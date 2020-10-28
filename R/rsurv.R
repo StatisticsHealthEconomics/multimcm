@@ -21,7 +21,7 @@ rsurv <- function(n = 100,
     if (distn == "exp") {
       rexp_rgn(n, params$mu, X)
     } else if (distn == "weibull") {
-      rweibull_rgn(n, params$alpha, param$mu, X)
+      rweibull_rgn(n, params$alpha, params$mu, X)      #for mu: it is params$mu? 
     } else if (distn == "biweibull") {
       do.call(rbiweibull_rgn, c(n = n, X = X, params))
     }

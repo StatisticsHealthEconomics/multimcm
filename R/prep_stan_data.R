@@ -7,6 +7,8 @@
 #' @param centre_age
 #' @param mean_cf
 #' @param var_cf
+#' @param mu_cf linear regression on cure fraction
+#' @param sigma_cf
 #' @param mu_bg
 #' @param sigma_bg
 #'

@@ -186,3 +186,49 @@ Note that one the fits has clearly not converged and so the plots is not meaning
 
 ![Frequentist approach overall survival](C:/Users/Nathan/Documents/mixture cure model project/from Antonio/BMS_ICON_cure_modeling/MCM_15012020/Figures/os_rates.png){width=50%}
 
+
+## Model checking
+
+Before using the real data we developed the models using simulated data sets. In this way we know the true underlying data generating process.
+It is trivial to simulate random variables from the given distributions in R using the in-built functions.
+However, times from the 'product' distribution used for the non-cured combined background and cancer event times need to be generated from a bespoke function.
+
+We have shown above that density can be thought of as the probability of surviving both events up to time $t$ and then experiencing either at time $t$.
+This is equivalent to the earliest event time being after time $t$ i.e.
+
+$$
+P(\min\{ X,Y \}>t) = P(X>t, Y>t) = P(X>t) P(Y>t) = S_X S_Y
+$$
+
+Thus, we simulate all latent event times and select the smallest as the observed time.
+In the simplest case, this is a well-known method for simulating jump times in a Markov model.
+More generally, we can think of the exponential-weibull model as a version of a poly-hazard model.
+
+
+## Joint model
+If we factorise into a marginal and conditional components to model the underlying bivariate disrtibution.
+
+$$
+OS_i \sim p(c | PFS, \phi_{iOS}, \tau_{OS})
+$$
+$$
+g_{OS}(\phi_{iOS}) = \beta_0 + \beta_1 (PFS_i - \mu_{PFS})[+ \ldots]
+$$
+$$
+\mu_{OS} = g_{OS}^{-1}(\beta0)
+$$
+$$
+g_{PFS}(\phi_{iPFS}) = \alpha_0 [+ \ldots]
+$$
+$$
+PFS_i \sim p(PFS | \phi_{iPFS}, \tau_{PFS})
+$$
+$$
+\mu_{PFS} = g_{PFS}^{-1}(alpha_0)
+$$
+
+
+The combined log-likelihood is
+$$
+\mathcal{l} = \mathcal{l}_{OS} + \mathcal{l}_{PFS}
+$$

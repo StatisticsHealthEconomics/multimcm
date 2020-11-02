@@ -1492,6 +1492,45 @@ window.onload = function() {
   PagedTableDoc.initAll();
 };
 </script>
+<style type="text/css">
+a.anchor-section {margin-left: 10px; visibility: hidden; color: inherit;}
+a.anchor-section::before {content: '#';}
+.hasAnchor:hover a.anchor-section {visibility: visible;}
+</style>
+<script>// Anchor sections v1.0 written by Atsushi Yasumoto on Oct 3rd, 2020.
+document.addEventListener('DOMContentLoaded', function() {
+  // Do nothing if AnchorJS is used
+  if (typeof window.anchors === 'object' && anchors.hasOwnProperty('hasAnchorJSLink')) {
+    return;
+  }
+
+  const h = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
+
+  // Do nothing if sections are already anchored
+  if (Array.from(h).some(x => x.classList.contains('hasAnchor'))) {
+    return null;
+  }
+
+  // Use section id when pandoc runs with --section-divs
+  const section_id = function(x) {
+    return ((x.classList.contains('section') || (x.tagName === 'SECTION'))
+            ? x.id : '');
+  };
+
+  // Add anchors
+  h.forEach(function(x) {
+    const id = x.id || section_id(x.parentElement);
+    if (id === '') {
+      return null;
+    }
+    let anchor = document.createElement('a');
+    anchor.href = '#' + id;
+    anchor.classList = ['anchor-section'];
+    x.classList.add('hasAnchor');
+    x.appendChild(anchor);
+  });
+});
+</script>
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -1500,7 +1539,7 @@ window.onload = function() {
   div.column{display: inline-block; vertical-align: top; width: 50%;}
   div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
   ul.task-list{list-style: none;}
-      </style>
+    </style>
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -1778,6 +1817,15 @@ e^{-(t/\lambda_u)^k - \lambda^* t} \left(\lambda^* + \frac{k}{\lambda_u} \left(\
 <p class="caption">Frequentist approach overall survival</p>
 </div>
 </div>
+<div id="model-checking" class="section level2">
+<h2>Model checking</h2>
+<p>Before using the real data we developed the models using simulated data sets. In this way we know the true underlying data generating process. It is trivial to simulate random variables from the given distributions in R using the in-built functions. However, times from the ‘product’ distribution used for the non-cured combined background and cancer event times need to be generated from a bespoke function.</p>
+<p>We have shown above that density can be thought of as the probability of surviving both events up to time <span class="math inline">\(t\)</span> and then experiencing either at time <span class="math inline">\(t\)</span>. This is equivalent to the earliest event time being after time <span class="math inline">\(t\)</span> i.e.</p>
+<p><span class="math display">\[
+P(\min\{ X,Y \}&gt;t) = P(X&gt;t, Y&gt;t) = P(X&gt;t) P(Y&gt;t) = S_X S_Y
+\]</span></p>
+<p>Thus, we simulate all latent event times and select the smallest as the observed time. In the simplest case, this is a well-known method for simulating jump times in a Markov model. More generally, we can think of the exponential-weibull model as a version of the poly-weibull model.</p>
+</div>
 
 
 
@@ -1788,7 +1836,7 @@ e^{-(t/\lambda_u)^k - \lambda^* t} \left(\lambda^* + \frac{k}{\lambda_u} \left(\
 
 // add bootstrap table styles to pandoc tables
 function bootstrapStylePandocTables() {
-  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
 }
 $(document).ready(function () {
   bootstrapStylePandocTables();

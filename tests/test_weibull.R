@@ -44,7 +44,7 @@ rates_bg2 <- exp(mu_bg[1] + mu_bg[2]*age_0_centred)
 
 # is this a bi-weibull?
 times_0 <- rweibull(n_0, shape = alpha0, scale = rates_0)
-map_dbl(rates_0, function(x) rweibull(1, shape = alpha0, scale = x))
+# map_dbl(rates_0, function(x) rweibull(1, shape = alpha0, scale = x)) #check
 
 times_bg2 <- rexp(n_0, rate = rates_bg2)
 times_bg0 <- pmin(times_0, times_bg2)
@@ -59,9 +59,11 @@ t_max <- 60
 # cens <- as.numeric(times_all != cens_times)
 
 # uniform sample then censor selected
-cens_idx <- sample(1:n, size = 350, replace = FALSE)
+cens_idx <- sample(1:n, size = 50, replace = FALSE)
+
 times_all[cens_idx] <-
   map_dbl(times_all[cens_idx], function(x) runif(1, 0, x))
+
 cens <- as.numeric(!(1:n) %in% cens_idx)
 
 ## check exp case
@@ -121,7 +123,7 @@ res_beta <-
     data = data_beta,
     warmup = 1000,
     iter = 10000,
-    thin= 10,
+    thin = 10,
     control = list(adapt_delta = 0.99,
                    max_treedepth = 20),
     chains = 1)

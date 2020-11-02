@@ -10,8 +10,8 @@ prep_stan_params <- function(model) {
   }
   if (model == "weibull") {
     return(
-      list(mu_alpha = 0.1,
-           sigma_alpha = 0.1,
+      list(a_alpha = 1,
+           b_alpha = 1,
            mu_0 = c(-3.1, -0.01),
            sigma_0 = c(1,1)))
   }

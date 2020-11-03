@@ -1,4 +1,5 @@
 
+#' prep_stan_params
 #'
 prep_stan_params <- function(model) {
 

@@ -35,9 +35,8 @@ bmcm_stan <- function(input_data,
       prep_stan_data(input_data,
                      event_type,
                      tx_name,
-                     centre_age,
-                     mean_cf,
-                     var_cf))
+                     centre_age),
+      prep_shared_params(mean_cf, var_cf))
 
   stan_model <-
     switch(model,

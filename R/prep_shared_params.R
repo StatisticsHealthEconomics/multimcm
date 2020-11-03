@@ -1,21 +1,26 @@
 
 #' prep_shared_params
 #'
+#' Model parameters not specific to OS or PFS:
+#' cure fraction, background and generated.
+#'
 #' @param mean_cf
 #' @param var_cf
 #' @param mu_bg
 #' @param sigma_bg
 #' @param t_max
+#' @param mu_cf
+#' @param sigma_cf
 #'
 #' @return list
 #'
 prep_shared_params <- function(mean_cf = NA,
-                           var_cf = NA,
-                           mu_cf = NA,
-                           sigma_cf = NA,
-                           mu_bg = c(-8.5, 0.03),
-                           sigma_bg = c(1, 1),
-                           t_max = 60) {
+                               var_cf = NA,
+                               mu_cf = NA,
+                               sigma_cf = NA,
+                               mu_bg = c(-8.5, 0.03),
+                               sigma_bg = c(1, 1),
+                               t_max = 60) {
 
   # cure fraction parameters
   cf_params <-
@@ -30,10 +35,9 @@ prep_shared_params <- function(mean_cf = NA,
     } else {
       list(a_cf = 1, b_cf = 1)}
 
-list(cf_params
-	 t_max = t_max,
-     mu_bg = mu_bg,
-     sigma_bg = sigma_bg)
- }
+  list(cf_params,
+       t_max = t_max,
+       mu_bg = mu_bg,
+       sigma_bg = sigma_bg)
+}
 
- 

@@ -1,6 +1,8 @@
 
 #' prep_stan_data
 #'
+#' Data specific to OS or PFS for stan input.
+#'
 #' @param input_data
 #' @param event_type
 #' @param tx_name

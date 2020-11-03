@@ -19,26 +19,28 @@
 #' @import dplyr
 #'
 bmcm_joint_stan <- function(input_data,
-                      model_os = "exp",
-                      model_pfs = "exp",
-                      tx_name = "IPILIMUMAB",
-                      iter = 2000,
-                      warmup = 1000,
-                      thin = 10,
-                      chains = 2,
-                      mean_cf = NA,
-                      var_cf = NA,
-                      centre_age = TRUE,
-                      ...) {
-	 
-  data_os <- c(prep_stan_params(model_os), #TODO:this could depend on event type with extra argument?
-               prep_stan_data(input_data,
+                            model_os = "exp",
+                            model_pfs = "exp",
+                            tx_name = "IPILIMUMAB",
+                            iter = 2000,
+                            warmup = 1000,
+                            thin = 10,
+                            chains = 2,
+                            mean_cf = NA,
+                            var_cf = NA,
+                            centre_age = TRUE,
+                            ...) {
+
+  data_os <-
+    c(prep_stan_params(model_os), #TODO:this could depend on event type with extra argument?
+      prep_stan_data(input_data,
                      event_type == "OS",
                      tx_name,
                      centre_age))
-  
-  data_pfs <- c(prep_stan_params(model_pfs),
-                prep_stan_data(input_data,
+
+  data_pfs <-
+    c(prep_stan_params(model_pfs),
+      prep_stan_data(input_data,
                      event_type == "PFS",
                      tx_name,
                      centre_age))
@@ -53,11 +55,11 @@ bmcm_joint_stan <- function(input_data,
 
   stan_model <-
     if (model_os == "exp") {
-    	if (model_pfs == "exp")      stanmodels$exp_exp_relative_mix
-		if (model_pfs == "weibull")  stanmodels$exp_weibull_relative_mix
-	} else if (model_os == "weibull") {
-    	if (model_pfs == "exp")      stanmodels$weibull_exp_relative_mix
-		if (model_pfs == "weibull")  stanmodels$weibull_weibull_relative_mix
+      if (model_pfs == "exp")      stanmodels$exp_exp_relative_mix
+      if (model_pfs == "weibull")  stanmodels$exp_weibull_relative_mix
+    } else if (model_os == "weibull") {
+      if (model_pfs == "exp")      stanmodels$weibull_exp_relative_mix
+      if (model_pfs == "weibull")  stanmodels$weibull_weibull_relative_mix
     }
 
   rstan_options(auto_write = TRUE)

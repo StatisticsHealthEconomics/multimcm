@@ -32,7 +32,7 @@ bmcm_joint_stan <- function(input_data,
                             ...) {
 
   data_os <-
-    c(prep_stan_params(model_os), #TODO:this could depend on event type with extra argument?
+    c(prep_stan_params(model_os), #TODO: this could depend on event type with extra argument?
       prep_stan_data(input_data,
                      event_type == "OS",
                      tx_name,
@@ -51,15 +51,17 @@ bmcm_joint_stan <- function(input_data,
   data_list <-
     c(data_os,
       data_pfs,
-      prep_shared_params(mean_cf, var_cf))
+      prep_shared_params(mean_cf, var_cf),
+      mu_joint = 0,
+      sigma_joint = 0.1)
 
   stan_model <-
     if (model_os == "exp") {
-      if (model_pfs == "exp")      stanmodels$exp_exp_relative_mix
-      if (model_pfs == "weibull")  stanmodels$exp_weibull_relative_mix
+      if (model_pfs == "exp")      stanmodels$exp_exp_joint_mix
+      if (model_pfs == "weibull")  stanmodels$exp_weibull_joint_mix
     } else if (model_os == "weibull") {
-      if (model_pfs == "exp")      stanmodels$weibull_exp_relative_mix
-      if (model_pfs == "weibull")  stanmodels$weibull_weibull_relative_mix
+      if (model_pfs == "exp")      stanmodels$weibull_exp_joint_mix
+      if (model_pfs == "weibull")  stanmodels$weibull_weibull_joint_mix
     }
 
   rstan_options(auto_write = TRUE)

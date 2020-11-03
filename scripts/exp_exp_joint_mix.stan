@@ -75,13 +75,13 @@ model {
 
   for (i in 1:n_os) {
     target += log_sum_exp(log(curefrac) +
-                surv_exp_lpdf(t_os[i] | d_os[i], lambda_bg[i]),
+                surv_exp_lpdf(t_os[i] | d_os[i], lambda_os_bg[i]),
                 log1m(curefrac) +
-                surv_exp_lpdf(t_os[i] | d_os[i], lambda_bg[i] + lambda_os[i])) +
+                surv_exp_lpdf(t_os[i] | d_os[i], lambda_os_bg[i] + lambda_os[i])) +
               log_sum_exp(log(curefrac) +
-                surv_exp_lpdf(t_pfs[i] | d_pfs[i], lambda_bg[i]),
+                surv_exp_lpdf(t_pfs[i] | d_pfs[i], lambda_pfs_bg[i]),
                 log1m(curefrac) +
-                surv_exp_lpdf(t_pfs[i] | d_pfs[i], lambda_bg[i] + lambda_pfs[i]));
+                surv_exp_lpdf(t_pfs[i] | d_pfs[i], lambda_pfs_bg[i] + lambda_pfs[i]));
   }
 }
 

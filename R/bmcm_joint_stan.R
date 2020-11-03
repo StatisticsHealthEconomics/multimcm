@@ -4,8 +4,8 @@
 #' Use pre-compiled C code.
 #'
 #' @param input_data Dataframe with all variables
-#' @param model Distribution name; exp, weibull, gompertz
-#' @param event_type Overall survival or progression-free survival; OS, PFS
+#' @param model_os Distribution name; exp, weibull, gompertz
+#' @param model_pfs Distribution name; exp, weibull, gompertz
 #' @param tx_name Treatment name; IPILIMUMAB, NIVOLUMAB, NIVOLUMAB+IPILIMUMAB
 #' @param iter int
 #' @param warmup Number of iterations burn-in; int

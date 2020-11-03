@@ -18,9 +18,7 @@ devtools::load_all()
 data("surv_input_data")
 
 all_tx_names <- c("IPILIMUMAB", "NIVOLUMAB", "NIVOLUMAB+IPILIMUMAB")
-all_event_types <- c("PFS", "OS")
 model_names <- c("exp", "weibull")#, "gompertz")
-# model_names <- c("exp_full", "weibull_full", "gompertz_full") # age-dependent cure fraction
 
 ## choose compiled stan?
 # stan_fn <- bmcm_joint_stan_file

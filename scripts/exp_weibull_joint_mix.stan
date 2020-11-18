@@ -18,12 +18,14 @@ data {
   matrix[n_os, H_os] X_os;       // matrix of covariates (with n rows and H columns)
   matrix[n_pfs, H_pfs] X_pfs;
 
+  real<lower=0> a_alpha;
+  real<lower=0> b_alpha;
+
   vector[H_os] mu_os;
   vector[H_pfs] mu_pfs;
   vector<lower=0> [H_os] sigma_os;
   vector<lower=0> [H_pfs] sigma_pfs;
 
-  //TODO: what to do when different type/number covariates for os and pfs?
   vector[H_os] mu_bg;
   vector<lower=0> [H_os] sigma_bg;
 
@@ -56,7 +58,7 @@ transformed parameters {
   lp_os = X_os*beta_os + beta_joint*(t_pfs - mean(lambda_pfs));
   lp_pfs = X_pfs*beta_pfs;
 
-  //TODO: hierarchical global beta_bg...
+  //TODO: can I use centring with same beta_bg when X_os and X_pfs are different?
   lp_os_bg = X_os*beta_bg;
   lp_pfs_bg = X_pfs*beta_bg;
 
@@ -73,6 +75,8 @@ model {
   beta_bg ~ normal(mu_bg, sigma_bg);
   beta_joint ~ normal(mu_joint, sigma_joint);
 
+  alpha0 ~ gamma(a_alpha, b_alpha);
+
   curefrac ~ beta(a_cf, b_cf);
 
   for (i in 1:n_os) {
@@ -83,7 +87,7 @@ model {
               log_sum_exp(log(curefrac) +
                 surv_exp_lpdf(t_pfs[i] | d_pfs[i], lambda_pfs_bg[i]),
                 log1m(curefrac) +
-                surv_exp_lpdf(t_pfs[i] | d_pfs[i], lambda_pfs_bg[i] + lambda_pfs[i]));
+                joint_exp_weibull_lpdf(t[i] | d_pfs[i], alpha0, lambda_pfs[i], lambda_pfs_bg[i]));
   }
 }
 
@@ -103,10 +107,10 @@ generated quantities {
   for (i in 1:t_max) {
     S_bg[i] = exp_Surv(i, rate_bg);
     S_os[i] = exp_Surv(i, rate_bg + rate_os);
-    S_pfs[i] = exp_Surv(i, rate_bg + rate_pfs);
+    S_pfs[i] = weibull_Surv(i, alpha0, rate_pfs);
 
-    S_os_pred[i] = curefrac*S_bg[i] + (1 - curefrac)*S_os[i];
-    S_pfs_pred[i] = curefrac*S_bg[i] + (1 - curefrac)*S_pfs[i];
+    S_os_pred[i] = curefrac*S_bg[i] + (1 - curefrac)*S_os[i]*S_bg[i];
+    S_pfs_pred[i] = curefrac*S_bg[i] + (1 - curefrac)*S_pfs[i]*S_bg[i];
   }
 }
 

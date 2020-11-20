@@ -4,14 +4,14 @@
 \alias{prep_stan_data}
 \title{prep_stan_data}
 \usage{
-prep_stan_data(input_data, event_type, tx_name, centre_age, mean_cf, var_cf)
+prep_stan_data(input_data, event_type, tx_name, centre_age)
 }
 \arguments{
-\item{var_cf}{}
+\item{centre_age}{}
 }
 \value{
-
+List
 }
 \description{
-prep_stan_data
+Data specific to OS or PFS for stan input.
 }

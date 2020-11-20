@@ -9,12 +9,13 @@ bmcm_stan(
   model = "exp",
   event_type = "PFS",
   tx_name = "IPILIMUMAB",
-  n_iter = 2000,
-  n_warmup = 1000,
-  n_chains = 2,
+  iter = 2000,
+  warmup = 1000,
+  thin = 10,
+  chains = 1,
   mean_cf = NA,
   var_cf = NA,
-  age_adj = TRUE,
+  centre_age = TRUE,
   ...
 )
 }
@@ -27,17 +28,17 @@ bmcm_stan(
 
 \item{tx_name}{Treatment name; IPILIMUMAB, NIVOLUMAB, NIVOLUMAB+IPILIMUMAB}
 
-\item{n_iter}{int}
+\item{iter}{int}
 
-\item{n_warmup}{int}
+\item{warmup}{Number of iterations burn-in; int}
 
-\item{n_chains}{Number of chains; int}
+\item{chains}{Number of chains; int}
 
 \item{mean_cf}{Mean cure fraction; default to U\link{0,1}}
 
 \item{var_cf}{Variance of cure fraction}
 
-\item{age_adj}{Logical to centre regression covariate}
+\item{centre_age}{Logical to centre regression covariate}
 
 \item{...}{Additional arguments}
 }

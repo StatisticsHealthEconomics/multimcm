@@ -1,10 +1,12 @@
 
 #' plot_S_event_type
 #'
-#' Plot results of running stan
+#' Plot results of running Stan
 #' relative survival mixture cure model.
 #'
 #' @param file_names Nested list of file name for stan output
+#'
+#' @return ggplot object
 #'
 #' @importFrom purrr map
 #' @importFrom reshape2 melt
@@ -17,7 +19,7 @@
 plot_S_event_type <- function(file_names) {
 
   ##TODO:
-  # text cure fractions
+  # add text cure fractions values
 
   fit_stan <- list()
   S_stats <- list()

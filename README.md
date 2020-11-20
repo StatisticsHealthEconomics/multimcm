@@ -16,7 +16,7 @@ called from R.
 
 ## Installation
 
-You can install the the development version from
+You can install the development version from
 [GitHub](https://github.com/) with:
 
 ``` r
@@ -34,9 +34,55 @@ extending current methods to account for the dependence between event
 times we leverage additional information to make better inferences and
 decisions.
 
-## Example
+## Data
 
-## Code of Conduct
+-   `data/surv_input_data.RData`: Individual-level patient data. This is
+    cleaned data from the previous frequentist
+    `n8thangreen/mixture_cure_model` package. The fields are:
+    -   `OSage`: age at OS event
+    -   `PFSage`: age at PFS event
+    -   `os`: time of OS
+    -   `os_event`: censoring indicator
+    -   `pfs`: time of PFS
+    -   `pfs_event`: censoring indicator
+    -   `TRTA`: treatment name
+    -   `SEX`: male or female
+    -   `COUNTRY`: abbreviated
+    -   `ACOUNTRY`: full name
+    -   `PFS_rate`: background mortality at time of PFS event from life
+        tables
+    -   `OS_rate`: background mortality at time of OS event from life
+        tables
+
+## Workflow
+
+The stan engine can be called either with the compile C code or with the
+stan script without precompiling.
+
+-   The precompiled stan code is in `inst/stan` and the compiled code in
+    `src/`
+-   The non-compiled stan code is in `scripts/`
+
+There are two runner scripts:
+
+-   `scripts/stan_checkmate.R`: Run stan mixture cure model with
+    *separate* model for PFS and OS data.
+-   `scripts/stan_checkmate_joint.R`: Run stan mixture cure model with
+    *joint* model for PFS and OS data.
+
+## Output
+
+Because the stan output files are large, we do not save a single list of
+all model outputs as a single objects. Instead `stan_filenames.RData` is
+a list of file names of the model outputs and each output is saved in a
+separate file. The file name formats are:
+
+-   For the separate OS, PFS models:
+    `stan_<distn>_<event type>_<treatment name>.Rds`
+-   For the joint OS, PFS models:
+    `stan_<distn>_<distn>_<treatment name>.Rds`
+
+### Code of Conduct
 
 Please note that the `york.course.excel.model.in.R` project is released
 with a [Contributor Code of

@@ -27,7 +27,7 @@ prep_stan_data <- function(input_data,
       input_data %>%
       select(TRTA, pfs, pfs_event, PFSage, PFS_rate) %>%
       mutate(PFS_rate =
-               ifelse(PFS_rate == 0, 0.00001, PFS_rate)) %>% # replace 0
+               ifelse(PFS_rate == 0, 0.00001, PFS_rate)) %>% # replace so >0
       split(input_data$TRTA)
 
   } else if (event_type == "OS") {

@@ -1,10 +1,12 @@
 
 #' MoM_beta
 #'
+#' Method of moments for the Beta distribution.
+#'
 #' @param xbar Mean
 #' @param vbar Variance
 #'
-#' @return
+#' @return Beta distribution parameters a, b in a list.
 #' @export
 #'
 #' @examples

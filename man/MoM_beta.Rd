@@ -12,10 +12,10 @@ MoM_beta(xbar, vbar)
 \item{vbar}{Variance}
 }
 \value{
-
+Beta distribution parameters a, b in a list.
 }
 \description{
-MoM_beta
+Method of moments for the Beta distribution.
 }
 \examples{
 

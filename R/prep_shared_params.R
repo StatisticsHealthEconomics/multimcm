@@ -4,13 +4,14 @@
 #' Model parameters not specific to OS or PFS:
 #' cure fraction, background and generated.
 #'
-#' @param mean_cf
-#' @param var_cf
-#' @param mu_bg
-#' @param sigma_bg
-#' @param t_max
-#' @param mu_cf
-#' @param sigma_cf
+#' @param mean_cf Mean of cure fraction to using in method of
+#'                moments (MoM) to obtain Beta distribution hyperparameters a, b
+#' @param var_cf Variance of cure fraction for MoM
+#' @param mu_bg Mean of background survival
+#' @param sigma_bg Standard deviation of background survival
+#' @param t_max Time horizon
+#' @param mu_cf Mean of cure fraction to use directly
+#' @param sigma_cf Standard deviation of cure fraction to use directly
 #'
 #' @return list
 #'

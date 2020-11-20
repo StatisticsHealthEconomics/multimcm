@@ -4,16 +4,19 @@
 \alias{plot_S_event_type}
 \title{plot_S_event_type}
 \usage{
-plot_S_event_type(stan_out)
+plot_S_event_type(file_names)
 }
 \arguments{
-\item{stan_out}{Nested list of stan output}
+\item{file_names}{Nested list of file name for stan output}
+}
+\value{
+ggplot object
 }
 \description{
-Plot results of running stan
+Plot results of running Stan
 relative survival mixture cure model.
 }
 \examples{
-load("data/stan_out.RData")
+load("data/file_names.RData")
 
 }

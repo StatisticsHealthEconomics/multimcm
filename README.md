@@ -26,8 +26,8 @@ devtools::install_github("StatisticsHealthEconomics/rstanbmcm")
 
 ## Motivation
 
-Mixture cure models are increasingly popular in health problem in
-particular oncology. A Bayesian paradigm allows the explicitly
+Mixture cure models are increasingly popular in health problems and in
+particular in oncology. A Bayesian paradigm allows the explicitly
 incorporation of uncertainties and principled synthesis of prior
 knowledge such as via expert elicitation or previous trials. By
 extending current methods to account for the dependence between event
@@ -56,7 +56,7 @@ decisions.
 
 ## Workflow
 
-The stan engine can be called either with the compile C code or with the
+The Stan engine can be called either with the compile C code or with the
 stan script without precompiling.
 
 -   The precompiled stan code is in `inst/stan` and the compiled code in
@@ -84,7 +84,6 @@ separate file. The file name formats are:
 
 ### Code of Conduct
 
-Please note that the `york.course.excel.model.in.R` project is released
-with a [Contributor Code of
+Please note that this project is released with a [Contributor Code of
 Conduct](https://contributor-covenant.org/version/2/0/CODE_OF_CONDUCT.html).
 By contributing to this project, you agree to abide by its terms.

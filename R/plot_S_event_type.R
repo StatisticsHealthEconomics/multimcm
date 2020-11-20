@@ -4,7 +4,8 @@
 #' Plot results of running Stan
 #' relative survival mixture cure model.
 #'
-#' @param file_names Nested list of file name for stan output
+#' @param file_names Nested list of file names for Stan output
+#' @param stan_list List of Stan output
 #'
 #' @return ggplot object
 #'
@@ -16,7 +17,8 @@
 #' @examples
 #' load("data/file_names.RData")
 #'
-plot_S_event_type <- function(file_names) {
+plot_S_event_type <- function(file_names = NA,
+                              stan_list = NA) {
 
   ##TODO:
   # add text cure fractions values
@@ -25,8 +27,15 @@ plot_S_event_type <- function(file_names) {
   S_stats <- list()
   S_pred <- NULL
 
-  event_types <- names(file_names)
-  tx_names <- names(file_names[[1]])
+  # read-in output or use directly
+  if (!all(is.na(file_names))) {
+    stan_out <- function(i, j) readRDS(file_names[[i]][[j]])
+    event_types <- names(file_names)
+    tx_names <- names(file_names[[1]])
+  } else {
+    stan_out <- function(i, j) stan_list[[i]][[j]]
+    event_types <- names(stan_list)
+    tx_names <- names(stan_list[[1]])}
 
   for (i in event_types) {
 
@@ -36,7 +45,7 @@ plot_S_event_type <- function(file_names) {
     for (j in tx_names) {
 
       fit_stan[[i]][[j]] <-
-        readRDS(file_names[[i]][[j]]) %>%
+        stan_out(i, j) %>%
         rstan::extract()
 
       # rearrange to time as rows

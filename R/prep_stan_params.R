@@ -1,6 +1,9 @@
 
 #' prep_stan_params
 #'
+#' @param model exp, weibull
+#' @return hyper-parameters
+#'
 prep_stan_params <- function(model) {
 
   if (model == "exp") {

@@ -1,5 +1,5 @@
 
-#' Run stan mixture cure model
+#' Run Stan mixture cure model
 #'
 #' Use pre-compiled C code.
 #'
@@ -30,6 +30,8 @@ bmcm_stan <- function(input_data,
                       var_cf = NA,
                       centre_age = TRUE,
                       ...) {
+
+  # hyper-parameters & statistics
   data_list <-
     c(prep_stan_params(model),
       prep_stan_data(input_data,

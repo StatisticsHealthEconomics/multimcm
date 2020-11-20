@@ -26,7 +26,7 @@ all_event_types <- c("PFS", "OS")
 model_names <- c("exp", "weibull")#, "gompertz")
 # model_names <- c("exp_full", "weibull_full", "gompertz_full") # age-dependent cure fraction
 
-## choose compiled stan?
+## choose compiled Stan?
 # stan_fn <- bmcm_stan_file
 stan_fn <- bmcm_stan
 
@@ -59,8 +59,15 @@ for (k in model_names) {
 
 # save(stan_files, file = "data/stan_filenames.RData")
 
+# plot from file
 plot_S_event_type(stan_files$exp)
 plot_S_event_type(stan_files$weibull)
+
+# plot directly
+plot_S_event_type(
+  stan_list = list(
+      PFS = list(
+        IPILIMUMAB = out)))
 
 
 ####################

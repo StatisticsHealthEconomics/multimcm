@@ -5,7 +5,8 @@
 #' cure fraction, background and generated.
 #'
 #' @param mean_cf Mean of cure fraction to using in method of
-#'                moments (MoM) to obtain Beta distribution hyperparameters a, b
+#'                moments (MoM) to obtain Beta distribution
+#'                hyper-parameters a, b
 #' @param var_cf Variance of cure fraction for MoM
 #' @param mu_bg Mean of background survival
 #' @param sigma_bg Standard deviation of background survival
@@ -22,7 +23,6 @@ prep_shared_params <- function(mean_cf = NA,
                                mu_bg = c(-8.5, 0.03),
                                sigma_bg = c(1, 1),
                                t_max = 60) {
-
   # cure fraction parameters
   cf_params <-
     if (!is.na(mean_cf) && !is.na(var_cf)) {
@@ -36,9 +36,9 @@ prep_shared_params <- function(mean_cf = NA,
     } else {
       list(a_cf = 1, b_cf = 1)}
 
-  list(cf_params,
-       t_max = t_max,
-       mu_bg = mu_bg,
-       sigma_bg = sigma_bg)
+  c(cf_params,
+    list(t_max = t_max,
+         mu_bg = mu_bg,
+         sigma_bg = sigma_bg))
 }
 

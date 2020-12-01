@@ -48,31 +48,8 @@ plot_S_event_type <- function(file_names = NA,
         stan_out(i, j) %>%
         rstan::extract()
 
-      # rearrange to time as rows
-      S_dat <-
-        list(
-          t(fit_stan[[i]][[j]]$S_pred) %>%
-            as_tibble() %>%
-            mutate(month = 1:n(),
-                   type = "S_pred"),
-          t(fit_stan[[i]][[j]]$S0) %>%
-            as_tibble() %>%
-            mutate(month = 1:n(),
-                   type = "S0"),
-          t(fit_stan[[i]][[j]]$S_bg) %>%
-            as_tibble() %>%
-            mutate(month = 1:n(),
-                   type = "S_bg"))
-
-      # means and credible intervals
       S_stats[[i]][[j]] <-
-        S_dat %>%
-        do.call(rbind, .) %>%
-        melt(id.vars = c("month", "type")) %>%
-        group_by(month, type) %>%
-        summarise(mean = mean(value),
-                  lower = quantile(value, probs = 0.025),
-                  upper = quantile(value, probs = 0.975))
+        prep_S_data(fit_stan[[i]][[j]])
     }
   }
 

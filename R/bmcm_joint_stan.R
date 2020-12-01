@@ -34,14 +34,14 @@ bmcm_joint_stan <- function(input_data,
   data_os <-
     c(prep_stan_params(model_os), #TODO: this could depend on event type with extra argument?
       prep_stan_data(input_data,
-                     event_type == "OS",
+                     event_type = "OS",
                      tx_name,
                      centre_age))
 
   data_pfs <-
     c(prep_stan_params(model_pfs),
       prep_stan_data(input_data,
-                     event_type == "PFS",
+                     event_type = "PFS",
                      tx_name,
                      centre_age))
 

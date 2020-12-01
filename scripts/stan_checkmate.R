@@ -27,8 +27,8 @@ model_names <- c("exp", "weibull")#, "gompertz")
 # model_names <- c("exp_full", "weibull_full", "gompertz_full") # age-dependent cure fraction
 
 ## choose compiled Stan?
-# stan_fn <- bmcm_stan_file
-stan_fn <- bmcm_stan
+stan_fn <- bmcm_stan_file
+# stan_fn <- bmcm_stan
 
 stan_files <- list()
 
@@ -42,8 +42,9 @@ for (k in model_names) {
                      event_type = i,
                      tx_name = j,
                      warmup = 1000,
-                     iter = 10000,#50000,
-                     thin = 10)#50)
+                     # iter = 10000,
+                     iter = 50000,
+                     thin = 50)
 
       file_name <-
         here::here(paste("data/stan", k, i, j, ".Rds", sep = "_"))

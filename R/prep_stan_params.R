@@ -2,20 +2,24 @@
 #' prep_stan_params
 #'
 #' @param model exp, weibull
+#' @param params
 #' @return hyper-parameters
 #'
-prep_stan_params <- function(model) {
+prep_stan_params <- function(model,
+                             params = NA) {
+
+  if (!is.na(params)) return(params)
 
   if (model == "exp") {
     return(
-      list(mu_0 = c(-3.1, -0.01),
+      list(mu_0 = c(-3.1, 0),
            sigma_0 = c(1,1)))
   }
   if (model == "weibull") {
     return(
       list(a_alpha = 1,
            b_alpha = 1,
-           mu_0 = c(-3.1, -0.01),
+           mu_0 = c(-3.1, 0),
            sigma_0 = c(1,1)))
   }
 

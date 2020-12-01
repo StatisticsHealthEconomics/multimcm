@@ -53,7 +53,7 @@ $\pi(x)$ denotes the probability of being cured conditional on
 covariates $x$, and $S_u(t, x)$ denotes the event (progression or
 mortality) due to cancer at time $t$ conditional on covariates $x$. For
 PFS, the survival is composed of either progressing to a diseased state
-or death i.e. $S_u = S_{prog} S^*_u$. We use World Health Organization
+or death. We use World Health Organization
 (WHO) life tables by country for the latest year available of 2016
 (@wholifetables) to inform the background mortality rate (baseline
 hazard) inputted to the cure model. Such baseline hazard is the expected
@@ -275,19 +275,24 @@ the exponential-weibull model as a version of a poly-hazard model.
 ## Joint model
 
 If we factorise into a marginal and conditional components to model the
-underlying bivariate distribution.
+underlying bivariate distribution can be written generally as
 
 $$
 OS_i \sim p(c | PFS, \phi_{iOS}, \tau_{OS})
-$$ $$
+$$
+$$
 g_{OS}(\phi_{iOS}) = \beta_0 + \beta_1 (PFS_i - \mu_{PFS})[+ \ldots]
-$$ $$
+$$
+$$
 \mu_{OS} = g_{OS}^{-1}(\beta_0)
-$$ $$
+$$
+$$
 g_{PFS}(\phi_{iPFS}) = \alpha_0 [+ \ldots]
-$$ $$
+$$
+$$
 PFS_i \sim p(PFS | \phi_{iPFS}, \tau_{PFS})
-$$ $$
+$$
+$$
 \mu_{PFS} = g_{PFS}^{-1}(\alpha_0)
 $$
 
@@ -295,4 +300,32 @@ The combined log-likelihood is $$
 \mathcal{l} = \mathcal{l}_{OS} + \mathcal{l}_{PFS}
 $$
 
+For example, for the exponential-exponential case with centred age this gives the following.
+
+$$
+t_{iOS} \sim Exp(\phi_{iOS})
+$$
+$$
+\log(\phi_{iOS}) = \beta_0 + \beta_1 (t_{iPFS} - \bar{t}_{PFS}) + \beta_2 age_{iPFS}
+$$
+$$
+\mu_{OS} = \exp(\beta_0)
+$$
+$$
+\log(\phi_{iPFS}) = \alpha_0 + \alpha_1 age_{iOS}
+$$
+$$
+t_{iPFS} \sim Exp(\phi_{iPFS})
+$$
+$$
+\mu_{PFS} = \exp(\alpha_0)
+$$
+$$
+\bar{t}_{PFS} = 1/\mu_{PFS} 
+$$
+
+
+
+
 ## References
+

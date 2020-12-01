@@ -1,5 +1,5 @@
 
-#' Run stan mixture cure model from stan file
+#' Run Stan mixture cure model from Stan file
 #'
 #' Does not use pre-compiled C code.
 #'
@@ -24,8 +24,8 @@ bmcm_stan_file <- function(input_data,
                            tx_name = "IPILIMUMAB",
                            iter = 3000,
                            warmup = 1000,
-                           chains = 3,
                            thin = 10,
+                           chains = 1,
                            mean_cf = NA,
                            var_cf = NA,
                            centre_age = TRUE,
@@ -35,9 +35,8 @@ bmcm_stan_file <- function(input_data,
       prep_stan_data(input_data,
                      event_type,
                      tx_name,
-                     centre_age,
-                     mean_cf,
-                     var_cf))
+                     centre_age),
+      prep_shared_params(mean_cf, var_cf))
 
   stan_file <-
     switch(model,
@@ -46,7 +45,7 @@ bmcm_stan_file <- function(input_data,
            gompertz = here::here("inst", "stan", "gompertz_relative_mix.stan"))
 
   rstan_options(auto_write = TRUE)
-  options(mc.cores = min(n_chains, parallel::detectCores() - 1))
+  options(mc.cores = min(chains, parallel::detectCores() - 1))
   # stan_rdump(c("n_obs", "y"), file = "mix.data.R")
 
   res <-
@@ -54,9 +53,10 @@ bmcm_stan_file <- function(input_data,
       file = stan_file,
       data = data_list,
       warmup = warmup,
+      iter = iter,
+      thin = thin,
       control = list(adapt_delta = 0.99,
                      max_treedepth = 20),
-      iter = iter,
       chains = chains, ...)
 
   return(res)

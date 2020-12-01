@@ -1710,7 +1710,7 @@ summary {
 \tag{*}
 S(t, x) = S^*(t, x)[\pi(x) + (1 − \pi(x))S_u(t, x)],
 \end{align}\]</span>
-<p>where <span class="math inline">\(S(t, x)\)</span> denotes the survival at time <span class="math inline">\(t\)</span>, <span class="math inline">\(S^*(t, x)\)</span> denotes the background mortality at time <span class="math inline">\(t\)</span> conditional on covariates <span class="math inline">\(x\)</span>, <span class="math inline">\(\pi(x)\)</span> denotes the probability of being cured conditional on covariates <span class="math inline">\(x\)</span>, and <span class="math inline">\(S_u(t, x)\)</span> denotes the event (progression or mortality) due to cancer at time <span class="math inline">\(t\)</span> conditional on covariates <span class="math inline">\(x\)</span>. For PFS, the survival is composed of either progressing to a diseased state or death i.e. <span class="math inline">\(S_u = S_{prog} S^*_u\)</span>. We use World Health Organization (WHO) life tables by country for the latest year available of 2016 (<span class="citation">WHO (2020)</span>) to inform the background mortality rate (baseline hazard) inputted to the cure model. Such baseline hazard is the expected mortality rate for each patient at the age at which he/she experiences the event. The mortality data are age- and gender adjusted, thus providing a granular account of the different patient profiles in the trial. Note that WHO reports conditional probabilities of death in 5-year intervals until age 85. A constant annual mortality rate is reported for individuals over 85. In addition, we make the assumption that the maximum age that a patient can live up to is 100 years.</p>
+<p>where <span class="math inline">\(S(t, x)\)</span> denotes the survival at time <span class="math inline">\(t\)</span>, <span class="math inline">\(S^*(t, x)\)</span> denotes the background mortality at time <span class="math inline">\(t\)</span> conditional on covariates <span class="math inline">\(x\)</span>, <span class="math inline">\(\pi(x)\)</span> denotes the probability of being cured conditional on covariates <span class="math inline">\(x\)</span>, and <span class="math inline">\(S_u(t, x)\)</span> denotes the event (progression or mortality) due to cancer at time <span class="math inline">\(t\)</span> conditional on covariates <span class="math inline">\(x\)</span>. For PFS, the survival is composed of either progressing to a diseased state or death. We use World Health Organization (WHO) life tables by country for the latest year available of 2016 (<span class="citation">WHO (2020)</span>) to inform the background mortality rate (baseline hazard) inputted to the cure model. Such baseline hazard is the expected mortality rate for each patient at the age at which he/she experiences the event. The mortality data are age- and gender adjusted, thus providing a granular account of the different patient profiles in the trial. Note that WHO reports conditional probabilities of death in 5-year intervals until age 85. A constant annual mortality rate is reported for individuals over 85. In addition, we make the assumption that the maximum age that a patient can live up to is 100 years.</p>
 <p>To model the disease-specific mortality (the uncured fraction), all standard parametric distributions are tested:</p>
 <ul>
 <li>Exponential</li>
@@ -1742,7 +1742,7 @@ L = \prod_i S(t_i | \boldsymbol{x}_i) h(t_i | \boldsymbol{x}_i)^{\delta_i}
  \sum_i \log(S^*(t_i | \boldsymbol{x}_i) h^*(t_i | \boldsymbol{x}_i)^{\delta_i}[\pi(x) +
    (1 − \pi(x)) S_u(t_i | \boldsymbol{x}_i) h_u(t_i | \boldsymbol{x}_i)^{\delta_i}])
 \]</span></p>
-<p>We will assume that the cured component is the exponential survival model. The non-cured component can be thought of in similar terms to the cumulative incidence function. That is, the probability of an event is the combined probability of surviving both events (e.g. for OS, all-cause and cancer mortality) and then experiencing either i.e. dropping the <span class="math inline">\(S\)</span> dependencies for brevity</p>
+<p>We will assume that the cured component is the exponential survival model. The non-cured component can be thought of in similar terms to the cumulative incidence function. That is, the probability of an event is the combined probability of surviving both events (e.g. for OS, all-cause and cancer mortality) and then experiencing either i.e. dropping the <span class="math inline">\(S\)</span> dependencies for brevity</p>
 <span class="math display">\[\begin{equation}
 \tag{**}
 S^* S_u (h^*)^{\delta} + S^* S_u (h_u)^{\delta} = S^* S_u (h^* + h_u)^{\delta}
@@ -1830,7 +1830,7 @@ P(\min\{ X,Y \}&gt;t) = P(X&gt;t, Y&gt;t) = P(X&gt;t) P(Y&gt;t) = S_X S_Y
 </div>
 <div id="joint-model" class="section level2">
 <h2>Joint model</h2>
-<p>If we factorise into a marginal and conditional components to model the underlying bivariate distribution.</p>
+<p>If we factorise into a marginal and conditional components to model the underlying bivariate distribution can be written generally as</p>
 <p><span class="math display">\[
 OS_i \sim p(c | PFS, \phi_{iOS}, \tau_{OS})
 \]</span> <span class="math display">\[
@@ -1846,6 +1846,22 @@ PFS_i \sim p(PFS | \phi_{iPFS}, \tau_{PFS})
 \]</span></p>
 <p>The combined log-likelihood is <span class="math display">\[
 \mathcal{l} = \mathcal{l}_{OS} + \mathcal{l}_{PFS}
+\]</span></p>
+<p>For example, for the exponential-exponential case with centred age this gives the following.</p>
+<p><span class="math display">\[
+t_{iOS} \sim Exp(\phi_{iOS})
+\]</span> <span class="math display">\[
+\log(\phi_{iOS}) = \beta_0 + \beta_1 (t_{iPFS} - \bar{t}_{PFS}) + \beta_2 age_{iPFS}
+\]</span> <span class="math display">\[
+\mu_{OS} = \exp(\beta_0)
+\]</span> <span class="math display">\[
+\log(\phi_{iPFS}) = \alpha_0 + \alpha_1 age_{iOS}
+\]</span> <span class="math display">\[
+t_{iPFS} \sim Exp(\phi_{iPFS})
+\]</span> <span class="math display">\[
+\mu_{PFS} = \exp(\alpha_0)
+\]</span> <span class="math display">\[
+\bar{t}_{PFS} = 1/\mu_{PFS} 
 \]</span></p>
 </div>
 <div id="references" class="section level2 unnumbered">

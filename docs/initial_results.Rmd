@@ -8,6 +8,10 @@ output:
     df_print: paged
   pdf_document: default
   word_document: default
+editor_options: 
+  markdown: 
+    wrap: 72
+bibliography: bibliography.bibtex
 ---
 
 ```{r setup, include=FALSE}
@@ -17,70 +21,88 @@ knitr::opts_chunk$set(echo = TRUE)
 [taken from Anthonio]
 
 ### Methodology
-Immuno-oncologic (IO) studies for melanoma therapies, such as _ipilimumab_, _nivolumab_, and the _nivolumab_
-+ _ipilimumab_ combination, have indicated that survival curves “plateau” (a considerable proportion of
-patients are “long-term survivors”). Cure models are a special type of survival analysis where this “cure
-fraction” (the underlying proportion of responders to treatment/long-term survivors) is accounted for. Cure
-models estimate the cure fraction, in addition to a parametric survival function for patients that are not
-cured. The mortality risk in the cured patients is informed by a background mortality rate. The population
-that is not cured is subject both to background mortality and to additional mortality from their cancer,
-estimated using a parametric survival model.
 
-A mixture cure model (MCM) is a type of cure model where survival is modelled as a mixture of two groups
-of patients: those who are cured and those who are not (and who therefore remain at risk). The survival for
-a population with a cure fraction can be written as follows:
+Immuno-oncologic (IO) studies for melanoma therapies, such as
+*ipilimumab* (ipi), *nivolumab* (nivo), and the *nivolumab* with
+*ipilimumab* (nivo + ipi) combination, have indicated that survival
+curves "plateau" (a considerable proportion of patients are "long-term
+survivors"). Cure models are a special type of survival analysis where
+this "cure fraction" (the underlying proportion of responders to
+treatment/long-term survivors) is accounted for. Cure models estimate
+the cure fraction, in addition to a parametric survival function for
+patients that are not cured. The mortality risk in the cured patients is
+informed by a background mortality rate. The population that is not
+cured is subject both to background mortality and to additional
+mortality from their cancer, estimated using a parametric survival
+model.
 
+A mixture cure model (MCM) is a type of cure model where survival is
+modelled as a mixture of two groups of patients: those who are cured and
+those who are not (and who therefore remain at risk). The survival for a
+population with a cure fraction can be written as follows:
+
+```{=tex}
 \begin{align}
 \tag{*}
 S(t, x) = S^*(t, x)[\pi(x) + (1 − \pi(x))S_u(t, x)],
 \end{align}
+```
+where $S(t, x)$ denotes the survival at time $t$, $S^*(t, x)$ denotes
+the background mortality at time $t$ conditional on covariates $x$,
+$\pi(x)$ denotes the probability of being cured conditional on
+covariates $x$, and $S_u(t, x)$ denotes the event (progression or
+mortality) due to cancer at time $t$ conditional on covariates $x$. For
+PFS, the survival is composed of either progressing to a diseased state
+or death. We use World Health Organization
+(WHO) life tables by country for the latest year available of 2016
+(@wholifetables) to inform the background mortality rate (baseline
+hazard) inputted to the cure model. Such baseline hazard is the expected
+mortality rate for each patient at the age at which he/she experiences
+the event. The mortality data are age- and gender adjusted, thus
+providing a granular account of the different patient profiles in the
+trial. Note that WHO reports conditional probabilities of death in
+5-year intervals until age 85. A constant annual mortality rate is
+reported for individuals over 85. In addition, we make the assumption
+that the maximum age that a patient can live up to is 100 years.
 
-where $S(t, x)$ denotes the survival at time $t$, $S^*(t, x)$ denotes the background mortality at time $t$ conditional on
-covariates $x$, $\pi(x)$ denotes the probability of being cured conditional on covariates $x$, and $S_u(t, x)$ denotes
-the mortality due to cancer at time t conditional on covariates $x$.
-We use World Health Organization (WHO) life tables by country (2018) to inform the background mortality
-rate (baseline hazard) inputed to the cure model. Such baseline hazard is the expected mortality rate for
-each patient at the age at which he/she experiences the event. The mortality data are age- and gender adjusted,
-thus providing a granular account of the different patient profiles in the trial. Note that WHO
-reports conditional probabilities of death in 5-year intervals until age 85. A constant annual mortality rate is
-reported for individuals over 85. In addition, we make the assumption that the maximum age that a patient
-can live up to is 100 years.
+To model the disease-specific mortality (the uncured fraction), all
+standard parametric distributions are tested:
 
-To model the disease-specific mortality (the uncured fraction), all standard parametric distributions are tested:
+-   Exponential
+-   Weibull
+-   Gompertz
+-   Log-normal
+-   Log-logistic
+-   Generalised gamma.
 
-* exponential
-* Weibull
-* Gompertz
-* log-normal
-* log-logistic
-* generalised gamma.
-
-Parameters for the models, including the cure rate parameter, are derived via Bayesian inference.
+Parameters for the models, including the cure rate parameter, are
+derived via Bayesian inference.
 
 ### Model description
 
-Let $T_i$ be the non-negative random variable denoting the survival time of patient $i$ with covariate vector $\boldsymbol{x}_i$.
+Let $T_i$ be the non-negative random variable denoting the survival time
+of patient $i$ with covariate vector $\boldsymbol{x}_i$.
 
-We can assume that the cure fraction is the same for the whole population i.e. $\pi$ is fixed.
-Further, we can assume the $\pi$ models the relationship between $\boldsymbol{x}_i$ and the probability of being cured.
-E.g. using a logistic-linear model
+In the simplest case we can assume that the cure fraction is the same
+for the whole population i.e. $\pi$ is fixed. Further, we can assume the
+$\pi$ models the relationship between $\boldsymbol{x}_i$ and the
+probability of being cured. E.g. using a logistic-linear model
 
 $$
 \pi(\boldsymbol{x}_i | \boldsymbol{\beta}) = 1/[1 + \exp(-\boldsymbol{x}_i^T \boldsymbol{\beta})].
 $$
 
-The likelihood of the standard survival is 
+The likelihood of the standard survival is
 
 $$
 L = \prod_i S(t_i | \boldsymbol{x}_i) h(t_i | \boldsymbol{x}_i)^{\delta_i}
 $$
 
-Log-likelihood
-$$
+Log-likelihood $$
 \mathcal{l} = \sum_i \log(S(t_i | \boldsymbol{x}_i)) + \delta_i \log(h(t_i | \boldsymbol{x}_i))
 $$
 
-Plugging this directly into the mixture cure equation in (*) gives
+Plugging this directly into the mixture cure equation in (\*) gives
 
 $$
 \mathcal{l}(\pi | \boldsymbol{\delta}, \boldsymbol{x}) =
@@ -88,16 +110,19 @@ $$
    (1 − \pi(x)) S_u(t_i | \boldsymbol{x}_i) h_u(t_i | \boldsymbol{x}_i)^{\delta_i}])
 $$
 
-Clearly the cured component is the exponential survival model.
-The non-cured component can be thought of in similar terms to the cumulative incidence function.
-That is, it is the combined probability of surviving both events (all-cause and cancer mortality) and then experiencing either i.e.
+We will assume that the cured component is the exponential survival
+model. The non-cured component can be thought of in similar terms to the
+cumulative incidence function. That is, the probability of an event is
+the combined probability of surviving both events (e.g. for OS,
+all-cause and cancer mortality) and then experiencing either i.e.
+dropping the $S$ dependencies for brevity
 
+```{=tex}
 \begin{equation}
 \tag{**}
 S^* S_u (h^*)^{\delta} + S^* S_u (h_u)^{\delta} = S^* S_u (h^* + h_u)^{\delta}
 \end{equation}
-
-
+```
 Posterior distribution with cure fraction independent on covariates.
 
 $$
@@ -111,6 +136,9 @@ p(\boldsymbol{\beta^u},\boldsymbol{\beta^*}, \boldsymbol{\beta^{cf}} | \boldsymb
 $$
 
 ### Exponential
+
+First, consider the simplest case where both the background and cancer
+times to event follow exponential distributions.
 
 Define $f(t)$ density, $S(t)$ survival and $h(t)$ hazard functions.
 
@@ -126,39 +154,64 @@ $$
    (1 − \pi(x)) \exp(-\lambda_u t) \lambda_u^{\delta_i}])
 $$
 
-Substituting $S(t)$ and $h(t)$ into (**)
+Substituting $S(t)$ and $h(t)$ into (\*\*)
 
 $$
-f^*_u = e^{-\lambda^* t} e^{-\lambda_u t} (\lambda^* + \lambda_u)^{\delta} \;\;\; i.e. \mbox{for no censoring} \;\; T \sim exp(\lambda^* + \lambda_u)
+f^*_u = e^{-\lambda^* t} e^{-\lambda_u t} (\lambda^* + \lambda_u)^{\delta} \;\;\; i.e. \mbox{for no censoring} \;\; T \sim Exp(\lambda^* + \lambda_u)
 $$
-
-
 
 #### Prior specification
 
-The marginal prior distributions will probably depend on which group of data are being modelled.
+The marginal prior distributions will probably depend on which group of
+data are being modelled.
 
-* _Cure fraction_
+-   *Cure fraction*
 
-We can specify directly using a Beta($a$, $b$) prior, most uninformative at a uniform Beta(1,1).
-Incorporating the covariate via a logistic link we specify priors on the linear coefficient $\beta^{cf}_0, \beta^{cf}_1$.
-Although not strictly recommended, we could take sensible starting values from the previous frequentist analysis results.
-For example, for OS the nivo, ipi and combined mean cure fractions were 45%, 23% and 54%.
-If the data are centred then this corresponds to $\beta^{cf}_0 = -0.2, -1.2, 0.16$, respectively.
-We would still need to specify how much we expect one year increase in age would change the cure fraction.
+We can specify directly using a $Beta(a, b)$ prior, most uninformative
+as a uniform $Beta(1,1)$. Incorporating the covariate via a logistic
+link we specify priors on the linear coefficient
+$\beta^{cf}_0, \beta^{cf}_1$. Although not strictly recommended, we
+could take sensible starting values from the previous frequentist
+analysis results. For example, for OS the nivo, ipi and combined mean
+cure fractions were 45%, 23% and 54%. If the data are centred then this
+corresponds to $\beta^{cf}_0 = -0.2, -1.2, 0.16$, respectively. We would
+still need to specify how much we expect one year increase in age would
+change the cure fraction.
 
-* _Background survival_
+-   *Background survival*
 
-The default survival curves used in this analysis are from country-level WHO data. We can consider these to provide sufficiently accurate estimates given the sample size and so incorporating uncertainty is not necessary. In fact these annual point estimates are used directly in the frequentist analysis.
-This is done by age matching each individual with the life table and then obtaining the mortality rate at the event time.
+The default survival curves used in this analysis are from country-level
+WHO data. We can consider these to provide sufficiently accurate
+estimates given the sample size and so incorporating uncertainty is not
+necessary. In fact these annual point estimates are used directly in the
+frequentist analysis. This is done by age matching each individual with
+the life table and then obtaining the mortality rate at the event time.
 
-However, we also want the developed model to be able to be applied to other datasets which may be smaller or noisy.
-Sensible prior parameter values can be taken for the life table hazard curve. After infancy the log-hazard is approximately linear and so intercept and slope estimates are simple to obtain.
+However, we also want the developed model to be able to be applied to
+other data sets which may be smaller or noisy. Sensible prior parameter
+values can be taken for the life table hazard curve. After infancy the
+log-hazard is approximately linear and so intercept and slope estimates
+are simple to obtain.
 
-* _Mortality due to cancer_
+An alternative non-parametric approach, as used in @Demiris2006, is to
+use a *Gamma process* to define gamma distributions at each time. A
+variance parameter determines the influence between times.
 
+Average values derived from the life tables are used in the Gamma
+process. These are age-sex-country standardised. The below plot shows
+the mean, median and a sample of hazard curves for the checkmate data
+set. The underlying hazard curve for 0-100 year olds is shifted left
+depending on the starting age of an individual in the cohort.
+
+![](background_average_rate_plot.png){width="50%"}
+
+-   *Mortality due to cancer*
+
+TODO
 
 ### Weibull
+
+The Weibull is defined as follows
 
 $$
 f(t) = \frac{k}{\lambda} \left(\frac{t}{\lambda}\right)^{k-1} e^{-(t/\lambda)^k}, \;\;
@@ -166,47 +219,63 @@ S(t) = e^{-(t/\lambda)^k}, \;\;
 h(t) = \frac{k}{\lambda} \left(\frac{t}{\lambda}\right)^{k-1}
 $$
 
-Substituting $S(t)$ and $h(t)$ into (**)
+Substituting $S(t)$ and $h(t)$ into (\*\*) the combined pdf is
 
 $$
 e^{-(t/\lambda_u)^k - \lambda^* t} \left(\lambda^* + \frac{k}{\lambda_u} \left(\frac{t}{\lambda_u}\right)^{k-1} \right)^{\delta}
 $$
 
-
 ### Initial results
 
-We fit the exponential hazard model to the study data and produced the posterior survival curves below. The corresponding frequentist curves are also shown for comparison. We see that the curve are similar, providing some initial validation.
-Note that one the fits has clearly not converged and so the plots is not meaningful. This is an indication that we need to improve how the model is set-up prior to fitting. This could be that the exponential distribution is not appropriate or that better prior specification of the parameters is needed. We ran the stan engine for over 70,000 iterations so a brute force approach of simply increasing the number of iterations may not be appropriate in this case.
+We fit the exponential hazard model to the study data and produced the
+posterior survival curves below. The corresponding frequentist curves
+are also shown for comparison. We see that the curves are similar,
+providing some initial validation. Note that one the background fits has
+not converged. This is an indication that we need to improve how the
+model is set-up prior to fitting. This could be that the exponential
+distribution is not appropriate or that better prior specification of
+the parameters is needed. We ran the Stan engine for over 70,000
+iterations so a brute force approach of simply increasing the number of
+iterations may not be appropriate in this case.
 
-![Exponential hazard posterior survival](../plots/exp_posterior_S_all.png)
+![Exponential hazard posterior
+survival](../plots/exp_posterior_S_all.png)
 
+<!-- ![Frequentist approach progression-free -->
 
-![Frequentist approach progression-free survival](C:/Users/Nathan/Documents/mixture cure model project/from Antonio/BMS_ICON_cure_modeling/MCM_15012020/Figures/pfs_rates.png){width=50%}
+<!-- survival](C:/Users/Nathan/Documents/mixture%20cure%20model%20project/from%20Antonio/BMS_ICON_cure_modeling/MCM_15012020/Figures/pfs_rates.png){width="50%"} -->
 
+<!-- ![Frequentist approach overall -->
 
-![Frequentist approach overall survival](C:/Users/Nathan/Documents/mixture cure model project/from Antonio/BMS_ICON_cure_modeling/MCM_15012020/Figures/os_rates.png){width=50%}
-
+<!-- survival](C:/Users/Nathan/Documents/mixture%20cure%20model%20project/from%20Antonio/BMS_ICON_cure_modeling/MCM_15012020/Figures/os_rates.png){width="50%"} -->
 
 ## Model checking
 
-Before using the real data we developed the models using simulated data sets. In this way we know the true underlying data generating process.
-It is trivial to simulate random variables from the given distributions in R using the in-built functions.
-However, times from the 'product' distribution used for the non-cured combined background and cancer event times need to be generated from a bespoke function.
+Before using the real data we developed the models using simulated data
+sets. In this way we know the true underlying data generating process.
+It is trivial to simulate random variables from the given distributions
+in R using the in-built functions. However, times from the 'product'
+distribution used for the non-cured combined background and cancer event
+times need to be generated from a bespoke function.
 
-We have shown above that density can be thought of as the probability of surviving both events up to time $t$ and then experiencing either at time $t$.
-This is equivalent to the earliest event time being after time $t$ i.e.
+We have shown above that the density can be thought of as the
+probability of surviving both events up to time $t$ and then
+experiencing either at time $t$. This is equivalent to the earliest
+event time being after time $t$ i.e.
 
 $$
 P(\min\{ X,Y \}>t) = P(X>t, Y>t) = P(X>t) P(Y>t) = S_X S_Y
 $$
 
-Thus, we simulate all latent event times and select the smallest as the observed time.
-In the simplest case, this is a well-known method for simulating jump times in a Markov model.
-More generally, we can think of the exponential-weibull model as a version of a poly-hazard model.
-
+Thus, we simulate all latent event times and select the smallest as the
+observed time. In the simplest case, this is a well-known method for
+simulating jump times in a Markov model. More generally, we can think of
+the exponential-weibull model as a version of a poly-hazard model.
 
 ## Joint model
-If we factorise into a marginal and conditional components to model the underlying bivariate disrtibution.
+
+If we factorise into a marginal and conditional components to model the
+underlying bivariate distribution can be written generally as
 
 $$
 OS_i \sim p(c | PFS, \phi_{iOS}, \tau_{OS})
@@ -215,7 +284,7 @@ $$
 g_{OS}(\phi_{iOS}) = \beta_0 + \beta_1 (PFS_i - \mu_{PFS})[+ \ldots]
 $$
 $$
-\mu_{OS} = g_{OS}^{-1}(\beta0)
+\mu_{OS} = g_{OS}^{-1}(\beta_0)
 $$
 $$
 g_{PFS}(\phi_{iPFS}) = \alpha_0 [+ \ldots]
@@ -224,11 +293,39 @@ $$
 PFS_i \sim p(PFS | \phi_{iPFS}, \tau_{PFS})
 $$
 $$
-\mu_{PFS} = g_{PFS}^{-1}(alpha_0)
+\mu_{PFS} = g_{PFS}^{-1}(\alpha_0)
 $$
 
-
-The combined log-likelihood is
-$$
+The combined log-likelihood is $$
 \mathcal{l} = \mathcal{l}_{OS} + \mathcal{l}_{PFS}
 $$
+
+For example, for the exponential-exponential case with centred age this gives the following.
+
+$$
+t_{iOS} \sim Exp(\phi_{iOS})
+$$
+$$
+\log(\phi_{iOS}) = \beta_0 + \beta_1 (t_{iPFS} - \bar{t}_{PFS}) + \beta_2 age_{iPFS}
+$$
+$$
+\mu_{OS} = \exp(\beta_0)
+$$
+$$
+\log(\phi_{iPFS}) = \alpha_0 + \alpha_1 age_{iOS}
+$$
+$$
+t_{iPFS} \sim Exp(\phi_{iPFS})
+$$
+$$
+\mu_{PFS} = \exp(\alpha_0)
+$$
+$$
+\bar{t}_{PFS} = 1/\mu_{PFS} 
+$$
+
+
+
+
+## References
+

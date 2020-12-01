@@ -1,14 +1,19 @@
 
 #' prep_stan_data
 #'
-#' Data specific to OS or PFS for stan input.
+#' Data specific to OS or PFS for Stan input.
 #'
-#' @param input_data
-#' @param event_type
-#' @param tx_name
-#' @param centre_age
+#' @param input_data surv_input_data
+#' @param event_type PFS, OS
+#' @param tx_name IPILIMUMAB, NIVOLUMAB, NIVOLUMAB+IPILIMUMAB
+#' @param centre_age Logical
 #'
-#' @return List
+#' @return List;
+#'         sample size,
+#'         times,
+#'         censoring indicator,
+#'         number of covariates,
+#'         covariates
 #' @import dplyr
 #' @export
 #'

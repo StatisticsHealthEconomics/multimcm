@@ -1,10 +1,9 @@
 // exponential mixture cure model
 // relative survival
 
-//ideas:
-// * joint distribution for PFS and OS
-// * more than 2 mixture components
-// * prob group membership per individual
+// ideas:
+//  * more than 2 mixture components
+//  * prob group membership per individual
 
 functions {
 #include /include/distributions.stan
@@ -18,27 +17,28 @@ data {
   int<lower = 0> H;           // number of covariates
   matrix[n,H] X;              // matrix of covariates (with n rows and H columns)
 
-  vector[H] mu_0;
-  vector<lower=0> [H] sigma_0;
-  vector[H] mu_bg;
-  vector<lower=0> [H] sigma_bg;
-  vector[H] mu_cf;
-  vector<lower=0> [H] sigma_cf;
+  vector[H] mu_0;               // disease mean
+  vector<lower=0> [H] sigma_0;  // disease sd
+  vector[H] mu_bg;              // background mean
+  vector<lower=0> [H] sigma_bg; // background sd
+  vector[H] mu_cf;              // cure fraction mean
+  vector<lower=0> [H] sigma_cf; // cure fraction sd
 
   int<lower=0> t_max;
 }
 
 parameters {
-  vector[H] beta0;         // coefficients in linear predictor (including intercept)
-  vector[H] beta_bg;
-  vector[H] beta_cf;
+  // coefficients in linear predictor (including intercept)
+  vector[H] beta0;    // disease
+  vector[H] beta_bg;  // background
+  vector[H] beta_cf;  // cure fraction
 }
 
 transformed parameters {
-  vector[n] linpred0;
+  vector[n] linpred0;   // linear predictors
   vector[n] linpred_bg;
   vector[n] linpred_cf;
-  vector[n] lambda0;
+  vector[n] lambda0;    // hazards
   vector[n] lambda_bg;
   vector[n] curefrac;
 
@@ -54,6 +54,7 @@ transformed parameters {
 }
 
 model {
+  // priors
   beta0 ~ normal(mu_0, sigma_0);
   beta_bg ~ normal(mu_bg, sigma_bg);
   beta_cf ~ normal(mu_cf, sigma_cf);

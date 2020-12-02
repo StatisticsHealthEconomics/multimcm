@@ -8,6 +8,8 @@
 prep_stan_params <- function(model,
                              params = NA) {
 
+  ##TODO: add event_type argument and condition
+
   if (!is.na(params)) return(params)
 
   if (model == "exp") {

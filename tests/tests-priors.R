@@ -15,6 +15,7 @@ library(dplyr)
 library(ggplot2)
 devtools::load_all()
 
+# load("~/R/rstanbmcm/data/surv_input_data.RData")
 data("surv_input_data")
 
 all_tx_names <- c("IPILIMUMAB", "NIVOLUMAB", "NIVOLUMAB+IPILIMUMAB")
@@ -118,4 +119,108 @@ out <- stan_fn(input_data = surv_input_data,
                thin = 1)
 
 plot_prior_predictive(out, event_type = "os")
+
+
+#####################
+# likelihood-based  #
+#####################
+
+# nivo
+# pfs
+out <- stan_fn(input_data = surv_input_data,
+               model_os = k,
+               model_pfs = i,
+               tx_name = j,
+               params_pfs = list(mu_0 = c(-2, 0),
+                                sigma_0 = c(0.5, 1)),
+               params_cf = list(mean_beta_cf = 0.30,
+                                var_beta_cf = 0.001),
+               warmup = 1,
+               iter = 100,
+               thin = 1)
+
+plot_prior_predictive(out, event_type = "pfs")
+
+# ipi
+# pfs
+out <- stan_fn(input_data = surv_input_data,
+               model_os = k,
+               model_pfs = i,
+               tx_name = j,
+               params_pfs = list(mu_0 = c(-2, 0),
+                                 sigma_0 = c(0.5, 1)),
+               params_cf = list(mean_beta_cf = 0.1,
+                                var_beta_cf = 0.001),
+               warmup = 1,
+               iter = 100,
+               thin = 1)
+
+plot_prior_predictive(out, event_type = "pfs")
+
+# niov+ipi
+# pfs
+out <- stan_fn(input_data = surv_input_data,
+               model_os = k,
+               model_pfs = i,
+               tx_name = j,
+               params_pfs = list(mu_0 = c(-2, 0),
+                                 sigma_0 = c(0.5, 1)),
+               params_cf = list(mean_beta_cf = 0.4,
+                                var_beta_cf = 0.001),
+               warmup = 1,
+               iter = 100,
+               thin = 1)
+
+plot_prior_predictive(out, event_type = "pfs")
+
+
+# nivo
+# os
+out <- stan_fn(input_data = surv_input_data,
+               model_os = k,
+               model_pfs = i,
+               tx_name = j,
+               params_os = list(mu_0 = c(-3, 0),
+                                 sigma_0 = c(0.4, 1)),
+               params_cf = list(mean_beta_cf = 0.4,
+                                var_beta_cf = 0.005),
+               warmup = 1,
+               iter = 100,
+               thin = 1)
+
+plot_prior_predictive(out, event_type = "os")
+
+# ipi
+# os
+out <- stan_fn(input_data = surv_input_data,
+               model_os = k,
+               model_pfs = i,
+               tx_name = j,
+               params_pfs = list(mu_0 = c(-3, 0),
+                                 sigma_0 = c(0.4, 1)),
+               params_cf = list(mean_beta_cf = 0.2,
+                                var_beta_cf = 0.001),
+               warmup = 1,
+               iter = 100,
+               thin = 1)
+
+plot_prior_predictive(out, event_type = "pfs")
+
+# niov+ipi
+# os
+out <- stan_fn(input_data = surv_input_data,
+               model_os = k,
+               model_pfs = i,
+               tx_name = j,
+               params_pfs = list(mu_0 = c(-3, 0),
+                                 sigma_0 = c(0.5, 1)),
+               params_cf = list(mean_beta_cf = 0.4,
+                                var_beta_cf = 0.001),
+               warmup = 1,
+               iter = 100,
+               thin = 1)
+
+plot_prior_predictive(out, event_type = "pfs")
+
+
 

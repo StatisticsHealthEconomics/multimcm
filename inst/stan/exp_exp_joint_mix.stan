@@ -2,6 +2,7 @@
 // joint relative survival
 
 //TODO: hierarchical global beta_bg...
+//TODO: hierarchical os, pfs cure fraction
 
 
 functions {

@@ -57,22 +57,22 @@ decisions.
 ## Workflow
 
 The Stan engine can be called either with the compile C code or with the
-stan script without precompiling.
+Stan script without precompiling.
 
--   The precompiled stan code is in `inst/stan` and the compiled code in
+-   The precompiled Stan code is in `inst/stan` and the compiled code in
     `src/`
--   The non-compiled stan code is in `scripts/`
+-   The non-compiled Stan code is in `scripts/`
 
 There are two runner scripts:
 
--   `scripts/stan_checkmate.R`: Run stan mixture cure model with
+-   `scripts/stan_checkmate.R`: Run Stan mixture cure model with
     *separate* model for PFS and OS data.
--   `scripts/stan_checkmate_joint.R`: Run stan mixture cure model with
+-   `scripts/stan_checkmate_joint.R`: Run Stan mixture cure model with
     *joint* model for PFS and OS data.
 
 ## Output
 
-Because the stan output files are large, we do not save a single list of
+Because the Stan output files are large, we do not save a single list of
 all model outputs as a single objects. Instead `stan_filenames.RData` is
 a list of file names of the model outputs and each output is saved in a
 separate file. The file name formats are:

@@ -43,8 +43,6 @@ for (k in model_names) {
                      model_os = k,
                      model_pfs = i,
                      tx_name = j,
-                     params_cf = list(mean_beta_cf = 0.9999,
-                                      var_beta_cf = 0.00001),
                      warmup = 1,#000,
                      iter = 100,#00,
                      thin = 1)#0)
@@ -61,12 +59,27 @@ for (k in model_names) {
   }
 }
 
+out <- stan_fn(input_data = surv_input_data,
+               model_os = "exp",
+               model_pfs = "exp",
+               tx_name = "NIVOLUMAB",
+               params_pfs = list(mu_0 = c(-2, 0),
+                                 sigma_0 = c(0.5, 1)),
+               params_os = list(mu_0 = c(-3, 0),
+                                sigma_0 = c(0.4, 1)),
+               params_cf = list(mean_beta_cf = 0.4,
+                                var_beta_cf = 0.005),
+               warmup = 100,
+               iter = 10000,
+               thin = 100)
+
+
 # save(stan_files, file = "data/stan_joint_filenames.RData")
 
-##TODO:
-# write plot function for joint output...
-
 # plot_S_event_type(stan_files$exp)
+
+stan_list <- list(NIVOLUMAB = out)
+plot_S_joint(stan_list = stan_list)
 
 plot_prior_predictive(out, event_type = "os")
 plot_prior_predictive(out, event_type = "pfs")

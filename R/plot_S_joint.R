@@ -30,10 +30,12 @@ plot_S_joint <- function(file_names = NA,
     tx_names <- names(file_names[[1]])
   } else {
     stan_out <- function(j) stan_list[[j]]
-    tx_names <- names(stan_list[[1]])}
+    tx_names <- names(stan_list)}
 
   fit_stan <- list()
   S_stats <- list()
+  S_stats$os <- list()
+  S_stats$pfs <- list()
 
   for (j in tx_names) {
 
@@ -41,11 +43,11 @@ plot_S_joint <- function(file_names = NA,
       stan_out(j) %>%
       rstan::extract()
 
-    S_stats[[1]][[j]] <-
+    S_stats$os[[j]] <-
       prep_S_data(fit_stan[[j]],
                   event_type = "os")
 
-    S_stats[[2]][[j]] <-
+    S_stats$pfs[[j]] <-
       prep_S_data(fit_stan[[j]],
                   event_type = "pfs")
   }
@@ -60,7 +62,7 @@ plot_S_joint <- function(file_names = NA,
   ggplot(plot_dat, aes(month, mean, group = type, colour = type)) +
     geom_line() +
     # facet_grid(. ~ scenario)
-    facet_grid(event_type ~ Tx) +
+    facet_grid(Tx ~ event_type) +
     ylab("Survival") +
     geom_ribbon(aes(x = month, ymin = lower, ymax = upper, fill = type),
                 linetype = 0,

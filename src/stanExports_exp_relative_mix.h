@@ -37,7 +37,7 @@ stan::io::program_reader prog_reader__() {
     reader.add_event(9, 0, "start", "/include/distributions.stan");
     reader.add_event(153, 144, "end", "/include/distributions.stan");
     reader.add_event(153, 10, "restart", "model_exp_relative_mix");
-    reader.add_event(295, 150, "end", "model_exp_relative_mix");
+    reader.add_event(314, 169, "end", "model_exp_relative_mix");
     return reader;
 }
 template <typename T0__, typename T1__>
@@ -1131,6 +1131,12 @@ public:
         names__.push_back("S_bg");
         names__.push_back("S0");
         names__.push_back("S_pred");
+        names__.push_back("pmean_0");
+        names__.push_back("pmean_bg");
+        names__.push_back("pcurefrac");
+        names__.push_back("pS_bg");
+        names__.push_back("pS_0");
+        names__.push_back("S_prior");
     }
     void get_dims(std::vector<std::vector<size_t> >& dimss__) const {
         dimss__.resize(0);
@@ -1154,6 +1160,21 @@ public:
         dimss__.push_back(dims__);
         dims__.resize(0);
         dims__.push_back(n);
+        dimss__.push_back(dims__);
+        dims__.resize(0);
+        dimss__.push_back(dims__);
+        dims__.resize(0);
+        dimss__.push_back(dims__);
+        dims__.resize(0);
+        dims__.push_back(t_max);
+        dimss__.push_back(dims__);
+        dims__.resize(0);
+        dims__.push_back(t_max);
+        dimss__.push_back(dims__);
+        dims__.resize(0);
+        dims__.push_back(t_max);
+        dimss__.push_back(dims__);
+        dims__.resize(0);
         dimss__.push_back(dims__);
         dims__.resize(0);
         dimss__.push_back(dims__);
@@ -1282,28 +1303,82 @@ public:
             Eigen::Matrix<double, Eigen::Dynamic, 1> S_pred(t_max);
             stan::math::initialize(S_pred, DUMMY_VAR__);
             stan::math::fill(S_pred, DUMMY_VAR__);
-            // generated quantities statements
+            current_statement_begin__ = 240;
+            double pmean_0;
+            (void) pmean_0;  // dummy to suppress unused var warning
+            stan::math::initialize(pmean_0, DUMMY_VAR__);
+            stan::math::fill(pmean_0, DUMMY_VAR__);
             current_statement_begin__ = 241;
-            stan::math::assign(rate0, stan::math::exp(get_base1(beta0, 1, "beta0", 1)));
+            double pmean_bg;
+            (void) pmean_bg;  // dummy to suppress unused var warning
+            stan::math::initialize(pmean_bg, DUMMY_VAR__);
+            stan::math::fill(pmean_bg, DUMMY_VAR__);
             current_statement_begin__ = 242;
-            stan::math::assign(rate_bg, stan::math::exp(get_base1(beta_bg, 1, "beta_bg", 1)));
+            double pcurefrac;
+            (void) pcurefrac;  // dummy to suppress unused var warning
+            stan::math::initialize(pcurefrac, DUMMY_VAR__);
+            stan::math::fill(pcurefrac, DUMMY_VAR__);
+            current_statement_begin__ = 243;
+            validate_non_negative_index("pS_bg", "t_max", t_max);
+            Eigen::Matrix<double, Eigen::Dynamic, 1> pS_bg(t_max);
+            stan::math::initialize(pS_bg, DUMMY_VAR__);
+            stan::math::fill(pS_bg, DUMMY_VAR__);
             current_statement_begin__ = 244;
+            validate_non_negative_index("pS_0", "t_max", t_max);
+            Eigen::Matrix<double, Eigen::Dynamic, 1> pS_0(t_max);
+            stan::math::initialize(pS_0, DUMMY_VAR__);
+            stan::math::fill(pS_0, DUMMY_VAR__);
+            current_statement_begin__ = 245;
+            validate_non_negative_index("S_prior", "t_max", t_max);
+            Eigen::Matrix<double, Eigen::Dynamic, 1> S_prior(t_max);
+            stan::math::initialize(S_prior, DUMMY_VAR__);
+            stan::math::fill(S_prior, DUMMY_VAR__);
+            // generated quantities statements
+            current_statement_begin__ = 248;
+            stan::math::assign(rate0, stan::math::exp(get_base1(beta0, 1, "beta0", 1)));
+            current_statement_begin__ = 249;
+            stan::math::assign(rate_bg, stan::math::exp(get_base1(beta_bg, 1, "beta_bg", 1)));
+            current_statement_begin__ = 251;
             for (int i = 1; i <= t_max; ++i) {
-                current_statement_begin__ = 245;
+                current_statement_begin__ = 252;
                 stan::model::assign(S_bg, 
                             stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
                             exp_Surv(i, rate_bg, pstream__), 
                             "assigning variable S_bg");
-                current_statement_begin__ = 246;
+                current_statement_begin__ = 253;
                 stan::model::assign(S0, 
                             stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
                             exp_Surv(i, (rate_bg + rate0), pstream__), 
                             "assigning variable S0");
-                current_statement_begin__ = 247;
+                current_statement_begin__ = 254;
                 stan::model::assign(S_pred, 
                             stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
                             ((curefrac * get_base1(S_bg, i, "S_bg", 1)) + ((1 - curefrac) * get_base1(S0, i, "S0", 1))), 
                             "assigning variable S_pred");
+            }
+            current_statement_begin__ = 258;
+            stan::math::assign(pmean_0, stan::math::exp(get_base1(mu_0, 1, "mu_0", 1)));
+            current_statement_begin__ = 259;
+            stan::math::assign(pmean_bg, stan::math::exp(get_base1(mu_bg, 1, "mu_bg", 1)));
+            current_statement_begin__ = 260;
+            stan::math::assign(pcurefrac, (a_cf / (a_cf + b_cf)));
+            current_statement_begin__ = 262;
+            for (int i = 1; i <= t_max; ++i) {
+                current_statement_begin__ = 263;
+                stan::model::assign(pS_bg, 
+                            stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
+                            exp_Surv(i, pmean_bg, pstream__), 
+                            "assigning variable pS_bg");
+                current_statement_begin__ = 264;
+                stan::model::assign(pS_0, 
+                            stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
+                            exp_Surv(i, (pmean_bg + pmean_0), pstream__), 
+                            "assigning variable pS_0");
+                current_statement_begin__ = 265;
+                stan::model::assign(S_prior, 
+                            stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
+                            ((pcurefrac * get_base1(pS_bg, i, "pS_bg", 1)) + ((1 - pcurefrac) * get_base1(pS_0, i, "pS_0", 1))), 
+                            "assigning variable S_prior");
             }
             // validate, write generated quantities
             current_statement_begin__ = 234;
@@ -1324,6 +1399,27 @@ public:
             size_t S_pred_j_1_max__ = t_max;
             for (size_t j_1__ = 0; j_1__ < S_pred_j_1_max__; ++j_1__) {
                 vars__.push_back(S_pred(j_1__));
+            }
+            current_statement_begin__ = 240;
+            vars__.push_back(pmean_0);
+            current_statement_begin__ = 241;
+            vars__.push_back(pmean_bg);
+            current_statement_begin__ = 242;
+            vars__.push_back(pcurefrac);
+            current_statement_begin__ = 243;
+            size_t pS_bg_j_1_max__ = t_max;
+            for (size_t j_1__ = 0; j_1__ < pS_bg_j_1_max__; ++j_1__) {
+                vars__.push_back(pS_bg(j_1__));
+            }
+            current_statement_begin__ = 244;
+            size_t pS_0_j_1_max__ = t_max;
+            for (size_t j_1__ = 0; j_1__ < pS_0_j_1_max__; ++j_1__) {
+                vars__.push_back(pS_0(j_1__));
+            }
+            current_statement_begin__ = 245;
+            size_t S_prior_j_1_max__ = t_max;
+            for (size_t j_1__ = 0; j_1__ < S_prior_j_1_max__; ++j_1__) {
+                vars__.push_back(S_prior(j_1__));
             }
         } catch (const std::exception& e) {
             stan::lang::rethrow_located(e, current_statement_begin__, prog_reader__());
@@ -1422,6 +1518,33 @@ public:
             param_name_stream__ << "S_pred" << '.' << j_1__ + 1;
             param_names__.push_back(param_name_stream__.str());
         }
+        param_name_stream__.str(std::string());
+        param_name_stream__ << "pmean_0";
+        param_names__.push_back(param_name_stream__.str());
+        param_name_stream__.str(std::string());
+        param_name_stream__ << "pmean_bg";
+        param_names__.push_back(param_name_stream__.str());
+        param_name_stream__.str(std::string());
+        param_name_stream__ << "pcurefrac";
+        param_names__.push_back(param_name_stream__.str());
+        size_t pS_bg_j_1_max__ = t_max;
+        for (size_t j_1__ = 0; j_1__ < pS_bg_j_1_max__; ++j_1__) {
+            param_name_stream__.str(std::string());
+            param_name_stream__ << "pS_bg" << '.' << j_1__ + 1;
+            param_names__.push_back(param_name_stream__.str());
+        }
+        size_t pS_0_j_1_max__ = t_max;
+        for (size_t j_1__ = 0; j_1__ < pS_0_j_1_max__; ++j_1__) {
+            param_name_stream__.str(std::string());
+            param_name_stream__ << "pS_0" << '.' << j_1__ + 1;
+            param_names__.push_back(param_name_stream__.str());
+        }
+        size_t S_prior_j_1_max__ = t_max;
+        for (size_t j_1__ = 0; j_1__ < S_prior_j_1_max__; ++j_1__) {
+            param_name_stream__.str(std::string());
+            param_name_stream__ << "S_prior" << '.' << j_1__ + 1;
+            param_names__.push_back(param_name_stream__.str());
+        }
     }
     void unconstrained_param_names(std::vector<std::string>& param_names__,
                                    bool include_tparams__ = true,
@@ -1492,6 +1615,33 @@ public:
         for (size_t j_1__ = 0; j_1__ < S_pred_j_1_max__; ++j_1__) {
             param_name_stream__.str(std::string());
             param_name_stream__ << "S_pred" << '.' << j_1__ + 1;
+            param_names__.push_back(param_name_stream__.str());
+        }
+        param_name_stream__.str(std::string());
+        param_name_stream__ << "pmean_0";
+        param_names__.push_back(param_name_stream__.str());
+        param_name_stream__.str(std::string());
+        param_name_stream__ << "pmean_bg";
+        param_names__.push_back(param_name_stream__.str());
+        param_name_stream__.str(std::string());
+        param_name_stream__ << "pcurefrac";
+        param_names__.push_back(param_name_stream__.str());
+        size_t pS_bg_j_1_max__ = t_max;
+        for (size_t j_1__ = 0; j_1__ < pS_bg_j_1_max__; ++j_1__) {
+            param_name_stream__.str(std::string());
+            param_name_stream__ << "pS_bg" << '.' << j_1__ + 1;
+            param_names__.push_back(param_name_stream__.str());
+        }
+        size_t pS_0_j_1_max__ = t_max;
+        for (size_t j_1__ = 0; j_1__ < pS_0_j_1_max__; ++j_1__) {
+            param_name_stream__.str(std::string());
+            param_name_stream__ << "pS_0" << '.' << j_1__ + 1;
+            param_names__.push_back(param_name_stream__.str());
+        }
+        size_t S_prior_j_1_max__ = t_max;
+        for (size_t j_1__ = 0; j_1__ < S_prior_j_1_max__; ++j_1__) {
+            param_name_stream__.str(std::string());
+            param_name_stream__ << "S_prior" << '.' << j_1__ + 1;
             param_names__.push_back(param_name_stream__.str());
         }
     }

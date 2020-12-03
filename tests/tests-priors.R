@@ -25,6 +25,9 @@ stan_fn <- bmcm_joint_stan_file
 
 stan_files <- list()
 
+
+# exp ---------------------------------------------------------------------
+
 k <- model_names[1]
 i <- model_names[1]
 j <- all_tx_names[1]
@@ -221,6 +224,34 @@ out <- stan_fn(input_data = surv_input_data,
                thin = 1)
 
 plot_prior_predictive(out, event_type = "pfs")
+
+
+# weibull -----------------------------------------------------------------
+
+
+k <- model_names[1]
+i <- model_names[1]
+j <- all_tx_names[1]
+
+
+#################
+# cure fraction #
+#################
+
+# background
+out <- stan_fn(input_data = surv_input_data,
+               model_os = "exp",
+               model_pfs = "weibull",
+               tx_name = "IPILIMUMAB",
+               params_cf = list(mean_beta_cf = 0.9999,
+                                var_beta_cf = 0.00001),
+               warmup = 1,
+               iter = 100,
+               thin = 1)
+
+plot_prior_predictive(out, event_type = "os")
+plot_prior_predictive(out, event_type = "pfs")
+
 
 
 

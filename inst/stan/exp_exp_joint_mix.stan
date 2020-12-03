@@ -38,8 +38,10 @@ data {
   real mu_joint;
   real<lower=0> sigma_joint;
 
-  real a_cf;                  // cure fraction ~ Beta(a,b)
-  real b_cf;
+  real mean_cf;                  // cure fraction
+  real sd_cf;
+  real sd_cf_os;
+  real sd_cf_pfs;
 
   int<lower=0> t_max;
 }
@@ -50,7 +52,8 @@ parameters {
   vector[H_os] beta_bg;
   real beta_joint;
 
-  real<lower=0, upper=1> curefrac;
+  real<lower=0, upper=1> cf_os;
+  real<lower=0, upper=1> cf_pfs;
 }
 
 transformed parameters {
@@ -77,6 +80,9 @@ transformed parameters {
   lambda_pfs = exp(lp_pfs);
   lambda_os_bg = exp(lp_os_bg);     // background survival with uncertainty
   lambda_pfs_bg = exp(lp_pfs_bg);
+
+  cf_os = inv_logit(lp_cf_os)
+  cf_pfs = inv_logit(lp_cf_pfs)
 }
 
 model {
@@ -85,16 +91,20 @@ model {
   beta_bg ~ normal(mu_bg, sigma_bg);
   beta_joint ~ normal(mu_joint, sigma_joint);
 
-  curefrac ~ beta(a_cf, b_cf);
+  global_cf ~ normal(mean_cf, sd_cf);
+  lp_cf_os ~ normal(global_cf, sd_cf_os)
+  lp_cf_pfs ~ normal(global_cf, sd_cf_pfs)
 
   for (i in 1:n_os) {
-    target += log_sum_exp(log(curefrac) +
+    target += log_sum_exp(
+                log(cf_os) +
                 surv_exp_lpdf(t_os[i] | d_os[i], lambda_os_bg[i]),
-                log1m(curefrac) +
+                log1m(cf_os) +
                 surv_exp_lpdf(t_os[i] | d_os[i], lambda_os_bg[i] + lambda_os[i])) +
-              log_sum_exp(log(curefrac) +
+              log_sum_exp(
+                log(cf_pfs) +
                 surv_exp_lpdf(t_pfs[i] | d_pfs[i], lambda_pfs_bg[i]),
-                log1m(curefrac) +
+                log1m(cf_pfs) +
                 surv_exp_lpdf(t_pfs[i] | d_pfs[i], lambda_pfs_bg[i] + lambda_pfs[i]));
   }
 }
@@ -144,12 +154,6 @@ generated quantities {
   pmean_os = exp(pbeta_os);
   pmean_pfs = exp(pbeta_pfs);
   pmean_bg = exp(pbeta_bg);
-
-  // point estimation
-  // pmean_os = exp(mu_0_os[1]);
-  // pmean_pfs = exp(mu_0_pfs[1]);
-  // pmean_bg = exp(mu_bg[1]);
-  // pcurefrac = a_cf/(a_cf + b_cf);
 
   for (i in 1:t_max) {
     pS_bg[i] = exp_Surv(i, pmean_bg);

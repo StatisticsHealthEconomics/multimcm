@@ -59,19 +59,23 @@ for (k in model_names) {
   }
 }
 
-out <- stan_fn(input_data = surv_input_data,
-               model_os = "exp",
-               model_pfs = "exp",
-               tx_name = "NIVOLUMAB",
-               params_pfs = list(mu_0 = c(-2, 0),
-                                 sigma_0 = c(0.5, 1)),
-               params_os = list(mu_0 = c(-3, 0),
-                                sigma_0 = c(0.4, 1)),
-               params_cf = list(mean_beta_cf = 0.4,
-                                var_beta_cf = 0.005),
-               warmup = 100,
-               iter = 10000,
-               thin = 100)
+out <-
+  bmcm_joint_stan_file(
+    input_data = surv_input_data,
+    model_os = "exp",
+    model_pfs = "weibull",
+    tx_name = "NIVOLUMAB",
+    params_pfs = list(a_alpha = 5,
+                      b_alpha = 3,
+                      mu_0 = c(2, 0),
+                      sigma_0 = c(0.5, 0.01)),
+    params_os = list(mu_0 = c(-3, 0),
+                     sigma_0 = c(0.4, 1)),
+    params_cf = list(mean_beta_cf = 0.3,
+                     var_beta_cf = 0.005),
+    warmup = 100,
+    iter = 10000,
+    thin = 100)
 
 
 # save(stan_files, file = "data/stan_joint_filenames.RData")

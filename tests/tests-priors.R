@@ -228,30 +228,135 @@ plot_prior_predictive(out, event_type = "pfs")
 
 # weibull -----------------------------------------------------------------
 
+# big step in CrI
+out <-
+  bmcm_joint_stan_file(input_data = surv_input_data,
+                       model_os = "exp",
+                       model_pfs = "weibull",
+                       tx_name = "IPILIMUMAB",
+                       params_pfs = list(a_alpha = 0.1,
+                                         b_alpha = 0.1,
+                                         mu_0 = c(3, 0),
+                                         sigma_0 = c(0.1, 0.01)),
+                       params_cf = list(mean_beta_cf = 0.5,
+                                        var_beta_cf = 0.00001),
+                       warmup = 1,
+                       iter = 100,
+                       thin = 1)
 
-k <- model_names[1]
-i <- model_names[1]
-j <- all_tx_names[1]
-
-
-#################
-# cure fraction #
-#################
-
-# background
-out <- stan_fn(input_data = surv_input_data,
-               model_os = "exp",
-               model_pfs = "weibull",
-               tx_name = "IPILIMUMAB",
-               params_cf = list(mean_beta_cf = 0.9999,
-                                var_beta_cf = 0.00001),
-               warmup = 1,
-               iter = 100,
-               thin = 1)
-
-plot_prior_predictive(out, event_type = "os")
 plot_prior_predictive(out, event_type = "pfs")
 
+# pfs
+# nivo+ipi
+out <-
+  bmcm_joint_stan_file(input_data = surv_input_data,
+                       model_os = "exp",
+                       model_pfs = "weibull",
+                       tx_name = "IPILIMUMAB",
+                       params_pfs = list(a_alpha = 5,
+                                         b_alpha = 3,
+                                         mu_0 = c(2, 0),
+                                         sigma_0 = c(0.7, 0.01)),
+                       params_cf = list(mean_beta_cf = 0.4,
+                                        var_beta_cf = 0.001),
+                       warmup = 1,
+                       iter = 100,
+                       thin = 1)
+
+plot_prior_predictive(out, event_type = "pfs")
+
+# ipi
+out <-
+  bmcm_joint_stan_file(input_data = surv_input_data,
+                       model_os = "exp",
+                       model_pfs = "weibull",
+                       tx_name = "IPILIMUMAB",
+                       params_pfs = list(a_alpha = 5,
+                                         b_alpha = 3,
+                                         mu_0 = c(2, 0),
+                                         sigma_0 = c(0.5, 0.01)),
+                       params_cf = list(mean_beta_cf = 0.1,
+                                        var_beta_cf = 0.001),
+                       warmup = 1,
+                       iter = 100,
+                       thin = 1)
+
+plot_prior_predictive(out, event_type = "pfs")
+
+
+# nivo
+out <-
+  bmcm_joint_stan_file(input_data = surv_input_data,
+                       model_os = "exp",
+                       model_pfs = "weibull",
+                       tx_name = "IPILIMUMAB",
+                       params_pfs = list(a_alpha = 5,
+                                         b_alpha = 3,
+                                         mu_0 = c(2, 0),
+                                         sigma_0 = c(0.5, 0.01)),
+                       params_cf = list(mean_beta_cf = 0.3,
+                                        var_beta_cf = 0.001),
+                       warmup = 1,
+                       iter = 100,
+                       thin = 1)
+
+plot_prior_predictive(out, event_type = "pfs")
+
+
+# os
+# nivo+ipi
+out <-
+  bmcm_joint_stan_file(input_data = surv_input_data,
+                       model_os = "exp",
+                       model_pfs = "weibull",
+                       tx_name = "IPILIMUMAB",
+                       params_pfs = list(a_alpha = 5,
+                                         b_alpha = 3,
+                                         mu_0 = c(3, 0),
+                                         sigma_0 = c(0.5, 0.01)),
+                       params_cf = list(mean_beta_cf = 0.5,
+                                        var_beta_cf = 0.001),
+                       warmup = 1,
+                       iter = 100,
+                       thin = 1)
+
+plot_prior_predictive(out, event_type = "pfs")
+
+# ipi
+out <-
+  bmcm_joint_stan_file(input_data = surv_input_data,
+                       model_os = "exp",
+                       model_pfs = "weibull",
+                       tx_name = "IPILIMUMAB",
+                       params_pfs = list(a_alpha = 5,
+                                         b_alpha = 3,
+                                         mu_0 = c(3, 0),
+                                         sigma_0 = c(0.5, 0.01)),
+                       params_cf = list(mean_beta_cf = 0.2,
+                                        var_beta_cf = 0.001),
+                       warmup = 1,
+                       iter = 100,
+                       thin = 1)
+
+plot_prior_predictive(out, event_type = "pfs")
+
+# nivo
+out <-
+  bmcm_joint_stan_file(input_data = surv_input_data,
+                       model_os = "exp",
+                       model_pfs = "weibull",
+                       tx_name = "IPILIMUMAB",
+                       params_pfs = list(a_alpha = 5,
+                                         b_alpha = 3,
+                                         mu_0 = c(3, 0),
+                                         sigma_0 = c(0.5, 0.01)),
+                       params_cf = list(mean_beta_cf = 0.5,
+                                        var_beta_cf = 0.001),
+                       warmup = 1,
+                       iter = 100,
+                       thin = 1)
+
+plot_prior_predictive(out, event_type = "pfs")
 
 
 

@@ -133,7 +133,7 @@ generated quantities {
   real pbeta_os = normal_rng(mu_0_os[1], sigma_0_os[1]);
   real pbeta_pfs = normal_rng(mu_0_pfs[1], sigma_0_pfs[1]);
   real pbeta_bg = normal_rng(mu_bg[1], sigma_bg[1]);
-  real pcurefrac = beta_rng(a_cf, b_cf);
+  real pcurefrac = normal_rng(mean_cf, sd_cf);
 
   # intercepts
   mean_os = exp(beta_os[1]);
@@ -153,14 +153,15 @@ generated quantities {
   pmean_os = exp(pbeta_os);
   pmean_pfs = exp(pbeta_pfs);
   pmean_bg = exp(pbeta_bg);
+  pmean_cf = inv_logit(pcurefrac);
 
   for (i in 1:t_max) {
     pS_bg[i] = exp_Surv(i, pmean_bg);
     pS_os[i] = exp_Surv(i, pmean_bg + pmean_os);
     pS_pfs[i] = exp_Surv(i, pmean_bg + pmean_pfs);
 
-    S_os_prior[i] = pcurefrac*pS_bg[i] + (1 - pcurefrac)*pS_os[i];
-    S_pfs_prior[i] = pcurefrac*pS_bg[i] + (1 - pcurefrac)*pS_pfs[i];
+    S_os_prior[i] = mean_cf*pS_bg[i] + (1 - mean_cf)*pS_os[i];
+    S_pfs_prior[i] = mean_cf*pS_bg[i] + (1 - mean_cf)*pS_pfs[i];
   }
 }
 

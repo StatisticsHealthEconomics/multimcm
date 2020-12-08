@@ -99,14 +99,14 @@ transformed parameters {
   lp_os = X_os*beta_os + beta_joint*(t_pfs - mean_t_pfs);
   //TODO: rate rather than t?
   // lp_os = X_os*beta_os + beta_joint*(lp_pfs - mean_lp_pfs);
-  // lp_os = X_os*beta_os + beta_joint*X_pfs[, 2]*beta_pfs;
+  // lp_os = X_os*beta_os + beta_joint*X_pfs[, 2]*beta_pfs[2];
 
   lambda_os = exp(lp_os);
 }
 
 model {
   vector[n_os] distn_os_lpdf;
-  vector[n_os] distn_pfs_lpdf;
+  vector[n_pfs] distn_pfs_lpdf;
 
   beta_os ~ normal(mu_0_os, sigma_0_os);
   beta_pfs ~ normal(mu_0_pfs, sigma_0_pfs);

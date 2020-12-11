@@ -97,10 +97,6 @@ transformed parameters {
   // }
 
   lp_os = X_os*beta_os + beta_joint*(t_pfs - mean_t_pfs);
-  //TODO: rate rather than t?
-  // lp_os = X_os*beta_os + beta_joint*(lp_pfs - mean_lp_pfs);
-  // lp_os = X_os*beta_os + beta_joint*X_pfs[, 2]*beta_pfs[2];
-
   lambda_os = exp(lp_os);
 }
 
@@ -123,22 +119,22 @@ model {
   for (i in 1:n_os) {
 
     if (distn_os == 1)
-      distn_os_lpdf[i] = surv_exp_lpdf(t_os[i] | d_os[i], lambda_os_bg[i] + lambda_os[i]);
+      distn_os_lpdf[i] = surv_exp_lp(t_os[i] | d_os[i], lambda_os_bg[i] + lambda_os[i]);
     // if (distn_os == 2)
-    //   distn_os_lpdf[i] = joint_exp_weibull_lpdf(t_os[i] | d_os[i], alpha1, lambda_os[i], lambda_os_bg[i]);
+    //   distn_os_lpdf[i] = joint_exp_weibull_lp(t_os[i] | d_os[i], alpha1, lambda_os[i], lambda_os_bg[i]);
 
     if (distn_pfs == 1)
-      distn_pfs_lpdf[i] = surv_exp_lpdf(t_pfs[i] | d_pfs[i], lambda_pfs_bg[i] + lambda_pfs[i]);
+      distn_pfs_lpdf[i] = surv_exp_lp(t_pfs[i] | d_pfs[i], lambda_pfs_bg[i] + lambda_pfs[i]);
     // if (distn_pfs == 2)
-    //   distn_pfs_lpdf[i] = joint_exp_weibull_lpdf(t_pfs[i] | d_pfs[i], alpha2, lambda_pfs[i], lambda_pfs_bg[i]);
+    //   distn_pfs_lpdf[i] = joint_exp_weibull_lp(t_pfs[i] | d_pfs[i], alpha2, lambda_pfs[i], lambda_pfs_bg[i]);
 
     target += log_sum_exp(
                 log(curefrac) +
-                surv_exp_lpdf(t_os[i] | d_os[i], lambda_os_bg[i]),
+                surv_exp_lp(t_os[i] | d_os[i], lambda_os_bg[i]),
                 log1m(curefrac) + distn_os_lpdf[i]) +
               log_sum_exp(
                 log(curefrac) +
-                surv_exp_lpdf(t_pfs[i] | d_pfs[i], lambda_pfs_bg[i]),
+                surv_exp_lp(t_pfs[i] | d_pfs[i], lambda_pfs_bg[i]),
                 log1m(curefrac) + distn_pfs_lpdf[i]);
   }
 }

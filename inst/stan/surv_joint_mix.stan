@@ -5,6 +5,12 @@
 
 functions {
 #include /include/distributions.stan
+
+  // // exponential integral used in gompertz mean
+  // real exp_integral(real x, real xc, real[] theta,
+  //                   real[] x_r, int[] x_i) {
+  //   return exp(x)/x;
+  // }
 }
 
 // input data ----
@@ -73,6 +79,11 @@ transformed parameters {
   vector[n_os] lambda_pfs_bg;
   vector[n_pfs] mean_t_pfs;
 
+  // gompertz
+  // real x_r[0];
+  // int x_i[0];
+  // vector Ei;
+
   lp_pfs = X_pfs*beta_pfs;
 
   lp_os_bg = X_os*beta_bg;
@@ -83,18 +94,35 @@ transformed parameters {
   lambda_os_bg = exp(lp_os_bg);
   lambda_pfs_bg = exp(lp_pfs_bg);
 
-  # correlated event times
+  // correlated event times ----
+
+  // direct estimate
+  // mean_t_pfs = mean(t_pfs)
+
   if (distn_pfs == 1) {
     // mean_t_pfs = 1/exp(beta_pfs[1]));  // global mean //TODO: should this be adjusted?
     for (i in 1:n_pfs)
       mean_t_pfs[i] = 1/lambda_pfs[i];
   }
 
+  // // weibull
   // if (distn_pfs == 2) {
   //   // mean_t_pfs = exp(beta_pfs[1])*tgamma(1 + 1/alpha2);
   //   for (i in 1:n_pfs)
   //     mean_t_pfs[i] = lambda_pfs[i]*tgamma(1 + 1/alpha2);
   // }
+
+  // // gompertz
+  // if (distn_pfs == 3) {
+  //   for (i in 1:n_pfs)
+  //     Ei[i] = integrate_1d (exp_integral, -lambda_pfs[i],
+  //                           positive_infinity(),
+  //                           {}, real[] x_r, int[] x_i)
+  //     mean_t_pfs[i] = 1/b * exp(lambda_pfs[i]) * Ei[i]
+  // }
+
+  //TODO: what about censoring?
+  // if do regn on lp_pfs then censoring ok?
 
   lp_os = X_os*beta_os + beta_joint*(t_pfs - mean_t_pfs);
   lambda_os = exp(lp_os);
@@ -109,9 +137,16 @@ model {
   beta_bg ~ normal(mu_bg, sigma_bg);
   beta_joint ~ normal(mu_joint, sigma_joint);
 
+  // weibull
   if (distn_os == 2)
     alpha1 ~ gamma(a_alpha_os, b_alpha_os);
   if (distn_pfs == 2)
+    alpha2 ~ gamma(a_alpha_pfs, b_alpha_pfs);
+
+  // gompertz
+  if (distn_os == 3)
+    alpha1 ~ gamma(a_alpha_os, b_alpha_os);
+  if (distn_pfs == 3)
     alpha2 ~ gamma(a_alpha_pfs, b_alpha_pfs);
 
   curefrac ~ beta(a_cf, b_cf);
@@ -122,19 +157,21 @@ model {
       distn_os_lpdf[i] = surv_exp_lp(t_os[i] | d_os[i], lambda_os_bg[i] + lambda_os[i]);
     // if (distn_os == 2)
     //   distn_os_lpdf[i] = joint_exp_weibull_lp(t_os[i] | d_os[i], alpha1, lambda_os[i], lambda_os_bg[i]);
+    // if (distn_os == 3)
+    //   distn_os_lpdf[i] = joint_exp_gompertz_lp(t_os[i] | d_os[i], alpha1, lambda_os[i], lambda_os_bg[i]);
 
     if (distn_pfs == 1)
       distn_pfs_lpdf[i] = surv_exp_lp(t_pfs[i] | d_pfs[i], lambda_pfs_bg[i] + lambda_pfs[i]);
     // if (distn_pfs == 2)
     //   distn_pfs_lpdf[i] = joint_exp_weibull_lp(t_pfs[i] | d_pfs[i], alpha2, lambda_pfs[i], lambda_pfs_bg[i]);
+    // if (distn_pfs == 3)
+    //   distn_pfs_lpdf[i] = joint_exp_gompertz_lp(t_pfs[i] | d_pfs[i], alpha2, lambda_pfs[i], lambda_pfs_bg[i]);
 
     target += log_sum_exp(
-                log(curefrac) +
-                surv_exp_lp(t_os[i] | d_os[i], lambda_os_bg[i]),
+                log(curefrac) + surv_exp_lp(t_os[i] | d_os[i], lambda_os_bg[i]),
                 log1m(curefrac) + distn_os_lpdf[i]) +
               log_sum_exp(
-                log(curefrac) +
-                surv_exp_lp(t_pfs[i] | d_pfs[i], lambda_pfs_bg[i]),
+                log(curefrac) + surv_exp_lp(t_pfs[i] | d_pfs[i], lambda_pfs_bg[i]),
                 log1m(curefrac) + distn_pfs_lpdf[i]);
   }
 }

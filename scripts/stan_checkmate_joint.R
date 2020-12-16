@@ -13,6 +13,10 @@ library(ggplot2)
 # library(rstanbmcm)
 devtools::load_all()
 
+rstan_options(auto_write = TRUE)
+options(mc.cores = parallel::detectCores() - 1)
+
+
 ## surv_input_data
 # load("~/Documents/R/mixture_cure_model/data/surv_input_data.RData")
 data("surv_input_data")
@@ -22,7 +26,7 @@ surv_input_data$csex <-
   as.numeric(as.factor(surv_input_data$SEX)) - 1.5
 
 all_tx_names <- c("IPILIMUMAB", "NIVOLUMAB", "NIVOLUMAB+IPILIMUMAB")
-model_names <- c("exp", "weibull")#, "gompertz")
+model_names <- c("exp", "weibull", "gompertz")
 
 ## choose compiled stan?
 stan_fn <- bmcm_joint_stan_file

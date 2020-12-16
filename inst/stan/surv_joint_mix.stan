@@ -13,7 +13,6 @@ functions {
   // }
 }
 
-// input data ----
 data {
   int<lower=0> n_os;            // number of observations
   int<lower=0> n_pfs;
@@ -30,7 +29,7 @@ data {
   matrix[n_os, H_os] X_os;        // matrix of covariates (with n rows and H columns)
   matrix[n_pfs, H_pfs] X_pfs;
 
-  int distn_os;                // 1: exp; 2: weibull
+  int distn_os;                // 1: exp; 2: weibull; 3: gompertz
   int distn_pfs;
 
   real<lower=0> a_alpha_os[distn_os == 2 ? 1 : 0];
@@ -80,12 +79,11 @@ transformed parameters {
   vector[n_pfs] mean_t_pfs;
 
   // gompertz
-  // real x_r[0];
-  // int x_i[0];
-  // vector Ei;
+  real x_r[0];
+  int x_i[0];
+  vector Ei[distn_pfs == 3 ? 1 : 0];
 
   lp_pfs = X_pfs*beta_pfs;
-
   lp_os_bg = X_os*beta_bg;
   lp_pfs_bg = X_pfs*beta_bg;
 
@@ -98,6 +96,10 @@ transformed parameters {
 
   // direct estimate
   // mean_t_pfs = mean(t_pfs)
+
+  //TODO: impute censored t_pfs for conditional regression
+  //TODO: \sum S_pfs(t) use for mean_t_pfs
+
 
   if (distn_pfs == 1) {
     // mean_t_pfs = 1/exp(beta_pfs[1]));  // global mean //TODO: should this be adjusted?
@@ -114,15 +116,13 @@ transformed parameters {
 
   // // gompertz
   // if (distn_pfs == 3) {
-  //   for (i in 1:n_pfs)
+  //   for (i in 1:n_pfs) {
   //     Ei[i] = integrate_1d (exp_integral, -lambda_pfs[i],
   //                           positive_infinity(),
   //                           {}, real[] x_r, int[] x_i)
   //     mean_t_pfs[i] = 1/b * exp(lambda_pfs[i]) * Ei[i]
+  //   }
   // }
-
-  //TODO: what about censoring?
-  // if do regn on lp_pfs then censoring ok?
 
   lp_os = X_os*beta_os + beta_joint*(t_pfs - mean_t_pfs);
   lambda_os = exp(lp_os);
@@ -192,6 +192,9 @@ generated quantities {
   real pmean_bg;
   // real pcurefrac;
 
+  real palpha1[distn_os == 2 ? 1 : 0];
+  real palpha2[distn_pfs == 2 ? 1 : 0];
+
   vector[t_max] pS_bg;
   vector[t_max] pS_os;
   vector[t_max] pS_pfs;
@@ -205,9 +208,9 @@ generated quantities {
 
   // weibull
   if (distn_os == 2)
-    real palpha1 = gamma_rng(a_alpha_os, b_alpha_os);
+    palpha1 = gamma_rng(a_alpha_os, b_alpha_os);
   if (distn_pfs == 2)
-    real palpha2 = gamma_rng(a_alpha_pfs, b_alpha_pfs);
+    palpha2 = gamma_rng(a_alpha_pfs, b_alpha_pfs);
 
   # intercepts
   mean_os = exp(beta_os[1]);
@@ -218,14 +221,14 @@ generated quantities {
     S_bg[i] = exp_Surv(i, mean_bg);
 
   if (distn_os == 1)
-    S_os[i] = exp_Surv(i, mean_bg + mean_os);
-  if (distn_os == 2)
-    S_os[i] = weibull_Surv(i, alpha1, mean_os);
+    S_os[i] = exp_Surv(i, mean_os);
+  // if (distn_os == 2)
+  //   S_os[i] = weibull_Surv(i, alpha1, mean_os);
 
   if (distn_pfs == 1)
     S_pfs[i] = exp_Surv(i, mean_pfs);
-  if (distn_pfs == 2)
-    S_pfs[i] = weibull_Surv(i, alpha2, mean_pfs);
+  // if (distn_pfs == 2)
+  //   S_pfs[i] = weibull_Surv(i, alpha2, mean_pfs);
 
     S_os_pred[i] = curefrac*S_bg[i] + (1 - curefrac)*S_os[i]*S_bg[i];
     S_pfs_pred[i] = curefrac*S_bg[i] + (1 - curefrac)*S_pfs[i]*S_bg[i];
@@ -247,13 +250,13 @@ generated quantities {
 
     if (distn_os == 1)
       pS_os[i] = exp_Surv(i, pmean_os);
-    if (distn_os == 2)
-      pS_os[i] = exp_Surv(i, palpha1, pmean_os);
+    // if (distn_os == 2)
+    //   pS_os[i] = weibull_Surv(i, palpha1, pmean_os);
 
     if (distn_pfs == 1)
-      pS_pfs[i] = weibull_Surv(i, pmean_pfs);
-    if (distn_pfs == 2)
-      pS_pfs[i] = weibull_Surv(i, palpha2, pmean_pfs);
+      pS_pfs[i] = exp_Surv(i, pmean_pfs);
+    // if (distn_pfs == 2)
+    //   pS_pfs[i] = weibull_Surv(i, palpha2, pmean_pfs);
 
     S_os_prior[i] = pcurefrac*pS_bg[i] + (1 - pcurefrac)*pS_os[i]*pS_bg[i];
     S_pfs_prior[i] = pcurefrac*pS_bg[i] + (1 - pcurefrac)*pS_pfs[i]*pS_bg[i];

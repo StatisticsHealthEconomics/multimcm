@@ -1,8 +1,14 @@
-// exponential-weibull mixture cure model
+// exponential-gompertz mixture cure model
 // joint relative survival
 
 functions {
 #include /include/distributions.stan
+
+  // exponential integral used in gompertz mean
+  real exp_integral(real x, real xc, real[] theta,
+                    real[] x_r, int[] x_i) {
+    return exp(x)/x;
+  }
 }
 
 // input data ----
@@ -63,6 +69,11 @@ transformed parameters {
   vector[n_os] lambda_pfs_bg;
   vector[n_pfs] mean_t_pfs;
 
+  // gompertz
+  real x_r[0];
+  int x_i[0];
+  vector Ei;
+
   lp_pfs = X_pfs*beta_pfs;
 
   lp_os_bg = X_os*beta_bg;
@@ -73,8 +84,15 @@ transformed parameters {
   lambda_os_bg = exp(lp_os_bg);
   lambda_pfs_bg = exp(lp_pfs_bg);
 
-  # correlated event times
-  mean_t_pfs = lambda_pfs*tgamma(1 + 1/alpha0); // weibull
+  // correlated event times
+
+  for (i in 1:n_pfs) {
+    Ei[i] = integrate_1d(exp_integral, -lambda_pfs[i],
+                         positive_infinity(), {},
+                         real[] x_r, int[] x_i)
+    mean_t_pfs[i] = 1/alpha0 * exp(lambda_pfs[i]) * Ei[i]
+  }
+
   lp_os = X_os*beta_os + beta_joint*(t_pfs - mean_t_pfs);
   lambda_os = exp(lp_os);
 }
@@ -99,7 +117,7 @@ model {
                 log(curefrac) +
                 surv_exp_lpdf(t_pfs[i] | d_pfs[i], lambda_pfs_bg[i]),
                 log1m(curefrac) +
-                joint_exp_weibull_lpdf(t_pfs[i] | d_pfs[i], alpha0, lambda_pfs[i], lambda_pfs_bg[i]));
+                joint_exp_gompertz_lpdf(t_pfs[i] | d_pfs[i], alpha0, lambda_pfs[i], lambda_pfs_bg[i]));
   }
 }
 
@@ -140,7 +158,7 @@ generated quantities {
   for (i in 1:t_max) {
     S_bg[i] = exp_Surv(i, mean_bg);
     S_os[i] = exp_Surv(i, mean_bg + mean_os);
-    S_pfs[i] = weibull_Surv(i, alpha0, mean_pfs);
+    S_pfs[i] = gompertz_Surv(i, alpha0, mean_pfs);
 
     S_os_pred[i] = curefrac*S_bg[i] + (1 - curefrac)*S_os[i];
     S_pfs_pred[i] = curefrac*S_bg[i] + (1 - curefrac)*S_pfs[i]*S_bg[i];
@@ -154,7 +172,7 @@ generated quantities {
   for (i in 1:t_max) {
     pS_bg[i] = exp_Surv(i, pmean_bg);
     pS_os[i] = exp_Surv(i, pmean_bg + pmean_os);
-    pS_pfs[i] = weibull_Surv(i, palpha0, pmean_pfs);
+    pS_pfs[i] = gompertz_Surv(i, palpha0, pmean_pfs);
 
     S_os_prior[i] = pcurefrac*pS_bg[i] + (1 - pcurefrac)*pS_os[i];
     S_pfs_prior[i] = pcurefrac*pS_bg[i] + (1 - pcurefrac)*pS_pfs[i]*pS_bg[i];

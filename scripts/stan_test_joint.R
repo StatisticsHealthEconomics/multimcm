@@ -4,6 +4,8 @@
 #
 #
 
+library(ggplot2)
+
 
 rstan_options(auto_write = TRUE)
 options(mc.cores = parallel::detectCores() - 1)
@@ -75,9 +77,16 @@ out <-
     tx_name = "NIVOLUMAB",
     params_cf = list(mean_beta_cf = 0.3,
                      var_beta_cf = 0.005),
-    warmup = 1,
-    iter = 100,
-    thin = 1)
+    warmup = 5000,
+    iter = 100000,
+    thin = 100)
 
 
+## plots
+
+stan_list <- list(NIVOLUMAB = out)
+plot_S_joint(stan_list = stan_list)
+
+plot_prior_predictive(out, event_type = "os")
+plot_prior_predictive(out, event_type = "pfs")
 

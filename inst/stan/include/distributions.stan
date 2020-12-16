@@ -74,6 +74,7 @@ real weibull_log_S (real t, real shape, real scale) {
   return logS;
 }
 
+
 // weibull survival
 real weibull_Surv (real t, real shape, real scale) {
   real S;

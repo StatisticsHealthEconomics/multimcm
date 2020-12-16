@@ -2,7 +2,7 @@
 % Please edit documentation in R/bmcm_stan_file.R
 \name{bmcm_stan_file}
 \alias{bmcm_stan_file}
-\title{Run stan mixture cure model from stan file}
+\title{Run Stan mixture cure model from Stan file}
 \usage{
 bmcm_stan_file(
   input_data,
@@ -11,8 +11,8 @@ bmcm_stan_file(
   tx_name = "IPILIMUMAB",
   iter = 3000,
   warmup = 1000,
-  chains = 3,
   thin = 10,
+  chains = 1,
   mean_cf = NA,
   var_cf = NA,
   centre_age = TRUE,

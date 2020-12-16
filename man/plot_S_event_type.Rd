@@ -4,10 +4,12 @@
 \alias{plot_S_event_type}
 \title{plot_S_event_type}
 \usage{
-plot_S_event_type(file_names)
+plot_S_event_type(file_names = NA, stan_list = NA)
 }
 \arguments{
-\item{file_names}{Nested list of file name for stan output}
+\item{file_names}{Nested list of file names for Stan output}
+
+\item{stan_list}{List of Stan output}
 }
 \value{
 ggplot object

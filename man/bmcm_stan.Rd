@@ -2,7 +2,7 @@
 % Please edit documentation in R/bmcm_stan.R
 \name{bmcm_stan}
 \alias{bmcm_stan}
-\title{Run stan mixture cure model}
+\title{Run Stan mixture cure model}
 \usage{
 bmcm_stan(
   input_data,

@@ -4,7 +4,13 @@
 \alias{prep_stan_params}
 \title{prep_stan_params}
 \usage{
-prep_stan_params(model)
+prep_stan_params(model, params = NA)
+}
+\arguments{
+\item{model}{exp, weibull}
+}
+\value{
+hyper-parameters
 }
 \description{
 prep_stan_params

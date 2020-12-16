@@ -1,4 +1,9 @@
 
+#
+# test new joint functions
+#
+#
+
 
 rstan_options(auto_write = TRUE)
 options(mc.cores = parallel::detectCores() - 1)
@@ -20,15 +25,14 @@ bmcm_joint <- function(input_data,
                        ...) {
 
   data_os <-
-    #TODO: this could depend on event type with extra argument?
-    c(prep_stan_params(model_os, params_os),
+    c(prep_stan_params0(model_os, params_os),
       prep_stan_data(input_data,
                      event_type = "OS",
                      tx_name,
                      centre_age))
 
   data_pfs <-
-    c(prep_stan_params(model_pfs, params_pfs),
+    c(prep_stan_params0(model_pfs, params_pfs),
       prep_stan_data(input_data,
                      event_type = "PFS",
                      tx_name,
@@ -63,7 +67,6 @@ bmcm_joint <- function(input_data,
 }
 
 
-
 out <-
   bmcm_joint(
     input_data = surv_input_data,
@@ -72,9 +75,9 @@ out <-
     tx_name = "NIVOLUMAB",
     params_cf = list(mean_beta_cf = 0.3,
                      var_beta_cf = 0.005),
-    warmup = 10,
-    iter = 1000,
-    thin = 10)
+    warmup = 1,
+    iter = 100,
+    thin = 1)
 
 
 

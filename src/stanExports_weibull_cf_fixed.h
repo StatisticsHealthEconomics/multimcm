@@ -429,13 +429,13 @@ struct weibull_Surv_functor__ {
         return weibull_Surv(t, shape, scale, pstream__);
     }
 };
-template <bool propto, typename T0__, typename T1__, typename T2__, typename T3__>
-typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__>::type
-surv_weibull_lpdf(const T0__& t,
-                      const T1__& d,
-                      const T2__& shape,
-                      const T3__& scale, std::ostream* pstream__) {
-    typedef typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__>::type local_scalar_t__;
+template <typename T0__, typename T1__, typename T2__, typename T3__, typename T_lp__, typename T_lp_accum__>
+typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__, T_lp__>::type
+surv_weibull_lp(const T0__& t,
+                    const T1__& d,
+                    const T2__& shape,
+                    const T3__& scale, T_lp__& lp__, T_lp_accum__& lp_accum__, std::ostream* pstream__) {
+    typedef typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__, T_lp__>::type local_scalar_t__;
     typedef local_scalar_t__ fun_return_scalar_t__;
     const static bool propto__ = true;
     (void) propto__;
@@ -460,22 +460,14 @@ surv_weibull_lpdf(const T0__& t,
         throw std::runtime_error("*** IF YOU SEE THIS, PLEASE REPORT A BUG ***");
     }
 }
-template <typename T0__, typename T1__, typename T2__, typename T3__>
-typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__>::type
-surv_weibull_lpdf(const T0__& t,
-                      const T1__& d,
-                      const T2__& shape,
-                      const T3__& scale, std::ostream* pstream__) {
-    return surv_weibull_lpdf<false>(t,d,shape,scale, pstream__);
-}
-struct surv_weibull_lpdf_functor__ {
-    template <bool propto, typename T0__, typename T1__, typename T2__, typename T3__>
-        typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__>::type
+struct surv_weibull_lp_functor__ {
+    template <typename T0__, typename T1__, typename T2__, typename T3__, typename T_lp__, typename T_lp_accum__>
+        typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__, T_lp__>::type
     operator()(const T0__& t,
-                      const T1__& d,
-                      const T2__& shape,
-                      const T3__& scale, std::ostream* pstream__) const {
-        return surv_weibull_lpdf(t, d, shape, scale, pstream__);
+                    const T1__& d,
+                    const T2__& shape,
+                    const T3__& scale, T_lp__& lp__, T_lp_accum__& lp_accum__, std::ostream* pstream__) const {
+        return surv_weibull_lp(t, d, shape, scale, lp__, lp_accum__, pstream__);
     }
 };
 template <typename T0__, typename T1__, typename T2__>
@@ -595,13 +587,13 @@ struct gompertz_Surv_functor__ {
         return gompertz_Surv(t, shape, rate, pstream__);
     }
 };
-template <bool propto, typename T0__, typename T1__, typename T2__, typename T3__>
-typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__>::type
-surv_gompertz_lpdf(const T0__& t,
-                       const T1__& d,
-                       const T2__& shape,
-                       const T3__& rate, std::ostream* pstream__) {
-    typedef typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__>::type local_scalar_t__;
+template <typename T0__, typename T1__, typename T2__, typename T3__, typename T_lp__, typename T_lp_accum__>
+typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__, T_lp__>::type
+surv_gompertz_lp(const T0__& t,
+                     const T1__& d,
+                     const T2__& shape,
+                     const T3__& rate, T_lp__& lp__, T_lp_accum__& lp_accum__, std::ostream* pstream__) {
+    typedef typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__, T_lp__>::type local_scalar_t__;
     typedef local_scalar_t__ fun_return_scalar_t__;
     const static bool propto__ = true;
     (void) propto__;
@@ -626,22 +618,14 @@ surv_gompertz_lpdf(const T0__& t,
         throw std::runtime_error("*** IF YOU SEE THIS, PLEASE REPORT A BUG ***");
     }
 }
-template <typename T0__, typename T1__, typename T2__, typename T3__>
-typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__>::type
-surv_gompertz_lpdf(const T0__& t,
-                       const T1__& d,
-                       const T2__& shape,
-                       const T3__& rate, std::ostream* pstream__) {
-    return surv_gompertz_lpdf<false>(t,d,shape,rate, pstream__);
-}
-struct surv_gompertz_lpdf_functor__ {
-    template <bool propto, typename T0__, typename T1__, typename T2__, typename T3__>
-        typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__>::type
+struct surv_gompertz_lp_functor__ {
+    template <typename T0__, typename T1__, typename T2__, typename T3__, typename T_lp__, typename T_lp_accum__>
+        typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__, T_lp__>::type
     operator()(const T0__& t,
-                       const T1__& d,
-                       const T2__& shape,
-                       const T3__& rate, std::ostream* pstream__) const {
-        return surv_gompertz_lpdf(t, d, shape, rate, pstream__);
+                     const T1__& d,
+                     const T2__& shape,
+                     const T3__& rate, T_lp__& lp__, T_lp_accum__& lp_accum__, std::ostream* pstream__) const {
+        return surv_gompertz_lp(t, d, shape, rate, lp__, lp_accum__, pstream__);
     }
 };
 template <typename T0__, typename T1__, typename T2__, typename T3__, typename T4__>

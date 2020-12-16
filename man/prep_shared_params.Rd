@@ -5,20 +5,23 @@
 \title{prep_shared_params}
 \usage{
 prep_shared_params(
-  mean_cf = NA,
-  var_cf = NA,
+  mean_beta_cf = NA,
+  var_beta_cf = NA,
   mu_cf = NA,
   sigma_cf = NA,
   mu_bg = c(-8.5, 0.03),
   sigma_bg = c(1, 1),
-  t_max = 60
+  t_max = 60,
+  mu_joint = 0,
+  sigma_joint = 0.1
 )
 }
 \arguments{
-\item{mean_cf}{Mean of cure fraction to using in method of
-moments (MoM) to obtain Beta distribution hyperparameters a, b}
+\item{mean_beta_cf}{Mean of cure fraction to use in method of
+moments (MoM) to obtain Beta distribution
+hyper-parameters a, b}
 
-\item{var_cf}{Variance of cure fraction for MoM}
+\item{var_beta_cf}{Variance of cure fraction for MoM}
 
 \item{mu_cf}{Mean of cure fraction to use directly}
 
@@ -29,6 +32,8 @@ moments (MoM) to obtain Beta distribution hyperparameters a, b}
 \item{sigma_bg}{Standard deviation of background survival}
 
 \item{t_max}{Time horizon}
+
+\item{sigma_joint}{}
 }
 \value{
 list

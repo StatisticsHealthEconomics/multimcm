@@ -1,7 +1,6 @@
 // exponential mixture cure model
 // joint relative survival
-
-//TODO: hierarchical global beta_bg...
+// hierarchical cure fraction
 
 
 functions {
@@ -51,8 +50,9 @@ parameters {
   vector[H_os] beta_bg;
   real beta_joint;
 
-  real<lower=0, upper=1> cf_os;
-  real<lower=0, upper=1> cf_pfs;
+  real lp_cf_global;
+  real lp_cf_os;
+  real lp_cf_pfs;
 }
 
 transformed parameters {
@@ -65,6 +65,10 @@ transformed parameters {
   vector[n_pfs] lambda_pfs;
   vector[n_os] lambda_os_bg;
   vector[n_os] lambda_pfs_bg;
+
+  real<lower=0, upper=1> cf_global;
+  real<lower=0, upper=1> cf_os;
+  real<lower=0, upper=1> cf_pfs;
 
   # correlated event times
   lp_os = X_os*beta_os + beta_joint*(t_pfs - 1/exp(beta_pfs[1]));
@@ -80,8 +84,9 @@ transformed parameters {
   lambda_os_bg = exp(lp_os_bg);     // background survival with uncertainty
   lambda_pfs_bg = exp(lp_pfs_bg);
 
-  cf_os = inv_logit(lp_cf_os)
-  cf_pfs = inv_logit(lp_cf_pfs)
+  cf_global = inv_logit(lp_cf_global);
+  cf_os = inv_logit(lp_cf_os);
+  cf_pfs = inv_logit(lp_cf_pfs);
 }
 
 model {
@@ -90,9 +95,9 @@ model {
   beta_bg ~ normal(mu_bg, sigma_bg);
   beta_joint ~ normal(mu_joint, sigma_joint);
 
-  global_cf ~ normal(mean_cf, sd_cf);
-  lp_cf_os ~ normal(global_cf, sd_cf_os)
-  lp_cf_pfs ~ normal(global_cf, sd_cf_pfs)
+  lp_cf_global ~ normal(mean_cf, sd_cf);
+  lp_cf_os ~ normal(lp_cf_global, sd_cf_os);
+  lp_cf_pfs ~ normal(lp_cf_global, sd_cf_pfs);
 
   for (i in 1:n_os) {
     target += log_sum_exp(
@@ -122,7 +127,7 @@ generated quantities {
   real pmean_os;
   real pmean_pfs;
   real pmean_bg;
-  // real pcurefrac;
+  real pmean_cf;
 
   vector[t_max] pS_bg;
   vector[t_max] pS_os;
@@ -145,8 +150,8 @@ generated quantities {
     S_os[i] = exp_Surv(i, mean_bg + mean_os);
     S_pfs[i] = exp_Surv(i, mean_bg + mean_pfs);
 
-    S_os_pred[i] = curefrac*S_bg[i] + (1 - curefrac)*S_os[i];
-    S_pfs_pred[i] = curefrac*S_bg[i] + (1 - curefrac)*S_pfs[i];
+    S_os_pred[i] = cf_os*S_bg[i] + (1 - cf_os)*S_os[i];
+    S_pfs_pred[i] = cf_pfs*S_bg[i] + (1 - cf_pfs)*S_pfs[i];
   }
 
   # prior checks
@@ -160,8 +165,8 @@ generated quantities {
     pS_os[i] = exp_Surv(i, pmean_bg + pmean_os);
     pS_pfs[i] = exp_Surv(i, pmean_bg + pmean_pfs);
 
-    S_os_prior[i] = mean_cf*pS_bg[i] + (1 - mean_cf)*pS_os[i];
-    S_pfs_prior[i] = mean_cf*pS_bg[i] + (1 - mean_cf)*pS_pfs[i];
+    S_os_prior[i] = pmean_cf*pS_bg[i] + (1 - pmean_cf)*pS_os[i];
+    S_pfs_prior[i] = pmean_cf*pS_bg[i] + (1 - pmean_cf)*pS_pfs[i];
   }
 }
 

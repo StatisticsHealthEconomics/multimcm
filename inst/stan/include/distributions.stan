@@ -41,7 +41,7 @@ real surv_exp_pdf (real t, real d, real rate) {
 }
 
 // log exponential sampling distribution
-real surv_exp_lp (real t, real d, real rate) {
+real surv_exp_lpdf (real t, real d, real rate) {
   real log_lik;
   log_lik = d * exp_log_h(t, rate) + exp_log_S(t, rate);
   return log_lik;
@@ -135,7 +135,7 @@ real joint_exp_weibull_pdf(real t, real d, real shape, real scale, real rate) {
   return log_lik;
 }
 
-real joint_exp_weibull_lp(real t, real d, real shape, real scale, real rate) {
+real joint_exp_weibull_lpdf(real t, real d, real shape, real scale, real rate) {
   real log_lik;
   log_lik = d * log(exp_haz(t, rate) + weibull_haz(t, shape, scale)) +
             exp_log_S(t, rate) + weibull_log_S(t, shape, scale);

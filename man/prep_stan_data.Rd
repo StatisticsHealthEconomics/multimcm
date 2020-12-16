@@ -7,11 +7,22 @@
 prep_stan_data(input_data, event_type, tx_name, centre_age)
 }
 \arguments{
-\item{centre_age}{}
+\item{input_data}{surv_input_data}
+
+\item{event_type}{PFS, OS}
+
+\item{tx_name}{IPILIMUMAB, NIVOLUMAB, NIVOLUMAB+IPILIMUMAB}
+
+\item{centre_age}{Logical}
 }
 \value{
-List
+List;
+sample size,
+times,
+censoring indicator,
+number of covariates,
+covariates
 }
 \description{
-Data specific to OS or PFS for stan input.
+Data specific to OS or PFS for Stan input.
 }

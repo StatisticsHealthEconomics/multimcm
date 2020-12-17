@@ -20,6 +20,7 @@ real exp_haz (real t, real rate) {
 }
 
 // exponential distribution log survival
+// inbuilt exponential_lccdf(y | beta)
 real exp_log_S (real t, real rate) {
   real logS;
   logS = -rate * t;
@@ -68,12 +69,12 @@ real weibull_haz (real t, real shape, real scale) {
 }
 
 // weibull log survival
+// inbuilt weibull_lccdf(y | alpha, sigma)
 real weibull_log_S (real t, real shape, real scale) {
   real logS;
   logS = -pow(t/scale, shape);
   return logS;
 }
-
 
 // weibull survival
 real weibull_Surv (real t, real shape, real scale) {
@@ -83,7 +84,7 @@ real weibull_Surv (real t, real shape, real scale) {
 }
 
 // weibull sampling distribution
-real surv_weibull_lp (real t, real d, real shape, real scale) {
+real surv_weibull_lpdf (real t, real d, real shape, real scale) {
   real log_lik;
   log_lik = d * weibull_log_h(t, shape, scale) + weibull_log_S(t, shape, scale);
   return log_lik;
@@ -129,6 +130,9 @@ real surv_gompertz_lp (real t, real d, real shape, real rate) {
 * combined (non-cured) mortality
 * background (all-cause) and cancer
 */
+
+// weibull
+
 real joint_exp_weibull_pdf(real t, real d, real shape, real scale, real rate) {
   real log_lik;
   log_lik = exp_Surv(t, rate) * weibull_Surv(t, shape, scale) *
@@ -142,4 +146,21 @@ real joint_exp_weibull_lpdf(real t, real d, real shape, real scale, real rate) {
             exp_log_S(t, rate) + weibull_log_S(t, shape, scale);
   return log_lik;
 }
+
+//gompertz
+
+real joint_exp_gompertz_pdf(real t, real d, real shape, real scale, real rate) {
+  real log_lik;
+  log_lik = exp_Surv(t, rate) * gompertz_Surv(t, shape, scale) *
+            pow(exp_haz(t, rate) + gompertz_haz(t, shape, scale), d);
+  return log_lik;
+}
+
+real joint_exp_gompertz_lpdf(real t, real d, real shape, real scale, real rate) {
+  real log_lik;
+  log_lik = d * log(exp_haz(t, rate) + gompertz_haz(t, shape, scale)) +
+            exp_log_S(t, rate) + gompertz_log_S(t, shape, scale);
+  return log_lik;
+}
+
 

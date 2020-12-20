@@ -2,7 +2,6 @@
 // relative survival
 
 //ideas:
-// * joint distribution for PFS and OS
 // * more than 2 mixture components
 // * prob group membership per individual
 
@@ -91,15 +90,19 @@ generated quantities {
   real rate0;
   real rate_bg;
   vector[t_max] S_bg;
-  vector[t_max] S0;
+  vector[t_max] S_0;
   vector[t_max] S_pred;
 
   real pmean_0;
   real pmean_bg;
-  real pcurefrac;
+
   vector[t_max] pS_bg;
   vector[t_max] pS_0;
   vector[t_max] S_prior;
+
+  real pbeta_0 = normal_rng(mu_0[1], sigma_0[1]);
+  real pbeta_bg = normal_rng(mu_bg[1], sigma_bg[1]);
+  real pmean_cf = beta_rng(a_cf, b_cf);
 
   # intercept
   rate0 = exp(beta0[1]);
@@ -107,19 +110,18 @@ generated quantities {
 
   for (i in 1:t_max) {
     S_bg[i] = exp_Surv(i, rate_bg);
-    S0[i] = exp_Surv(i, rate_bg + rate0);
-    S_pred[i] = curefrac*S_bg[i] + (1 - curefrac)*S0[i];
+    S_0[i] = exp_Surv(i, rate_bg + rate0);
+    S_pred[i] = curefrac*S_bg[i] + (1 - curefrac)*S_0[i];
   }
 
   # prior checks
-  pmean_0 = exp(mu_0[1]);
-  pmean_bg = exp(mu_bg[1]);
-  pcurefrac = a_cf/(a_cf + b_cf);
+  pmean_0 = exp(pbeta_0);
+  pmean_bg = exp(pbeta_bg);
 
   for (i in 1:t_max) {
     pS_bg[i] = exp_Surv(i, pmean_bg);
     pS_0[i] = exp_Surv(i, pmean_bg + pmean_0);
-    S_prior[i] = pcurefrac*pS_bg[i] + (1 - pcurefrac)*pS_0[i];
+    S_prior[i] = pmean_cf*pS_bg[i] + (1 - pmean_cf)*pS_0[i];
   }
 
 

@@ -1,4 +1,4 @@
-// exponential mixture cure model
+// exponential-exponential mixture cure model
 // joint relative survival
 
 //TODO: hierarchical global beta_bg...

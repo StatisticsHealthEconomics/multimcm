@@ -24,13 +24,16 @@ data("surv_input_data")
 all_tx_names <- c("IPILIMUMAB", "NIVOLUMAB", "NIVOLUMAB+IPILIMUMAB")
 all_event_types <- c("PFS", "OS")
 model_names <- c("exp", "weibull")#, "gompertz")
-# model_names <- c("exp_full", "weibull_full", "gompertz_full") # age-dependent cure fraction
 
 ## choose compiled Stan?
 stan_fn <- bmcm_stan_file
 # stan_fn <- bmcm_stan
 
 stan_files <- list()
+
+# k <- "exp"
+# i <- "OS"
+# j <- "NIVOLUMAB"
 
 for (k in model_names) {
   for (i in all_event_types) {
@@ -41,10 +44,9 @@ for (k in model_names) {
                      model = k,
                      event_type = i,
                      tx_name = j,
-                     warmup = 1000,
-                     # iter = 10000,
-                     iter = 50000,
-                     thin = 50)
+                     warmup = 500,
+                     iter = 10000,
+                     thin = 20)
 
       file_name <-
         here::here(paste("data/stan", k, i, j, ".Rds", sep = "_"))
@@ -65,10 +67,26 @@ plot_S_event_type(stan_files$exp)
 plot_S_event_type(stan_files$weibull)
 
 # plot directly
-plot_S_event_type(
+gg <-
+  plot_S_event_type(
   stan_list = list(
       PFS = list(
         IPILIMUMAB = out)))
+gg
+
+# overlay Kaplan-Meier
+library(survival)
+fit <- survfit(Surv(os, os_event) ~ 1,
+               data = filter(surv_input_data, TRTA == "NIVOLUMAB"))
+
+gg + geom_line(aes(x = time, y = surv),
+               data = data.frame(time = fit$time, surv = fit$surv),
+               lwd = 1,
+               inherit.aes = FALSE) +
+  xlim(0,60)
+
+
+plot_prior_predictive(out)
 
 
 ####################

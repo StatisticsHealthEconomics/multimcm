@@ -1,16 +1,16 @@
 // mixture cure model
 // joint relative survival
-//
+// single script for all distns
 
 
 functions {
 #include /include/distributions.stan
 
-  // // exponential integral used in gompertz mean
-  // real exp_integral(real x, real xc, real[] theta,
-  //                   real[] x_r, int[] x_i) {
-  //   return exp(x)/x;
-  // }
+  // exponential integral used in gompertz mean
+  real exp_integral(real x, real xc, real[] theta,
+                    real[] x_r, int[] x_i) {
+    return exp(x)/x;
+  }
 }
 
 data {
@@ -55,13 +55,18 @@ data {
   int<lower=0> t_max;
 }
 
+transformed data {
+  real x_r[0];
+  int x_i[0];
+}
+
 parameters {
   vector[H_os] beta_os;       // coefficients in linear predictor (including intercept)
   vector[H_pfs] beta_pfs;
   vector[H_os] beta_bg;
   real beta_joint;
-  real<lower=0> alpha1[distn_os == 2 ? 1 : 0];
-  real<lower=0> alpha2[distn_pfs == 2 ? 1 : 0];
+  real<lower=0> alpha_os[distn_os == 2 ? 1 : 0];
+  real<lower=0> alpha_pfs[distn_pfs == 2 ? 1 : 0];
 
   real<lower=0, upper=1> curefrac;
 }
@@ -79,9 +84,7 @@ transformed parameters {
   vector[n_pfs] mean_t_pfs;
 
   // gompertz
-  real x_r[0];
-  int x_i[0];
-  vector Ei[distn_pfs == 3 ? 1 : 0];
+  vector[distn_pfs == 3 ? n_pfs : 0] Ei;
 
   lp_pfs = X_pfs*beta_pfs;
   lp_os_bg = X_os*beta_bg;
@@ -95,10 +98,9 @@ transformed parameters {
   // correlated event times ----
 
   // direct estimate
-  // mean_t_pfs = mean(t_pfs)
+  // mean_t_pfs = mean(t_pfs);
 
   //TODO: impute censored t_pfs for conditional regression
-  //TODO: \sum S_pfs(t) use for mean_t_pfs
 
 
   if (distn_pfs == 1) {
@@ -109,19 +111,29 @@ transformed parameters {
 
   // // weibull
   // if (distn_pfs == 2) {
-  //   // mean_t_pfs = exp(beta_pfs[1])*tgamma(1 + 1/alpha2);
+  //   // mean_t_pfs = exp(beta_pfs[1])*tgamma(1 + 1/alpha_pfs);
   //   for (i in 1:n_pfs)
-  //     mean_t_pfs[i] = lambda_pfs[i]*tgamma(1 + 1/alpha2);
+  //     mean_t_pfs[i] = lambda_pfs[i]*tgamma(1 + 1/alpha_pfs);
   // }
 
   // // gompertz
   // if (distn_pfs == 3) {
-  //   for (i in 1:n_pfs) {
-  //     Ei[i] = integrate_1d (exp_integral, -lambda_pfs[i],
-  //                           positive_infinity(),
-  //                           {}, real[] x_r, int[] x_i)
-  //     mean_t_pfs[i] = 1/b * exp(lambda_pfs[i]) * Ei[i]
-  //   }
+  //     for (i in 1:n_pfs) {
+  //
+  //   //TODO: syntax error ...
+  //   // Ei[i] = integrate_1d(exp_integral,
+  //   //                      -lambda_pfs[i],
+  //   //                      positive_infinity(),
+  //   //                      // {},
+  //   //                      1.0,
+  //   //                      x_r, x_i, 1e-8);
+  //   //
+  //   // mean_t_pfs[i] = 1/alpha_pfs * exp(lambda_pfs[i]) * Ei[i];
+  //
+  //      for (j in 1:100) {
+  //         mean_t_pfs[i] += gompertz_Surv(j, alpha_pfs, lambda_pfs[i]);
+  //      }
+  //    }
   // }
 
   lp_os = X_os*beta_os + beta_joint*(t_pfs - mean_t_pfs);
@@ -139,15 +151,15 @@ model {
 
   // weibull
   if (distn_os == 2)
-    alpha1 ~ gamma(a_alpha_os, b_alpha_os);
+    alpha_os ~ gamma(a_alpha_os, b_alpha_os);
   if (distn_pfs == 2)
-    alpha2 ~ gamma(a_alpha_pfs, b_alpha_pfs);
+    alpha_pfs ~ gamma(a_alpha_pfs, b_alpha_pfs);
 
   // gompertz
   if (distn_os == 3)
-    alpha1 ~ gamma(a_alpha_os, b_alpha_os);
+    alpha_os ~ gamma(a_alpha_os, b_alpha_os);
   if (distn_pfs == 3)
-    alpha2 ~ gamma(a_alpha_pfs, b_alpha_pfs);
+    alpha_pfs ~ gamma(a_alpha_pfs, b_alpha_pfs);
 
   curefrac ~ beta(a_cf, b_cf);
 
@@ -156,16 +168,16 @@ model {
     if (distn_os == 1)
       distn_os_lpdf[i] = surv_exp_lpdf(t_os[i] | d_os[i], lambda_os_bg[i] + lambda_os[i]);
     // if (distn_os == 2)
-    //   distn_os_lpdf[i] = joint_exp_weibull_lpdf(t_os[i] | d_os[i], alpha1, lambda_os[i], lambda_os_bg[i]);
+    //   distn_os_lpdf[i] = joint_exp_weibull_lpdf(t_os[i] | d_os[i], alpha_os, lambda_os[i], lambda_os_bg[i]);
     // if (distn_os == 3)
-    //   distn_os_lpdf[i] = joint_exp_gompertz_lpdf(t_os[i] | d_os[i], alpha1, lambda_os[i], lambda_os_bg[i]);
+    //   distn_os_lpdf[i] = joint_exp_gompertz_lpdf(t_os[i] | d_os[i], alpha_os, lambda_os[i], lambda_os_bg[i]);
 
     if (distn_pfs == 1)
       distn_pfs_lpdf[i] = surv_exp_lpdf(t_pfs[i] | d_pfs[i], lambda_pfs_bg[i] + lambda_pfs[i]);
     // if (distn_pfs == 2)
-    //   distn_pfs_lpdf[i] = joint_exp_weibull_lpdf(t_pfs[i] | d_pfs[i], alpha2, lambda_pfs[i], lambda_pfs_bg[i]);
+    //   distn_pfs_lpdf[i] = joint_exp_weibull_lpdf(t_pfs[i] | d_pfs[i], alpha_pfs, lambda_pfs[i], lambda_pfs_bg[i]);
     // if (distn_pfs == 3)
-    //   distn_pfs_lpdf[i] = joint_exp_gompertz_lpdf(t_pfs[i] | d_pfs[i], alpha2, lambda_pfs[i], lambda_pfs_bg[i]);
+    //   distn_pfs_lpdf[i] = joint_exp_gompertz_lpdf(t_pfs[i] | d_pfs[i], alpha_pfs, lambda_pfs[i], lambda_pfs_bg[i]);
 
     target += log_sum_exp(
                 log(curefrac) + surv_exp_lpdf(t_os[i] | d_os[i], lambda_os_bg[i]),
@@ -192,8 +204,8 @@ generated quantities {
   real pmean_bg;
   // real pcurefrac;
 
-  real palpha1[distn_os == 2 ? 1 : 0];
-  real palpha2[distn_pfs == 2 ? 1 : 0];
+  real palpha_os[distn_os == 2 ? 1 : 0];
+  real palpha_pfs[distn_pfs == 2 ? 1 : 0];
 
   vector[t_max] pS_bg;
   vector[t_max] pS_os;
@@ -208,9 +220,9 @@ generated quantities {
 
   // weibull
   if (distn_os == 2)
-    palpha1 = gamma_rng(a_alpha_os, b_alpha_os);
+    palpha_os = gamma_rng(a_alpha_os, b_alpha_os);
   if (distn_pfs == 2)
-    palpha2 = gamma_rng(a_alpha_pfs, b_alpha_pfs);
+    palpha_pfs = gamma_rng(a_alpha_pfs, b_alpha_pfs);
 
   # intercepts
   mean_os = exp(beta_os[1]);
@@ -223,12 +235,16 @@ generated quantities {
   if (distn_os == 1)
     S_os[i] = exp_Surv(i, mean_os);
   // if (distn_os == 2)
-  //   S_os[i] = weibull_Surv(i, alpha1, mean_os);
+  //   S_os[i] = weibull_Surv(i, alpha_os, mean_os);
+  // if (distn_os == 3)
+  //   S_os[i] = gompertz_Surv(i, alpha_os, mean_os);
 
   if (distn_pfs == 1)
     S_pfs[i] = exp_Surv(i, mean_pfs);
   // if (distn_pfs == 2)
-  //   S_pfs[i] = weibull_Surv(i, alpha2, mean_pfs);
+  //   S_pfs[i] = weibull_Surv(i, alpha_pfs, mean_pfs);
+  // if (distn_pfs == 3)
+  //   S_pfs[i] = gompertz_Surv(i, alpha_pfs, mean_pfs);
 
     S_os_pred[i] = curefrac*S_bg[i] + (1 - curefrac)*S_os[i]*S_bg[i];
     S_pfs_pred[i] = curefrac*S_bg[i] + (1 - curefrac)*S_pfs[i]*S_bg[i];
@@ -251,12 +267,16 @@ generated quantities {
     if (distn_os == 1)
       pS_os[i] = exp_Surv(i, pmean_os);
     // if (distn_os == 2)
-    //   pS_os[i] = weibull_Surv(i, palpha1, pmean_os);
+    //   pS_os[i] = weibull_Surv(i, palpha_os, pmean_os);
+    // if (distn_os == 3)
+    //   pS_os[i] = gompertz_Surv(i, palpha_os, pmean_os);
 
     if (distn_pfs == 1)
       pS_pfs[i] = exp_Surv(i, pmean_pfs);
     // if (distn_pfs == 2)
-    //   pS_pfs[i] = weibull_Surv(i, palpha2, pmean_pfs);
+    //   pS_pfs[i] = weibull_Surv(i, palpha_pfs, pmean_pfs);
+    // if (distn_pfs == 3)
+    //   pS_pfs[i] = gompertz_Surv(i, palpha_pfs, pmean_pfs);
 
     S_os_prior[i] = pcurefrac*pS_bg[i] + (1 - pcurefrac)*pS_os[i]*pS_bg[i];
     S_pfs_prior[i] = pcurefrac*pS_bg[i] + (1 - pcurefrac)*pS_pfs[i]*pS_bg[i];

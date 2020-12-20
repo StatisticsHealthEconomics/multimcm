@@ -57,6 +57,10 @@ bmcm_stan_file <- function(input_data,
       thin = thin,
       control = list(adapt_delta = 0.99,
                      max_treedepth = 20),
+      # init = list(
+      #   list(curefrac = 0.4,
+      #        beta_0 = c(-3, 0.1),
+      #        beta_bg = c(-9, 0.1))),
       chains = chains, ...)
 
   return(res)

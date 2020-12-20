@@ -16,6 +16,8 @@
 #'                  e.g. mean_beta_cf Mean cure fraction (default U[0,1])
 #'                  var_beta_cf Variance of cure fraction
 #' @param centre_age Logical to centre regression covariate
+#' @param cf_model Select cure fraction model. 1: shared; 2: separate ;3: hierarchical
+#' @param joint_model Select joint event time model. TRUE: joint model; FALSE: separate
 #' @param ... Additional arguments
 #'
 #' @import rstan
@@ -31,9 +33,10 @@ bmcm_joint_stan_file <- function(input_data,
                                  chains = 1,
                                  params_os = NA,
                                  params_pfs = NA,
-                                 params_cf = list(mean_beta_cf = NA,
-                                                  var_beta_cf = NA),
+                                 params_cf = NA,
                                  centre_age = TRUE,
+                                 cf_model = 3,
+                                 joint_model = TRUE,
                                  ...) {
 
   data_os <-
@@ -57,12 +60,14 @@ bmcm_joint_stan_file <- function(input_data,
   data_list <-
     c(data_os,
       data_pfs,
-      do.call(prep_shared_params, params_cf))
+      prep_shared_params(params_cf),
+      cf_model = cf_model,
+      joint_model = joint_model)
 
   stan_file <-
     if (model_os == "exp") {
-      if (model_pfs == "exp")           here::here("inst", "stan", "exp_exp_joint_mix.stan")
-      else if (model_pfs == "weibull")  here::here("inst", "stan", "exp_weibull_joint_mix.stan")
+      if (model_pfs == "exp")           here::here("inst", "stan", "exp_exp_joint_hiercf.stan")
+    } else if (model_pfs == "weibull")  here::here("inst", "stan", "exp_weibull_joint_mix.stan")
 
     } else if (model_os == "weibull") {
       if (model_pfs == "exp")           here::here("inst", "stan", "weibull_exp_joint_mix.stan")
@@ -83,10 +88,10 @@ bmcm_joint_stan_file <- function(input_data,
       control = list(adapt_delta = 0.99,
                      max_treedepth = 20),
       # init = list(
-      #   list(curefrac = 0.5,
-      #        beta_os = c(0.1, 0.1),
-      #        beta_pfs = c(0.1, 0.1),
-      #        beta_bg = c(0.1, 0.1),
+      #   list(curefrac = 0.4,
+      #        beta_os = c(-3, 0.1),
+      #        beta_pfs = c(-3, 0.1),
+      #        beta_bg = c(-8, 0.1),
       #        beta_joint = 0.1)),
       chains = chains, ...)
 

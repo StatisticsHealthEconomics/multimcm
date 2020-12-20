@@ -104,6 +104,12 @@ real gompertz_log_h (real t, real shape, real rate) {
   return log_h;
 }
 
+real gompertz_haz (real t, real shape, real rate) {
+  real h;
+  h = rate*exp(shape*t);
+  return h;
+}
+
 // gompertz log survival
 real gompertz_log_S (real t, real shape, real rate) {
   real log_S;
@@ -119,7 +125,7 @@ real gompertz_Surv (real t, real shape, real rate) {
 }
 
 // gompertz sampling distribution
-real surv_gompertz_lp (real t, real d, real shape, real rate) {
+real surv_gompertz_lpdf (real t, real d, real shape, real rate) {
   real log_lik;
   log_lik = d * gompertz_log_h(t, shape, rate) + gompertz_log_S(t, shape, rate);
   return log_lik;

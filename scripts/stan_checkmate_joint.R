@@ -11,7 +11,7 @@ library(shinystan)
 library(dplyr)
 library(ggplot2)
 # library(rstanbmcm)
-devtools::load_all()
+# devtools::load_all()
 
 rstan_options(auto_write = TRUE)
 options(mc.cores = parallel::detectCores() - 1)
@@ -21,7 +21,7 @@ options(mc.cores = parallel::detectCores() - 1)
 # load("~/Documents/R/mixture_cure_model/data/surv_input_data.RData")
 data("surv_input_data")
 
-# centred
+##TODO: move this to data prep script in surv_input_data package
 surv_input_data$csex <-
   as.numeric(as.factor(surv_input_data$SEX)) - 1.5
 
@@ -63,23 +63,26 @@ for (k in model_names) {
   }
 }
 
+# test...
 out <-
   bmcm_joint_stan_file(
     input_data = surv_input_data,
     model_os = "exp",
-    model_pfs = "weibull",
+    model_pfs = "exp",
     tx_name = "NIVOLUMAB",
-    params_pfs = list(a_alpha = 5,
-                      b_alpha = 3,
-                      mu_0 = c(2, 0),
+    params_pfs = list(mu_0 = c(-3, 0),
                       sigma_0 = c(0.5, 0.01)),
     params_os = list(mu_0 = c(-3, 0),
                      sigma_0 = c(0.4, 1)),
-    params_cf = list(mean_beta_cf = 0.3,
-                     var_beta_cf = 0.005),
+    params_cf = list(mu_cf = -0.8,            # hierarchical cure fraction
+                     sigma_cf = 2,
+                     sd_cf_os = 0.5,
+                     sd_cf_pfs = 0.5),
+    cf_model = 3,
+    joint_model = TRUE,
     warmup = 100,
-    iter = 10000,
-    thin = 100)
+    iter = 1000,
+    thin = 10)
 
 
 # save(stan_files, file = "data/stan_joint_filenames.RData")

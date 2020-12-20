@@ -49,7 +49,7 @@ plot_S_event_type <- function(file_names = NA,
         rstan::extract()
 
       S_stats[[i]][[j]] <-
-        prep_S_data(fit_stan[[i]][[j]])
+        prep_S_data(stan_extract = fit_stan[[i]][[j]])
     }
   }
 

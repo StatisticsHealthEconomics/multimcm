@@ -1,6 +1,5 @@
 // exponential mixture cure model
 // joint relative survival
-// hierarchical cure fraction
 
 
 functions {
@@ -33,13 +32,19 @@ data {
   vector[H_os] mu_bg;
   vector<lower=0> [H_os] sigma_bg;
 
-  real mu_joint;
-  real<lower=0> sigma_joint;
+  int<lower=0, upper=1> joint_model;
+  real[joint_model] mu_joint;
+  real<lower=0> sigma_joint[joint_model];
 
-  real mean_cf;                  // cure fraction
-  real sd_cf;
-  real sd_cf_os;
-  real sd_cf_pfs;
+  int<lower=0, upper=1> cf_model;         // cure fraction
+  real[cf_model == 3] mu_cf;
+  real[cf_model == 2] mu_cf_os;           // 1- shared; 2- separate; 3- hierarchical
+  real[cf_model == 2] mu_cf_pfs;
+  real<lower=0> sigma_cf[cf_model == 3];
+  real<lower=0> sd_cf_os[cf_model == 2|3];
+  real<lower=0> sd_cf_pfs[cf_model == 2|3];
+  real[cf_model == 1] a_cf;
+  real[cf_model == 1] b_cf;
 
   int<lower=0> t_max;
 }
@@ -48,9 +53,9 @@ parameters {
   vector[H_os] beta_os;       // coefficients in linear predictor (including intercept)
   vector[H_pfs] beta_pfs;
   vector[H_os] beta_bg;
-  real beta_joint;
+  real beta_joint[joint_model ? n_os ; 1];
 
-  real lp_cf_global;
+  real[cf_model == 3] lp_cf_global;
   real lp_cf_os;
   real lp_cf_pfs;
 }
@@ -72,6 +77,7 @@ transformed parameters {
 
   # correlated event times
   lp_os = X_os*beta_os + beta_joint*(t_pfs - 1/exp(beta_pfs[1]));
+  // lp_os = X_os*beta_os;
 
   lp_pfs = X_pfs*beta_pfs;
 
@@ -84,21 +90,41 @@ transformed parameters {
   lambda_os_bg = exp(lp_os_bg);     // background survival with uncertainty
   lambda_pfs_bg = exp(lp_pfs_bg);
 
-  cf_global = inv_logit(lp_cf_global);
-  cf_os = inv_logit(lp_cf_os);
-  cf_pfs = inv_logit(lp_cf_pfs);
+  if (cf_model == 3)
+    cf_global = inv_logit(lp_cf_global);
+  if (cf_model == 2|3) {
+    cf_os = inv_logit(lp_cf_os);
+    cf_pfs = inv_logit(lp_cf_pfs);
+  } else {
+    cf_os = cf_global;
+    cf_pfs = cf_global;
+  }
 }
 
 model {
   beta_os ~ normal(mu_0_os, sigma_0_os);
   beta_pfs ~ normal(mu_0_pfs, sigma_0_pfs);
   beta_bg ~ normal(mu_bg, sigma_bg);
-  beta_joint ~ normal(mu_joint, sigma_joint);
 
-  lp_cf_global ~ normal(mean_cf, sd_cf);
-  lp_cf_os ~ normal(lp_cf_global, sd_cf_os);
-  lp_cf_pfs ~ normal(lp_cf_global, sd_cf_pfs);
+  if (joint_model) {
+    beta_joint ~ normal(mu_joint, sigma_joint);
+  } else {
+    beta_joint = 0;
+  }
 
+  // cure fraction
+  if (cf_model == 3) {
+    lp_cf_global ~ normal(mu_cf, sigma_cf);
+    lp_cf_os ~ normal(lp_cf_global, sd_cf_os);
+    lp_cf_pfs ~ normal(lp_cf_global, sd_cf_pfs);
+  } else if (cf_model == 2) {
+    lp_cf_os ~ normal(mu_cf_os, sd_cf_os);
+    lp_cf_pfs ~ normal(mu_cf_pfs, sd_cf_pfs);
+  } else {
+    cf_global ~ beta(a_cf, b_cf);
+  }
+
+  // likelihood
   for (i in 1:n_os) {
     target += log_sum_exp(
                 log(cf_os) +
@@ -127,7 +153,8 @@ generated quantities {
   real pmean_os;
   real pmean_pfs;
   real pmean_bg;
-  real pmean_cf;
+  real pmean_cf_os;
+  real pmean_cf_pfs;
 
   vector[t_max] pS_bg;
   vector[t_max] pS_os;
@@ -138,7 +165,23 @@ generated quantities {
   real pbeta_os = normal_rng(mu_0_os[1], sigma_0_os[1]);
   real pbeta_pfs = normal_rng(mu_0_pfs[1], sigma_0_pfs[1]);
   real pbeta_bg = normal_rng(mu_bg[1], sigma_bg[1]);
-  real pcurefrac = normal_rng(mean_cf, sd_cf);
+
+  // cure fraction prior
+  if (cf_model == 3) {
+    //TODO: include extra sd_cf_os, sd_cf_pfs variation?
+    real pcurefrac = normal_rng(mu_cf, sigma_cf);
+    pmean_cf_os = inv_logit(pcurefrac);
+    pmean_cf_pfs = inv_logit(pcurefrac);
+  } else if (cf_model == 2) {
+    real pcf_os = normal_rng(mu_cf_os, sd_cf_os);
+    real pcf_pfs = normal_rng(mu_cf_pfs, sd_cf_pfs);
+    pmean_cf_os = inv_logit(pcf_os);
+    pmean_cf_pfs = inv_logit(pcf_pfs);
+  } else {
+    real pcurefrac ~ beta(a_cf, b_cf);
+    pmean_cf_os = pcurefrac;
+    pmean_cf_pfs = pcurefrac;
+  }
 
   # intercepts
   mean_os = exp(beta_os[1]);
@@ -158,15 +201,14 @@ generated quantities {
   pmean_os = exp(pbeta_os);
   pmean_pfs = exp(pbeta_pfs);
   pmean_bg = exp(pbeta_bg);
-  pmean_cf = inv_logit(pcurefrac);
 
   for (i in 1:t_max) {
     pS_bg[i] = exp_Surv(i, pmean_bg);
     pS_os[i] = exp_Surv(i, pmean_bg + pmean_os);
     pS_pfs[i] = exp_Surv(i, pmean_bg + pmean_pfs);
 
-    S_os_prior[i] = pmean_cf*pS_bg[i] + (1 - pmean_cf)*pS_os[i];
-    S_pfs_prior[i] = pmean_cf*pS_bg[i] + (1 - pmean_cf)*pS_pfs[i];
+    S_os_prior[i] = pmean_cf_os*pS_bg[i] + (1 - pmean_cf_os)*pS_os[i];
+    S_pfs_prior[i] = pmean_cf_pfs*pS_bg[i] + (1 - pmean_cf_pfs)*pS_pfs[i];
   }
 }
 

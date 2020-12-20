@@ -9,7 +9,7 @@ functions {
 data {
   int<lower=0> n_os;             // number of observations
   int<lower=0> n_pfs;
-  int<lower=0> H_os;           // number of covariates
+  int<lower=0> H_os;             // number of covariates
   int<lower=0> H_pfs;
 
   vector[n_os] t_os;             // observation times
@@ -46,7 +46,7 @@ parameters {
   vector[H_pfs] beta_pfs;
   vector[H_os] beta_bg;
   real beta_joint;
-  real alpha0;
+  real alpha_pfs;
 
   real<lower=0, upper=1> curefrac;
 }
@@ -74,7 +74,7 @@ transformed parameters {
   lambda_pfs_bg = exp(lp_pfs_bg);
 
   # correlated event times
-  mean_t_pfs = lambda_pfs*tgamma(1 + 1/alpha0); // weibull
+  mean_t_pfs = lambda_pfs*tgamma(1 + 1/alpha_pfs); // weibull
   lp_os = X_os*beta_os + beta_joint*(t_pfs - mean_t_pfs);
   lambda_os = exp(lp_os);
 }
@@ -85,7 +85,7 @@ model {
   beta_bg ~ normal(mu_bg, sigma_bg);
   beta_joint ~ normal(mu_joint, sigma_joint);
 
-  alpha0 ~ gamma(a_alpha_pfs, b_alpha_pfs);
+  alpha_pfs ~ gamma(a_alpha_pfs, b_alpha_pfs);
 
   curefrac ~ beta(a_cf, b_cf);
 
@@ -99,7 +99,7 @@ model {
                 log(curefrac) +
                 surv_exp_lpdf(t_pfs[i] | d_pfs[i], lambda_pfs_bg[i]),
                 log1m(curefrac) +
-                joint_exp_weibull_lpdf(t_pfs[i] | d_pfs[i], alpha0, lambda_pfs[i], lambda_pfs_bg[i]));
+                joint_exp_weibull_lpdf(t_pfs[i] | d_pfs[i], alpha_pfs, lambda_pfs[i], lambda_pfs_bg[i]));
   }
 }
 
@@ -130,7 +130,7 @@ generated quantities {
   real pbeta_pfs = normal_rng(mu_0_pfs[1], sigma_0_pfs[1]);
   real pbeta_bg = normal_rng(mu_bg[1], sigma_bg[1]);
   real pcurefrac = beta_rng(a_cf, b_cf);
-  real palpha0 = gamma_rng(a_alpha_pfs, b_alpha_pfs);
+  real palpha_pfs = gamma_rng(a_alpha_pfs, b_alpha_pfs);
 
   # intercepts
   mean_os = exp(beta_os[1]);
@@ -140,7 +140,7 @@ generated quantities {
   for (i in 1:t_max) {
     S_bg[i] = exp_Surv(i, mean_bg);
     S_os[i] = exp_Surv(i, mean_bg + mean_os);
-    S_pfs[i] = weibull_Surv(i, alpha0, mean_pfs);
+    S_pfs[i] = weibull_Surv(i, alpha_pfs, mean_pfs);
 
     S_os_pred[i] = curefrac*S_bg[i] + (1 - curefrac)*S_os[i];
     S_pfs_pred[i] = curefrac*S_bg[i] + (1 - curefrac)*S_pfs[i]*S_bg[i];
@@ -154,7 +154,7 @@ generated quantities {
   for (i in 1:t_max) {
     pS_bg[i] = exp_Surv(i, pmean_bg);
     pS_os[i] = exp_Surv(i, pmean_bg + pmean_os);
-    pS_pfs[i] = weibull_Surv(i, palpha0, pmean_pfs);
+    pS_pfs[i] = weibull_Surv(i, palpha_pfs, pmean_pfs);
 
     S_os_prior[i] = pcurefrac*pS_bg[i] + (1 - pcurefrac)*pS_os[i];
     S_pfs_prior[i] = pcurefrac*pS_bg[i] + (1 - pcurefrac)*pS_pfs[i]*pS_bg[i];

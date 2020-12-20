@@ -4,12 +4,14 @@
 #' Model parameters not specific to OS or PFS:
 #' cure fraction, background and generated.
 #'
-#' @param mean_beta_cf Mean of cure fraction to use in method of
-#'                     moments (MoM) to obtain Beta distribution
-#'                     hyper-parameters a, b
-#' @param var_beta_cf Variance of cure fraction for MoM
-#' @param mu_cf Mean of cure fraction to use directly
-#' @param sigma_cf Standard deviation of cure fraction to use directly
+#' @param cf_params list consisting of potentially:
+#'                  - mean_beta_cf Mean of cure fraction to use in method of
+#'                  - moments (MoM) to obtain Beta distribution
+#'                  - hyper-parameters a, b
+#'                  - var_beta_cf Variance of cure fraction for MoM
+#'                  - mu_cf Mean of cure fraction to use directly
+#'                  - sigma_cf Standard deviation of cure fraction to use directly
+#'                  - sd_cf_os,sd_cf_pfs Hierarchical cure fraction standard deviations
 #' @param mu_bg Mean of background survival
 #' @param sigma_bg Standard deviation of background survival
 #' @param t_max Time horizon
@@ -18,32 +20,42 @@
 #'
 #' @return list
 #'
-prep_shared_params <- function(mean_beta_cf = NA,
-                               var_beta_cf = NA,
-                               mu_cf = NA,
-                               sigma_cf = NA,
+prep_shared_params <- function(cf_params = NA,
                                mu_bg = c(-8.5, 0.03),
                                sigma_bg = c(1, 1),
                                t_max = 60,
                                mu_joint = 0,
                                sigma_joint = 0.1) {
-  # cure fraction parameters
-  cf_params <-
-    if (!is.na(mean_beta_cf) &&
-        !is.na(var_beta_cf)) {
 
-      mombeta <- MoM_beta(mean_beta_cf,
-                          var_beta_cf)
+  # cure fraction parameters
+  empty_params <-
+    list(a_cf = numeric(0),
+         b_cf = numeric(0),
+         mu_cf = numeric(0),
+         mu_cf_os = numeric(0),
+         mu_cf_pfs = numeric(0),
+         sigma_cf = numeric(0),
+         sd_cf_os = numeric(0),
+         sd_cf_pfs = numeric(0))
+
+  if (!is.na(cf_params$mean_beta_cf) &&
+      !is.na(cf_params$var_beta_cf)) {
+
+    mombeta <-
+      MoM_beta(cf_params$mean_beta_cf,
+               cf_params$var_beta_cf)
+    cf_params <-
       list(a_cf = mombeta$a,
            b_cf = mombeta$b)
 
-    } else if (all(!is.na(mu_cf)) &&
-               all(!is.na(sigma_cf))) {
+  } else if (any(is.na(cf_params))) {
+    cf_params <-
+      list(a_cf = 1,
+           b_cf = 1)}
 
-      list(mu_cf = mu_cf,
-           sigma_cf = sigma_cf)
-    } else {
-      list(a_cf = 1, b_cf = 1)}
+  cf_params <-
+    modifyList(empty_params,
+               cf_params)
 
   c(cf_params,
     list(t_max = t_max,

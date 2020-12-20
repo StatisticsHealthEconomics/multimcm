@@ -384,3 +384,28 @@ out <-
 
 plot_prior_predictive(out, event_type = "pfs")
 
+
+## hierarchical cure fraction
+
+out <-
+  bmcm_joint_stan_file(
+    input_data = surv_input_data,
+    model_os = "exp",
+    model_pfs = "exp",
+    tx_name = "IPILIMUMAB",
+    params_pfs = list(mu_0 = c(-3, 0),
+                      sigma_0 = c(0.5, 0.001)),
+    params_os = list(mu_0 = c(-3, 0),
+                     sigma_0 = c(0.4, 1)),
+    params_cf = list(mu_cf = -0.8,
+                     sigma_cf = 0.1,
+                     sd_cf_os = 0.005,
+                     sd_cf_pfs = 0.005),
+    algorithm = "Fixed_param",
+    warmup = 1,
+    iter = 100,
+    thin = 1)
+
+plot_prior_predictive(out, event_type = "pfs")
+plot_prior_predictive(out, event_type = "os")
+

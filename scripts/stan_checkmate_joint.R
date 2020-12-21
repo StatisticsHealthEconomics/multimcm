@@ -78,8 +78,8 @@ out <-
                      sigma_cf = 2,
                      sd_cf_os = 0.5,
                      sd_cf_pfs = 0.5),
-    cf_model = 3,
-    joint_model = TRUE,
+    cf_model = 2,                # 1- shared; 2- separate; 3- hierarchical
+    joint_model = FALSE,
     warmup = 100,
     iter = 1000,
     thin = 10)

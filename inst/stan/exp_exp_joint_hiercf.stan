@@ -33,18 +33,18 @@ data {
   vector<lower=0> [H_os] sigma_bg;
 
   int<lower=0, upper=1> joint_model;
-  real[joint_model] mu_joint;
+  real mu_joint[joint_model];
   real<lower=0> sigma_joint[joint_model];
 
   int<lower=0, upper=1> cf_model;         // cure fraction
-  real[cf_model == 3] mu_cf;
-  real[cf_model == 2] mu_cf_os;           // 1- shared; 2- separate; 3- hierarchical
-  real[cf_model == 2] mu_cf_pfs;
+  real mu_cf[cf_model == 3];
+  real mu_cf_os[cf_model == 2];           // 1- shared; 2- separate; 3- hierarchical
+  real mu_cf_pfs[cf_model == 2];
   real<lower=0> sigma_cf[cf_model == 3];
-  real<lower=0> sd_cf_os[cf_model == 2|3];
-  real<lower=0> sd_cf_pfs[cf_model == 2|3];
-  real[cf_model == 1] a_cf;
-  real[cf_model == 1] b_cf;
+  real<lower=0> sd_cf_os[cf_model == 2 || 3];
+  real<lower=0> sd_cf_pfs[cf_model == 2 || 3];
+  real a_cf[cf_model == 1];
+  real b_cf[cf_model == 1];
 
   int<lower=0> t_max;
 }
@@ -53,11 +53,12 @@ parameters {
   vector[H_os] beta_os;       // coefficients in linear predictor (including intercept)
   vector[H_pfs] beta_pfs;
   vector[H_os] beta_bg;
-  real beta_joint[joint_model ? n_os ; 1];
+  real beta_joint;
 
-  real[cf_model == 3] lp_cf_global;
-  real lp_cf_os;
-  real lp_cf_pfs;
+  real cf_pooled[cf_model == 1];
+  real lp_cf_global[cf_model == 3];
+  real lp_cf_os[cf_model == 2 || 3];
+  real lp_cf_pfs[cf_model == 2 || 3];
 }
 
 transformed parameters {
@@ -77,7 +78,6 @@ transformed parameters {
 
   # correlated event times
   lp_os = X_os*beta_os + beta_joint*(t_pfs - 1/exp(beta_pfs[1]));
-  // lp_os = X_os*beta_os;
 
   lp_pfs = X_pfs*beta_pfs;
 
@@ -90,14 +90,15 @@ transformed parameters {
   lambda_os_bg = exp(lp_os_bg);     // background survival with uncertainty
   lambda_pfs_bg = exp(lp_pfs_bg);
 
-  if (cf_model == 3)
-    cf_global = inv_logit(lp_cf_global);
-  if (cf_model == 2|3) {
-    cf_os = inv_logit(lp_cf_os);
-    cf_pfs = inv_logit(lp_cf_pfs);
+  if (cf_model == 3) {
+    cf_global = inv_logit(lp_cf_global[1]);
+  }
+  if (cf_model == 2 || 3) {
+    cf_os = inv_logit(lp_cf_os[1]);
+    cf_pfs = inv_logit(lp_cf_pfs[1]);
   } else {
-    cf_os = cf_global;
-    cf_pfs = cf_global;
+    cf_os = cf_pooled[1];
+    cf_pfs = cf_pooled[1];
   }
 }
 
@@ -107,9 +108,9 @@ model {
   beta_bg ~ normal(mu_bg, sigma_bg);
 
   if (joint_model) {
-    beta_joint ~ normal(mu_joint, sigma_joint);
+    beta_joint ~ normal(mu_joint[1], sigma_joint[1]);
   } else {
-    beta_joint = 0;
+    beta_joint ~ normal(0, 0);  //TODO: how best to set ot 0?
   }
 
   // cure fraction
@@ -121,7 +122,7 @@ model {
     lp_cf_os ~ normal(mu_cf_os, sd_cf_os);
     lp_cf_pfs ~ normal(mu_cf_pfs, sd_cf_pfs);
   } else {
-    cf_global ~ beta(a_cf, b_cf);
+    cf_pooled ~ beta(a_cf, b_cf);
   }
 
   // likelihood
@@ -169,16 +170,16 @@ generated quantities {
   // cure fraction prior
   if (cf_model == 3) {
     //TODO: include extra sd_cf_os, sd_cf_pfs variation?
-    real pcurefrac = normal_rng(mu_cf, sigma_cf);
+    real pcurefrac = normal_rng(mu_cf[1], sigma_cf[1]);
     pmean_cf_os = inv_logit(pcurefrac);
     pmean_cf_pfs = inv_logit(pcurefrac);
   } else if (cf_model == 2) {
-    real pcf_os = normal_rng(mu_cf_os, sd_cf_os);
-    real pcf_pfs = normal_rng(mu_cf_pfs, sd_cf_pfs);
+    real pcf_os = normal_rng(mu_cf_os[1], sd_cf_os[1]);
+    real pcf_pfs = normal_rng(mu_cf_pfs[1], sd_cf_pfs[1]);
     pmean_cf_os = inv_logit(pcf_os);
     pmean_cf_pfs = inv_logit(pcf_pfs);
   } else {
-    real pcurefrac ~ beta(a_cf, b_cf);
+    real pcurefrac = beta_rng(a_cf[1], b_cf[1]);
     pmean_cf_os = pcurefrac;
     pmean_cf_pfs = pcurefrac;
   }

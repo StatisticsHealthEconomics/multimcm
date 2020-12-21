@@ -67,8 +67,7 @@ bmcm_joint_stan_file <- function(input_data,
   stan_file <-
     if (model_os == "exp") {
       if (model_pfs == "exp")           here::here("inst", "stan", "exp_exp_joint_hiercf.stan")
-    } else if (model_pfs == "weibull")  here::here("inst", "stan", "exp_weibull_joint_mix.stan")
-
+      else if (model_pfs == "weibull")  here::here("inst", "stan", "exp_weibull_joint_mix.stan")
     } else if (model_os == "weibull") {
       if (model_pfs == "exp")           here::here("inst", "stan", "weibull_exp_joint_mix.stan")
       else if (model_pfs == "weibull")  here::here("inst", "stan", "weibull_weibull_joint_mix.stan")

@@ -6,12 +6,12 @@
 #'
 #' @param cf_params list consisting of potentially:
 #'                  - mean_beta_cf Mean of cure fraction to use in method of
-#'                  - moments (MoM) to obtain Beta distribution
-#'                  - hyper-parameters a, b
+#'                                 moments (MoM) to obtain Beta distribution
+#'                                 hyper-parameters a, b
 #'                  - var_beta_cf Variance of cure fraction for MoM
 #'                  - mu_cf Mean of cure fraction to use directly
 #'                  - sigma_cf Standard deviation of cure fraction to use directly
-#'                  - sd_cf_os,sd_cf_pfs Hierarchical cure fraction standard deviations
+#'                  - sd_cf_os, sd_cf_pfs Hierarchical cure fraction standard deviations
 #' @param mu_bg Mean of background survival
 #' @param sigma_bg Standard deviation of background survival
 #' @param t_max Time horizon
@@ -26,8 +26,7 @@ prep_shared_params <- function(cf_params = NA,
                                t_max = 60,
                                mu_joint = 0,
                                sigma_joint = 0.1) {
-
-  # cure fraction parameters
+  # all cure fraction parameters
   empty_params <-
     list(a_cf = numeric(0),
          b_cf = numeric(0),
@@ -38,8 +37,8 @@ prep_shared_params <- function(cf_params = NA,
          sd_cf_os = numeric(0),
          sd_cf_pfs = numeric(0))
 
-  if (!is.na(cf_params$mean_beta_cf) &&
-      !is.na(cf_params$var_beta_cf)) {
+  if (!is.null(cf_params$mean_beta_cf) &&
+      !is.null(cf_params$var_beta_cf)) {
 
     mombeta <-
       MoM_beta(cf_params$mean_beta_cf,

@@ -15,9 +15,10 @@
 #' @param params_cf List of possible parameters values;
 #'                  e.g. mean_beta_cf Mean cure fraction (default U[0,1])
 #'                  var_beta_cf Variance of cure fraction
+#' @param params_joint list of mu_joint, sigma_joint
 #' @param centre_age Logical to centre regression covariate
 #' @param cf_model Select cure fraction model. 1: shared; 2: separate ;3: hierarchical
-#' @param joint_model Select joint event time model. TRUE: joint model; FALSE: separate
+#' @param joint_model Logical. Select joint event time model. TRUE: joint model; FALSE: separate
 #' @param ... Additional arguments
 #'
 #' @import rstan
@@ -34,11 +35,11 @@ bmcm_joint_stan_file <- function(input_data,
                                  params_os = NA,
                                  params_pfs = NA,
                                  params_cf = NA,
+                                 params_joint = list(NA),
                                  centre_age = TRUE,
                                  cf_model = 3,
                                  joint_model = TRUE,
                                  ...) {
-
   data_os <-
     #TODO: this could depend on event type with extra argument?
     c(prep_stan_params(model_os, params_os),
@@ -60,7 +61,8 @@ bmcm_joint_stan_file <- function(input_data,
   data_list <-
     c(data_os,
       data_pfs,
-      prep_shared_params(params_cf),
+      prep_shared_params(params_cf,
+                         params_joint),
       cf_model = cf_model,
       joint_model = joint_model)
 

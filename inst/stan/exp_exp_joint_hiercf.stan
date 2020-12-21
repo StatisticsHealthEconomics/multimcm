@@ -36,15 +36,15 @@ data {
   real mu_joint[joint_model];
   real<lower=0> sigma_joint[joint_model];
 
-  int<lower=0, upper=1> cf_model;         // cure fraction
-  real mu_cf[cf_model == 3];
-  real mu_cf_os[cf_model == 2];           // 1- shared; 2- separate; 3- hierarchical
-  real mu_cf_pfs[cf_model == 2];
-  real<lower=0> sigma_cf[cf_model == 3];
-  real<lower=0> sd_cf_os[cf_model == 2 || 3];
-  real<lower=0> sd_cf_pfs[cf_model == 2 || 3];
-  real a_cf[cf_model == 1];
-  real b_cf[cf_model == 1];
+  int<lower=1, upper=3> cf_model;         // cure fraction
+  real mu_cf_gl[cf_model == 3 ? 1 : 0];
+  real mu_cf_os[cf_model == 2 ? 1 : 0];           // 1- shared; 2- separate; 3- hierarchical
+  real mu_cf_pfs[cf_model == 2 ? 1 : 0];
+  real<lower=0> sigma_cf_gl[cf_model == 3 ? 1 : 0];
+  real<lower=0> sd_cf_os[cf_model == 2 || 3 ? 1 : 0];
+  real<lower=0> sd_cf_pfs[cf_model == 2 || 3 ? 1 : 0];
+  real a_cf[cf_model == 1 ? 1 : 0];
+  real b_cf[cf_model == 1 ? 1 : 0];
 
   int<lower=0> t_max;
 }
@@ -53,12 +53,12 @@ parameters {
   vector[H_os] beta_os;       // coefficients in linear predictor (including intercept)
   vector[H_pfs] beta_pfs;
   vector[H_os] beta_bg;
-  real beta_joint;
+  real beta_joint[joint_model];
 
-  real cf_pooled[cf_model == 1];
-  real lp_cf_global[cf_model == 3];
-  real lp_cf_os[cf_model == 2 || 3];
-  real lp_cf_pfs[cf_model == 2 || 3];
+  real<lower=0, upper=1> cf_pooled[cf_model == 1 ? 1 : 0];
+  real lp_cf_global[cf_model == 3 ? 1 : 0];
+  real lp_cf_os[cf_model == 2 || 3 ? 1 : 0];
+  real lp_cf_pfs[cf_model == 2 || 3 ? 1 : 0];
 }
 
 transformed parameters {
@@ -72,12 +72,16 @@ transformed parameters {
   vector[n_os] lambda_os_bg;
   vector[n_os] lambda_pfs_bg;
 
-  real<lower=0, upper=1> cf_global;
+  real<lower=0, upper=1> cf_global[cf_model == 3 ? 1 : 0];
   real<lower=0, upper=1> cf_os;
   real<lower=0, upper=1> cf_pfs;
 
   # correlated event times
-  lp_os = X_os*beta_os + beta_joint*(t_pfs - 1/exp(beta_pfs[1]));
+  if (joint_model) {
+    lp_os = X_os*beta_os + beta_joint[1]*(t_pfs - 1/exp(beta_pfs[1]));
+  } else {
+    lp_os = X_os*beta_os;
+  }
 
   lp_pfs = X_pfs*beta_pfs;
 
@@ -91,7 +95,7 @@ transformed parameters {
   lambda_pfs_bg = exp(lp_pfs_bg);
 
   if (cf_model == 3) {
-    cf_global = inv_logit(lp_cf_global[1]);
+    cf_global = inv_logit(lp_cf_global);
   }
   if (cf_model == 2 || 3) {
     cf_os = inv_logit(lp_cf_os[1]);
@@ -108,14 +112,12 @@ model {
   beta_bg ~ normal(mu_bg, sigma_bg);
 
   if (joint_model) {
-    beta_joint ~ normal(mu_joint[1], sigma_joint[1]);
-  } else {
-    beta_joint ~ normal(0, 0);  //TODO: how best to set ot 0?
+    beta_joint ~ normal(mu_joint, sigma_joint);
   }
 
   // cure fraction
   if (cf_model == 3) {
-    lp_cf_global ~ normal(mu_cf, sigma_cf);
+    lp_cf_global ~ normal(mu_cf_gl, sigma_cf_gl);
     lp_cf_os ~ normal(lp_cf_global, sd_cf_os);
     lp_cf_pfs ~ normal(lp_cf_global, sd_cf_pfs);
   } else if (cf_model == 2) {
@@ -170,7 +172,7 @@ generated quantities {
   // cure fraction prior
   if (cf_model == 3) {
     //TODO: include extra sd_cf_os, sd_cf_pfs variation?
-    real pcurefrac = normal_rng(mu_cf[1], sigma_cf[1]);
+    real pcurefrac = normal_rng(mu_cf_gl[1], sigma_cf_gl[1]);
     pmean_cf_os = inv_logit(pcurefrac);
     pmean_cf_pfs = inv_logit(pcurefrac);
   } else if (cf_model == 2) {

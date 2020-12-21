@@ -90,7 +90,34 @@ out <-
 # plot_S_event_type(stan_files$exp)
 
 stan_list <- list(NIVOLUMAB = out)
-plot_S_joint(stan_list = stan_list)
+gg <- plot_S_joint(stan_list = stan_list)
+gg
+
+# overlay Kaplan-Meier
+##TODO: move to function
+
+library(survival)
+fit_os <- survfit(Surv(os, os_event) ~ 1,
+                  data = filter(surv_input_data, TRTA == "NIVOLUMAB"))
+fit_pfs <- survfit(Surv(pfs, pfs_event) ~ 1,
+                  data = filter(surv_input_data, TRTA == "NIVOLUMAB"))
+km_data <-
+  rbind(
+    data.frame(Tx = "NIVOLUMAB",
+               event_type = "os",
+               time = fit_os$time,
+               surv = fit_os$surv),
+    data.frame(Tx = "NIVOLUMAB",
+               event_type = "pfs",
+               time = fit_pfs$time,
+               surv = fit_pfs$surv))
+
+gg + geom_line(aes(x = time, y = surv),
+               data = km_data,
+               lwd = 1,
+               inherit.aes = FALSE) +
+  xlim(0, 60)
+
 
 plot_prior_predictive(out, event_type = "os")
 plot_prior_predictive(out, event_type = "pfs")

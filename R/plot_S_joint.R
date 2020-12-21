@@ -61,7 +61,6 @@ plot_S_joint <- function(file_names = NA,
 
   ggplot(plot_dat, aes(month, mean, group = type, colour = type)) +
     geom_line() +
-    # facet_grid(. ~ scenario)
     facet_grid(Tx ~ event_type) +
     ylab("Survival") +
     geom_ribbon(aes(x = month, ymin = lower, ymax = upper, fill = type),

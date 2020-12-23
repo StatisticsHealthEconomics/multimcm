@@ -19,7 +19,7 @@ rsurv <- function(n = 100,
     if (distn == "exp") {
       rexp_rgn(n, params$mu, X)
     } else if (distn == "weibull") {
-      rweibull_rgn(n, params$alpha, params$mu, X)      #for mu: it is params$mu? 
+      rweibull_rgn(n, params$alpha, params$mu, X)      #for mu: it is params$mu?
     } else if (distn == "biweibull") {
       do.call(rbiweibull_rgn, c(n = n, X = X, params))
     }
@@ -71,16 +71,15 @@ rsurv_mix <- function(cf = 0.2,
                           list(
                             mu = c(-8, 0.005))),
                       X = rep(c(10, 25, 50, 100), each = 50)) {
-
-  n_distns <- length(distn)
+    n_distns <- length(distn)
 
   if (length(params) != n_distns)
     stop("Number of parameter sets and distributions don't match",
          call. = FALSE)
 
-  z <- rbinom(n, 1, cf) + 1
-  s <- c(sum(z == 1), sum(z == 2))
-  m <- list(X[z == 1], X[z == 2])
+  z <- rbinom(n, 1, cf) + 1        # group indicator
+  s <- c(sum(z == 1), sum(z == 2)) # group sizes
+  m <- split(X, z)                 # group covariates
 
   prop_cens <-
     if (length(prop_cens) < n_distns) {
@@ -106,6 +105,7 @@ rsurv_mix <- function(cf = 0.2,
     times = unlist(out$times),
     t_cens = unlist(out$t_cens),
     status = unlist(out$status),
-    X = unlist(m))
+    X = m,
+    group = sort(as.numeric(z == 2)))
 }
 

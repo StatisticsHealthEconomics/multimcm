@@ -89,7 +89,12 @@ out <-
 
 # plot_S_event_type(stan_files$exp)
 
-stan_list <- list(NIVOLUMAB = out)
+# trta <- "NIVOLUMAB+IPILIMUMAB"
+# trta <- "IPILIMUMAB"
+trta <- "NIVOLUMAB"
+
+# stan_list <- list("NIVOLUMAB+IPILIMUMAB" = out)
+stan_list <- list("NIVOLUMAB" = out)
 gg <- plot_S_joint(stan_list = stan_list)
 gg
 
@@ -98,16 +103,16 @@ gg
 
 library(survival)
 fit_os <- survfit(Surv(os, os_event) ~ 1,
-                  data = filter(surv_input_data, TRTA == "NIVOLUMAB"))
+                  data = filter(surv_input_data, TRTA == trta))
 fit_pfs <- survfit(Surv(pfs, pfs_event) ~ 1,
-                  data = filter(surv_input_data, TRTA == "NIVOLUMAB"))
+                  data = filter(surv_input_data, TRTA == trta))
 km_data <-
   rbind(
-    data.frame(Tx = "NIVOLUMAB",
+    data.frame(Tx = trta,
                event_type = "os",
                time = fit_os$time,
                surv = fit_os$surv),
-    data.frame(Tx = "NIVOLUMAB",
+    data.frame(Tx = trta,
                event_type = "pfs",
                time = fit_pfs$time,
                surv = fit_pfs$surv))

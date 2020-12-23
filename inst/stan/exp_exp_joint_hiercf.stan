@@ -37,12 +37,12 @@ data {
   real<lower=0> sigma_joint[joint_model];
 
   int<lower=1, upper=3> cf_model;         // cure fraction
-  real mu_cf_gl[cf_model == 3 ? 1 : 0];
-  real mu_cf_os[cf_model == 2 ? 1 : 0];           // 1- shared; 2- separate; 3- hierarchical
+  real mu_cf_gl[cf_model == 3 ? 1 : 0];   // 1- shared; 2- separate; 3- hierarchical
+  real mu_cf_os[cf_model == 2 ? 1 : 0];
   real mu_cf_pfs[cf_model == 2 ? 1 : 0];
   real<lower=0> sigma_cf_gl[cf_model == 3 ? 1 : 0];
-  real<lower=0> sd_cf_os[cf_model == 2 || 3 ? 1 : 0];
-  real<lower=0> sd_cf_pfs[cf_model == 2 || 3 ? 1 : 0];
+  real<lower=0> sd_cf_os[cf_model != 1 ? 1 : 0];
+  real<lower=0> sd_cf_pfs[cf_model != 1 ? 1 : 0];
   real a_cf[cf_model == 1 ? 1 : 0];
   real b_cf[cf_model == 1 ? 1 : 0];
 
@@ -57,8 +57,8 @@ parameters {
 
   real<lower=0, upper=1> cf_pooled[cf_model == 1 ? 1 : 0];
   real lp_cf_global[cf_model == 3 ? 1 : 0];
-  real lp_cf_os[cf_model == 2 || 3 ? 1 : 0];
-  real lp_cf_pfs[cf_model == 2 || 3 ? 1 : 0];
+  real lp_cf_os[cf_model != 1 ? 1 : 0];
+  real lp_cf_pfs[cf_model != 1 ? 1 : 0];
 }
 
 transformed parameters {
@@ -97,7 +97,7 @@ transformed parameters {
   if (cf_model == 3) {
     cf_global = inv_logit(lp_cf_global);
   }
-  if (cf_model == 2 || 3) {
+  if (cf_model != 1) {
     cf_os = inv_logit(lp_cf_os[1]);
     cf_pfs = inv_logit(lp_cf_pfs[1]);
   } else {

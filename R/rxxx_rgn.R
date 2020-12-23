@@ -8,7 +8,7 @@
 #'
 rexp_rgn <- function(n, mu, X) {
 
-  linpred <- mu[1] + mu[-1] %*% X
+  linpred <- mu[1] + as.matrix(X) %*% mu[-1]
   rates <- exp(linpred)
 
   rexp(n, rate = rates)
@@ -24,7 +24,7 @@ rexp_rgn <- function(n, mu, X) {
 #'
 rweibull_rgn <- function(n, alpha, mu, X) {
 
-  linpred <- mu[1] + mu[-1] %*% X
+  linpred <- mu[1] + as.matrix(X) %*% mu[-1]
   rates <- exp(linpred)
 
   rweibull(n, shape = alpha, scale = rates)
@@ -41,8 +41,8 @@ rweibull_rgn <- function(n, alpha, mu, X) {
 #'
 rbiweibull_rgn <- function(n, alpha, mu_exp, mu_w, X) {
 
-  lp_exp <- mu_exp[1] + mu_exp[-1] %*% X
-  lp_w <- mu_w[1] + mu_w[-1] %*% X
+  lp_exp <- mu_exp[1] + as.matrix(X) %*% mu_exp[-1]
+  lp_w <- mu_w[1] + as.matrix(X) %*% mu_w[-1]
 
   rates_exp <- exp(lp_exp)
   rates_w <- exp(lp_w)

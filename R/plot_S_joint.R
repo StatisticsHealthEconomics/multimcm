@@ -52,6 +52,15 @@ plot_S_joint <- function(file_names = NA,
                   event_type = "pfs")
   }
 
+  ann_text <-
+    data.frame(event_type = c("os", "pfs"),
+               Tx = rep(tx_names, each = 2),
+               label = c(paste(round(
+                 quantile(fit_stan[[1]]$cf_os,
+                          probs = c(0.05,0.5,0.95)), 2), collapse = " "),
+                 paste(round(
+                   quantile(fit_stan[[1]]$cf_pfs,
+                            probs = c(0.05,0.5,0.95)), 2), collapse = " ")))
   # unnest
   plot_dat <-
     S_stats %>%
@@ -59,12 +68,16 @@ plot_S_joint <- function(file_names = NA,
     bind_rows(.id = "event_type") %>%
     mutate(scenario = paste(event_type, Tx, sep = "_"))
 
-  ggplot(plot_dat, aes(month, mean, group = type, colour = type)) +
+  p <-
+    ggplot(plot_dat, aes(month, mean, group = type, colour = type)) +
     geom_line() +
     facet_grid(Tx ~ event_type) +
     ylab("Survival") +
     geom_ribbon(aes(x = month, ymin = lower, ymax = upper, fill = type),
                 linetype = 0,
                 alpha = 0.2)
+
+  p + geom_text(data = ann_text,
+                aes(x = 40, y = 1, label = label), inherit.aes = FALSE)
 }
 

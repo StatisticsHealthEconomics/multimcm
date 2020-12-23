@@ -15,7 +15,7 @@ library(shinystan)
 library(dplyr)
 library(ggplot2)
 # library(rstanbmcm)
-devtools::load_all()
+# devtools::load_all()
 
 # surv_input_data
 # load("C:/Users/Nathan/Documents/R/mixture_cure_model/data/surv_input_data.RData")

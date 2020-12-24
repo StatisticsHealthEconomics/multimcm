@@ -5,23 +5,25 @@
 
 
 # generate fake checkmate data
-##TODO: problem that eent time are too big
+##TODO: problem that event time are too big
 ##      and then messes-up the joint regression
 
 s_tx_groups <- table(surv_input_data$TRTA)
+mu0 <- -2
+OSage_NIVO <- surv_input_data$OSage[surv_input_data$TRTA == "NIVOLUMAB"]
 
 fake_nivo_pfs <-
   rsurv_mix(cf = 0.45,
             n = s_tx_groups["NIVOLUMAB"],
             distn = c("exp", "exp"),
-            prop_cens = 0.5,
+            prop_cens = 0.2,
             params =
               list(
                 list(
-                  mu = c(-2, 0.005)),
+                  mu = c(mu0, 0.005)),
                 list(
                   mu = c(-8.5, 0.05))),
-            X = surv_input_data$OSage)
+            X = OSage_NIVO)
 
 # centered for joint model
 surv_input_fake <-
@@ -31,18 +33,18 @@ surv_input_fake <-
          pfs_event = ifelse(TRTA == "NIVOLUMAB",
                             fake_nivo_pfs$status, pfs_event)) %>%
   group_by(TRTA) %>%
-  mutate(pfs_centred = pfs - 1/exp(-3))
+  mutate(pfs_centred = pfs - 1/exp(mu0))
 
 X_nivo <-
   data.frame(
-    OSage = surv_input_fake$OSage[surv_input_fake$TRTA == "NIVOLUMAB"],
+    OSage = OSage_NIVO,
     t_pfs = surv_input_fake$pfs_centred[surv_input_fake$TRTA == "NIVOLUMAB"])
 
 fake_nivo_os <-
   rsurv_mix(cf = 0.2,
             n = s_tx_groups["NIVOLUMAB"],
             distn = c("exp", "exp"),
-            prop_cens = 0.5,
+            prop_cens = 0.2,
             params =
               list(
                 list(
@@ -55,7 +57,9 @@ fake_nivo_os <-
 surv_input_fake$os[surv_input_fake$TRTA == "NIVOLUMAB"] <- fake_nivo_os$t_cens
 surv_input_fake$os_event[surv_input_fake$TRTA == "NIVOLUMAB"] <- fake_nivo_os$status
 
-# check KM plots
+
+## plots
+# check Kaplan-Meier
 
 library(survival)
 fit_pfs <- survfit(Surv(fake_nivo_pfs$t_cens, fake_nivo_pfs$status) ~ fake_nivo_pfs$group)

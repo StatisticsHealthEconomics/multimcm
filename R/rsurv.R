@@ -73,7 +73,7 @@ rsurv_mix <- function(cf = 0.2,
                       X = rep(c(10, 25, 50, 100), each = 50)) {
     n_distns <- length(distn)
 
-  if (length(params) != n_distns)
+    if (length(params) != n_distns)
     stop("Number of parameter sets and distributions don't match",
          call. = FALSE)
 

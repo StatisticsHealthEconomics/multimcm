@@ -123,50 +123,5 @@ generated quantities {
     pS_0[i] = exp_Surv(i, pmean_bg + pmean_0);
     S_prior[i] = pmean_cf*pS_bg[i] + (1 - pmean_cf)*pS_0[i];
   }
-
-
-  ////TODO: posterior predictions ----
-  // match input data case-mix
-  //
-  // vector<lower=0> t_tilde[n] =
-  //   exp_mix_rng(curefrac, lambda0, lambda_bg)
-  //
-  //   exp_mix_reg = function(real curefrac, vector lambda0, vector lambda_bg) {
-  //
-  //     vector<lower=0> t[n]
-  //
-  //     for (i in 1:n) {
-  //       //TODO: how is this vectorised over posterior draws?
-  //       real U = uniform_rng(0,1)
-  //
-  //       if (curefrac > U) {
-  //         t[i] = exponential_rng(lambda_bg[i])
-  //       } else {
-  //         t[i] = exponential_rng(lambda_bg[i] + lambda0[i])
-  //       }
-  //     }
-  //     return(t)
-  //   }
-  //
-  // vector<lower=0> lambda_tilde[n] =
-  //   rate_mix_rng(curefrac, lambda0, lambda_bg)
-  //
-  //   rate_mix_reg = function(real curefrac, vector lambda0, vector lambda_bg) {
-  //
-  //     vector<lower=0> lambda[n]
-  //
-  //     for (i in 1:n) {
-  //       // same U for all posterior samples for given individual
-  //       real U = uniform_rng(0,1)
-  //
-  //       if (curefrac > U) {
-  //         lambda[i] = lambda_bg[i]
-  //       } else {
-  //         lambda[i] = lambda_bg[i] + lambda0[i]
-  //       }
-  //     }
-  //     return(lambda)
-  //   }
-
 }
 

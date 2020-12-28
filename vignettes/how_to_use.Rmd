@@ -1,5 +1,5 @@
 ---
-title: "How to use"
+title: "How to use rstanbmcm"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{how_to_use}
@@ -110,6 +110,12 @@ We then define the which distributions we want to fit to the OS anf PFS data, fo
 
 * Finally, the remaining arguments are passed directly to the Stan engine.
 
+
+## Results
+
+### Output data
+
+### Plots
 
 
 

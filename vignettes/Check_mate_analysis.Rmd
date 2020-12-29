@@ -1,0 +1,30 @@
+---
+title: "Checkmate 067 study Bayesian mixture cure model analysis"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Check_mate_analysis}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(rstanbmcm)
+```
+
+## Introduction
+
+See the _How to use rstanbmcm_ vignette for an introduction to how to use the package.
+
+## Model
+
+## Data
+
+## Results
+

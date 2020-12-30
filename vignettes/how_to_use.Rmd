@@ -140,14 +140,14 @@ names(res)
 
 ### Plots
 
-The function `plot_S_joint()` takes a list of multiple Stan runs and creates `ggplot2` grid object of survival curves.
+The function `plot_S_joint()` takes a list of multiple Stan runs and creates `ggplot2` grid object of survival curves for cured, uncured and mixed with 95% credible intervals.
 In our example we simply create a list of one element.
 ```{r warning=FALSE}
 stan_list <- list("IPILIMUMAB" = stan_exp_exp_IPI_)
 gg <- rstanbmcm:::plot_S_joint(stan_list = stan_list)
 ```
 
-In addition, we overlay the Kaplan-Meier curve for the original data.
+In addition, we overlay the Kaplan-Meier curves for the original data using the `survival` package.
 Note that this will always be slightly different since this is for the trial case-mix and the posterior survival curves are for the _average_ patient.
 
 ```{r fig.width=7, warning=FALSE}

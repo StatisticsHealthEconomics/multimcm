@@ -61,13 +61,13 @@ orig_data <- load("~/R/rstanbmcm/data/surv_input_data.RData")
 
 tx_name <- "IPILIMUMAB"
 fileloc_out <- paste0("plots/post_pred_cfsep_exp_exp_", tx_name, ".png")
-plot_post_pred_KM(tx_name, orig_data, fileloc_out)
+plot_post_pred_KM(res, tx_name, orig_data, fileloc_out)
 
 tx_name <- "NIVOLUMAB"
 fileloc_out <- paste0("plots/post_pred_cfsep_exp_exp_", tx_name, ".png")
-plot_post_pred_KM(tx_name, orig_data, fileloc_out)
+plot_post_pred_KM(res, tx_name, orig_data, fileloc_out)
 
 tx_name <- "NIVOLUMAB+IPILIMUMAB"
 fileloc_out <- paste0("plots/post_pred_cfsep_exp_exp_", tx_name, ".png")
-plot_post_pred_KM(tx_name, orig_data, fileloc_out)
+plot_post_pred_KM(res, tx_name, orig_data, fileloc_out)
 

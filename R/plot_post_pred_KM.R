@@ -1,9 +1,10 @@
 
 #' plot_post_pred_KM
 #' 
+#' @param res Stan output
 #' @param tx_name "IPILIMUMAB", "NIVOLUMAB", "NIVOLUMAB+IPILIMUMAB"
-#' @param orig_data
-#' @param fileloc_out
+#' @param orig_data Original study data
+#' @param fileloc_out File address for output plot with extension
 #' 
 #' @return 
 #' 
@@ -17,7 +18,8 @@
 #' fileloc_out <- paste0("plots/post_pred_cfsep_exp_exp_", tx_name, ".png")
 #' plot_post_pred_KM(tx_name, orig_data, fileloc_out)
 #' 
-plot_post_pred_KM <- function(tx_name,
+plot_post_pred_KM <- function(res,
+                              tx_name,
                               orig_data,
                               fileloc_out) {
   

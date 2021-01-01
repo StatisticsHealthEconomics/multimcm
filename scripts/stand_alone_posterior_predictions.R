@@ -12,10 +12,16 @@
 #     data = list(n = 311))
 
 
+tx_name <- "IPILIMUMAB"
+# tx_name <- "NIVOLUMAB"
+# tx_name <- "NIVOLUMAB+IPILIMUMAB"
+
+# cf_model <- "cf separate"
+cf_model <- "cf pooled"
+
 ## stan output
-# stan_out <- readRDS("~/R/rstanbmcm/data/cf separate/stan_exp_exp_IPI_.Rds")
-# stan_out <- readRDS("~/R/rstanbmcm/data/cf separate/stan_exp_exp_NIVOLUMAB_.Rds")
-stan_out <- readRDS("~/R/rstanbmcm/data/cf separate/stan_exp_exp_NIVOLUMAB+IPILIMUMAB_.Rds")
+stan_out <-
+  readRDS(glue::glue("~/R/rstanbmcm/data/{cf_model}/stan_exp_exp_{tx_name}_.Rds"))
 xx <- rstan::extract(stan_out)
 
 # explicitly looping over samples
@@ -57,17 +63,8 @@ res <-
 # Kaplan-Meier plots #
 ######################
 
-orig_data <- load("~/R/rstanbmcm/data/surv_input_data.RData")
-
-tx_name <- "IPILIMUMAB"
-fileloc_out <- paste0("plots/post_pred_cfsep_exp_exp_", tx_name, ".png")
-plot_post_pred_KM(res, tx_name, orig_data, fileloc_out)
-
-tx_name <- "NIVOLUMAB"
-fileloc_out <- paste0("plots/post_pred_cfsep_exp_exp_", tx_name, ".png")
-plot_post_pred_KM(res, tx_name, orig_data, fileloc_out)
-
-tx_name <- "NIVOLUMAB+IPILIMUMAB"
-fileloc_out <- paste0("plots/post_pred_cfsep_exp_exp_", tx_name, ".png")
-plot_post_pred_KM(res, tx_name, orig_data, fileloc_out)
+load("~/R/rstanbmcm/data/surv_input_data.RData")
+fileloc_out <- glue::glue("plots/post_pred_{cf_model}_exp_exp_{tx_name}.png")
+# plot_post_pred_KM(res, tx_name, surv_input_data, fileloc_out)
+plot_post_pred_KM(res, tx_name, surv_input_data)
 

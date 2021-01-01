@@ -21,13 +21,16 @@
 plot_post_pred_KM <- function(res,
                               tx_name,
                               orig_data,
-                              fileloc_out) {
+                              fileloc_out = NA) {
   
   n_post <- 90
   real_data <- orig_data[orig_data$TRTA == tx_name, ]
   yy <- rstan::extract(res)
   
-  png(filename = fileloc_out)
+  if (!is.na(fileloc_out)) {
+    png(filename = fileloc_out)
+    on.exit(dev.off())}
+  
   par(mfrow = c(1,2))
   
   # os
@@ -69,8 +72,7 @@ plot_post_pred_KM <- function(res,
   lines(fit, lwd = 2.5, conf.int = FALSE)
   
   title(tx_name, line = -1, outer = TRUE)
-  dev.off()
   
-  return()
+  invisible(res)
 }
 

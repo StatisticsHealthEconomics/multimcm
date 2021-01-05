@@ -143,16 +143,18 @@ model {
 }
 
 generated quantities {
-  # posterior
+  // posterior
   real mean_os;
   real mean_pfs;
   real mean_bg;
+
   vector[t_max] S_bg;
   vector[t_max] S_os;
   vector[t_max] S_pfs;
   vector[t_max] S_os_pred;
   vector[t_max] S_pfs_pred;
 
+  // prior pred
   real pmean_os;
   real pmean_pfs;
   real pmean_bg;
@@ -186,7 +188,7 @@ generated quantities {
     pmean_cf_pfs = pcurefrac;
   }
 
-  # intercepts
+  // intercepts
   mean_os = exp(beta_os[1]);
   mean_pfs = exp(beta_pfs[1]);
   mean_bg = exp(beta_bg[1]);
@@ -200,7 +202,7 @@ generated quantities {
     S_pfs_pred[i] = cf_pfs*S_bg[i] + (1 - cf_pfs)*S_pfs[i];
   }
 
-  # prior checks
+  // prior checks
   pmean_os = exp(pbeta_os);
   pmean_pfs = exp(pbeta_pfs);
   pmean_bg = exp(pbeta_bg);

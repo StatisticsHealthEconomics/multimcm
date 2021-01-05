@@ -43,9 +43,8 @@ functions {
 }
 
 data {
-  int<lower=1> n;
+  int<lower=1> n; // num individuals
 
-  //TODO: in parameters block instead?
   int<lower=1> n_samples;
   real<lower=0, upper=1> cf_os[n_samples];
   real<lower=0, upper=1> cf_pfs[n_samples];
@@ -55,42 +54,44 @@ data {
   matrix[n_samples, n] lambda_pfs_bg;
 
   // using means
-  // real beta_os[n_samples, 2];
-  // real beta_bg[n_samples, 2];
+  real beta_os[n_samples, 2];
+  real beta_pfs[n_samples, 2];
+  real beta_bg[n_samples, 2];
 }
 
 parameters {
-  //TODO: should these be here?
-  // real<lower=0, upper=1> curefrac;
-  // real beta_os[2];
-  // real beta_bg[2];
 }
 
 generated quantities {
-
-  // // don't
-  // vector[n] lambda_tilde;
-  // real<lower=0> t_tilde[n];
-  // real lambda0 = exp(beta_os[1]);
-  // real lambda_bg = exp(beta_bg[1]);
-  // lambda_tilde = rate_mean_rng(curefrac, lambda0, lambda_bg, n);
-  // t_tilde = exponential_rng(lambda_tilde);
 
   // explicitly loop over samples
   matrix[n_samples, n] lambda_os_tilde;
   real<lower=0> t_os_tilde[n_samples, n];
   matrix[n_samples, n] lambda_pfs_tilde;
   real<lower=0> t_pfs_tilde[n_samples, n];
-  // real lambda0;
-  // real lambda_bg;
+
+  real lambda_os_mean[n_samples];
+  real lambda_pfs_mean[n_samples];
+  real lambda_bg[n_samples];
+  matrix[n_samples, n] lambda_os_bar;
+  real<lower=0> t_os_bar[n_samples, n];
+  matrix[n_samples, n] lambda_pfs_bar;
+  real<lower=0> t_pfs_bar[n_samples, n];
 
   for (i in 1:n_samples) {
 
-    // // using means
-    // lambda0 = exp(beta_os[i, 1]);
-    // lambda_bg = exp(beta_bg[i, 1]);
-    // lambda_tilde[i, 1:n] = rate_mean_rng(curefrac[i], lambda0, lambda_bg, n);
+    // using means
+    lambda_os_mean[i] = exp(beta_os[i, 1]);
+    lambda_pfs_mean[i] = exp(beta_pfs[i, 1]);
+    lambda_bg[i] = exp(beta_bg[i, 1]);
 
+    lambda_os_bar[i, 1:n] = rate_mean_rng(cf_os[i], lambda_os_mean[i], lambda_bg[i], n);
+    t_os_bar[i, ] = exponential_rng(lambda_os_bar[i, ]);
+
+    lambda_pfs_bar[i, 1:n] = rate_mean_rng(cf_pfs[i], lambda_pfs_mean[i], lambda_bg[i], n);
+    t_pfs_bar[i, ] = exponential_rng(lambda_pfs_bar[i, ]);
+
+    // case-mix
     lambda_os_tilde[i, ] = rate_casemix_rng(cf_os[i], lambda_os[i, ], lambda_os_bg[i, ], n);
     t_os_tilde[i, ] = exponential_rng(lambda_os_tilde[i, ]);
 

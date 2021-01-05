@@ -96,4 +96,5 @@ out <-
     iter = 2000,
     thin = 20)
 
+saveRDS(out, "data/joint/stan_exp_exp_NIVOLUMAB_.Rds")
 

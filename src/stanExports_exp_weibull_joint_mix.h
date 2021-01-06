@@ -1238,17 +1238,17 @@ public:
             stan::lang::rethrow_located(std::runtime_error(std::string("Error transforming variable beta_joint: ") + e.what()), current_statement_begin__, prog_reader__());
         }
         current_statement_begin__ = 220;
-        if (!(context__.contains_r("alpha0")))
-            stan::lang::rethrow_located(std::runtime_error(std::string("Variable alpha0 missing")), current_statement_begin__, prog_reader__());
-        vals_r__ = context__.vals_r("alpha0");
+        if (!(context__.contains_r("alpha_pfs")))
+            stan::lang::rethrow_located(std::runtime_error(std::string("Variable alpha_pfs missing")), current_statement_begin__, prog_reader__());
+        vals_r__ = context__.vals_r("alpha_pfs");
         pos__ = 0U;
-        context__.validate_dims("parameter initialization", "alpha0", "double", context__.to_vec());
-        double alpha0(0);
-        alpha0 = vals_r__[pos__++];
+        context__.validate_dims("parameter initialization", "alpha_pfs", "double", context__.to_vec());
+        double alpha_pfs(0);
+        alpha_pfs = vals_r__[pos__++];
         try {
-            writer__.scalar_unconstrain(alpha0);
+            writer__.scalar_unconstrain(alpha_pfs);
         } catch (const std::exception& e) {
-            stan::lang::rethrow_located(std::runtime_error(std::string("Error transforming variable alpha0: ") + e.what()), current_statement_begin__, prog_reader__());
+            stan::lang::rethrow_located(std::runtime_error(std::string("Error transforming variable alpha_pfs: ") + e.what()), current_statement_begin__, prog_reader__());
         }
         current_statement_begin__ = 222;
         if (!(context__.contains_r("curefrac")))
@@ -1317,12 +1317,12 @@ public:
             else
                 beta_joint = in__.scalar_constrain();
             current_statement_begin__ = 220;
-            local_scalar_t__ alpha0;
-            (void) alpha0;  // dummy to suppress unused var warning
+            local_scalar_t__ alpha_pfs;
+            (void) alpha_pfs;  // dummy to suppress unused var warning
             if (jacobian__)
-                alpha0 = in__.scalar_constrain(lp__);
+                alpha_pfs = in__.scalar_constrain(lp__);
             else
-                alpha0 = in__.scalar_constrain();
+                alpha_pfs = in__.scalar_constrain();
             current_statement_begin__ = 222;
             local_scalar_t__ curefrac;
             (void) curefrac;  // dummy to suppress unused var warning
@@ -1390,7 +1390,7 @@ public:
             current_statement_begin__ = 245;
             stan::math::assign(lambda_pfs_bg, stan::math::exp(lp_pfs_bg));
             current_statement_begin__ = 248;
-            stan::math::assign(mean_t_pfs, multiply(lambda_pfs, stan::math::tgamma((1 + (1 / alpha0)))));
+            stan::math::assign(mean_t_pfs, multiply(lambda_pfs, stan::math::tgamma((1 + (1 / alpha_pfs)))));
             current_statement_begin__ = 249;
             stan::math::assign(lp_os, add(multiply(X_os, beta_os), multiply(beta_joint, subtract(t_pfs, mean_t_pfs))));
             current_statement_begin__ = 250;
@@ -1489,13 +1489,13 @@ public:
             current_statement_begin__ = 257;
             lp_accum__.add(normal_log<propto__>(beta_joint, mu_joint, sigma_joint));
             current_statement_begin__ = 259;
-            lp_accum__.add(gamma_log<propto__>(alpha0, a_alpha_pfs, b_alpha_pfs));
+            lp_accum__.add(gamma_log<propto__>(alpha_pfs, a_alpha_pfs, b_alpha_pfs));
             current_statement_begin__ = 261;
             lp_accum__.add(beta_log<propto__>(curefrac, a_cf, b_cf));
             current_statement_begin__ = 263;
             for (int i = 1; i <= n_os; ++i) {
                 current_statement_begin__ = 264;
-                lp_accum__.add((log_sum_exp((stan::math::log(curefrac) + surv_exp_lpdf(get_base1(t_os, i, "t_os", 1), get_base1(d_os, i, "d_os", 1), get_base1(lambda_os_bg, i, "lambda_os_bg", 1), pstream__)), (log1m(curefrac) + surv_exp_lpdf(get_base1(t_os, i, "t_os", 1), get_base1(d_os, i, "d_os", 1), (get_base1(lambda_os_bg, i, "lambda_os_bg", 1) + get_base1(lambda_os, i, "lambda_os", 1)), pstream__))) + log_sum_exp((stan::math::log(curefrac) + surv_exp_lpdf(get_base1(t_pfs, i, "t_pfs", 1), get_base1(d_pfs, i, "d_pfs", 1), get_base1(lambda_pfs_bg, i, "lambda_pfs_bg", 1), pstream__)), (log1m(curefrac) + joint_exp_weibull_lpdf(get_base1(t_pfs, i, "t_pfs", 1), get_base1(d_pfs, i, "d_pfs", 1), alpha0, get_base1(lambda_pfs, i, "lambda_pfs", 1), get_base1(lambda_pfs_bg, i, "lambda_pfs_bg", 1), pstream__)))));
+                lp_accum__.add((log_sum_exp((stan::math::log(curefrac) + surv_exp_lpdf(get_base1(t_os, i, "t_os", 1), get_base1(d_os, i, "d_os", 1), get_base1(lambda_os_bg, i, "lambda_os_bg", 1), pstream__)), (log1m(curefrac) + surv_exp_lpdf(get_base1(t_os, i, "t_os", 1), get_base1(d_os, i, "d_os", 1), (get_base1(lambda_os_bg, i, "lambda_os_bg", 1) + get_base1(lambda_os, i, "lambda_os", 1)), pstream__))) + log_sum_exp((stan::math::log(curefrac) + surv_exp_lpdf(get_base1(t_pfs, i, "t_pfs", 1), get_base1(d_pfs, i, "d_pfs", 1), get_base1(lambda_pfs_bg, i, "lambda_pfs_bg", 1), pstream__)), (log1m(curefrac) + joint_exp_weibull_lpdf(get_base1(t_pfs, i, "t_pfs", 1), get_base1(d_pfs, i, "d_pfs", 1), alpha_pfs, get_base1(lambda_pfs, i, "lambda_pfs", 1), get_base1(lambda_pfs_bg, i, "lambda_pfs_bg", 1), pstream__)))));
             }
         } catch (const std::exception& e) {
             stan::lang::rethrow_located(e, current_statement_begin__, prog_reader__());
@@ -1521,7 +1521,7 @@ public:
         names__.push_back("beta_pfs");
         names__.push_back("beta_bg");
         names__.push_back("beta_joint");
-        names__.push_back("alpha0");
+        names__.push_back("alpha_pfs");
         names__.push_back("curefrac");
         names__.push_back("lp_os");
         names__.push_back("lp_pfs");
@@ -1552,7 +1552,7 @@ public:
         names__.push_back("pbeta_pfs");
         names__.push_back("pbeta_bg");
         names__.push_back("pcurefrac");
-        names__.push_back("palpha0");
+        names__.push_back("palpha_pfs");
     }
     void get_dims(std::vector<std::vector<size_t> >& dimss__) const {
         dimss__.resize(0);
@@ -1683,8 +1683,8 @@ public:
         }
         double beta_joint = in__.scalar_constrain();
         vars__.push_back(beta_joint);
-        double alpha0 = in__.scalar_constrain();
-        vars__.push_back(alpha0);
+        double alpha_pfs = in__.scalar_constrain();
+        vars__.push_back(alpha_pfs);
         double curefrac = in__.scalar_lub_constrain(0, 1);
         vars__.push_back(curefrac);
         double lp__ = 0.0;
@@ -1754,7 +1754,7 @@ public:
             current_statement_begin__ = 245;
             stan::math::assign(lambda_pfs_bg, stan::math::exp(lp_pfs_bg));
             current_statement_begin__ = 248;
-            stan::math::assign(mean_t_pfs, multiply(lambda_pfs, stan::math::tgamma((1 + (1 / alpha0)))));
+            stan::math::assign(mean_t_pfs, multiply(lambda_pfs, stan::math::tgamma((1 + (1 / alpha_pfs)))));
             current_statement_begin__ = 249;
             stan::math::assign(lp_os, add(multiply(X_os, beta_os), multiply(beta_joint, subtract(t_pfs, mean_t_pfs))));
             current_statement_begin__ = 250;
@@ -1909,11 +1909,11 @@ public:
             stan::math::fill(pcurefrac, DUMMY_VAR__);
             stan::math::assign(pcurefrac,beta_rng(a_cf, b_cf, base_rng__));
             current_statement_begin__ = 304;
-            double palpha0;
-            (void) palpha0;  // dummy to suppress unused var warning
-            stan::math::initialize(palpha0, DUMMY_VAR__);
-            stan::math::fill(palpha0, DUMMY_VAR__);
-            stan::math::assign(palpha0,gamma_rng(a_alpha_pfs, b_alpha_pfs, base_rng__));
+            double palpha_pfs;
+            (void) palpha_pfs;  // dummy to suppress unused var warning
+            stan::math::initialize(palpha_pfs, DUMMY_VAR__);
+            stan::math::fill(palpha_pfs, DUMMY_VAR__);
+            stan::math::assign(palpha_pfs,gamma_rng(a_alpha_pfs, b_alpha_pfs, base_rng__));
             // generated quantities statements
             current_statement_begin__ = 307;
             stan::math::assign(mean_os, stan::math::exp(get_base1(beta_os, 1, "beta_os", 1)));
@@ -1936,7 +1936,7 @@ public:
                 current_statement_begin__ = 314;
                 stan::model::assign(S_pfs, 
                             stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
-                            weibull_Surv(i, alpha0, mean_pfs, pstream__), 
+                            weibull_Surv(i, alpha_pfs, mean_pfs, pstream__), 
                             "assigning variable S_pfs");
                 current_statement_begin__ = 316;
                 stan::model::assign(S_os_pred, 
@@ -1970,7 +1970,7 @@ public:
                 current_statement_begin__ = 328;
                 stan::model::assign(pS_pfs, 
                             stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
-                            weibull_Surv(i, palpha0, pmean_pfs, pstream__), 
+                            weibull_Surv(i, palpha_pfs, pmean_pfs, pstream__), 
                             "assigning variable pS_pfs");
                 current_statement_begin__ = 330;
                 stan::model::assign(S_os_prior, 
@@ -2055,7 +2055,7 @@ public:
             current_statement_begin__ = 303;
             vars__.push_back(pcurefrac);
             current_statement_begin__ = 304;
-            vars__.push_back(palpha0);
+            vars__.push_back(palpha_pfs);
         } catch (const std::exception& e) {
             stan::lang::rethrow_located(e, current_statement_begin__, prog_reader__());
             // Next line prevents compiler griping about no return
@@ -2108,7 +2108,7 @@ public:
         param_name_stream__ << "beta_joint";
         param_names__.push_back(param_name_stream__.str());
         param_name_stream__.str(std::string());
-        param_name_stream__ << "alpha0";
+        param_name_stream__ << "alpha_pfs";
         param_names__.push_back(param_name_stream__.str());
         param_name_stream__.str(std::string());
         param_name_stream__ << "curefrac";
@@ -2262,7 +2262,7 @@ public:
         param_name_stream__ << "pcurefrac";
         param_names__.push_back(param_name_stream__.str());
         param_name_stream__.str(std::string());
-        param_name_stream__ << "palpha0";
+        param_name_stream__ << "palpha_pfs";
         param_names__.push_back(param_name_stream__.str());
     }
     void unconstrained_param_names(std::vector<std::string>& param_names__,
@@ -2291,7 +2291,7 @@ public:
         param_name_stream__ << "beta_joint";
         param_names__.push_back(param_name_stream__.str());
         param_name_stream__.str(std::string());
-        param_name_stream__ << "alpha0";
+        param_name_stream__ << "alpha_pfs";
         param_names__.push_back(param_name_stream__.str());
         param_name_stream__.str(std::string());
         param_name_stream__ << "curefrac";
@@ -2445,7 +2445,7 @@ public:
         param_name_stream__ << "pcurefrac";
         param_names__.push_back(param_name_stream__.str());
         param_name_stream__.str(std::string());
-        param_name_stream__ << "palpha0";
+        param_name_stream__ << "palpha_pfs";
         param_names__.push_back(param_name_stream__.str());
     }
 }; // model

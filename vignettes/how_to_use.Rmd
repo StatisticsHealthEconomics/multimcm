@@ -119,7 +119,7 @@ Below we give some basic output specific to `rstanbmcm`.
 ### Output data
 
 ```{r echo=FALSE}
-stan_exp_exp_IPI_ <- readRDS("~/R/rstanbmcm/data/cf separate/stan_exp_exp_IPI_.Rds")
+stan_exp_exp_IPI_ <- readRDS("~/R/rstanbmcm/data/independent/cf separate/stan_exp_exp_IPILIMUMAB_.Rds")
 ```
 
 We can view the raw output from running the Stan model using

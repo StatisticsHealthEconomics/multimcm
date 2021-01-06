@@ -124,13 +124,6 @@ dropping the $S$ dependencies for brevity
 S^* S_u (h^*)^{\delta} + S^* S_u (h_u)^{\delta} = S^* S_u (h^* + h_u)^{\delta}
 \end{equation}
 ```
-For the initial analysis we will assume that the cure fraction is
-independent of the covariates so the posterior distribution is
-
-$$
-p(\pi, \boldsymbol{\beta^u}, \boldsymbol{\beta^*} | \boldsymbol{\delta}, \boldsymbol{x}) \propto L(\pi, \boldsymbol{\beta^u}, \boldsymbol{\beta^*} | \boldsymbol{\delta}, \boldsymbol{x}) f(\pi) g_2(\boldsymbol{\beta^u}) g_3(\boldsymbol{\beta^*})
-$$
-
 ## Bayesian formulation
 
 In a Bayesian approach to modelling, all quantities that are subject to
@@ -175,26 +168,14 @@ probabilistically below the curves for the healthy population, or by
 ensuring that OS behaves in a way to respect some agreed level of
 similarity, or correlation, to PFS).
 
-One effective way of modelling joint (bivariate) distributions is to
-factorise them into a marginal and a conditional distribution (which
-holds as a fundamental rule of probability). In general terms, we can
-then write $p(x,y) = p(x)p(y | x)$. In the context of our model, we can
-use this intuition to model the joint distribution of the PFS and OS
-observed times (in terms of their survival curves) as: $$
-S(t_{OS},t_{PFS}) = P⁡(T_{OS} \geq t_{OS}, T_{PFS} \geq t_{PFS})
-= S_{PFS} (t_{PFS}) S_{OS|PFS}(t_{OS}│T_{PFS} = t_{PFS}).
-$$ The structure above implies that essentially we first create a
-marginal generalised linear regression to model the survival curve for
-the PFS data (as a function of relevant covariates); the second module
-of the model implies another generalised linear regression for the OS
-data, where the observed PFS data act as a covariate (in addition to
-other relevant predictors, which may or may not be the same used for the
-PFS model). Alternative specifications are possible (for instance, the
-generalised linear model can be applied on the scale of the hazard
-function, if more appropriate). This modelling approach can be
-visualised in the graph below.
+The general form of the posterior distribution can be written as
+follows.
 
-![](DAG.png){width="80%"}
+$$
+p(\pi, \boldsymbol{\beta^u}, \boldsymbol{\beta^*} | \boldsymbol{\delta}, \boldsymbol{x}) \propto L(\pi, \boldsymbol{\beta^u}, \boldsymbol{\beta^*} | \boldsymbol{\delta}, \boldsymbol{x}) f(\pi) g_2(\boldsymbol{\beta^u}) g_3(\boldsymbol{\beta^*})
+$$
+
+assuming that the cure fraction is independent of the covariates.
 
 ### Cure fraction
 
@@ -217,8 +198,7 @@ alternatives.
     i.e. $cf_{os} = cf_{os} = cf$ where $$
     logit(cf) \sim N(\mu_{cf}, \sigma_{cf}^2), \;\;
     $$
--   *Separate*: Model each independently.
-$$
+-   *Separate*: Model each independently. $$
     logit(cf_{os}) \sim N(\mu_{cfos}, \sigma_{cfos}^2), \;\;  
     logit(cf_{pfs}) \sim N(\mu_{cfpfs}, \sigma_{cfpfs}^2)  
     $$
@@ -309,6 +289,27 @@ the exponential-weibull model as a version of a poly-hazard model.
 
 ## Jointly distributed event times model
 
+One effective way of modelling joint (bivariate) distributions is to
+factorise them into a marginal and a conditional distribution (which
+holds as a fundamental rule of probability). In general terms, we can
+then write $p(x,y) = p(x)p(y | x)$. In the context of our model, we can
+use this intuition to model the joint distribution of the PFS and OS
+observed times (in terms of their survival curves) as: $$
+S(t_{OS},t_{PFS}) = P⁡(T_{OS} \geq t_{OS}, T_{PFS} \geq t_{PFS})
+= S_{PFS} (t_{PFS}) S_{OS|PFS}(t_{OS}│T_{PFS} = t_{PFS}).
+$$ The structure above implies that essentially we first create a
+marginal generalised linear regression to model the survival curve for
+the PFS data (as a function of relevant covariates); the second module
+of the model implies another generalised linear regression for the OS
+data, where the observed PFS data act as a covariate (in addition to
+other relevant predictors, which may or may not be the same used for the
+PFS model). Alternative specifications are possible (for instance, the
+generalised linear model can be applied on the scale of the hazard
+function, if more appropriate). This modelling approach can be
+visualised in the graph below.
+
+![](DAG.png){width="80%"}
+
 If we factorise into a marginal and conditional components to model the
 underlying bivariate distribution can be written generally as
 
@@ -356,23 +357,33 @@ posterior survival curves below.
 
 For each model and treatment we produce two figures:
 
-1. The expected survival curves with 95% Credible Intervals (CrI). The OS curves are to the left-hand side and PFS curves to the right-hand side.
-Background mortality (i.e. cured patients) is indicated by the red line. Non-cured patients survival curves are shown in dark green and blue for OS and PFS respectively.
-Light green and magenta are the total sample.
-The black line is the Kaplan-Meier curve for the observed data.
-Note that these plots are for an average individual, e.g. at average age, and so we would not expect them to perfectly match the sample data Kaplan-Meier.
+1.  The expected survival curves with 95% Credible Intervals (CrI). The
+    OS curves are to the left-hand side and PFS curves to the right-hand
+    side. Background mortality (i.e. cured patients) is indicated by the
+    red line. Non-cured patients survival curves are shown in dark green
+    and blue for OS and PFS respectively. Light green and magenta are
+    the total sample. The black line is the Kaplan-Meier curve for the
+    observed data. Note that these plots are for an average individual,
+    e.g. at average age, and so we would not expect them to perfectly
+    match the sample data Kaplan-Meier.
 
-2. Kaplan-Meier curves for 50 simulated trials using the posterior prediction distribution for time to event. This is a good model checking plot, indicating if we can replicate data similar to the observed data using the fitted model.
+2.  Kaplan-Meier curves for 50 simulated trials using the posterior
+    prediction distribution for time to event. This is a good model
+    checking plot, indicating if we can replicate data similar to the
+    observed data using the fitted model.
 
-
-For the Checkmate dataset we found that the hierarchical model gave equivalent results to the separate cure fraction model and so for speed of computation and simplicity we only show the separate cure fraction results here.
+For the Checkmate dataset we found that the hierarchical model gave
+equivalent results to the separate cure fraction model and so for speed
+of computation and simplicity we only show the separate cure fraction
+results here.
 
 ### Independent PFS and OS event times
 
 #### Pooled cure fraction
 
-This is the most restrictive model and so as we would expect it gives the worse results.
-The OS is not bas but the PFS CrIs fail to contain the observed data.
+This is the most restrictive model and so as we would expect it gives
+the worse results. The OS is not bas but the PFS CrIs fail to contain
+the observed data.
 
 ```{r fig.show='hold',fig.align='center', out.width="40%", echo=FALSE}
 knitr::include_graphics(c("../plots/S_plots_exp_exp_cf_pooled_IPI.png", "../plots/post_pred_cf pooled_exp_exp_IPILIMUMAB.png"))
@@ -400,14 +411,17 @@ knitr::include_graphics(c("../plots/S_plots_exp_exp_cf_separate_NIVO.png", "../p
 knitr::include_graphics(c("../plots/S_plots_exp_exp_cf_separate_NIVO+IPI.png", "../plots/post_pred_cfsep_exp_exp_NIVOLUMAB+IPILIMUMAB.png"))
 ```
 
-
 ### Jointly distributed PFS and OS event times
 
-We see that the expected OS survival curves are biased; over-estimating the rate.
-This is not the case for the _ipilimumab_. This is due to the additional joint component in the OS linear regression. This may be due to censoring since _ipilimumab_ has the smallest amount. This is an area for research.
+We see that the expected OS survival curves are biased; over-estimating
+the rate. This is not the case for the *ipilimumab*. This is due to the
+additional joint component in the OS linear regression. This may be due
+to censoring since *ipilimumab* has the smallest amount. This is an area
+for research.
 
-However, the model does fit well taking in to account the case-mix of the study population.
-The posterior prediction plots show that the Kaplan-Meier for the observed data lies within the simulated curves.
+However, the model does fit well taking in to account the case-mix of
+the study population. The posterior prediction plots show that the
+Kaplan-Meier for the observed data lies within the simulated curves.
 
 ```{r fig.show='hold',fig.align='center', out.width="40%", echo=FALSE}
 knitr::include_graphics(c("../plots/S_plots_exp_exp_cf_separate_IPI_joint.png", "../plots/post_pred_joint_cf separate_exp_exp_IPILIMUMAB.png"))
@@ -421,19 +435,20 @@ knitr::include_graphics(c("../plots/S_plots_exp_exp_cf_separate_NIVO_joint.png",
 knitr::include_graphics(c("../plots/S_plots_exp_exp_cf_separate_NIVO+IPI_joint.png", "../plots/post_pred_joint_cf separate_exp_exp_NIVOLUMAB+IPILIMUMAB.png"))
 ```
 
-The table below summarises the cure fraction posterior distribution for each scenario.
+The table below summarises the cure fraction posterior distribution for
+each scenario.
 
-| Event times | Cure fraction | Treatment | $cf_{OS}$ (CrI) | $cf_{PFS}$ (CrI) |
-|------|------|------|------|------|
-| Independent | Pooled | IPI | 0.14 (0.12, 0.18) | 0.14 (0.12, 0.18) |
-| Independent | Pooled | NIVO | 0.36 (0.33, 0.41) | 0.36 (0.33, 0.41) |
-| Independent | Pooled | NIVO+IPI | 0.44 (0.4, 0.48) | 0.44 (0.4, 0.48) |
-| Independent | Separate | IPI | 0.27 (0.19, 0.38) | 0.14 (0.1, 0.18) |
-| Independent | Separate | NIVO | 0.42 (0.37, 0.47) | 0.32 (0.27, 0.36) |
-| Independent | Separate | NIVO+IPI | 0.5 (0.45, 0.55) | 0.38 (0.33, 0.43) |
-| Joint | Separate | IPI | 0.18 (0.12, 0.24) | 0.14 (0.11, 0.19) |
-| Joint | Separate | NIVO | 0.16 (0.1, 0.2) | 0.31 (0.26, 0.36) |
-| Joint | Separate | NIVO+IPI | 0.22 (0.17, 0.27) | 0.38 (0.33, 0.43) |
+| Event times | Cure fraction | Treatment | $cf_{OS}$ (CrI)   | $cf_{PFS}$ (CrI)  |
+|-------------|---------------|-----------|-------------------|-------------------|
+| Independent | Pooled        | IPI       | 0.14 (0.12, 0.18) | 0.14 (0.12, 0.18) |
+| Independent | Pooled        | NIVO      | 0.36 (0.33, 0.41) | 0.36 (0.33, 0.41) |
+| Independent | Pooled        | NIVO+IPI  | 0.44 (0.4, 0.48)  | 0.44 (0.4, 0.48)  |
+| Independent | Separate      | IPI       | 0.27 (0.19, 0.38) | 0.14 (0.1, 0.18)  |
+| Independent | Separate      | NIVO      | 0.42 (0.37, 0.47) | 0.32 (0.27, 0.36) |
+| Independent | Separate      | NIVO+IPI  | 0.5 (0.45, 0.55)  | 0.38 (0.33, 0.43) |
+| Joint       | Separate      | IPI       | 0.18 (0.12, 0.24) | 0.14 (0.11, 0.19) |
+| Joint       | Separate      | NIVO      | 0.16 (0.1, 0.2)   | 0.31 (0.26, 0.36) |
+| Joint       | Separate      | NIVO+IPI  | 0.22 (0.17, 0.27) | 0.38 (0.33, 0.43) |
 
 ## Future work
 

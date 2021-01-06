@@ -208,13 +208,6 @@ dropping the \(S\) dependencies for brevity
 S^* S_u (h^*)^{\delta} + S^* S_u (h_u)^{\delta} = S^* S_u (h^* + h_u)^{\delta}
 \end{equation}
 
-For the initial analysis we will assume that the cure fraction is
-independent of the covariates so the posterior distribution is
-
-\[
-p(\pi, \boldsymbol{\beta^u}, \boldsymbol{\beta^*} | \boldsymbol{\delta}, \boldsymbol{x}) \propto L(\pi, \boldsymbol{\beta^u}, \boldsymbol{\beta^*} | \boldsymbol{\delta}, \boldsymbol{x}) f(\pi) g_2(\boldsymbol{\beta^u}) g_3(\boldsymbol{\beta^*})
-\]
-
 \hypertarget{bayesian-formulation}{%
 \subsection{Bayesian formulation}\label{bayesian-formulation}}
 
@@ -260,26 +253,14 @@ probabilistically below the curves for the healthy population, or by
 ensuring that OS behaves in a way to respect some agreed level of
 similarity, or correlation, to PFS).
 
-One effective way of modelling joint (bivariate) distributions is to
-factorise them into a marginal and a conditional distribution (which
-holds as a fundamental rule of probability). In general terms, we can
-then write \(p(x,y) = p(x)p(y | x)\). In the context of our model, we
-can use this intuition to model the joint distribution of the PFS and OS
-observed times (in terms of their survival curves) as: \[
-S(t_{OS},t_{PFS}) = P⁡(T_{OS} \geq t_{OS}, T_{PFS} \geq t_{PFS})
-= S_{PFS} (t_{PFS}) S_{OS|PFS}(t_{OS}│T_{PFS} = t_{PFS}).
-\] The structure above implies that essentially we first create a
-marginal generalised linear regression to model the survival curve for
-the PFS data (as a function of relevant covariates); the second module
-of the model implies another generalised linear regression for the OS
-data, where the observed PFS data act as a covariate (in addition to
-other relevant predictors, which may or may not be the same used for the
-PFS model). Alternative specifications are possible (for instance, the
-generalised linear model can be applied on the scale of the hazard
-function, if more appropriate). This modelling approach can be
-visualised in the graph below.
+The general form of the posterior distribution can be written as
+follows.
 
-\includegraphics[width=0.8\textwidth,height=\textheight]{DAG.png}
+\[
+p(\pi, \boldsymbol{\beta^u}, \boldsymbol{\beta^*} | \boldsymbol{\delta}, \boldsymbol{x}) \propto L(\pi, \boldsymbol{\beta^u}, \boldsymbol{\beta^*} | \boldsymbol{\delta}, \boldsymbol{x}) f(\pi) g_2(\boldsymbol{\beta^u}) g_3(\boldsymbol{\beta^*})
+\]
+
+assuming that the cure fraction is independent of the covariates.
 
 \hypertarget{cure-fraction}{%
 \subsubsection{Cure fraction}\label{cure-fraction}}
@@ -410,6 +391,27 @@ the exponential-weibull model as a version of a poly-hazard model.
 \hypertarget{jointly-distributed-event-times-model}{%
 \subsection{Jointly distributed event times
 model}\label{jointly-distributed-event-times-model}}
+
+One effective way of modelling joint (bivariate) distributions is to
+factorise them into a marginal and a conditional distribution (which
+holds as a fundamental rule of probability). In general terms, we can
+then write \(p(x,y) = p(x)p(y | x)\). In the context of our model, we
+can use this intuition to model the joint distribution of the PFS and OS
+observed times (in terms of their survival curves) as: \[
+S(t_{OS},t_{PFS}) = P⁡(T_{OS} \geq t_{OS}, T_{PFS} \geq t_{PFS})
+= S_{PFS} (t_{PFS}) S_{OS|PFS}(t_{OS}│T_{PFS} = t_{PFS}).
+\] The structure above implies that essentially we first create a
+marginal generalised linear regression to model the survival curve for
+the PFS data (as a function of relevant covariates); the second module
+of the model implies another generalised linear regression for the OS
+data, where the observed PFS data act as a covariate (in addition to
+other relevant predictors, which may or may not be the same used for the
+PFS model). Alternative specifications are possible (for instance, the
+generalised linear model can be applied on the scale of the hazard
+function, if more appropriate). This modelling approach can be
+visualised in the graph below.
+
+\includegraphics[width=0.8\textwidth,height=\textheight]{DAG.png}
 
 If we factorise into a marginal and conditional components to model the
 underlying bivariate distribution can be written generally as

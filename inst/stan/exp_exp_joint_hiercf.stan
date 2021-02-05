@@ -167,6 +167,8 @@ generated quantities {
   vector[t_max] S_os_prior;
   vector[t_max] S_pfs_prior;
 
+  vector[n_os] log_lik;
+
   real pbeta_os = normal_rng(mu_0_os[1], sigma_0_os[1]);
   real pbeta_pfs = normal_rng(mu_0_pfs[1], sigma_0_pfs[1]);
   real pbeta_bg = normal_rng(mu_bg[1], sigma_bg[1]);
@@ -214,6 +216,22 @@ generated quantities {
 
     S_os_prior[i] = pmean_cf_os*pS_bg[i] + (1 - pmean_cf_os)*pS_os[i];
     S_pfs_prior[i] = pmean_cf_pfs*pS_bg[i] + (1 - pmean_cf_pfs)*pS_pfs[i];
+  }
+
+  // log-likelihood for loo
+  // http://mc-stan.org/loo/reference/extract_log_lik.html
+
+  for (n in 1:n_os) {
+    log_lik[n] = log_sum_exp(
+                   log(cf_os) +
+                    surv_exp_lpdf(t_os[n] | d_os[n], lambda_os_bg[n]),
+                  log1m(cf_os) +
+                    surv_exp_lpdf(t_os[n] | d_os[n], lambda_os_bg[n] + lambda_os[n])) +
+                log_sum_exp(
+                  log(cf_pfs) +
+                    surv_exp_lpdf(t_pfs[n] | d_pfs[n], lambda_pfs_bg[n]),
+                  log1m(cf_pfs) +
+                    surv_exp_lpdf(t_pfs[n] | d_pfs[n], lambda_pfs_bg[n] + lambda_pfs[n]));
   }
 }
 

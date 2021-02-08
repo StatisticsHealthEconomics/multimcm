@@ -19,10 +19,12 @@
 #' @param centre_age Logical to centre regression covariate
 #' @param cf_model Select cure fraction model. 1: shared; 2: separate ;3: hierarchical
 #' @param joint_model Logical. Select joint event time model. TRUE: joint model; FALSE: separate
+#' @param bg_model Background model. 1: Exponential distribution; 2: Direct fixed point values from life-table
 #' @param ... Additional arguments
 #'
 #' @import rstan
 #' @import dplyr
+#' @return stanfit object
 #'
 bmcm_joint_stan_file <- function(input_data,
                                  model_os = "exp",
@@ -39,6 +41,7 @@ bmcm_joint_stan_file <- function(input_data,
                                  centre_age = TRUE,
                                  cf_model = 3,
                                  joint_model = TRUE,
+                                 bg_model = 1,
                                  ...) {
   data_os <-
     #TODO: this could depend on event type with extra argument?
@@ -46,14 +49,16 @@ bmcm_joint_stan_file <- function(input_data,
       prep_stan_data(input_data,
                      event_type = "OS",
                      tx_name,
-                     centre_age))
+                     centre_age,
+                     bg_model))
 
   data_pfs <-
     c(prep_stan_params(model_pfs, params_pfs),
       prep_stan_data(input_data,
                      event_type = "PFS",
                      tx_name,
-                     centre_age))
+                     centre_age,
+                     bg_model))
 
   names(data_os) <- paste(names(data_os), "os", sep = "_")
   names(data_pfs) <- paste(names(data_pfs), "pfs", sep = "_")
@@ -62,7 +67,8 @@ bmcm_joint_stan_file <- function(input_data,
     c(data_os,
       data_pfs,
       prep_shared_params(params_cf,
-                         params_joint),
+                         params_joint,
+                         bg_model),
       cf_model = cf_model,
       joint_model = joint_model)
 

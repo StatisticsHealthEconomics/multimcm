@@ -1,5 +1,5 @@
 
-# diagnostic plots ----
+# MCMC diagnostic plots ----
 
 library(bayesplot)
 library(survival)

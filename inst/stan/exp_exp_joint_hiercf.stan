@@ -29,8 +29,11 @@ data {
   vector<lower=0> [H_pfs] sigma_0_pfs;
 
   //TODO: what to do when different type/number covariates for os and pfs?
-  vector[H_os] mu_bg;
-  vector<lower=0> [H_os] sigma_bg;
+  int<lower=1, upper=2> bg_model;
+  vector mu_bg[bg_model == 1 ? H_os : 0];
+  vector<lower=0> sigma_bg[bg_model == 1 ? H_os : 0];
+  vector h_bg_os[bg_model == 2 ? n_os : 0];
+  vector h_bg_pfs[bg_model == 2 ? n_pfs : 0];
 
   int<lower=0, upper=1> joint_model;
   real mu_joint[joint_model];
@@ -52,7 +55,7 @@ data {
 parameters {
   vector[H_os] beta_os;       // coefficients in linear predictor (including intercept)
   vector[H_pfs] beta_pfs;
-  vector[H_os] beta_bg;
+  vector beta_bg[bg_model == 1 ? H_os : 0];
   real beta_joint[joint_model];
 
   real<lower=0, upper=1> cf_pooled[cf_model == 1 ? 1 : 0];
@@ -85,14 +88,20 @@ transformed parameters {
 
   lp_pfs = X_pfs*beta_pfs;
 
-  lp_os_bg = X_os*beta_bg;
-  lp_pfs_bg = X_pfs*beta_bg;
+  if (bg_model == 1) {         // background survival with uncertainty
+    lp_os_bg = X_os*beta_bg;
+    lp_pfs_bg = X_pfs*beta_bg;
+  } else {
+    lp_os_bg = log(h_bg_os);
+    lp_pfs_bg = log(h_bg_pfs);
+  }
+
+  lambda_os_bg = exp(lp_os_bg);
+  lambda_pfs_bg = exp(lp_pfs_bg);
 
   // rate parameters
   lambda_os = exp(lp_os);
   lambda_pfs = exp(lp_pfs);
-  lambda_os_bg = exp(lp_os_bg);     // background survival with uncertainty
-  lambda_pfs_bg = exp(lp_pfs_bg);
 
   if (cf_model == 3) {
     cf_global = inv_logit(lp_cf_global);
@@ -109,7 +118,10 @@ transformed parameters {
 model {
   beta_os ~ normal(mu_0_os, sigma_0_os);
   beta_pfs ~ normal(mu_0_pfs, sigma_0_pfs);
-  beta_bg ~ normal(mu_bg, sigma_bg);
+
+  if (bg_model == 1) {
+    beta_bg ~ normal(mu_bg, sigma_bg);
+  }
 
   if (joint_model) {
     beta_joint ~ normal(mu_joint, sigma_joint);
@@ -156,7 +168,7 @@ generated quantities {
 
   // prior pred
   real pmean_os;
-  real pmean_pfs;i
+  real pmean_pfs;
   real pmean_bg;
   real pmean_cf_os;
   real pmean_cf_pfs;

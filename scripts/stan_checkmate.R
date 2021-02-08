@@ -1,5 +1,6 @@
 
 # run stan mixture cure model
+# without joint arguments
 # CheckMate 067 dataset
 
 

@@ -13,17 +13,16 @@
 #'                  - sigma_cf_gl Standard deviation of cure fraction to use directly
 #'                  - sd_cf_os, sd_cf_pfs Hierarchical cure fraction standard deviations
 #' @param joint_params list: mu_joint, sigma_joint
-#' @param mu_bg Mean of background survival
-#' @param sigma_bg Standard deviation of background survival
+#' @param bg_model Background model. 1: Exponential distribution; 2: fixed point values from life-tables
 #' @param t_max Time horizon
 #'
 #' @return list
 #'
 prep_shared_params <- function(cf_params = NA,
                                joint_params = list(NA),
-                               mu_bg = c(-8.5, 0.03),
-                               sigma_bg = c(1, 1),
+                               bg_model = 1,
                                t_max = 60) {
+
   # all cure fraction parameters
   empty_params <-
     list(a_cf = numeric(0),
@@ -62,10 +61,18 @@ prep_shared_params <- function(cf_params = NA,
     modifyList(empty_joint,
                joint_params)
 
+  bg_params <-
+    if (bg_model == 1) {
+      list(mu_bg = c(-8.5, 0.03),
+           sigma_bg = c(1, 1))
+    } else {
+      NULL}
+
   c(cf_params,
-    c(joint_params,
-      list(t_max = t_max,
-           mu_bg = mu_bg,
-           sigma_bg = sigma_bg)))
+    joint_params,
+    bg_params,
+    list(t_max = t_max,
+         mu_bg = mu_bg,
+         sigma_bg = sigma_bg))
 }
 

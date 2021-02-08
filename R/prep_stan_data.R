@@ -7,6 +7,7 @@
 #' @param event_type PFS, OS
 #' @param tx_name IPILIMUMAB, NIVOLUMAB, NIVOLUMAB+IPILIMUMAB
 #' @param centre_age Logical
+#' @param bg_model Background model. 1: Exponential distribution; 2: fixed point values from life-table
 #'
 #' @return List;
 #'         sample size,
@@ -20,7 +21,8 @@
 prep_stan_data <- function(input_data,
                            event_type,
                            tx_name,
-                           centre_age) {
+                           centre_age,
+                           bg_model = 1) {
 
   event_type <- match.arg(arg = event_type, c("PFS", "OS"))
   tx_name <- match.arg(arg = tx_name,
@@ -45,19 +47,25 @@ prep_stan_data <- function(input_data,
       split(input_data$TRTA)
   }
 
-  # centring
+  # centering
   age_adj <- ifelse(centre_age, mean(tx_dat[[tx_name]][[4]]), 0)
 
-    list(
-      n = nrow(tx_dat[[tx_name]]),
-      t = tx_dat[[tx_name]][[2]],
-      d = tx_dat[[tx_name]][[3]],
-      H = 2,
-      X = matrix(c(rep(1, nrow(tx_dat[[tx_name]])),
-                   tx_dat[[tx_name]][[4]] - age_adj),
-                 byrow = FALSE,
-                 ncol = 2)
-      # h_bg = tx_dat[[tx_name]][[5]]
-    )
+  # background hazard point values
+  h_bg <-
+    if (bg_model == 2) {
+      list(tx_dat[[tx_name]][[5]])
+    } else {
+      NULL}
+
+  c(list(
+    n = nrow(tx_dat[[tx_name]]),
+    t = tx_dat[[tx_name]][[2]],
+    d = tx_dat[[tx_name]][[3]],
+    H = 2,
+    X = matrix(c(rep(1, nrow(tx_dat[[tx_name]])),
+                 tx_dat[[tx_name]][[4]] - age_adj),
+               byrow = FALSE,
+               ncol = 2)),
+    h_bg = h_bg)
 }
 

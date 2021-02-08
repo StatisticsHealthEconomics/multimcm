@@ -354,28 +354,24 @@ $$ $$
 \bar{t}_{PFS} = 1/\mu_{PFS} 
 $$
 
-Where $\bar{t}_{PFS}$ is the mean time to event for PFS. This is
-simple to calculate for the Exponential distribution but is more
-complicated for other survival distributions.
-The parameters $\phi_{iOS}$ and $\phi_{iPFS}$ are the uncured hazard rates for
-individual $i$ for OS and PFS, respectively.
+Where $\bar{t}_{PFS}$ is the mean time to event for PFS. This is simple
+to calculate for the Exponential distribution but is more complicated
+for other survival distributions. The parameters $\phi_{iOS}$ and
+$\phi_{iPFS}$ are the uncured hazard rates for individual $i$ for OS and
+PFS, respectively.
 
 The background hazard rates are specified as follows
 
 $$
 t_{iOS} \sim Exp(\phi^*_{iOS})
-$$
-$$
+$$ $$
 \log(\phi^*_{iOS}) = \beta_0^* + \beta^*_1 age_{iOS}
-$$
-$$
+$$ $$
 t_{iPFS} \sim Exp(\phi^*_{iPFS})
-$$
-$$
+$$ $$
 \log(\phi^*_{iPFS}) = \beta_0^* + \beta^*_1 age_{iPFS}
-$$
-Notice that the coefficients $\beta_0^*$ and $\beta^*_1$ are the same in both equations .
-
+$$ Notice that the coefficients $\beta_0^*$ and $\beta^*_1$ are the same
+in both equations .
 
 ## Results
 
@@ -409,8 +405,8 @@ results here.
 #### Pooled cure fraction
 
 This is the most restrictive model and so as we would expect it gives
-the worse results. The OS is not bas but the PFS CrIs fail to contain
-the observed data.
+the worse results. The OS appears better than the PFS plots; the PFS
+CrIs fail to contain the observed data.
 
 ```{r fig.show='hold',fig.align='center', out.width="40%", echo=FALSE}
 knitr::include_graphics(c("../plots/S_plots_exp_exp_cf_pooled_IPI.png", "../plots/post_pred_cf pooled_exp_exp_IPILIMUMAB.png"))

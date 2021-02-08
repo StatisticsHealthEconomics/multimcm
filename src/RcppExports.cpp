@@ -15,10 +15,7 @@ RcppExport SEXP _rcpp_module_boot_stan_fit4exp_relative_mix_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4exp_weibull_joint_mix_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4gompertz_gompertz_joint_mix_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4postpred_exp_exp_mod();
-<<<<<<< HEAD
-=======
 RcppExport SEXP _rcpp_module_boot_stan_fit4postpred_exp_exp_gqs_mod();
->>>>>>> 9e7d52944c5456ae24dc023293555059dc445118
 RcppExport SEXP _rcpp_module_boot_stan_fit4surv_joint_mix_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4weibull_cf_fixed_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4weibull_relative_mix_mod();

@@ -196,7 +196,8 @@ coefficients of the cured fraction $\beta^*$, then the general form of
 the posterior distribution can be written as follows.
 
 $$
-p(\pi, \boldsymbol{\beta^u}, \boldsymbol{\beta^*} | \boldsymbol{\delta}, \boldsymbol{x}) \propto L(\pi, \boldsymbol{\beta^u}, \boldsymbol{\beta^*} | \boldsymbol{\delta}, \boldsymbol{x}) f(\pi) g_2(\boldsymbol{\beta^u}) g_3(\boldsymbol{\beta^*})
+p(\pi, \boldsymbol{\beta^u}, \boldsymbol{\beta^*} | \boldsymbol{\delta}, \boldsymbol{x}) \propto
+L(\pi, \boldsymbol{\beta^u}, \boldsymbol{\beta^*} | \boldsymbol{\delta}, \boldsymbol{x}) f(\pi) g_2(\boldsymbol{\beta^u}) g_3(\boldsymbol{\beta^*})
 $$
 
 assuming that the cure fraction is independent of the covariates.
@@ -231,6 +232,16 @@ alternatives.
     logit(\pi_{os}) \sim N(\pi, \sigma_{cfos}^2), \;\;  
     logit(\pi_{pfs}) \sim N(\pi, \sigma_{cfpfs}^2)  
     $$
+
+Below is an example DAG for the hierarchical cure fraction without a joint
+time to event component.
+Notice that even without the direct relationship between PFS and OS there
+is still an indirect influence via $\pi$.
+
+```{r, echo=FALSE, fig.align='center', out.width="40%"}
+knitr::include_graphics("hierarchical_DAG.png")
+```
+
 
 ## Exponentially distributed event times
 

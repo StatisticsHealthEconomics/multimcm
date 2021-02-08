@@ -167,6 +167,8 @@ generated quantities {
   vector[t_max] S_os_prior;
   vector[t_max] S_pfs_prior;
 
+  vector[n_os] log_lik;
+
   real pbeta_os = normal_rng(mu_0_os[1], sigma_0_os[1]);
   real pbeta_pfs = normal_rng(mu_0_pfs[1], sigma_0_pfs[1]);
   real pbeta_bg = normal_rng(mu_bg[1], sigma_bg[1]);
@@ -218,7 +220,6 @@ generated quantities {
 
   // log-likelihood for loo
   // http://mc-stan.org/loo/reference/extract_log_lik.html
-  vector[n_os] log_lik;
 
   for (n in 1:n_os) {
     log_lik[n] = log_sum_exp(

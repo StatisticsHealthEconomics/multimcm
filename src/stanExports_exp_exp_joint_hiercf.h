@@ -37,7 +37,7 @@ stan::io::program_reader prog_reader__() {
     reader.add_event(5, 0, "start", "/include/distributions.stan");
     reader.add_event(177, 172, "end", "/include/distributions.stan");
     reader.add_event(177, 6, "restart", "model_exp_exp_joint_hiercf");
-    reader.add_event(391, 218, "end", "model_exp_exp_joint_hiercf");
+    reader.add_event(409, 236, "end", "model_exp_exp_joint_hiercf");
     return reader;
 }
 template <typename T0__, typename T1__>
@@ -1820,6 +1820,7 @@ public:
         names__.push_back("pS_pfs");
         names__.push_back("S_os_prior");
         names__.push_back("S_pfs_prior");
+        names__.push_back("log_lik");
         names__.push_back("pbeta_os");
         names__.push_back("pbeta_pfs");
         names__.push_back("pbeta_bg");
@@ -1927,6 +1928,9 @@ public:
         dimss__.push_back(dims__);
         dims__.resize(0);
         dims__.push_back(t_max);
+        dimss__.push_back(dims__);
+        dims__.resize(0);
+        dims__.push_back(n_os);
         dimss__.push_back(dims__);
         dims__.resize(0);
         dimss__.push_back(dims__);
@@ -2267,138 +2271,151 @@ public:
             stan::math::initialize(S_pfs_prior, DUMMY_VAR__);
             stan::math::fill(S_pfs_prior, DUMMY_VAR__);
             current_statement_begin__ = 341;
+            validate_non_negative_index("log_lik", "n_os", n_os);
+            Eigen::Matrix<double, Eigen::Dynamic, 1> log_lik(n_os);
+            stan::math::initialize(log_lik, DUMMY_VAR__);
+            stan::math::fill(log_lik, DUMMY_VAR__);
+            current_statement_begin__ = 343;
             double pbeta_os;
             (void) pbeta_os;  // dummy to suppress unused var warning
             stan::math::initialize(pbeta_os, DUMMY_VAR__);
             stan::math::fill(pbeta_os, DUMMY_VAR__);
             stan::math::assign(pbeta_os,normal_rng(get_base1(mu_0_os, 1, "mu_0_os", 1), get_base1(sigma_0_os, 1, "sigma_0_os", 1), base_rng__));
-            current_statement_begin__ = 342;
+            current_statement_begin__ = 344;
             double pbeta_pfs;
             (void) pbeta_pfs;  // dummy to suppress unused var warning
             stan::math::initialize(pbeta_pfs, DUMMY_VAR__);
             stan::math::fill(pbeta_pfs, DUMMY_VAR__);
             stan::math::assign(pbeta_pfs,normal_rng(get_base1(mu_0_pfs, 1, "mu_0_pfs", 1), get_base1(sigma_0_pfs, 1, "sigma_0_pfs", 1), base_rng__));
-            current_statement_begin__ = 343;
+            current_statement_begin__ = 345;
             double pbeta_bg;
             (void) pbeta_bg;  // dummy to suppress unused var warning
             stan::math::initialize(pbeta_bg, DUMMY_VAR__);
             stan::math::fill(pbeta_bg, DUMMY_VAR__);
             stan::math::assign(pbeta_bg,normal_rng(get_base1(mu_bg, 1, "mu_bg", 1), get_base1(sigma_bg, 1, "sigma_bg", 1), base_rng__));
             // generated quantities statements
-            current_statement_begin__ = 346;
+            current_statement_begin__ = 348;
             if (as_bool(logical_eq(cf_model, 3))) {
                 {
-                current_statement_begin__ = 348;
+                current_statement_begin__ = 350;
                 local_scalar_t__ pcurefrac(DUMMY_VAR__);
                 (void) pcurefrac;  // dummy to suppress unused var warning
                 stan::math::initialize(pcurefrac, DUMMY_VAR__);
                 stan::math::fill(pcurefrac, DUMMY_VAR__);
                 stan::math::assign(pcurefrac,normal_rng(get_base1(mu_cf_gl, 1, "mu_cf_gl", 1), get_base1(sigma_cf_gl, 1, "sigma_cf_gl", 1), base_rng__));
-                current_statement_begin__ = 349;
+                current_statement_begin__ = 351;
                 stan::math::assign(pmean_cf_os, inv_logit(pcurefrac));
-                current_statement_begin__ = 350;
+                current_statement_begin__ = 352;
                 stan::math::assign(pmean_cf_pfs, inv_logit(pcurefrac));
                 }
             } else if (as_bool(logical_eq(cf_model, 2))) {
                 {
-                current_statement_begin__ = 352;
+                current_statement_begin__ = 354;
                 local_scalar_t__ pcf_os(DUMMY_VAR__);
                 (void) pcf_os;  // dummy to suppress unused var warning
                 stan::math::initialize(pcf_os, DUMMY_VAR__);
                 stan::math::fill(pcf_os, DUMMY_VAR__);
                 stan::math::assign(pcf_os,normal_rng(get_base1(mu_cf_os, 1, "mu_cf_os", 1), get_base1(sd_cf_os, 1, "sd_cf_os", 1), base_rng__));
-                current_statement_begin__ = 353;
+                current_statement_begin__ = 355;
                 local_scalar_t__ pcf_pfs(DUMMY_VAR__);
                 (void) pcf_pfs;  // dummy to suppress unused var warning
                 stan::math::initialize(pcf_pfs, DUMMY_VAR__);
                 stan::math::fill(pcf_pfs, DUMMY_VAR__);
                 stan::math::assign(pcf_pfs,normal_rng(get_base1(mu_cf_pfs, 1, "mu_cf_pfs", 1), get_base1(sd_cf_pfs, 1, "sd_cf_pfs", 1), base_rng__));
-                current_statement_begin__ = 354;
+                current_statement_begin__ = 356;
                 stan::math::assign(pmean_cf_os, inv_logit(pcf_os));
-                current_statement_begin__ = 355;
+                current_statement_begin__ = 357;
                 stan::math::assign(pmean_cf_pfs, inv_logit(pcf_pfs));
                 }
             } else {
                 {
-                current_statement_begin__ = 357;
+                current_statement_begin__ = 359;
                 local_scalar_t__ pcurefrac(DUMMY_VAR__);
                 (void) pcurefrac;  // dummy to suppress unused var warning
                 stan::math::initialize(pcurefrac, DUMMY_VAR__);
                 stan::math::fill(pcurefrac, DUMMY_VAR__);
                 stan::math::assign(pcurefrac,beta_rng(get_base1(a_cf, 1, "a_cf", 1), get_base1(b_cf, 1, "b_cf", 1), base_rng__));
-                current_statement_begin__ = 358;
+                current_statement_begin__ = 360;
                 stan::math::assign(pmean_cf_os, pcurefrac);
-                current_statement_begin__ = 359;
+                current_statement_begin__ = 361;
                 stan::math::assign(pmean_cf_pfs, pcurefrac);
                 }
             }
-            current_statement_begin__ = 363;
-            stan::math::assign(mean_os, stan::math::exp(get_base1(beta_os, 1, "beta_os", 1)));
-            current_statement_begin__ = 364;
-            stan::math::assign(mean_pfs, stan::math::exp(get_base1(beta_pfs, 1, "beta_pfs", 1)));
             current_statement_begin__ = 365;
-            stan::math::assign(mean_bg, stan::math::exp(get_base1(beta_bg, 1, "beta_bg", 1)));
+            stan::math::assign(mean_os, stan::math::exp(get_base1(beta_os, 1, "beta_os", 1)));
+            current_statement_begin__ = 366;
+            stan::math::assign(mean_pfs, stan::math::exp(get_base1(beta_pfs, 1, "beta_pfs", 1)));
             current_statement_begin__ = 367;
+            stan::math::assign(mean_bg, stan::math::exp(get_base1(beta_bg, 1, "beta_bg", 1)));
+            current_statement_begin__ = 369;
             for (int i = 1; i <= t_max; ++i) {
-                current_statement_begin__ = 368;
+                current_statement_begin__ = 370;
                 stan::model::assign(S_bg, 
                             stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
                             exp_Surv(i, mean_bg, pstream__), 
                             "assigning variable S_bg");
-                current_statement_begin__ = 369;
+                current_statement_begin__ = 371;
                 stan::model::assign(S_os, 
                             stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
                             exp_Surv(i, (mean_bg + mean_os), pstream__), 
                             "assigning variable S_os");
-                current_statement_begin__ = 370;
+                current_statement_begin__ = 372;
                 stan::model::assign(S_pfs, 
                             stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
                             exp_Surv(i, (mean_bg + mean_pfs), pstream__), 
                             "assigning variable S_pfs");
-                current_statement_begin__ = 372;
+                current_statement_begin__ = 374;
                 stan::model::assign(S_os_pred, 
                             stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
                             ((cf_os * get_base1(S_bg, i, "S_bg", 1)) + ((1 - cf_os) * get_base1(S_os, i, "S_os", 1))), 
                             "assigning variable S_os_pred");
-                current_statement_begin__ = 373;
+                current_statement_begin__ = 375;
                 stan::model::assign(S_pfs_pred, 
                             stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
                             ((cf_pfs * get_base1(S_bg, i, "S_bg", 1)) + ((1 - cf_pfs) * get_base1(S_pfs, i, "S_pfs", 1))), 
                             "assigning variable S_pfs_pred");
             }
-            current_statement_begin__ = 377;
-            stan::math::assign(pmean_os, stan::math::exp(pbeta_os));
-            current_statement_begin__ = 378;
-            stan::math::assign(pmean_pfs, stan::math::exp(pbeta_pfs));
             current_statement_begin__ = 379;
-            stan::math::assign(pmean_bg, stan::math::exp(pbeta_bg));
+            stan::math::assign(pmean_os, stan::math::exp(pbeta_os));
+            current_statement_begin__ = 380;
+            stan::math::assign(pmean_pfs, stan::math::exp(pbeta_pfs));
             current_statement_begin__ = 381;
+            stan::math::assign(pmean_bg, stan::math::exp(pbeta_bg));
+            current_statement_begin__ = 383;
             for (int i = 1; i <= t_max; ++i) {
-                current_statement_begin__ = 382;
+                current_statement_begin__ = 384;
                 stan::model::assign(pS_bg, 
                             stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
                             exp_Surv(i, pmean_bg, pstream__), 
                             "assigning variable pS_bg");
-                current_statement_begin__ = 383;
+                current_statement_begin__ = 385;
                 stan::model::assign(pS_os, 
                             stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
                             exp_Surv(i, (pmean_bg + pmean_os), pstream__), 
                             "assigning variable pS_os");
-                current_statement_begin__ = 384;
+                current_statement_begin__ = 386;
                 stan::model::assign(pS_pfs, 
                             stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
                             exp_Surv(i, (pmean_bg + pmean_pfs), pstream__), 
                             "assigning variable pS_pfs");
-                current_statement_begin__ = 386;
+                current_statement_begin__ = 388;
                 stan::model::assign(S_os_prior, 
                             stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
                             ((pmean_cf_os * get_base1(pS_bg, i, "pS_bg", 1)) + ((1 - pmean_cf_os) * get_base1(pS_os, i, "pS_os", 1))), 
                             "assigning variable S_os_prior");
-                current_statement_begin__ = 387;
+                current_statement_begin__ = 389;
                 stan::model::assign(S_pfs_prior, 
                             stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
                             ((pmean_cf_pfs * get_base1(pS_bg, i, "pS_bg", 1)) + ((1 - pmean_cf_pfs) * get_base1(pS_pfs, i, "pS_pfs", 1))), 
                             "assigning variable S_pfs_prior");
+            }
+            current_statement_begin__ = 395;
+            for (int n = 1; n <= n_os; ++n) {
+                current_statement_begin__ = 396;
+                stan::model::assign(log_lik, 
+                            stan::model::cons_list(stan::model::index_uni(n), stan::model::nil_index_list()), 
+                            (log_sum_exp((stan::math::log(cf_os) + surv_exp_lpdf(get_base1(t_os, n, "t_os", 1), get_base1(d_os, n, "d_os", 1), get_base1(lambda_os_bg, n, "lambda_os_bg", 1), pstream__)), (log1m(cf_os) + surv_exp_lpdf(get_base1(t_os, n, "t_os", 1), get_base1(d_os, n, "d_os", 1), (get_base1(lambda_os_bg, n, "lambda_os_bg", 1) + get_base1(lambda_os, n, "lambda_os", 1)), pstream__))) + log_sum_exp((stan::math::log(cf_pfs) + surv_exp_lpdf(get_base1(t_pfs, n, "t_pfs", 1), get_base1(d_pfs, n, "d_pfs", 1), get_base1(lambda_pfs_bg, n, "lambda_pfs_bg", 1), pstream__)), (log1m(cf_pfs) + surv_exp_lpdf(get_base1(t_pfs, n, "t_pfs", 1), get_base1(d_pfs, n, "d_pfs", 1), (get_base1(lambda_pfs_bg, n, "lambda_pfs_bg", 1) + get_base1(lambda_pfs, n, "lambda_pfs", 1)), pstream__)))), 
+                            "assigning variable log_lik");
             }
             // validate, write generated quantities
             current_statement_begin__ = 318;
@@ -2468,10 +2485,15 @@ public:
                 vars__.push_back(S_pfs_prior(j_1__));
             }
             current_statement_begin__ = 341;
-            vars__.push_back(pbeta_os);
-            current_statement_begin__ = 342;
-            vars__.push_back(pbeta_pfs);
+            size_t log_lik_j_1_max__ = n_os;
+            for (size_t j_1__ = 0; j_1__ < log_lik_j_1_max__; ++j_1__) {
+                vars__.push_back(log_lik(j_1__));
+            }
             current_statement_begin__ = 343;
+            vars__.push_back(pbeta_os);
+            current_statement_begin__ = 344;
+            vars__.push_back(pbeta_pfs);
+            current_statement_begin__ = 345;
             vars__.push_back(pbeta_bg);
         } catch (const std::exception& e) {
             stan::lang::rethrow_located(e, current_statement_begin__, prog_reader__());
@@ -2699,6 +2721,12 @@ public:
             param_name_stream__ << "S_pfs_prior" << '.' << j_1__ + 1;
             param_names__.push_back(param_name_stream__.str());
         }
+        size_t log_lik_j_1_max__ = n_os;
+        for (size_t j_1__ = 0; j_1__ < log_lik_j_1_max__; ++j_1__) {
+            param_name_stream__.str(std::string());
+            param_name_stream__ << "log_lik" << '.' << j_1__ + 1;
+            param_names__.push_back(param_name_stream__.str());
+        }
         param_name_stream__.str(std::string());
         param_name_stream__ << "pbeta_os";
         param_names__.push_back(param_name_stream__.str());
@@ -2907,6 +2935,12 @@ public:
         for (size_t j_1__ = 0; j_1__ < S_pfs_prior_j_1_max__; ++j_1__) {
             param_name_stream__.str(std::string());
             param_name_stream__ << "S_pfs_prior" << '.' << j_1__ + 1;
+            param_names__.push_back(param_name_stream__.str());
+        }
+        size_t log_lik_j_1_max__ = n_os;
+        for (size_t j_1__ = 0; j_1__ < log_lik_j_1_max__; ++j_1__) {
+            param_name_stream__.str(std::string());
+            param_name_stream__ << "log_lik" << '.' << j_1__ + 1;
             param_names__.push_back(param_name_stream__.str());
         }
         param_name_stream__.str(std::string());

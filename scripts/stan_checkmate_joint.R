@@ -30,9 +30,12 @@ data("surv_input_data")
 # model setup #
 ###############
 
+surv_input_data$PFS_rate <- surv_input_data$PFS_rate/12  # months
+surv_input_data$OS_rate <- surv_input_data$OS_rate/12
+
 save_res <- TRUE
 
-trta_idx <- 3
+trta_idx <- 1
 all_tx_names <- c("IPILIMUMAB", "NIVOLUMAB", "NIVOLUMAB+IPILIMUMAB")
 trta <- all_tx_names[trta_idx]
 
@@ -57,7 +60,7 @@ params_cf <-
             sd_cf_os = array(0.5, 1),
             sd_cf_pfs = array(0.5, 1)))
 
-bg_model_idx <- 1
+bg_model_idx <- 2
 bg_model_names <- c("bg_distn", "bg_fixed")
 bg_model <- bg_model_names[bg_model_idx]
 
@@ -85,10 +88,10 @@ out <-
     thin = 10)
 
 
-if (save_res)
+if (save_res) {
   saveRDS(out,
           file = glue::glue(
-            "data/independent/{cf_model_names[cf_idx]}/stan_{model_os}_{model_pfs}_{trta}.Rds"))
+            "data/independent/{cf_model_names[cf_idx]}/{bg_model}/stan_{model_os}_{model_pfs}_{trta}.Rds"))}
 
 stan_list <- list(out) %>% setNames(trta)
 
@@ -104,7 +107,6 @@ source("R/prep_S_data.R")
 source("R/plot_prior_predictions.R")
 
 gg <- plot_S_joint(stan_list = stan_list)
-gg
 
 # overlay Kaplan-Meier
 ##TODO: move to function
@@ -124,12 +126,20 @@ km_data <-
                time = fit_pfs$time,
                surv = fit_pfs$surv))
 
-gg + geom_line(aes(x = time, y = surv),
-               data = km_data,
-               lwd = 1,
-               inherit.aes = FALSE) +
+s_plot <-
+  gg +
+  geom_line(aes(x = time, y = surv),
+            data = km_data,
+            lwd = 1,
+            inherit.aes = FALSE) +
   xlim(0, 60)
+s_plot
 
-plot_prior_predictive(out, event_type = "os")
-plot_prior_predictive(out, event_type = "pfs")
+ggsave(s_plot,
+       filename = glue::glue(
+         "plots/S_plots_{model_os}_{model_pfs}_{cf_model_names[cf_idx]}_{bg_model}_{trta}.png"))
+
+
+# plot_prior_predictive(out, event_type = "os")
+# plot_prior_predictive(out, event_type = "pfs")
 

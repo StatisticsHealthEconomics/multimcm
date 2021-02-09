@@ -70,7 +70,8 @@ bmcm_joint_stan_file <- function(input_data,
                          params_joint,
                          bg_model),
       cf_model = cf_model,
-      joint_model = joint_model)
+      joint_model = joint_model,
+      bg_model = bg_model)
 
   stan_file <-
     if (model_os == "exp") {

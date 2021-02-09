@@ -12,9 +12,9 @@
 #     data = list(n = 311))
 
 
-# tx_name <- "IPILIMUMAB"
-# tx_name <- "NIVOLUMAB"
-tx_name <- "NIVOLUMAB+IPILIMUMAB"
+# trta <- "IPILIMUMAB"
+# trta <- "NIVOLUMAB"
+trta <- "NIVOLUMAB+IPILIMUMAB"
 
 cf_model <- "cf separate"
 # cf_model <- "cf pooled"
@@ -24,7 +24,7 @@ joint_model <- "joint"
 
 ## stan output
 stan_out <-
-  readRDS(glue::glue("~/R/rstanbmcm/data/{joint_model}/{cf_model}/stan_exp_exp_{tx_name}_.Rds"))
+  readRDS(glue::glue("~/R/rstanbmcm/data/{joint_model}/{cf_model}/stan_exp_exp_{trta}_.Rds"))
 xx <- rstan::extract(stan_out)
 
 # explicitly looping over samples
@@ -54,10 +54,10 @@ res <-
 ######################
 
 load("~/R/rstanbmcm/data/surv_input_data.RData")
-fileloc_out <- glue::glue("plots/post_pred_{joint_model}_{cf_model}_exp_exp_{tx_name}.png")
-plot_post_pred_KM(res, tx_name, surv_input_data, fileloc_out)
-plot_post_pred_KM(res, tx_name, surv_input_data)
-fileloc_out <- glue::glue("plots/post_pred_mean_{joint_model}_{cf_model}_exp_exp_{tx_name}.png")
-plot_post_pred_KM(res, tx_name, surv_input_data, casemix = FALSE, fileloc_out)
-plot_post_pred_KM(res, tx_name, surv_input_data, casemix = FALSE)
+fileloc_out <- glue::glue("plots/post_pred_{joint_model}_{cf_model}_exp_exp_{trta}.png")
+plot_post_pred_KM(res, trta, surv_input_data, fileloc_out)
+plot_post_pred_KM(res, trta, surv_input_data)
+fileloc_out <- glue::glue("plots/post_pred_mean_{joint_model}_{cf_model}_exp_exp_{trta}.png")
+plot_post_pred_KM(res, trta, surv_input_data, casemix = FALSE, fileloc_out)
+plot_post_pred_KM(res, trta, surv_input_data, casemix = FALSE)
 

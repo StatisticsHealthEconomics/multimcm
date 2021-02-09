@@ -53,11 +53,11 @@ prep_stan_data <- function(input_data,
   # background hazard point values
   h_bg <-
     if (bg_model == 2) {
-      list(tx_dat[[tx_name]][[5]])
+      tx_dat[[tx_name]][[5]]
     } else {
-      NULL}
+      numeric(0)}
 
-  c(list(
+  list(
     n = nrow(tx_dat[[tx_name]]),
     t = tx_dat[[tx_name]][[2]],
     d = tx_dat[[tx_name]][[3]],
@@ -65,7 +65,7 @@ prep_stan_data <- function(input_data,
     X = matrix(c(rep(1, nrow(tx_dat[[tx_name]])),
                  tx_dat[[tx_name]][[4]] - age_adj),
                byrow = FALSE,
-               ncol = 2)),
+               ncol = 2),
     h_bg = h_bg)
 }
 

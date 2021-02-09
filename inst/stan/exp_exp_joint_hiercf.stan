@@ -30,10 +30,10 @@ data {
 
   //TODO: what to do when different type/number covariates for os and pfs?
   int<lower=1, upper=2> bg_model;
-  vector mu_bg[bg_model == 1 ? H_os : 0];
-  vector<lower=0> sigma_bg[bg_model == 1 ? H_os : 0];
-  vector h_bg_os[bg_model == 2 ? n_os : 0];
-  vector h_bg_pfs[bg_model == 2 ? n_pfs : 0];
+  vector[bg_model == 1 ? H_os : 0] mu_bg;
+  vector<lower=0>[bg_model == 1 ? H_os : 0] sigma_bg;
+  vector[bg_model == 2 ? n_os : 0] h_bg_os;
+  vector[bg_model == 2 ? n_pfs : 0] h_bg_pfs;
 
   int<lower=0, upper=1> joint_model;
   real mu_joint[joint_model];
@@ -55,7 +55,7 @@ data {
 parameters {
   vector[H_os] beta_os;       // coefficients in linear predictor (including intercept)
   vector[H_pfs] beta_pfs;
-  vector beta_bg[bg_model == 1 ? H_os : 0];
+  vector[bg_model == 1 ? H_os : 0] beta_bg;
   real beta_joint[joint_model];
 
   real<lower=0, upper=1> cf_pooled[cf_model == 1 ? 1 : 0];
@@ -183,7 +183,23 @@ generated quantities {
 
   real pbeta_os = normal_rng(mu_0_os[1], sigma_0_os[1]);
   real pbeta_pfs = normal_rng(mu_0_pfs[1], sigma_0_pfs[1]);
-  real pbeta_bg = normal_rng(mu_bg[1], sigma_bg[1]);
+
+  real pbeta_bg;
+
+  // if (cf_model == 3) {
+    // real vpc_os;
+    // real vpc_pfs;
+    //
+    // vpc_os = sd_cf_os/(sigma_cf_gl + sd_cf_os);
+    // vpc_pfs = sd_cf_pfs/(sigma_cf_gl + sd_cf_pfs);
+  // }
+
+  if (bg_model == 1) {
+    pbeta_bg = normal_rng(mu_bg[1], sigma_bg[1]);
+  } else {
+    // pbeta_bg = log(mean(h_bg_os));
+    pbeta_bg = log(0.001);
+  }
 
   // cure fraction prior
   if (cf_model == 3) {
@@ -205,7 +221,14 @@ generated quantities {
   // intercepts
   mean_os = exp(beta_os[1]);
   mean_pfs = exp(beta_pfs[1]);
-  mean_bg = exp(beta_bg[1]);
+
+  //TODO: this is a short-term hack
+  if (bg_model == 1) {
+    mean_bg = exp(beta_bg[1]);
+  } else {
+    mean_bg = 0.001;
+    // mean_bg = mean(h_bg_os);
+  }
 
   for (i in 1:t_max) {
     S_bg[i] = exp_Surv(i, mean_bg);
@@ -245,5 +268,6 @@ generated quantities {
                   log1m(cf_pfs) +
                     surv_exp_lpdf(t_pfs[n] | d_pfs[n], lambda_pfs_bg[n] + lambda_pfs[n]));
   }
+
 }
 

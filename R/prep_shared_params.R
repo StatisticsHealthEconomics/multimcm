@@ -66,13 +66,12 @@ prep_shared_params <- function(cf_params = NA,
       list(mu_bg = c(-8.5, 0.03),
            sigma_bg = c(1, 1))
     } else {
-      NULL}
+      list(mu_bg = numeric(0),
+           sigma_bg = numeric(0))}
 
   c(cf_params,
     joint_params,
     bg_params,
-    list(t_max = t_max,
-         mu_bg = mu_bg,
-         sigma_bg = sigma_bg))
+    t_max = t_max)
 }
 

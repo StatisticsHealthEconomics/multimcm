@@ -9,6 +9,7 @@ library(loo)
 library(rethinking)
 library(purrr)
 library(dplyr)
+library(tibble)
 
 
 res_hier_fixed <-
@@ -31,7 +32,14 @@ purrr::map(res_sep_distn, loo, cores = 2)
 log_lik_hier_fix <- purrr::map(res_hier_fixed, extract_log_lik)
 log_lik_sep_distn <- purrr::map(res_hier_fixed, extract_log_lik)
 
-purrr::map(log_lik_hier_fix, waic)
+xxx <-
+  purrr::map(log_lik_hier_fix,
+             ~waic(.x)[["estimates"]]) %>%
+  do.call(rbind, .) %>%
+  as.data.frame %>%
+  rownames_to_column(var = "stat") %>%
+  arrange(stat)
+
 purrr::map(log_lik_sep_distn, waic)
 
 # ----
@@ -49,9 +57,9 @@ loo_compare(loo_ipi, loo_nivo)
 
 vpc <- function(out) {
   x <- extract(out)
-  c(pfs = sd(x$lp_cf_global)^2/(sd(x$lp_cf_global)^2 + sd(x$lp_cf_pfs)^2),
-    os = sd(x$lp_cf_global)^2/(sd(x$lp_cf_global)^2 + sd(x$lp_cf_os)^2))
+  c(pfs = round(sd(x$lp_cf_global)^2/(sd(x$lp_cf_global)^2 + sd(x$lp_cf_pfs)^2), 3),
+    os = round(sd(x$lp_cf_global)^2/(sd(x$lp_cf_global)^2 + sd(x$lp_cf_os)^2), 3))
 }
 
-purrr::map_df(res_hier_fixed, vpc)
+knitr::kable(purrr::map_df(res_hier_fixed, vpc))
 

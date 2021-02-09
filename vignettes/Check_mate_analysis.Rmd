@@ -4,12 +4,12 @@ author: "Nathan Green, Gianluca Baio, UCL"
 date: "7 January 2021"
 header_includes: \usepackage{amsmath}
 output:
+  html_document:
+    df_print: paged
   pdf_document: 
     keep_tex: yes
     highlight: zenburn
     latex_engine: xelatex
-  html_document:
-    df_print: paged
   word_document: default
 editor_options: 
   markdown: 
@@ -411,7 +411,7 @@ equivalent results to the separate cure fraction model and so for speed
 of computation and simplicity we only show the separate cure fraction
 results here.
 
-### Independent PFS and OS event times
+### Independent PFS and OS event times, distributional background
 
 #### Pooled cure fraction
 
@@ -450,7 +450,7 @@ knitr::include_graphics(c("../plots/S_plots_exp_exp_cf_separate_NIVO.png", "../p
 knitr::include_graphics(c("../plots/S_plots_exp_exp_cf_separate_NIVO+IPI.png", "../plots/post_pred_cfsep_exp_exp_NIVOLUMAB+IPILIMUMAB.png"))
 ```
 
-### Jointly distributed PFS and OS event times
+### Jointly distributed PFS and OS event times, distributional background
 
 We see that the expected OS survival curves are biased; over-estimating
 the rate. This is not the case for the *ipilimumab*. This is due to the
@@ -478,37 +478,81 @@ knitr::include_graphics(c("../plots/S_plots_exp_exp_cf_separate_NIVO+IPI_joint.p
 The table below summarises the cure fraction posterior distribution for
 each scenario.
 
-| | Event times | Cure fraction | Treatment | $cf_{OS}$ (CrI)   | $cf_{PFS}$ (CrI)  | $\beta_{joint}$ (CrI) |
-|-|-------------|---------------|-----------|-------------------|-------------------|-----------------------|
-|1| Independent | Pooled        | IPI       | 0.14 (0.12, 0.18) | 0.14 (0.12, 0.18) |                       |
-|2| Independent | Pooled        | NIVO      | 0.36 (0.33, 0.41) | 0.36 (0.33, 0.41) |                       |
-|3| Independent | Pooled        | NIVO+IPI  | 0.44 (0.4, 0.48)  | 0.44 (0.4, 0.48)  |                       |
-|4| Independent | Separate      | IPI       | 0.27 (0.19, 0.38) | 0.14 (0.1, 0.18)  |                       |
-|5| Independent | Separate      | NIVO      | 0.42 (0.37, 0.47) | 0.32 (0.27, 0.36) |                       |
-|6| Independent | Separate      | NIVO+IPI  | 0.5 (0.45, 0.55)  | 0.38 (0.33, 0.43) |                       |
-|7| Joint       | Separate      | IPI       | 0.18 (0.12, 0.24) | 0.14 (0.11, 0.19) |                       |
-|8| Joint       | Separate      | NIVO      | 0.16 (0.1, 0.2)   | 0.31 (0.26, 0.36) |                       |
-|9| Joint       | Separate      | NIVO+IPI  | 0.22 (0.17, 0.27) | 0.38 (0.33, 0.43) |                       |
+| | Event times | Cure fraction | Treatment | $cf_{OS}$ (CrI)   | $cf_{PFS}$ (CrI)  | $\beta_{joint}$ (CrI)  |
+|-|------------:|--------------:|----------:|------------------:|------------------:|-----------------------:|
+|1| Independent | Pooled        | IPI       | 0.14 (0.12, 0.18) | 0.14 (0.12, 0.18) |                        |
+|2| Independent | Pooled        | NIVO      | 0.36 (0.33, 0.41) | 0.36 (0.33, 0.41) |                        |
+|3| Independent | Pooled        | NIVO+IPI  | 0.44 (0.4, 0.48)  | 0.44 (0.4, 0.48)  |                        |
+|4| Independent | Separate      | IPI       | 0.27 (0.19, 0.38) | 0.14 (0.1, 0.18)  |                        |
+|5| Independent | Separate      | NIVO      | 0.42 (0.37, 0.47) | 0.32 (0.27, 0.36) |                        |
+|6| Independent | Separate      | NIVO+IPI  | 0.5 (0.45, 0.55)  | 0.38 (0.33, 0.43) |                        |
+|7| Joint       | Separate      | IPI       | 0.18 (0.12, 0.24) | 0.14 (0.11, 0.19) | -0.286 (-0.489, -0.155)|
+|8| Joint       | Separate      | NIVO      | 0.16 (0.1, 0.2)   | 0.31 (0.26, 0.36) | -0.125 (-0.17, -0.094) |
+|9| Joint       | Separate      | NIVO+IPI  | 0.22 (0.17, 0.27) | 0.38 (0.33, 0.43) | -0.145 (-0.212, -0.099)|
 
 
 Leave-one-out cross validation
 
 
 |Model |Statistic | Estimate | SE  |
-|------|----------|----------|-----|
+|-----:|---------:|---------:|----:|
 |   4  | elpd_loo | -1834.3  | 35.6|
 |   5  |          | -1666.8  | 46.2|
 |   6  |          | -1538.5  | 54.3|
-|      |          |          |     |
 |   4  | p_loo    | 7.1      | 0.8 |
 |   5  |          | 8.4      | 0.8 |
 |   6  |          | 9.6      | 1.4 |
-|      |          |          |     |
 |   4  | looic    | 3668.6   | 71.2|
 |   5  |          | 3333.6   | 92.4|
 |   6  |          | 3077.1   |108.6|
 
 
+### Hierarchical cure fraction, fixed (known) background
+
+```{r fig.show='hold',fig.align='center', out.width="40%", echo=FALSE}
+knitr::include_graphics("../plots/S_plots_exp_exp_cf hier_bg_fixed_IPILIMUMAB.png")
+```
+
+```{r fig.show='hold',fig.align='center', out.width="40%", echo=FALSE}
+knitr::include_graphics("../plots/S_plots_exp_exp_cf hier_bg_fixed_NIVOLUMAB.png")
+```
+
+```{r fig.show='hold',fig.align='center', out.width="40%", echo=FALSE}
+knitr::include_graphics("../plots/S_plots_exp_exp_cf_hier_bg_fixed_NIVO+IPI.png")
+```
+
+The table below summarises the cure fraction posterior distribution for
+each scenario.
+
+| | Event times | Cure fraction | Treatment | $cf$ (CrI)          | $cf_{OS}$ (CrI)     | $cf_{PFS}$ (CrI)    |
+|-|------------:|--------------:|----------:|--------------------:|--------------------:|--------------------:|
+|1| Independent | Hierarchical  | IPI       |0.151 (0.068, 0.26)  |0.196 (0.136, 0.255) |0.112 (0.079, 0.155) |
+|2| Independent | Hierarchical  | NIVO      |0.378 (0.216, 0.557) |0.412 (0.35, 0.479)  |0.321 (0.262, 0.379) |
+|3| Independent | Hierarchical  | NIVO+IPI  |0.463 (0.322, 0.62)  |0.519 (0.448, 0.585) |0.398 (0.336, 0.455) |
+
+
+Leave-one-out cross validation statistics:
+
+|         |stat      |     Estimate|          SE|
+|--------:|---------:|------------:|-----------:|
+|IPI      |elpd_waic | -1838.826318|  36.0674047|
+|NIVO     |elpd_waic | -1679.593315|  45.6855459|
+|IPI+NIVO |elpd_waic | -1543.235582|  53.8029923|
+|IPI      |p_waic    |     5.373491|   0.4815243|
+|NIVO     |p_waic    |     7.452234|   0.6225800|
+|IPI+NIVO |p_waic    |     6.671215|   0.5213592|
+|IPI      |waic      |  3677.652636|  72.1348094|
+|NIVO     |waic      |  3359.186630|  91.3710918|
+|IPI+NIVO |waic      |  3086.471164| 107.6059845|
+
+
+The variance partition coefficient (VPC) is defined as $\sigma_{global}^2/ (\sigma_{global}^2 + \sigma_{e}^2)$ where $e = PFS$ or $OS$.
+
+|         |       PFS|        OS|
+|--------:|---------:|---------:|
+|IPI      | 0.8132749| 0.7838815|
+|NIVO     | 0.8760108| 0.8765306|
+|IPI+NIVO | 0.8571695| 0.8459290|
 
 
 ## Future work

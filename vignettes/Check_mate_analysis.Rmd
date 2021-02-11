@@ -4,12 +4,12 @@ author: "Nathan Green, Gianluca Baio, UCL"
 date: "7 January 2021"
 header_includes: \usepackage{amsmath}
 output:
+  html_document:
+    df_print: paged
   pdf_document: 
     keep_tex: yes
     highlight: zenburn
     latex_engine: xelatex
-  html_document:
-    df_print: paged
   word_document: default
 editor_options: 
   markdown: 
@@ -511,49 +511,65 @@ Leave-one-out cross validation
 
 ```{r fig.show='hold',fig.align='center', out.width="40%", echo=FALSE}
 knitr::include_graphics("../plots/S_plots_exp_exp_cf hier_bg_fixed_IPILIMUMAB.png")
+knitr::include_graphics("../plots/S_plots_loglogistic_loglogistic_cf hier_bg_fixed_IPILIMUMAB.png")
 ```
 
 ```{r fig.show='hold',fig.align='center', out.width="40%", echo=FALSE}
 knitr::include_graphics("../plots/S_plots_exp_exp_cf hier_bg_fixed_NIVOLUMAB.png")
+knitr::include_graphics("../plots/S_plots_loglogistic_loglogistic_cf hier_bg_fixed_NIVOLUMAB.png")
 ```
 
 ```{r fig.show='hold',fig.align='center', out.width="40%", echo=FALSE}
 knitr::include_graphics("../plots/S_plots_exp_exp_cf_hier_bg_fixed_NIVO+IPI.png")
+knitr::include_graphics("../plots/S_plots_loglogistic_loglogistic_cf hier_bg_fixed_NIVOLUMAB+IPILIMUMAB.png")
 ```
 
 The table below summarises the cure fraction posterior distribution for
 each scenario.
 
-| | Event times | Cure fraction | Treatment | $cf$ (CrI)          | $cf_{OS}$ (CrI)     | $cf_{PFS}$ (CrI)    |
-|-|------------:|--------------:|----------:|--------------------:|--------------------:|--------------------:|
-|1| Independent | Hierarchical  | IPI       |0.151 (0.068, 0.26)  |0.196 (0.136, 0.255) |0.112 (0.079, 0.155) |
-|2| Independent | Hierarchical  | NIVO      |0.378 (0.216, 0.557) |0.412 (0.35, 0.479)  |0.321 (0.262, 0.379) |
-|3| Independent | Hierarchical  | NIVO+IPI  |0.463 (0.322, 0.62)  |0.519 (0.448, 0.585) |0.398 (0.336, 0.455) |
-
+|   | OS Distn   | PFS Distn  | Treatment           | $cf$ (CrI)          | $cf_{OS}$ (CrI)     | $cf_{PFS}$ (CrI)    |
+|:--|:-----------|:-----------|:--------------------|:--------------------|:--------------------|:--------------------|
+|1  |exp         |exp         |IPILIMUMAB           |0.151 (0.068, 0.26)  |0.196 (0.136, 0.255) |0.112 (0.079, 0.155) |
+|2  |exp         |exp         |NIVOLUMAB            |0.378 (0.216, 0.557) |0.412 (0.35, 0.479)  |0.321 (0.262, 0.379) |
+|3  |exp         |exp         |NIVOLUMAB+IPILIMUMAB |0.463 (0.322, 0.62)  |0.519 (0.448, 0.585) |0.398 (0.336, 0.455) |
+|4  |loglogistic |loglogistic |IPILIMUMAB           |0.133 (0.061, 0.278) |0.133 (0.054, 0.206) |0.113 (0.075, 0.152) |
+|5  |loglogistic |loglogistic |NIVOLUMAB            |0.348 (0.191, 0.526) |0.345 (0.231, 0.456) |0.325 (0.264, 0.382) |
+|6  |loglogistic |loglogistic |NIVOLUMAB+IPILIMUMAB |0.421 (0.266, 0.599) |0.459 (0.37, 0.535)  |0.375 (0.327, 0.421) |
 
 Leave-one-out cross validation statistics:
 
-|         |stat      |     Estimate|          SE|
-|--------:|---------:|------------:|-----------:|
-|IPI      |elpd_waic | -1838.826318|  36.0674047|
-|NIVO     |elpd_waic | -1679.593315|  45.6855459|
-|IPI+NIVO |elpd_waic | -1543.235582|  53.8029923|
-|IPI      |p_waic    |     5.373491|   0.4815243|
-|NIVO     |p_waic    |     7.452234|   0.6225800|
-|IPI+NIVO |p_waic    |     6.671215|   0.5213592|
-|IPI      |waic      |  3677.652636|  72.1348094|
-|NIVO     |waic      |  3359.186630|  91.3710918|
-|IPI+NIVO |waic      |  3086.471164| 107.6059845|
 
+| OS Distn   | PFS Distn  | Treatment           |Statistic   | Estimate|     SE|
+|:-----------|:-----------|:--------------------|:-----------|--------:|------:|
+|exp         |exp         |IPILIMUMAB           |elpd_waic   | -1838.83|  36.07|
+|exp         |exp         |NIVOLUMAB            |elpd_waic.1 | -1679.59|  45.69|
+|exp         |exp         |NIVOLUMAB+IPILIMUMAB |elpd_waic.2 | -1543.24|  53.80|
+|loglogistic |loglogistic |IPILIMUMAB           |elpd_waic.3 | -1768.17|  39.20|
+|loglogistic |loglogistic |NIVOLUMAB            |elpd_waic.4 | -1651.73|  46.02|
+|loglogistic |loglogistic |NIVOLUMAB+IPILIMUMAB |elpd_waic.5 | -1533.95|  53.17|
+|exp         |exp         |IPILIMUMAB           |p_waic      |     5.37|   0.48|
+|exp         |exp         |NIVOLUMAB            |p_waic.1    |     7.45|   0.62|
+|exp         |exp         |NIVOLUMAB+IPILIMUMAB |p_waic.2    |     6.67|   0.52|
+|loglogistic |loglogistic |IPILIMUMAB           |p_waic.3    |     9.19|   0.56|
+|loglogistic |loglogistic |NIVOLUMAB            |p_waic.4    |     9.20|   0.53|
+|loglogistic |loglogistic |NIVOLUMAB+IPILIMUMAB |p_waic.5    |     6.10|   0.50|
+|exp         |exp         |IPILIMUMAB           |waic        |  3677.65|  72.13|
+|exp         |exp         |NIVOLUMAB            |waic.1      |  3359.19|  91.37|
+|exp         |exp         |NIVOLUMAB+IPILIMUMAB |waic.2      |  3086.47| 107.61|
+|loglogistic |loglogistic |IPILIMUMAB           |waic.3      |  3536.33|  78.40|
+|loglogistic |loglogistic |NIVOLUMAB            |waic.4      |  3303.47|  92.04|
+|loglogistic |loglogistic |NIVOLUMAB+IPILIMUMAB |waic.5      |  3067.91| 106.35|
 
 The variance partition coefficient (VPC) is defined as $\sigma_{global}^2/ (\sigma_{global}^2 + \sigma_{e}^2)$ where $e = PFS$ or $OS$.
 
-|         |       PFS|        OS|
-|--------:|---------:|---------:|
-|IPI      | 0.8132749| 0.7838815|
-|NIVO     | 0.8760108| 0.8765306|
-|IPI+NIVO | 0.8571695| 0.8459290|
-
+| OS Distn   | PFS Distn  | Treatment           | PFS    | OS    |
+|:-----------|:-----------|:--------------------|-------:|------:|
+|exp         |exp         |IPILIMUMAB           |   0.813|  0.784|
+|exp         |exp         |NIVOLUMAB            |   0.876|  0.877|
+|exp         |exp         |NIVOLUMAB+IPILIMUMAB |   0.857|  0.846|
+|loglogistic |loglogistic |IPILIMUMAB           |   0.812|  0.604|
+|loglogistic |loglogistic |NIVOLUMAB            |   0.890|  0.672|
+|loglogistic |loglogistic |NIVOLUMAB+IPILIMUMAB |   0.915|  0.786|
 
 ## Future work
 

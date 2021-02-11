@@ -35,7 +35,7 @@ surv_input_data$OS_rate <- surv_input_data$OS_rate/12
 
 save_res <- TRUE
 
-trta_idx <- 1
+trta_idx <- 3
 all_tx_names <- c("IPILIMUMAB", "NIVOLUMAB", "NIVOLUMAB+IPILIMUMAB")
 trta <- all_tx_names[trta_idx]
 
@@ -72,9 +72,9 @@ params_pfs <-
          list(mu_0 = c(-3, 0),
               sigma_0 = c(0.5, 0.01)),
        loglogistic =
-         list(a_shape = 0.5,
-              b_shape = 0.5,
-              mu_0 = c(-3, 0),
+         list(a_shape = 1,
+              b_shape = 1,
+              mu_0 = c(3, 0),
               sigma_0 = c(0.5, 0.01)))
 
 params_os <-
@@ -82,9 +82,9 @@ params_os <-
          list(mu_0 = c(-3, 0),
               sigma_0 = c(0.4, 1)),
        loglogistic =
-         list(a_shape = 0.5,
-              b_shape = 0.5,
-              mu_0 = c(-3, 0),
+         list(a_shape = 1,
+              b_shape = 1,
+              mu_0 = c(3, 0),
               sigma_0 = c(0.4, 1)))
 
 #######
@@ -160,6 +160,6 @@ ggsave(s_plot,
          "plots/S_plots_{model_os}_{model_pfs}_{cf_model_names[cf_idx]}_{bg_model}_{trta}.png"))
 
 
-# plot_prior_predictive(out, event_type = "os")
-# plot_prior_predictive(out, event_type = "pfs")
+plot_prior_predictive(out, event_type = "os")
+plot_prior_predictive(out, event_type = "pfs")
 

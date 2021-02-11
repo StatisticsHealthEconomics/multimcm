@@ -150,42 +150,41 @@ real surv_gompertz_lpdf (real t, real d, real shape, real rate) {
 */
 
 // log hazard
-vector loglogistic_log_h (vector t, real shape, vector scale) {
- vector[num_elements(t)] log_h;
- for (i in 1:num_elements(t)) {
-   log_h[i] = log(shape) - log(scale[i]) +
-              (shape - 1)*(log(t[i]) - log(scale[i])) -
-              log(1 + pow(t[i]/scale[i], shape));
- }
+real loglogistic_log_h (real t, real shape, real scale) {
+ real log_h;
+ log_h = log(shape) - log(scale) +
+            (shape - 1)*(log(t) - log(scale)) -
+            log(1 + pow(t/scale, shape));
  return log_h;
 }
 
 // hazard
-vector loglogistic_haz (vector t, real shape, vector scale) {
- vector[num_elements(t)] haz;
- for (i in 1:num_elements(t)) {
-   haz[i] = (shape/scale[i] * pow(t[i]/scale[i], shape - 1))/
-            (1 + pow((t[i]/scale[i]), shape));
- }
+real loglogistic_haz (real t, real shape, real scale) {
+ real haz;
+ haz = (shape/scale * pow(t/scale, shape - 1))/
+         (1 + pow((t/scale), shape));
  return haz;
 }
 
 // log survival
-vector loglogistic_log_S (vector t, real shape, vector scale) {
- vector[num_elements(t)] log_S;
- for (i in 1:num_elements(t)) {
-   log_S[i] = -log(1 + pow(t[i]/scale[i], shape));
- }
+real loglogistic_log_S (real t, real shape, real scale) {
+ real log_S;
+ log_S = -log(1 + pow(t/scale, shape));
  return log_S;
 }
 
+// survival
+real loglogistic_Surv (real t, real shape, real scale) {
+ real Surv;
+ Surv = 1/(1 + pow(t/scale, shape));
+ return Surv;
+}
+
 // sampling distribution
-real surv_loglogistic_lpdf (vector t, vector d, real shape, vector scale) {
-  vector[num_elements(t)] log_lik;
-  real prob;
-  log_lik = d .* log_h(t, shape,scale) + log_S(t,shape,scale);
-  prob = sum(log_lik);
-  return prob;
+real surv_loglogistic_lpdf (real t, real d, real shape, real scale) {
+  real log_lik;
+  log_lik = d * loglogistic_log_h(t, shape, scale) + loglogistic_log_S(t, shape, scale);
+  return log_lik;
 }
 
 
@@ -241,4 +240,11 @@ real joint_exp_loglogistic_lpdf(real t, real d, real shape, real scale, real rat
             exp_log_S(t, rate) + loglogistic_log_S(t, shape, scale);
   return log_lik;
 }
+
+real exp_loglogistic_Surv(real t, real shape, real scale, real rate) {
+  real Surv;
+  Surv = exp_Surv(t, rate) * loglogistic_Surv(t, shape, scale);
+  return Surv;
+}
+
 

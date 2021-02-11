@@ -55,11 +55,19 @@ tab_cf_pfs <-
                       round(quantile(x, 0.975),3), ")")}) %>%
   do.call(rbind, .)
 
+scenarios <-
+  dir("data/independent/cf hier/bg_fixed") %>%
+  gsub("stan_", "", .) %>%
+  gsub(".Rds", "", .) %>%
+  stringr::str_split("_") %>%
+  do.call(rbind, .)
 
 knitr::kable(
-  cbind(tab_cf_global,
-        tab_cf_os,
-        tab_cf_pfs))
+  cbind(ID = 1:length(tab_cf_global),
+        scenarios,
+        "$cf$ (CrI)" = tab_cf_global,
+        "$cf_{OS}$ (CrI)" = tab_cf_os,
+        "$cf_{PFS}$ (CrI)" = tab_cf_pfs))
 
 
 ## joint, separate

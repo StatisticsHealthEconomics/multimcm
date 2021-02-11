@@ -141,7 +141,7 @@ out <- stan_fn(input_data = surv_input_data,
                model_pfs = i,
                tx_name = j,
                params_pfs = list(mu_0 = c(-2, 0),
-                                sigma_0 = c(0.5, 1)),
+                                 sigma_0 = c(0.5, 1)),
                params_cf = list(mean_beta_cf = 0.30,
                                 var_beta_cf = 0.001),
                algorithm = "Fixed_param",
@@ -193,7 +193,7 @@ out <- stan_fn(input_data = surv_input_data,
                model_pfs = i,
                tx_name = j,
                params_os = list(mu_0 = c(-3, 0),
-                                 sigma_0 = c(0.4, 1)),
+                                sigma_0 = c(0.4, 1)),
                params_cf = list(mean_beta_cf = 0.4,
                                 var_beta_cf = 0.005),
                algorithm = "Fixed_param",
@@ -408,4 +408,37 @@ out <-
 
 plot_prior_predictive(out, event_type = "pfs")
 plot_prior_predictive(out, event_type = "os")
+
+
+## loglogistic
+
+out <-
+  bmcm_joint_stan_file(
+    input_data = surv_input_data,
+    model_os = "loglogistic",
+    model_pfs = "loglogistic",
+    tx_name = "IPILIMUMAB",
+    params_pfs = list(a_shape = 1,
+                      b_shape = 1,
+                      mu_0 = c(2, 0),
+                      sigma_0 = c(0.5, 0.01)),
+    params_os = list(a_shape = 0.5,
+                     b_shape = 0.5,
+                     mu_0 = c(-3, 0),
+                     sigma_0 = c(0.4, 1)),
+    params_cf = list(mu_cf_gl = array(-0.8, 1),
+                     sigma_cf_gl = array(2, 1),
+                     sd_cf_os = array(0.5, 1),
+                     sd_cf_pfs = array(0.5, 1)),
+    cf_model = 3,
+    joint_model = FALSE,
+    bg_model = 2,
+    algorithm = "Fixed_param",
+    warmup = 1,
+    iter = 100,
+    thin = 1)
+
+plot_prior_predictive(out, event_type = "pfs")
+plot_prior_predictive(out, event_type = "os")
+
 

@@ -39,9 +39,9 @@ trta_idx <- 1
 all_tx_names <- c("IPILIMUMAB", "NIVOLUMAB", "NIVOLUMAB+IPILIMUMAB")
 trta <- all_tx_names[trta_idx]
 
-model_os_idx <- 1
-model_pfs_idx <- 1
-model_names <- c("exp", "weibull", "gompertz")
+model_os_idx <- 4
+model_pfs_idx <- 4
+model_names <- c("exp", "weibull", "gompertz", "loglogistic")
 model_os <- model_names[model_os_idx]
 model_pfs <- model_names[model_pfs_idx]
 
@@ -49,21 +49,43 @@ cf_idx <- 3
 cf_model_names <- c("cf pooled", "cf separate", "cf hier")
 
 params_cf <-
-  list(list(mu_cf_gl = array(-0.8, 1),
-            sigma_cf_gl = array(2, 1)),
-       list(mu_cf_os = array(-0.8, 1),
-            mu_cf_pfs = array(-0.8, 1),
-            sd_cf_os = array(0.5, 1),
-            sd_cf_pfs = array(0.5, 1)),
-       list(mu_cf_gl = array(-0.8, 1),
-            sigma_cf_gl = array(2, 1),
-            sd_cf_os = array(0.5, 1),
-            sd_cf_pfs = array(0.5, 1)))
+  list("cf pooled" =
+         list(mu_cf_gl = array(-0.8, 1),
+              sigma_cf_gl = array(2, 1)),
+       "cf separate" =
+         list(mu_cf_os = array(-0.8, 1),
+              mu_cf_pfs = array(-0.8, 1),
+              sd_cf_os = array(0.5, 1),
+              sd_cf_pfs = array(0.5, 1)),
+       "cf hier" =
+         list(mu_cf_gl = array(-0.8, 1),
+              sigma_cf_gl = array(2, 1),
+              sd_cf_os = array(0.5, 1),
+              sd_cf_pfs = array(0.5, 1)))
 
 bg_model_idx <- 2
 bg_model_names <- c("bg_distn", "bg_fixed")
 bg_model <- bg_model_names[bg_model_idx]
 
+params_pfs <-
+  list(exp =
+         list(mu_0 = c(-3, 0),
+              sigma_0 = c(0.5, 0.01)),
+       loglogistic =
+         list(a_shape = 0.5,
+              b_shape = 0.5,
+              mu_0 = c(-3, 0),
+              sigma_0 = c(0.5, 0.01)))
+
+params_os <-
+  list(exp =
+         list(mu_0 = c(-3, 0),
+              sigma_0 = c(0.4, 1)),
+       loglogistic =
+         list(a_shape = 0.5,
+              b_shape = 0.5,
+              mu_0 = c(-3, 0),
+              sigma_0 = c(0.4, 1)))
 
 #######
 # run #
@@ -75,10 +97,8 @@ out <-
     model_os = model_os,
     model_pfs = model_pfs,
     tx_name = trta,
-    params_pfs = list(mu_0 = c(-3, 0),
-                      sigma_0 = c(0.5, 0.01)),
-    params_os = list(mu_0 = c(-3, 0),
-                     sigma_0 = c(0.4, 1)),
+    params_pfs = params_pfs[[model_pfs]],
+    params_os = params_os[[model_os]],
     params_cf = params_cf[[cf_idx]],
     cf_model = cf_idx,                # 1- shared; 2- separate; 3- hierarchical
     joint_model = FALSE,

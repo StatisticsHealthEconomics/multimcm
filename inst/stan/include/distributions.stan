@@ -1,11 +1,13 @@
 
 /**
-* exponential distribution log hazard
+* exponential distribution
 *
 * @param t time
 * @param rate
 * @return A real
 */
+
+//  log hazard
 real exp_log_h (real t, real rate) {
   real logh;
   logh = log(rate);
@@ -50,18 +52,21 @@ real surv_exp_lpdf (real t, real d, real rate) {
 
 
 /**
-* weibull log hazard
+* weibull
 *
 * @param t time
 * @param rate
 * @return A real
 */
+
+// log hazard
 real weibull_log_h (real t, real shape, real scale) {
   real logh;
   logh = log(shape) + (shape - 1)*log(t/scale) - log(scale);
   return logh;
 }
 
+// hazard
 real weibull_haz (real t, real shape, real scale) {
   real h;
   h = shape / scale * pow(t/scale, shape - 1);
@@ -92,18 +97,21 @@ real surv_weibull_lpdf (real t, real d, real shape, real scale) {
 
 
 /**
-* gompertz log hazard
+* gompertz
 *
 * @param t time
 * @param rate
 * @return A real
 */
+
+// log hazard
 real gompertz_log_h (real t, real shape, real rate) {
   real log_h;
   log_h = log(rate) + (shape * t);
   return log_h;
 }
 
+// hazard
 real gompertz_haz (real t, real shape, real rate) {
   real h;
   h = rate*exp(shape*t);
@@ -133,6 +141,55 @@ real surv_gompertz_lpdf (real t, real d, real shape, real rate) {
 
 
 /**
+* log-logistic
+*
+* @param t time
+* @param shape
+* @param scale
+* @return A real
+*/
+
+// log hazard
+vector loglogistic_log_h (vector t, real shape, vector scale) {
+ vector[num_elements(t)] log_h;
+ for (i in 1:num_elements(t)) {
+   log_h[i] = log(shape) - log(scale[i]) +
+              (shape - 1)*(log(t[i]) - log(scale[i])) -
+              log(1 + pow(t[i]/scale[i], shape));
+ }
+ return log_h;
+}
+
+// hazard
+vector loglogistic_haz (vector t, real shape, vector scale) {
+ vector[num_elements(t)] haz;
+ for (i in 1:num_elements(t)) {
+   haz[i] = (shape/scale[i] * pow(t[i]/scale[i], shape - 1))/
+            (1 + pow((t[i]/scale[i]), shape));
+ }
+ return haz;
+}
+
+// log survival
+vector loglogistic_log_S (vector t, real shape, vector scale) {
+ vector[num_elements(t)] log_S;
+ for (i in 1:num_elements(t)) {
+   log_S[i] = -log(1 + pow(t[i]/scale[i], shape));
+ }
+ return log_S;
+}
+
+// sampling distribution
+real surv_loglogistic_lpdf (vector t, vector d, real shape, vector scale) {
+  vector[num_elements(t)] log_lik;
+  real prob;
+  log_lik = d .* log_h(t, shape,scale) + log_S(t,shape,scale);
+  prob = sum(log_lik);
+  return prob;
+}
+
+
+/**
 * combined (non-cured) mortality
 * background (all-cause) and cancer
 */
@@ -140,10 +197,10 @@ real surv_gompertz_lpdf (real t, real d, real shape, real rate) {
 // weibull
 
 real joint_exp_weibull_pdf(real t, real d, real shape, real scale, real rate) {
-  real log_lik;
-  log_lik = exp_Surv(t, rate) * weibull_Surv(t, shape, scale) *
+  real lik;
+  lik = exp_Surv(t, rate) * weibull_Surv(t, shape, scale) *
             pow(exp_haz(t, rate) + weibull_haz(t, shape, scale), d);
-  return log_lik;
+  return lik;
 }
 
 real joint_exp_weibull_lpdf(real t, real d, real shape, real scale, real rate) {
@@ -153,13 +210,13 @@ real joint_exp_weibull_lpdf(real t, real d, real shape, real scale, real rate) {
   return log_lik;
 }
 
-//gompertz
+// gompertz
 
 real joint_exp_gompertz_pdf(real t, real d, real shape, real scale, real rate) {
-  real log_lik;
-  log_lik = exp_Surv(t, rate) * gompertz_Surv(t, shape, scale) *
+  real lik;
+  lik = exp_Surv(t, rate) * gompertz_Surv(t, shape, scale) *
             pow(exp_haz(t, rate) + gompertz_haz(t, shape, scale), d);
-  return log_lik;
+  return lik;
 }
 
 real joint_exp_gompertz_lpdf(real t, real d, real shape, real scale, real rate) {
@@ -169,4 +226,19 @@ real joint_exp_gompertz_lpdf(real t, real d, real shape, real scale, real rate) 
   return log_lik;
 }
 
+// log-logistic
+
+real joint_exp_loglogistic_pdf(real t, real d, real shape, real scale, real rate) {
+  real lik;
+  lik = exp_Surv(t, rate) * loglogistic_Surv(t, shape, scale) *
+            pow(exp_haz(t, rate) + loglogistic_haz(t, shape, scale), d);
+  return lik;
+}
+
+real joint_exp_loglogistic_lpdf(real t, real d, real shape, real scale, real rate) {
+  real log_lik;
+  log_lik = d * log(exp_haz(t, rate) + loglogistic_haz(t, shape, scale)) +
+            exp_log_S(t, rate) + loglogistic_log_S(t, shape, scale);
+  return log_lik;
+}
 

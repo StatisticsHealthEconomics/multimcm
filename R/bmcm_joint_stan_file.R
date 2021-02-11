@@ -80,6 +80,10 @@ bmcm_joint_stan_file <- function(input_data,
     } else if (model_os == "weibull") {
       if (model_pfs == "exp")           here::here("inst", "stan", "weibull_exp_joint_mix.stan")
       else if (model_pfs == "weibull")  here::here("inst", "stan", "weibull_weibull_joint_mix.stan")
+    } else if (model_os == "loglogistic") {
+      if (model_pfs == "exp")           here::here("inst", "stan", "weibull_exp_joint_mix.stan")
+      else if (model_pfs == "weibull")  here::here("inst", "stan", "weibull_weibull_joint_mix.stan")
+      else if (model_pfs == "loglogistic")  here::here("inst", "stan", "loglogistic_loglogistic.stan")
     }
 
   rstan_options(auto_write = TRUE)

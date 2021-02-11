@@ -1,6 +1,8 @@
 
 #' prep_stan_params
 #'
+#' Default parameters for priors if not supplied.
+#'
 #' @param model exp, weibull
 #' @param params
 #' @return hyper-parameters
@@ -18,6 +20,13 @@ prep_stan_params <- function(model,
            sigma_0 = c(1,1)))
   }
   if (model == "weibull") {
+    return(
+      list(a_alpha = 1,
+           b_alpha = 1,
+           mu_0 = c(-3.1, 0),
+           sigma_0 = c(1,1)))
+  }
+  if (model == "loglogistic") {
     return(
       list(a_alpha = 1,
            b_alpha = 1,

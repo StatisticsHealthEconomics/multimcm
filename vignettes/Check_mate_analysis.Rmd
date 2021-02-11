@@ -4,12 +4,12 @@ author: "Nathan Green, Gianluca Baio, UCL"
 date: "7 January 2021"
 header_includes: \usepackage{amsmath}
 output:
-  html_document:
-    df_print: paged
   pdf_document: 
     keep_tex: yes
     highlight: zenburn
     latex_engine: xelatex
+  html_document:
+    df_print: paged
   word_document: default
 editor_options: 
   markdown: 

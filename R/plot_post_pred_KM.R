@@ -1,5 +1,7 @@
 
-#' plot_post_pred_KM
+#' Plot posterior predictive Kaplan-Meier
+#'
+#' Base R used.
 #'
 #' @param res Stan output
 #' @param tx_name "IPILIMUMAB", "NIVOLUMAB", "NIVOLUMAB+IPILIMUMAB"
@@ -45,8 +47,9 @@ plot_post_pred_KM <- function(res,
 
   # os
   y_tilde <- t_os[1, ]
-  fit <- survfit(Surv(y_tilde, rep(1, length(y_tilde))) ~ 1)
-  plot(fit,
+
+  plot(1,
+       type = "n",
        col = "lightblue",
        xlim = c(0, 60),
        conf.int = FALSE,
@@ -54,7 +57,8 @@ plot_post_pred_KM <- function(res,
        ylab = "Survival",
        xlab = "Month",
        bty = "n")
-  for (i in 2:n_post) {
+
+  for (i in seq_len(n_post)) {
     fit <- survfit(Surv(t_os[i, ], rep(1, length(y_tilde))) ~ 1)
     lines(fit, col = "lightblue", conf.int = FALSE)
   }
@@ -64,8 +68,9 @@ plot_post_pred_KM <- function(res,
 
   # pfs
   y_tilde <- t_pfs[1, ]
-  fit <- survfit(Surv(y_tilde, rep(1, length(y_tilde))) ~ 1)
-  plot(fit,
+
+  plot(1,
+       type = "n",
        col = "lightblue",
        xlim = c(0, 60),
        conf.int = FALSE,
@@ -73,11 +78,12 @@ plot_post_pred_KM <- function(res,
        xlab = "Month",
        bty = "n")
 
-  for (i in 2:n_post) {
+  for (i in seq_len(n_post)) {
     fit <- survfit(Surv(t_pfs[i, ], rep(1, length(y_tilde))) ~ 1)
     lines(fit, col = "lightblue", conf.int = FALSE)
   }
 
+  # observed data
   fit <- survfit(Surv(real_data$pfs, real_data$pfs_event) ~ 1)
   lines(fit, lwd = 2.5, conf.int = FALSE)
 

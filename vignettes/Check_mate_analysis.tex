@@ -283,7 +283,8 @@ the coefficients of the cured fraction \(\beta^*\), then the general
 form of the posterior distribution can be written as follows.
 
 \[
-p(\pi, \boldsymbol{\beta^u}, \boldsymbol{\beta^*} | \boldsymbol{\delta}, \boldsymbol{x}) \propto L(\pi, \boldsymbol{\beta^u}, \boldsymbol{\beta^*} | \boldsymbol{\delta}, \boldsymbol{x}) f(\pi) g_2(\boldsymbol{\beta^u}) g_3(\boldsymbol{\beta^*})
+p(\pi, \boldsymbol{\beta^u}, \boldsymbol{\beta^*} | \boldsymbol{\delta}, \boldsymbol{x}) \propto
+L(\pi, \boldsymbol{\beta^u}, \boldsymbol{\beta^*} | \boldsymbol{\delta}, \boldsymbol{x}) f(\pi) g_2(\boldsymbol{\beta^u}) g_3(\boldsymbol{\beta^*})
 \]
 
 assuming that the cure fraction is independent of the covariates.
@@ -325,6 +326,13 @@ alternatives.
   logit(\pi_{pfs}) \sim N(\pi, \sigma_{cfpfs}^2)  
   \]
 \end{itemize}
+
+Below is an example DAG for the hierarchical cure fraction without a
+joint time to event component. Notice that even without the direct
+relationship between PFS and OS there is still an indirect influence via
+\(\pi\).
+
+\begin{center}\includegraphics[width=0.4\linewidth]{hierarchical_DAG} \end{center}
 
 \hypertarget{exponentially-distributed-event-times}{%
 \subsection{Exponentially distributed event
@@ -509,9 +517,9 @@ equivalent results to the separate cure fraction model and so for speed
 of computation and simplicity we only show the separate cure fraction
 results here.
 
-\hypertarget{independent-pfs-and-os-event-times}{%
-\subsubsection{Independent PFS and OS event
-times}\label{independent-pfs-and-os-event-times}}
+\hypertarget{independent-pfs-and-os-event-times-distributional-background}{%
+\subsubsection{Independent PFS and OS event times, distributional
+background}\label{independent-pfs-and-os-event-times-distributional-background}}
 
 \hypertarget{pooled-cure-fraction}{%
 \paragraph{Pooled cure fraction}\label{pooled-cure-fraction}}
@@ -540,9 +548,10 @@ curvature.
 
 \begin{center}\includegraphics[width=0.4\linewidth]{../plots/S_plots_exp_exp_cf_separate_NIVO+IPI} \includegraphics[width=0.4\linewidth]{../plots/post_pred_cfsep_exp_exp_NIVOLUMAB+IPILIMUMAB} \end{center}
 
-\hypertarget{jointly-distributed-pfs-and-os-event-times}{%
-\subsubsection{Jointly distributed PFS and OS event
-times}\label{jointly-distributed-pfs-and-os-event-times}}
+\hypertarget{jointly-distributed-pfs-and-os-event-times-distributional-background}{%
+\subsubsection{Jointly distributed PFS and OS event times,
+distributional
+background}\label{jointly-distributed-pfs-and-os-event-times-distributional-background}}
 
 We see that the expected OS survival curves are biased; over-estimating
 the rate. This is not the case for the \emph{ipilimumab}. This is due to
@@ -563,36 +572,166 @@ Kaplan-Meier for the observed data lies within the simulated curves.
 The table below summarises the cure fraction posterior distribution for
 each scenario.
 
-\begin{longtable}[]{@{}llllll@{}}
+\begin{longtable}[]{@{}lrrrrrr@{}}
 \toprule
-& Event times & Cure fraction & Treatment & \(cf_{OS}\) (CrI) &
-\(cf_{PFS}\) (CrI)\tabularnewline
+\begin{minipage}[b]{0.01\columnwidth}\raggedright
+\strut
+\end{minipage} & \begin{minipage}[b]{0.10\columnwidth}\raggedleft
+Event times\strut
+\end{minipage} & \begin{minipage}[b]{0.12\columnwidth}\raggedleft
+Cure fraction\strut
+\end{minipage} & \begin{minipage}[b]{0.09\columnwidth}\raggedleft
+Treatment\strut
+\end{minipage} & \begin{minipage}[b]{0.15\columnwidth}\raggedleft
+\(cf_{OS}\) (CrI)\strut
+\end{minipage} & \begin{minipage}[b]{0.15\columnwidth}\raggedleft
+\(cf_{PFS}\) (CrI)\strut
+\end{minipage} & \begin{minipage}[b]{0.19\columnwidth}\raggedleft
+\(\beta_{joint}\) (CrI)\strut
+\end{minipage}\tabularnewline
 \midrule
 \endhead
-1 & Independent & Pooled & IPI & 0.14 (0.12, 0.18) & 0.14 (0.12,
-0.18)\tabularnewline
-2 & Independent & Pooled & NIVO & 0.36 (0.33, 0.41) & 0.36 (0.33,
-0.41)\tabularnewline
-3 & Independent & Pooled & NIVO+IPI & 0.44 (0.4, 0.48) & 0.44 (0.4,
-0.48)\tabularnewline
-4 & Independent & Separate & IPI & 0.27 (0.19, 0.38) & 0.14 (0.1,
-0.18)\tabularnewline
-5 & Independent & Separate & NIVO & 0.42 (0.37, 0.47) & 0.32 (0.27,
-0.36)\tabularnewline
-6 & Independent & Separate & NIVO+IPI & 0.5 (0.45, 0.55) & 0.38 (0.33,
-0.43)\tabularnewline
-7 & Joint & Separate & IPI & 0.18 (0.12, 0.24) & 0.14 (0.11,
-0.19)\tabularnewline
-8 & Joint & Separate & NIVO & 0.16 (0.1, 0.2) & 0.31 (0.26,
-0.36)\tabularnewline
-9 & Joint & Separate & NIVO+IPI & 0.22 (0.17, 0.27) & 0.38 (0.33,
-0.43)\tabularnewline
+\begin{minipage}[t]{0.01\columnwidth}\raggedright
+1\strut
+\end{minipage} & \begin{minipage}[t]{0.10\columnwidth}\raggedleft
+Independent\strut
+\end{minipage} & \begin{minipage}[t]{0.12\columnwidth}\raggedleft
+Pooled\strut
+\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedleft
+IPI\strut
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedleft
+0.14 (0.12, 0.18)\strut
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedleft
+0.14 (0.12, 0.18)\strut
+\end{minipage} & \begin{minipage}[t]{0.19\columnwidth}\raggedleft
+\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.01\columnwidth}\raggedright
+2\strut
+\end{minipage} & \begin{minipage}[t]{0.10\columnwidth}\raggedleft
+Independent\strut
+\end{minipage} & \begin{minipage}[t]{0.12\columnwidth}\raggedleft
+Pooled\strut
+\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedleft
+NIVO\strut
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedleft
+0.36 (0.33, 0.41)\strut
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedleft
+0.36 (0.33, 0.41)\strut
+\end{minipage} & \begin{minipage}[t]{0.19\columnwidth}\raggedleft
+\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.01\columnwidth}\raggedright
+3\strut
+\end{minipage} & \begin{minipage}[t]{0.10\columnwidth}\raggedleft
+Independent\strut
+\end{minipage} & \begin{minipage}[t]{0.12\columnwidth}\raggedleft
+Pooled\strut
+\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedleft
+NIVO+IPI\strut
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedleft
+0.44 (0.4, 0.48)\strut
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedleft
+0.44 (0.4, 0.48)\strut
+\end{minipage} & \begin{minipage}[t]{0.19\columnwidth}\raggedleft
+\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.01\columnwidth}\raggedright
+4\strut
+\end{minipage} & \begin{minipage}[t]{0.10\columnwidth}\raggedleft
+Independent\strut
+\end{minipage} & \begin{minipage}[t]{0.12\columnwidth}\raggedleft
+Separate\strut
+\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedleft
+IPI\strut
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedleft
+0.27 (0.19, 0.38)\strut
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedleft
+0.14 (0.1, 0.18)\strut
+\end{minipage} & \begin{minipage}[t]{0.19\columnwidth}\raggedleft
+\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.01\columnwidth}\raggedright
+5\strut
+\end{minipage} & \begin{minipage}[t]{0.10\columnwidth}\raggedleft
+Independent\strut
+\end{minipage} & \begin{minipage}[t]{0.12\columnwidth}\raggedleft
+Separate\strut
+\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedleft
+NIVO\strut
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedleft
+0.42 (0.37, 0.47)\strut
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedleft
+0.32 (0.27, 0.36)\strut
+\end{minipage} & \begin{minipage}[t]{0.19\columnwidth}\raggedleft
+\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.01\columnwidth}\raggedright
+6\strut
+\end{minipage} & \begin{minipage}[t]{0.10\columnwidth}\raggedleft
+Independent\strut
+\end{minipage} & \begin{minipage}[t]{0.12\columnwidth}\raggedleft
+Separate\strut
+\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedleft
+NIVO+IPI\strut
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedleft
+0.5 (0.45, 0.55)\strut
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedleft
+0.38 (0.33, 0.43)\strut
+\end{minipage} & \begin{minipage}[t]{0.19\columnwidth}\raggedleft
+\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.01\columnwidth}\raggedright
+7\strut
+\end{minipage} & \begin{minipage}[t]{0.10\columnwidth}\raggedleft
+Joint\strut
+\end{minipage} & \begin{minipage}[t]{0.12\columnwidth}\raggedleft
+Separate\strut
+\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedleft
+IPI\strut
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedleft
+0.18 (0.12, 0.24)\strut
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedleft
+0.14 (0.11, 0.19)\strut
+\end{minipage} & \begin{minipage}[t]{0.19\columnwidth}\raggedleft
+-0.286 (-0.489, -0.155)\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.01\columnwidth}\raggedright
+8\strut
+\end{minipage} & \begin{minipage}[t]{0.10\columnwidth}\raggedleft
+Joint\strut
+\end{minipage} & \begin{minipage}[t]{0.12\columnwidth}\raggedleft
+Separate\strut
+\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedleft
+NIVO\strut
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedleft
+0.16 (0.1, 0.2)\strut
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedleft
+0.31 (0.26, 0.36)\strut
+\end{minipage} & \begin{minipage}[t]{0.19\columnwidth}\raggedleft
+-0.125 (-0.17, -0.094)\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.01\columnwidth}\raggedright
+9\strut
+\end{minipage} & \begin{minipage}[t]{0.10\columnwidth}\raggedleft
+Joint\strut
+\end{minipage} & \begin{minipage}[t]{0.12\columnwidth}\raggedleft
+Separate\strut
+\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedleft
+NIVO+IPI\strut
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedleft
+0.22 (0.17, 0.27)\strut
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedleft
+0.38 (0.33, 0.43)\strut
+\end{minipage} & \begin{minipage}[t]{0.19\columnwidth}\raggedleft
+-0.145 (-0.212, -0.099)\strut
+\end{minipage}\tabularnewline
 \bottomrule
 \end{longtable}
 
 Leave-one-out cross validation
 
-\begin{longtable}[]{@{}llll@{}}
+\begin{longtable}[]{@{}rrrr@{}}
 \toprule
 Model & Statistic & Estimate & SE\tabularnewline
 \midrule
@@ -600,14 +739,126 @@ Model & Statistic & Estimate & SE\tabularnewline
 4 & elpd\_loo & -1834.3 & 35.6\tabularnewline
 5 & & -1666.8 & 46.2\tabularnewline
 6 & & -1538.5 & 54.3\tabularnewline
-& & &\tabularnewline
 4 & p\_loo & 7.1 & 0.8\tabularnewline
 5 & & 8.4 & 0.8\tabularnewline
 6 & & 9.6 & 1.4\tabularnewline
-& & &\tabularnewline
 4 & looic & 3668.6 & 71.2\tabularnewline
 5 & & 3333.6 & 92.4\tabularnewline
 6 & & 3077.1 & 108.6\tabularnewline
+\bottomrule
+\end{longtable}
+
+\hypertarget{hierarchical-cure-fraction-fixed-known-background}{%
+\subsubsection{Hierarchical cure fraction, fixed (known)
+background}\label{hierarchical-cure-fraction-fixed-known-background}}
+
+\begin{center}\includegraphics[width=0.4\linewidth]{../plots/S_plots_exp_exp_cf hier_bg_fixed_IPILIMUMAB} \end{center}
+
+\begin{center}\includegraphics[width=0.4\linewidth]{../plots/S_plots_exp_exp_cf hier_bg_fixed_NIVOLUMAB} \end{center}
+
+\begin{center}\includegraphics[width=0.4\linewidth]{../plots/S_plots_exp_exp_cf_hier_bg_fixed_NIVO+IPI} \end{center}
+
+The table below summarises the cure fraction posterior distribution for
+each scenario.
+
+\begin{longtable}[]{@{}lrrrrrr@{}}
+\toprule
+\begin{minipage}[b]{0.01\columnwidth}\raggedright
+\strut
+\end{minipage} & \begin{minipage}[b]{0.10\columnwidth}\raggedleft
+Event times\strut
+\end{minipage} & \begin{minipage}[b]{0.12\columnwidth}\raggedleft
+Cure fraction\strut
+\end{minipage} & \begin{minipage}[b]{0.09\columnwidth}\raggedleft
+Treatment\strut
+\end{minipage} & \begin{minipage}[b]{0.16\columnwidth}\raggedleft
+\(cf\) (CrI)\strut
+\end{minipage} & \begin{minipage}[b]{0.16\columnwidth}\raggedleft
+\(cf_{OS}\) (CrI)\strut
+\end{minipage} & \begin{minipage}[b]{0.16\columnwidth}\raggedleft
+\(cf_{PFS}\) (CrI)\strut
+\end{minipage}\tabularnewline
+\midrule
+\endhead
+\begin{minipage}[t]{0.01\columnwidth}\raggedright
+1\strut
+\end{minipage} & \begin{minipage}[t]{0.10\columnwidth}\raggedleft
+Independent\strut
+\end{minipage} & \begin{minipage}[t]{0.12\columnwidth}\raggedleft
+Hierarchical\strut
+\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedleft
+IPI\strut
+\end{minipage} & \begin{minipage}[t]{0.16\columnwidth}\raggedleft
+0.151 (0.068, 0.26)\strut
+\end{minipage} & \begin{minipage}[t]{0.16\columnwidth}\raggedleft
+0.196 (0.136, 0.255)\strut
+\end{minipage} & \begin{minipage}[t]{0.16\columnwidth}\raggedleft
+0.112 (0.079, 0.155)\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.01\columnwidth}\raggedright
+2\strut
+\end{minipage} & \begin{minipage}[t]{0.10\columnwidth}\raggedleft
+Independent\strut
+\end{minipage} & \begin{minipage}[t]{0.12\columnwidth}\raggedleft
+Hierarchical\strut
+\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedleft
+NIVO\strut
+\end{minipage} & \begin{minipage}[t]{0.16\columnwidth}\raggedleft
+0.378 (0.216, 0.557)\strut
+\end{minipage} & \begin{minipage}[t]{0.16\columnwidth}\raggedleft
+0.412 (0.35, 0.479)\strut
+\end{minipage} & \begin{minipage}[t]{0.16\columnwidth}\raggedleft
+0.321 (0.262, 0.379)\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.01\columnwidth}\raggedright
+3\strut
+\end{minipage} & \begin{minipage}[t]{0.10\columnwidth}\raggedleft
+Independent\strut
+\end{minipage} & \begin{minipage}[t]{0.12\columnwidth}\raggedleft
+Hierarchical\strut
+\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedleft
+NIVO+IPI\strut
+\end{minipage} & \begin{minipage}[t]{0.16\columnwidth}\raggedleft
+0.463 (0.322, 0.62)\strut
+\end{minipage} & \begin{minipage}[t]{0.16\columnwidth}\raggedleft
+0.519 (0.448, 0.585)\strut
+\end{minipage} & \begin{minipage}[t]{0.16\columnwidth}\raggedleft
+0.398 (0.336, 0.455)\strut
+\end{minipage}\tabularnewline
+\bottomrule
+\end{longtable}
+
+Leave-one-out cross validation statistics:
+
+\begin{longtable}[]{@{}rrrr@{}}
+\toprule
+& stat & Estimate & SE\tabularnewline
+\midrule
+\endhead
+IPI & elpd\_waic & -1838.826318 & 36.0674047\tabularnewline
+NIVO & elpd\_waic & -1679.593315 & 45.6855459\tabularnewline
+IPI+NIVO & elpd\_waic & -1543.235582 & 53.8029923\tabularnewline
+IPI & p\_waic & 5.373491 & 0.4815243\tabularnewline
+NIVO & p\_waic & 7.452234 & 0.6225800\tabularnewline
+IPI+NIVO & p\_waic & 6.671215 & 0.5213592\tabularnewline
+IPI & waic & 3677.652636 & 72.1348094\tabularnewline
+NIVO & waic & 3359.186630 & 91.3710918\tabularnewline
+IPI+NIVO & waic & 3086.471164 & 107.6059845\tabularnewline
+\bottomrule
+\end{longtable}
+
+The variance partition coefficient (VPC) is defined as
+\(\sigma_{global}^2/ (\sigma_{global}^2 + \sigma_{e}^2)\) where
+\(e = PFS\) or \(OS\).
+
+\begin{longtable}[]{@{}rrr@{}}
+\toprule
+& PFS & OS\tabularnewline
+\midrule
+\endhead
+IPI & 0.8132749 & 0.7838815\tabularnewline
+NIVO & 0.8760108 & 0.8765306\tabularnewline
+IPI+NIVO & 0.8571695 & 0.8459290\tabularnewline
 \bottomrule
 \end{longtable}
 

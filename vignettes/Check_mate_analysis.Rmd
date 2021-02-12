@@ -4,12 +4,12 @@ author: "Nathan Green, Gianluca Baio, UCL"
 date: "7 January 2021"
 header_includes: \usepackage{amsmath}
 output:
-  html_document:
-    df_print: paged
   pdf_document: 
     keep_tex: yes
     highlight: zenburn
-    latex_engine: xelatex
+    latex_engine: lualatex
+  html_document:
+    df_print: paged
   word_document: default
 editor_options: 
   markdown: 
@@ -539,26 +539,26 @@ each scenario.
 Leave-one-out cross validation statistics:
 
 
-| OS Distn   | PFS Distn  | Treatment           |Statistic   | Estimate|     SE|
-|:-----------|:-----------|:--------------------|:-----------|--------:|------:|
-|exp         |exp         |IPILIMUMAB           |elpd_waic   | -1838.83|  36.07|
-|exp         |exp         |NIVOLUMAB            |elpd_waic.1 | -1679.59|  45.69|
-|exp         |exp         |NIVOLUMAB+IPILIMUMAB |elpd_waic.2 | -1543.24|  53.80|
-|loglogistic |loglogistic |IPILIMUMAB           |elpd_waic.3 | -1768.17|  39.20|
-|loglogistic |loglogistic |NIVOLUMAB            |elpd_waic.4 | -1651.73|  46.02|
-|loglogistic |loglogistic |NIVOLUMAB+IPILIMUMAB |elpd_waic.5 | -1533.95|  53.17|
-|exp         |exp         |IPILIMUMAB           |p_waic      |     5.37|   0.48|
-|exp         |exp         |NIVOLUMAB            |p_waic.1    |     7.45|   0.62|
-|exp         |exp         |NIVOLUMAB+IPILIMUMAB |p_waic.2    |     6.67|   0.52|
-|loglogistic |loglogistic |IPILIMUMAB           |p_waic.3    |     9.19|   0.56|
-|loglogistic |loglogistic |NIVOLUMAB            |p_waic.4    |     9.20|   0.53|
-|loglogistic |loglogistic |NIVOLUMAB+IPILIMUMAB |p_waic.5    |     6.10|   0.50|
-|exp         |exp         |IPILIMUMAB           |waic        |  3677.65|  72.13|
-|exp         |exp         |NIVOLUMAB            |waic.1      |  3359.19|  91.37|
-|exp         |exp         |NIVOLUMAB+IPILIMUMAB |waic.2      |  3086.47| 107.61|
-|loglogistic |loglogistic |IPILIMUMAB           |waic.3      |  3536.33|  78.40|
-|loglogistic |loglogistic |NIVOLUMAB            |waic.4      |  3303.47|  92.04|
-|loglogistic |loglogistic |NIVOLUMAB+IPILIMUMAB |waic.5      |  3067.91| 106.35|
+| OS Distn   | PFS Distn  | Treatment           |Statistic | Estimate|     SE|
+|:-----------|:-----------|:--------------------|:---------|--------:|------:|
+|exp         |exp         |IPILIMUMAB           |elpd_waic | -1838.83|  36.07|
+|exp         |exp         |NIVOLUMAB            |elpd_waic | -1679.59|  45.69|
+|exp         |exp         |NIVOLUMAB+IPILIMUMAB |elpd_waic | -1543.24|  53.80|
+|loglogistic |loglogistic |IPILIMUMAB           |elpd_waic | -1768.17|  39.20|
+|loglogistic |loglogistic |NIVOLUMAB            |elpd_waic | -1651.73|  46.02|
+|loglogistic |loglogistic |NIVOLUMAB+IPILIMUMAB |elpd_waic | -1533.95|  53.17|
+|exp         |exp         |IPILIMUMAB           |p_waic    |     5.37|   0.48|
+|exp         |exp         |NIVOLUMAB            |p_waic    |     7.45|   0.62|
+|exp         |exp         |NIVOLUMAB+IPILIMUMAB |p_waic    |     6.67|   0.52|
+|loglogistic |loglogistic |IPILIMUMAB           |p_waic    |     9.19|   0.56|
+|loglogistic |loglogistic |NIVOLUMAB            |p_waic    |     9.20|   0.53|
+|loglogistic |loglogistic |NIVOLUMAB+IPILIMUMAB |p_waic    |     6.10|   0.50|
+|exp         |exp         |IPILIMUMAB           |waic      |  3677.65|  72.13|
+|exp         |exp         |NIVOLUMAB            |waic      |  3359.19|  91.37|
+|exp         |exp         |NIVOLUMAB+IPILIMUMAB |waic      |  3086.47| 107.61|
+|loglogistic |loglogistic |IPILIMUMAB           |waic      |  3536.33|  78.40|
+|loglogistic |loglogistic |NIVOLUMAB            |waic      |  3303.47|  92.04|
+|loglogistic |loglogistic |NIVOLUMAB+IPILIMUMAB |waic      |  3067.91| 106.35|
 
 The variance partition coefficient (VPC) is defined as $\sigma_{global}^2/ (\sigma_{global}^2 + \sigma_{e}^2)$ where $e = PFS$ or $OS$.
 
@@ -570,6 +570,12 @@ The variance partition coefficient (VPC) is defined as $\sigma_{global}^2/ (\sig
 |loglogistic |loglogistic |IPILIMUMAB           |   0.812|  0.604|
 |loglogistic |loglogistic |NIVOLUMAB            |   0.890|  0.672|
 |loglogistic |loglogistic |NIVOLUMAB+IPILIMUMAB |   0.915|  0.786|
+
+
+```{r fig.show='hold',fig.align='center', out.width="40%", echo=FALSE}
+knitr::include_graphics("../plots//cf_forest_plot.png")
+```
+
 
 ## Future work
 

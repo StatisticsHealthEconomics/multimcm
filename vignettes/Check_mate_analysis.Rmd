@@ -4,12 +4,12 @@ author: "Nathan Green, Gianluca Baio, UCL"
 date: "7 January 2021"
 header_includes: \usepackage{amsmath}
 output:
-  html_document:
-    df_print: paged
   pdf_document: 
     keep_tex: yes
     highlight: zenburn
-    latex_engine: xelatex
+    latex_engine: lualatex
+  html_document:
+    df_print: paged
   word_document: default
 editor_options: 
   markdown: 
@@ -570,6 +570,12 @@ The variance partition coefficient (VPC) is defined as $\sigma_{global}^2/ (\sig
 |loglogistic |loglogistic |IPILIMUMAB           |   0.812|  0.604|
 |loglogistic |loglogistic |NIVOLUMAB            |   0.890|  0.672|
 |loglogistic |loglogistic |NIVOLUMAB+IPILIMUMAB |   0.915|  0.786|
+
+
+```{r fig.show='hold',fig.align='center', out.width="40%", echo=FALSE}
+knitr::include_graphics("../plots//cf_forest_plot.png")
+```
+
 
 ## Future work
 

@@ -189,6 +189,89 @@ real surv_loglogistic_lpdf (real t, real d, real shape, real scale) {
 
 
 /**
+* generalised gamma
+*
+* @param t time
+* @param shape
+* @param scale
+* @return A real
+*/
+real gen_gamma_lpdf(vector x, vector mu, real sigma, real Q) {
+  // Uses the same parameterisation as flexsurv
+  // mu = location
+  // sigma = scale
+  // Q = shape
+  vector[num_elements(x)] prob;
+  real lprob;
+  vector[num_elements(x)] w;
+  // Constructs the log-density for each observation
+  w = ((log(x)-mu))/sigma;
+  for (i in 1:num_elements(x)) {
+    prob[i] = -log(sigma*x[i]) + log(fabs(Q)) + pow(Q, -2)*log(pow(Q, -2)) + pow(Q, -2)*(Q*w[i]-exp(Q*w[i])) - lgamma(pow(Q, -2));
+  }
+  // And the total log-density (as a sum of the individual terms)
+  lprob = sum((prob));
+  return lprob;
+}
+
+real gen_gamma_cens_lpdf(vector x, vector mu, real sigma, real Q, vector u) {
+  // Rescales the distribution accounting for right censoring
+  vector[num_elements(x)] prob;
+  real lprob;
+  vector[num_elements(x)] w;
+  vector[num_elements(x)] tr;
+  // Constructs the log-density for each observation
+  tr = x .* u;
+  w = ((log(tr)-mu))/sigma;
+  for (i in 1:num_elements(x)) {
+    prob[i] = log(u[i]) - log(sigma*tr[i]) + log(fabs(Q)) + pow(Q, -2)*log(pow(Q, -2)) + pow(Q, -2)*(Q*w[i] - exp(Q*w[i])) - lgamma(pow(Q, -2));
+  }
+  // And the total log-density (as a sum of the individual terms)
+  lprob = sum((prob));
+  return lprob;
+}
+
+
+
+/**
+* log-normal
+*
+* @param t time
+* @param shape
+* @param scale
+* @return A real
+*/
+// Defines the log survival
+vector log_S (vector t, vector mean, real sd) {
+  vector[num_elements(t)] log_S;
+  for (i in 1:num_elements(t)) {
+    log_S[i] = log(1 - Phi((log(t[i]) - mean[i])/sd));
+  }
+  return log_S;
+}
+
+// Defines the log hazard
+vector log_h (vector t, vector mean, real sd) {
+  vector[num_elements(t)] log_h;
+  vector[num_elements(t)] ls;
+  ls = log_S(t, mean, sd);
+  for (i in 1:num_elements(t)) {
+    log_h[i] = lognormal_lpdf(t[i]|mean[i],sd) - ls[i];
+  }
+  return log_h;
+}
+
+// Defines the sampling distribution
+real surv_lognormal_lpdf (vector t, vector d, vector mean, real sd) {
+  vector[num_elements(t)] log_lik;
+  real prob;
+  log_lik = d .* log_h(t, mean, sd) + log_S(t, mean, sd);
+  prob = sum(log_lik);
+  return prob;
+}
+
+
+/**
 * combined (non-cured) mortality
 * background (all-cause) and cancer
 */
@@ -247,4 +330,37 @@ real exp_loglogistic_Surv(real t, real shape, real scale, real rate) {
   return Surv;
 }
 
+// log-normal
+
+real joint_exp_lognormal_pdf(real t, real d, real shape, real scale, real rate) {
+  real lik;
+  return lik;
+}
+
+real joint_exp_lognormal_lpdf(real t, real d, real shape, real scale, real rate) {
+  real log_lik;
+  return log_lik;
+}
+
+real exp_lognormal_Surv(real t, real shape, real scale, real rate) {
+  real Surv;
+  return Surv;
+}
+
+// generalised gamma
+
+real joint_exp_gengamma_pdf(real t, real d, real shape, real scale, real rate) {
+  real lik;
+  return lik;
+}
+
+real joint_exp_gengamma_lpdf(real t, real d, real shape, real scale, real rate) {
+  real log_lik;
+  return log_lik;
+}
+
+real exp_gengamma_Surv(real t, real shape, real scale, real rate) {
+  real Surv;
+  return Surv;
+}
 

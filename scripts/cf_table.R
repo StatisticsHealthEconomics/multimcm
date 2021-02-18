@@ -6,6 +6,7 @@
 # TODO: read in table directly to RMarkdown
 
 
+library(rstan)
 library(rstanarm)
 library(bayesplot)
 library(loo)
@@ -30,11 +31,11 @@ cf_os <- purrr::map(params_hier_fixed, "cf_os")
 
 tab_cf_global <-
   purrr::map(cf_global,
-           function(x) {
-             paste0(round(mean(x),3),
-                    " (",
-                    round(quantile(x, 0.025),3), ", ",
-                    round(quantile(x, 0.975),3), ")")}) %>%
+             function(x) {
+               paste0(round(mean(x),3),
+                      " (",
+                      round(quantile(x, 0.025),3), ", ",
+                      round(quantile(x, 0.975),3), ")")}) %>%
   do.call(rbind, .)
 
 tab_cf_os <-
@@ -69,9 +70,23 @@ knitr::kable(
         "$cf_{OS}$ (CrI)" = tab_cf_os,
         "$cf_{PFS}$ (CrI)" = tab_cf_pfs))
 
+# forest plot
+##TODO: automate names...
+xx <-
+  cbind(
+    as.data.frame(cf_global),
+    as.data.frame(cf_os),
+    as.data.frame(cf_pfs)) %>%
+  setNames(c("cf_global_ipi_exp", "cf_global_nivo_exp", "cf_global_both_exp", "cf_global_ipi_llog", "cf_global_nivo_llog", "cf_global_both_llog",
+             "cf_os_ipi_exp", "cf_os_nivo_exp", "cf_os_both_exp", "cf_os_ipi_llog", "cf_os_nivo_llog", "cf_os_both_llog",
+             "cf_pfs_ipi_exp", "cf_pfs_nivo_exp", "cf_pfs_both_exp", "cf_pfs_ipi_llog", "cf_pfs_nivo_llog", "cf_pfs_both_llog"))
+
+mcmc_intervals(xx) + xlim(0, 0.65)
+
+ggsave(filename = "plots/cf_forest_plot.png")
+
 
 ## joint, separate
-
 
 res_joint_distn <-
   dir("data/joint/cf separate",

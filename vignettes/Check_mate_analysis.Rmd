@@ -4,12 +4,13 @@ author: "Nathan Green, Gianluca Baio, UCL"
 date: "7 January 2021"
 header_includes: \usepackage{amsmath}
 output:
-  html_document:
-    df_print: paged
   pdf_document: 
+    fig_caption: yes
     keep_tex: yes
     highlight: zenburn
-    latex_engine: xelatex
+    latex_engine: lualatex
+  html_document:
+    df_print: paged
   word_document: default
 editor_options: 
   markdown: 
@@ -28,18 +29,17 @@ knitr::opts_chunk$set(
 
 In this project we formulate and demonstrate the application of a
 Bayesian mixture cure model (MCM) using the Checkmate 067 study dataset
-and the Exponential distribution for event times. Analogous results to
-those created previously for the frequentist MCM approach are produced
-and we extend the Bayesian MCM to incorporate additional structure,
-including the joint (bivariate) modelling of overall survival (OS) and
-progression-free survival (PFS) event times. We show that the separate
-Exponential OS and PFS Bayesian MCMs perform well for the Checkmate 067
-data. The jointly distributed event time Bayesian MCM also has good
-predictive performance. The real benefit of this approach may be with
-other dataset where there is short follow-up or small sample sizes. The
+and the Exponential and log-logistic distributions for event times.
+Analogous results to those created previously for the frequentist MCM
+approach are produced and we extend the Bayesian MCM to incorporate
+additional structure, including the joining of overall survival (OS) and
+progression-free survival (PFS) models using a hierarchical struture on
+the cure fraction. We show that the Exponential and in particular the
+log-logistic OS and PFS Bayesian MCMs perform reasonably well for the
+Checkmate 067 data. The real benefit of this approach may be with other
+dataset where there is short follow-up or small sample sizes. The
 associated R code for this work, held in a private on-line repository,
 has been written for re-use and generalisability to other problems.
-Areas for future work are given.
 
 ## Background
 
@@ -86,8 +86,8 @@ The aims of the the analysis in this document are as follows:
     event times.
 -   Produce analogous results to those created previously for the
     frequentist approach.
--   Extend the Bayesian model to incorporate additional structure,
-    including the joint bivariate modelling of OS and PFS event times.
+-   Extend the Bayesian model to incorporate additional structure
+    including a hierarchical cure fraction.
 
 This analysis has been carried-out using the Stan inference engine
 (@carpenter2017stan) called from R on a Windows PC. The packaged code
@@ -129,8 +129,8 @@ $$
    (1 − \pi(x)) S_u(t_i | \boldsymbol{x}_i) h_u(t_i | \boldsymbol{x}_i)^{\delta_i}])
 $$
 
-We will assume that the cured component is the exponential survival
-model. The non-cured component can be thought of in similar terms to the
+If we assume that the cured component is the Exponential survival model
+then the non-cured component can be thought of in similar terms to the
 cumulative incidence function. That is, the probability of an event is
 the combined probability of surviving both events (e.g. for OS,
 all-cause and cancer mortality) and then experiencing either i.e.
@@ -233,20 +233,42 @@ alternatives.
     logit(\pi_{pfs}) \sim N(\pi, \sigma_{cfpfs}^2)  
     $$
 
-Below is an example DAG for the hierarchical cure fraction without a joint
-time to event component.
-Notice that even without the direct relationship between PFS and OS there
-is still an indirect influence via $\pi$.
+Below is an example DAG for the hierarchical cure fraction without a
+joint time to event component. Notice that even without the direct
+relationship between PFS and OS there is still an indirect influence via
+$\pi$.
 
-```{r, echo=FALSE, fig.align='center', out.width="40%"}
+```{r, echo=FALSE, fig.align='center', out.width="40%", fig.cap="\\label{fig:hier_dag} Hierarchical cure fraction DAG."}
 knitr::include_graphics("hierarchical_DAG.png")
 ```
 
+## Background survival
+
+The previous frequentist analysis used the World Health Organization
+(WHO) life tables by country for the latest year available of 2016
+(@wholifetables) to inform the background mortality rate (baseline
+hazard). These baseline hazards are the expected mortality rate for each
+patient at the age at which they experience the event. The mortality
+data are age- and gender adjusted, thus providing a granular account of
+the different patient profiles in the trial. The WHO reports conditional
+probabilities of death in 5-year intervals until age 85. A constant
+annual mortality rate is reported for individuals over 85. They assumed
+that the maximum age is 100 years.
+
+In a Bayesian analysis there are alternative ways in which we could
+model the background mortality.
+
+For this work we shall use WHO hazard point estimates as known. We could
+consider the WHO estimates to provide sufficiently accurate estimates
+given the sample size and so incorporating uncertainty is not necessary.
+This also forces consistency across fits. Denote the WHO estimates for
+individual $i$ as $\hat{f}_i, \hat{S}_i, \hat{h}_i$ for the density,
+survival and hazard respectively.
 
 ## Exponentially distributed event times
 
-Consider the straightforward case where both the background and cancer
-times to event follow Exponential distributions.
+Consider the straightforward case where both the cancer times to event
+follow Exponential distributions.
 
 Define $f(t)$ density, $S(t)$ survival and $h(t)$ hazard functions.
 
@@ -257,8 +279,8 @@ $$
 Which gives the likelihood
 
 $$
-\mathcal{l}(\pi | \boldsymbol{\delta}, \boldsymbol{x}) =
- \sum_i \log(\exp(-\lambda^* t) \lambda^{* \delta_i}[\pi(x) +
+L(\pi, \lambda_u | \boldsymbol{\delta}, \boldsymbol{x}, \hat{S}, \hat{h}) =
+ \sum_i \hat{S}_i \hat{h}_i^{\delta_i}[\pi(x) +
    (1 − \pi(x)) \exp(-\lambda_u t) \lambda_u^{\delta_i}])
 $$
 
@@ -268,121 +290,21 @@ $$
 f^*_u = e^{-\lambda^* t} e^{-\lambda_u t} (\lambda^* + \lambda_u)^{\delta} \;\;\; i.e. \mbox{for no censoring} \;\; T \sim Exp(\lambda^* + \lambda_u)
 $$
 
-## Background survival
+## Log-logistic distributed event times
 
-The frequentist analysis used the World Health Organization (WHO) life
-tables by country for the latest year available of 2016 (@wholifetables)
-to inform the background mortality rate (baseline hazard). These
-baseline hazards are the expected mortality rate for each patient at the
-age at which they experience the event. The mortality data are age- and
-gender adjusted, thus providing a granular account of the different
-patient profiles in the trial. The WHO reports conditional probabilities
-of death in 5-year intervals until age 85. A constant annual mortality
-rate is reported for individuals over 85. They assumed that the maximum
-age is 100 years.
-
-In a Bayesian analysis there are alternative ways in which we could
-model the background mortality.
-
-#### Use WHO hazard point estimates as known
-
-We could consider the WHO estimates to provide sufficiently accurate
-estimates given the sample size and so incorporating uncertainty is not
-necessary.
-
-#### Survival distribution informed by the WHO data
-
-However, we also want the developed model to be able to be applied to
-other data sets which may be smaller or noisy. Also the mortality rate
-for the cured study population may not be the same as the general
-population. Sensible prior parameter values can be taken for the life
-table hazard curve. After infancy the log-hazard is approximately linear
-and so intercept and slope estimates are simple to obtain.
-
-In this analysis we use the more general distributional approach. This
-allows for more freedom in the model fitting.
-
-## Jointly distributed event times model
-
-One effective way of modelling joint (bivariate) distributions is to
-factorise them into a marginal and a conditional distribution (which
-holds as a fundamental rule of probability). In general terms, we can
-then write $p(x,y) = p(x)p(y | x)$. In the context of our model, we can
-use this intuition to model the joint distribution of the PFS and OS
-observed times (in terms of their survival curves) as: $$
-S(t_{OS},t_{PFS}) = P⁡(T_{OS} \geq t_{OS}, T_{PFS} \geq t_{PFS})
-= S_{PFS} (t_{PFS}) S_{OS|PFS}(t_{OS}│T_{PFS} = t_{PFS}).
-$$ The structure above implies that essentially we first create a
-marginal generalised linear regression to model the survival curve for
-the PFS data (as a function of relevant covariates); the second module
-of the model implies another generalised linear regression for the OS
-data, where the observed PFS data act as a covariate (in addition to
-other relevant predictors, which may or may not be the same used for the
-PFS model). Alternative specifications are possible (for instance, the
-generalised linear model can be applied on the scale of the hazard
-function, if more appropriate). This modelling approach can be
-visualised in the graph below.
-
-![](DAG.png){width="80%"}
-
-If we factorise into marginal and conditional components to model the
-underlying bivariate distribution this can be written generally as
+In the frequentist analysis, generally the log-logistic is the one of
+the best fitting distributions. The relevant functions are
 
 $$
-OS_i \sim p(c | PFS, \phi_{iOS}, \tau_{OS})
-$$ $$
-g_{OS}(\phi_{iOS}) = \beta_0 + \beta_1 (PFS_i - \mu_{PFS})[+ \ldots]
-$$ $$
-\mu_{OS} = g_{OS}^{-1}(\beta_0)
-$$ $$
-g_{PFS}(\phi_{iPFS}) = \alpha_0 [+ \ldots]
-$$ $$
-PFS_i \sim p(PFS | \phi_{iPFS}, \tau_{PFS})
-$$ $$
-\mu_{PFS} = g_{PFS}^{-1}(\alpha_0)
+f(t) = \frac{(\beta/\alpha)(t/\alpha)^{\beta - 1}}{(1 + (t/\alpha)^{\beta})^2}, \;\; S(t) = (1 + (t/\alpha)^{\beta})^{-1}, \;\; h(t) = \frac{(\beta/\alpha)(t/\alpha)^{\beta - 1}}{1 + (t/\alpha)^{\beta}}
 $$
 
-The combined log-likelihood is $$
-\mathcal{l} = \mathcal{l}_{OS} + \mathcal{l}_{PFS}
-$$
-
-For the case with exponential OS times and exponential PFS times with
-centred age this gives the following.
+which gives the likelihood
 
 $$
-t_{iOS} \sim Exp(\phi_{iOS})
-$$ $$
-\log(\phi_{iOS}) = \beta_0 + \beta_1 (t_{iPFS} - \bar{t}_{PFS}) + \beta_2 age_{iPFS}
-$$ $$
-\mu_{OS} = \exp(\beta_0)
-$$ $$
-\log(\phi_{iPFS}) = \alpha_0 + \alpha_1 age_{iOS}
-$$ $$
-t_{iPFS} \sim Exp(\phi_{iPFS})
-$$ $$
-\mu_{PFS} = \exp(\alpha_0)
-$$ $$
-\bar{t}_{PFS} = 1/\mu_{PFS} 
+L(\pi, \alpha, \beta | \boldsymbol{\delta}, \boldsymbol{x}, \hat{S}, \hat{h}) =
+\sum_i \hat{S}_i \hat{h}_i^{\delta_i} \left[ \pi(x) - (1 - \pi(x))(1 + (t/\alpha)^{\beta})^{-1} \left(\frac{(\beta/\alpha)(t/\alpha)^{\beta - 1}}{1 + (t/\alpha)^{\beta}} \right)^{\delta_i} \right]
 $$
-
-Where $\bar{t}_{PFS}$ is the mean time to event for PFS. This is simple
-to calculate for the Exponential distribution but is more complicated
-for other survival distributions. The parameters $\phi_{iOS}$ and
-$\phi_{iPFS}$ are the uncured hazard rates for individual $i$ for OS and
-PFS, respectively.
-
-The background hazard rates are specified as follows
-
-$$
-t_{iOS} \sim Exp(\phi^*_{iOS})
-$$ $$
-\log(\phi^*_{iOS}) = \beta_0^* + \beta^*_1 age_{iOS}
-$$ $$
-t_{iPFS} \sim Exp(\phi^*_{iPFS})
-$$ $$
-\log(\phi^*_{iPFS}) = \beta_0^* + \beta^*_1 age_{iPFS}
-$$ Notice that the coefficients $\beta_0^*$ and $\beta^*_1$ are the same
-in both equations .
 
 ## Results
 
@@ -406,230 +328,103 @@ For each model and treatment we produce two figures:
     checking plot, indicating if we can replicate data similar to the
     observed data using the fitted model.
 
-For the Checkmate dataset we found that the hierarchical model gave
-equivalent results to the separate cure fraction model and so for speed
-of computation and simplicity we only show the separate cure fraction
-results here.
+Figures \ref{fig:IPI}, \ref{fig:NIVO}, and \ref{fig:NIVO+IPI} show
+posterior survival curves for the Exponential and log-logistic models.
 
-### Independent PFS and OS event times, distributional background
-
-#### Pooled cure fraction
-
-This is the most restrictive model and so as we would expect it gives
-the worse results. The OS appears better than the PFS plots; the PFS
-CrIs fail to contain the observed data.
-
-```{r fig.show='hold',fig.align='center', out.width="40%", echo=FALSE}
-knitr::include_graphics(c("../plots/S_plots_exp_exp_cf_pooled_IPI.png", "../plots/post_pred_cf pooled_exp_exp_IPILIMUMAB.png"))
-```
-
-```{r fig.show='hold',fig.align='center', out.width="40%", echo=FALSE}
-knitr::include_graphics(c("../plots/S_plots_exp_exp_cf_pooled_NIVO.png", "../plots/post_pred_cf pooled_exp_exp_NIVOLUMAB.png"))
-```
-
-```{r fig.show='hold',fig.align='center', out.width="40%", echo=FALSE}
-knitr::include_graphics(c("../plots/S_plots_exp_exp_cf_pooled_NIVO+IPI.png", "../plots/post_pred_cf pooled_exp_exp_NIVOLUMAB+IPILIMUMAB.png"))
-```
-
-#### Separate cure fraction
-
-The models with independently fit cure fraction appear to fit reasonably
-well. The mismatch in fit is due to the assumption of an exponential
-survival curve for uncured patients which does not capture the true
-curvature.
-
-```{r fig.show='hold',fig.align='center', out.width="40%", echo=FALSE}
-knitr::include_graphics(c("../plots/S_plots_exp_exp_cf_separate_IPI.png", "../plots/post_pred_cfsep_exp_exp_IPILIMUMAB.png"))
-```
-
-```{r fig.show='hold',fig.align='center', out.width="40%", echo=FALSE}
-knitr::include_graphics(c("../plots/S_plots_exp_exp_cf_separate_NIVO.png", "../plots/post_pred_cfsep_exp_exp_NIVOLUMAB.png"))
-```
-
-```{r fig.show='hold',fig.align='center', out.width="40%", echo=FALSE}
-knitr::include_graphics(c("../plots/S_plots_exp_exp_cf_separate_NIVO+IPI.png", "../plots/post_pred_cfsep_exp_exp_NIVOLUMAB+IPILIMUMAB.png"))
-```
-
-### Jointly distributed PFS and OS event times, distributional background
-
-We see that the expected OS survival curves are biased; over-estimating
-the rate. This is not the case for the *ipilimumab*. This is due to the
-additional joint component in the OS linear regression. This may be due
-to censoring since *ipilimumab* has the smallest amount. This is an area
-for research.
-
-However, the model does fit well taking in to account the case-mix of
-the study population. The posterior prediction plots show that the
-Kaplan-Meier for the observed data lies within the simulated curves.
-
-```{r fig.show='hold',fig.align='center', out.width="40%", echo=FALSE}
-knitr::include_graphics(c("../plots/S_plots_exp_exp_cf_separate_IPI_joint.png", "../plots/post_pred_joint_cf separate_exp_exp_IPILIMUMAB.png"))
-```
-
-```{r fig.show='hold', fig.align='center', out.width="40%", echo=FALSE}
-knitr::include_graphics(c("../plots/S_plots_exp_exp_cf_separate_NIVO_joint.png",
-                          "../plots/post_pred_joint_cf separate_exp_exp_NIVOLUMAB.png"))
-```
-
-```{r fig.show='hold',fig.align='center', out.width="40%", echo=FALSE}
-knitr::include_graphics(c("../plots/S_plots_exp_exp_cf_separate_NIVO+IPI_joint.png", "../plots/post_pred_joint_cf separate_exp_exp_NIVOLUMAB+IPILIMUMAB.png"))
-```
-
-The table below summarises the cure fraction posterior distribution for
-each scenario.
-
-| | Event times | Cure fraction | Treatment | $cf_{OS}$ (CrI)   | $cf_{PFS}$ (CrI)  | $\beta_{joint}$ (CrI)  |
-|-|------------:|--------------:|----------:|------------------:|------------------:|-----------------------:|
-|1| Independent | Pooled        | IPI       | 0.14 (0.12, 0.18) | 0.14 (0.12, 0.18) |                        |
-|2| Independent | Pooled        | NIVO      | 0.36 (0.33, 0.41) | 0.36 (0.33, 0.41) |                        |
-|3| Independent | Pooled        | NIVO+IPI  | 0.44 (0.4, 0.48)  | 0.44 (0.4, 0.48)  |                        |
-|4| Independent | Separate      | IPI       | 0.27 (0.19, 0.38) | 0.14 (0.1, 0.18)  |                        |
-|5| Independent | Separate      | NIVO      | 0.42 (0.37, 0.47) | 0.32 (0.27, 0.36) |                        |
-|6| Independent | Separate      | NIVO+IPI  | 0.5 (0.45, 0.55)  | 0.38 (0.33, 0.43) |                        |
-|7| Joint       | Separate      | IPI       | 0.18 (0.12, 0.24) | 0.14 (0.11, 0.19) | -0.286 (-0.489, -0.155)|
-|8| Joint       | Separate      | NIVO      | 0.16 (0.1, 0.2)   | 0.31 (0.26, 0.36) | -0.125 (-0.17, -0.094) |
-|9| Joint       | Separate      | NIVO+IPI  | 0.22 (0.17, 0.27) | 0.38 (0.33, 0.43) | -0.145 (-0.212, -0.099)|
-
-
-Leave-one-out cross validation
-
-
-|Model |Statistic | Estimate | SE  |
-|-----:|---------:|---------:|----:|
-|   4  | elpd_loo | -1834.3  | 35.6|
-|   5  |          | -1666.8  | 46.2|
-|   6  |          | -1538.5  | 54.3|
-|   4  | p_loo    | 7.1      | 0.8 |
-|   5  |          | 8.4      | 0.8 |
-|   6  |          | 9.6      | 1.4 |
-|   4  | looic    | 3668.6   | 71.2|
-|   5  |          | 3333.6   | 92.4|
-|   6  |          | 3077.1   |108.6|
-
-
-### Hierarchical cure fraction, fixed (known) background
-
-```{r fig.show='hold',fig.align='center', out.width="40%", echo=FALSE}
+```{r fig.show='hold',fig.align='center', out.width="40%", echo=FALSE, fig.cap="\\label{fig:IPI}Posterior survival curves for the mixture cure model and ipilimumab. The red line is cured background, light green and blue are uncured, and dark green and magenta are combined. a) Exponential uncured; b) Log-logistic uncured."}
 knitr::include_graphics("../plots/S_plots_exp_exp_cf hier_bg_fixed_IPILIMUMAB.png")
 knitr::include_graphics("../plots/S_plots_loglogistic_loglogistic_cf hier_bg_fixed_IPILIMUMAB.png")
 ```
 
-```{r fig.show='hold',fig.align='center', out.width="40%", echo=FALSE}
+```{r fig.show='hold',fig.align='center', out.width="40%", echo=FALSE, fig.cap="\\label{fig:NIVO}Posterior survival curves for the mixture cure model and nivolumab. The red line is cured background, light green and blue are uncured, and dark green and magenta are combined. a) Exponential uncured; b) Log-logistic uncured."}
 knitr::include_graphics("../plots/S_plots_exp_exp_cf hier_bg_fixed_NIVOLUMAB.png")
 knitr::include_graphics("../plots/S_plots_loglogistic_loglogistic_cf hier_bg_fixed_NIVOLUMAB.png")
 ```
 
-```{r fig.show='hold',fig.align='center', out.width="40%", echo=FALSE}
+```{r fig.show='hold',fig.align='center', out.width="40%", echo=FALSE, fig.cap="\\label{fig:NIVO+IPI}Posterior survival curves for the mixture cure model and dual ipilimumab and nivolumab. The red line is cured background, light green and blue are uncured, and dark green and magenta are combined. a) Exponential uncured; b) Log-logistic uncured."}
 knitr::include_graphics("../plots/S_plots_exp_exp_cf_hier_bg_fixed_NIVO+IPI.png")
 knitr::include_graphics("../plots/S_plots_loglogistic_loglogistic_cf hier_bg_fixed_NIVOLUMAB+IPILIMUMAB.png")
+```
+
+Figure \ref{fig:forest} show the forest plot of cure fraction posterior distributions.
+We see that the values are generally similar for the Exponential and log-logistic fits.
+This clearly shows how the global cure fraction posterior distribution lies partway between the PFS and OS distributions.
+
+```{r fig.show='hold',fig.align='center', out.width="60%", echo=FALSE, fig.cap="\\label{fig:forest}Forest plot of cure fraction posterior distributions."}
+knitr::include_graphics("../plots/cf_forest_plot.png")
 ```
 
 The table below summarises the cure fraction posterior distribution for
 each scenario.
 
-|   | OS Distn   | PFS Distn  | Treatment           | $cf$ (CrI)          | $cf_{OS}$ (CrI)     | $cf_{PFS}$ (CrI)    |
-|:--|:-----------|:-----------|:--------------------|:--------------------|:--------------------|:--------------------|
-|1  |exp         |exp         |IPILIMUMAB           |0.151 (0.068, 0.26)  |0.196 (0.136, 0.255) |0.112 (0.079, 0.155) |
-|2  |exp         |exp         |NIVOLUMAB            |0.378 (0.216, 0.557) |0.412 (0.35, 0.479)  |0.321 (0.262, 0.379) |
-|3  |exp         |exp         |NIVOLUMAB+IPILIMUMAB |0.463 (0.322, 0.62)  |0.519 (0.448, 0.585) |0.398 (0.336, 0.455) |
-|4  |loglogistic |loglogistic |IPILIMUMAB           |0.133 (0.061, 0.278) |0.133 (0.054, 0.206) |0.113 (0.075, 0.152) |
-|5  |loglogistic |loglogistic |NIVOLUMAB            |0.348 (0.191, 0.526) |0.345 (0.231, 0.456) |0.325 (0.264, 0.382) |
-|6  |loglogistic |loglogistic |NIVOLUMAB+IPILIMUMAB |0.421 (0.266, 0.599) |0.459 (0.37, 0.535)  |0.375 (0.327, 0.421) |
++---+------+------+------------+------------+------------+-------------+
+|   | OS   | PFS  | Treatment  | $cf$ (CrI) | $cf_{OS}$  | $cf_{PFS}$  |
+|   | D    | D    |            |            | (CrI)      | (CrI)       |
+|   | istn | istn |            |            |            |             |
++:==+:=====+:=====+:===========+:===========+:===========+:============+
+| 1 | exp  | exp  | IPILIMUMAB | 0.151      | 0.196      | 0.112       |
+|   |      |      |            | (0.068,    | (0.136,    | (0.079,     |
+|   |      |      |            | 0.26)      | 0.255)     | 0.155)      |
++---+------+------+------------+------------+------------+-------------+
+| 2 | exp  | exp  | NIVOLUMAB  | 0.378      | 0.412      | 0.321       |
+|   |      |      |            | (0.216,    | (0.35,     | (0.262,     |
+|   |      |      |            | 0.557)     | 0.479)     | 0.379)      |
++---+------+------+------------+------------+------------+-------------+
+| 3 | exp  | exp  | NIVOLUMAB  | 0.463      | 0.519      | 0.398       |
+|   |      |      | +          | (0.322,    | (0.448,    | (0.336,     |
+|   |      |      | IPILIMUMAB | 0.62)      | 0.585)     | 0.455)      |
++---+------+------+------------+------------+------------+-------------+
+| 4 | log  | log  | IPILIMUMAB | 0.133      | 0.133      | 0.113       |
+|   | logi | logi |            | (0.061,    | (0.054,    | (0.075,     |
+|   | stic | stic |            | 0.278)     | 0.206)     | 0.152)      |
++---+------+------+------------+------------+------------+-------------+
+| 5 | log  | log  | NIVOLUMAB  | 0.348      | 0.345      | 0.325       |
+|   | logi | logi |            | (0.191,    | (0.231,    | (0.264,     |
+|   | stic | stic |            | 0.526)     | 0.456)     | 0.382)      |
++---+------+------+------------+------------+------------+-------------+
+| 6 | log  | log  | NIVOLUMAB  | 0.421      | 0.459      | 0.375       |
+|   | logi | logi | +          | (0.266,    | (0.37,     | (0.327,     |
+|   | stic | stic | IPILIMUMAB | 0.599)     | 0.535)     | 0.421)      |
++---+------+------+------------+------------+------------+-------------+
 
-Leave-one-out cross validation statistics:
+The table below gives the leave-one-out cross validation statistics for each model fit.
 
+| OS Distn    | PFS Distn   | Treatment            | Statistic | Estimate |     SE |
+|:------------|:------------|:---------------------|:----------|---------:|-------:|
+| exp         | exp         | IPILIMUMAB           | elpd_waic | -1838.83 |  36.07 |
+| exp         | exp         | NIVOLUMAB            | elpd_waic | -1679.59 |  45.69 |
+| exp         | exp         | NIVOLUMAB+IPILIMUMAB | elpd_waic | -1543.24 |  53.80 |
+| loglogistic | loglogistic | IPILIMUMAB           | elpd_waic | -1768.17 |  39.20 |
+| loglogistic | loglogistic | NIVOLUMAB            | elpd_waic | -1651.73 |  46.02 |
+| loglogistic | loglogistic | NIVOLUMAB+IPILIMUMAB | elpd_waic | -1533.95 |  53.17 |
+| exp         | exp         | IPILIMUMAB           | p_waic    |     5.37 |   0.48 |
+| exp         | exp         | NIVOLUMAB            | p_waic    |     7.45 |   0.62 |
+| exp         | exp         | NIVOLUMAB+IPILIMUMAB | p_waic    |     6.67 |   0.52 |
+| loglogistic | loglogistic | IPILIMUMAB           | p_waic    |     9.19 |   0.56 |
+| loglogistic | loglogistic | NIVOLUMAB            | p_waic    |     9.20 |   0.53 |
+| loglogistic | loglogistic | NIVOLUMAB+IPILIMUMAB | p_waic    |     6.10 |   0.50 |
+| exp         | exp         | IPILIMUMAB           | waic      |  3677.65 |  72.13 |
+| exp         | exp         | NIVOLUMAB            | waic      |  3359.19 |  91.37 |
+| exp         | exp         | NIVOLUMAB+IPILIMUMAB | waic      |  3086.47 | 107.61 |
+| loglogistic | loglogistic | IPILIMUMAB           | waic      |  3536.33 |  78.40 |
+| loglogistic | loglogistic | NIVOLUMAB            | waic      |  3303.47 |  92.04 |
+| loglogistic | loglogistic | NIVOLUMAB+IPILIMUMAB | waic      |  3067.91 | 106.35 |
 
-| OS Distn   | PFS Distn  | Treatment           |Statistic   | Estimate|     SE|
-|:-----------|:-----------|:--------------------|:-----------|--------:|------:|
-|exp         |exp         |IPILIMUMAB           |elpd_waic   | -1838.83|  36.07|
-|exp         |exp         |NIVOLUMAB            |elpd_waic.1 | -1679.59|  45.69|
-|exp         |exp         |NIVOLUMAB+IPILIMUMAB |elpd_waic.2 | -1543.24|  53.80|
-|loglogistic |loglogistic |IPILIMUMAB           |elpd_waic.3 | -1768.17|  39.20|
-|loglogistic |loglogistic |NIVOLUMAB            |elpd_waic.4 | -1651.73|  46.02|
-|loglogistic |loglogistic |NIVOLUMAB+IPILIMUMAB |elpd_waic.5 | -1533.95|  53.17|
-|exp         |exp         |IPILIMUMAB           |p_waic      |     5.37|   0.48|
-|exp         |exp         |NIVOLUMAB            |p_waic.1    |     7.45|   0.62|
-|exp         |exp         |NIVOLUMAB+IPILIMUMAB |p_waic.2    |     6.67|   0.52|
-|loglogistic |loglogistic |IPILIMUMAB           |p_waic.3    |     9.19|   0.56|
-|loglogistic |loglogistic |NIVOLUMAB            |p_waic.4    |     9.20|   0.53|
-|loglogistic |loglogistic |NIVOLUMAB+IPILIMUMAB |p_waic.5    |     6.10|   0.50|
-|exp         |exp         |IPILIMUMAB           |waic        |  3677.65|  72.13|
-|exp         |exp         |NIVOLUMAB            |waic.1      |  3359.19|  91.37|
-|exp         |exp         |NIVOLUMAB+IPILIMUMAB |waic.2      |  3086.47| 107.61|
-|loglogistic |loglogistic |IPILIMUMAB           |waic.3      |  3536.33|  78.40|
-|loglogistic |loglogistic |NIVOLUMAB            |waic.4      |  3303.47|  92.04|
-|loglogistic |loglogistic |NIVOLUMAB+IPILIMUMAB |waic.5      |  3067.91| 106.35|
+The variance partition coefficient (VPC) is defined as
+$\sigma_{global}^2/ (\sigma_{global}^2 + \sigma_{e}^2)$ where $e = PFS$
+or $OS$.
+This indicates want proportion of the total variance is attributable to variation within-groups, or how much is found between-groups.
 
-The variance partition coefficient (VPC) is defined as $\sigma_{global}^2/ (\sigma_{global}^2 + \sigma_{e}^2)$ where $e = PFS$ or $OS$.
+| OS Distn    | PFS Distn   | Treatment            |   PFS |    OS |
+|:------------|:------------|:---------------------|------:|------:|
+| exp         | exp         | IPILIMUMAB           | 0.813 | 0.784 |
+| exp         | exp         | NIVOLUMAB            | 0.876 | 0.877 |
+| exp         | exp         | NIVOLUMAB+IPILIMUMAB | 0.857 | 0.846 |
+| loglogistic | loglogistic | IPILIMUMAB           | 0.812 | 0.604 |
+| loglogistic | loglogistic | NIVOLUMAB            | 0.890 | 0.672 |
+| loglogistic | loglogistic | NIVOLUMAB+IPILIMUMAB | 0.915 | 0.786 |
 
-| OS Distn   | PFS Distn  | Treatment           | PFS    | OS    |
-|:-----------|:-----------|:--------------------|-------:|------:|
-|exp         |exp         |IPILIMUMAB           |   0.813|  0.784|
-|exp         |exp         |NIVOLUMAB            |   0.876|  0.877|
-|exp         |exp         |NIVOLUMAB+IPILIMUMAB |   0.857|  0.846|
-|loglogistic |loglogistic |IPILIMUMAB           |   0.812|  0.604|
-|loglogistic |loglogistic |NIVOLUMAB            |   0.890|  0.672|
-|loglogistic |loglogistic |NIVOLUMAB+IPILIMUMAB |   0.915|  0.786|
+It appears the above table that much of the variation is due to between PFS and OS indicating distinct cure fractions in each.
 
-## Future work
-
-#### Expand available distributions
-
-Having shown the application of these methods to this problem we will
-extend the tool kit to include other standard parametric distributions
-are tested:
-
--   Weibull
--   Gompertz
--   Log-normal
--   Log-logistic
--   Generalised gamma
-
-#### Sensitivity analysis
-
-Of course, when the data offer only limited amount of information, the
-assumptions in the prior distribution possibly exert much influence on
-the results - and crucially on the decision model output. We will
-conduct extensive sensitivity analysis and will justify assumptions in
-all aspects of the modelling strategy by assessing the meaning of the
-various distributional assumptions visually and formally.
-
-#### Model checking and testing
-
-We have already written a suite of simulation functions to create
-synthetic cohorts with which to test the models such that we know the
-true underlying data generating process.
-
-#### Background survival
-
-An alternative non-parametric approach, as used in @Demiris2006, is to
-use a *Gamma process* to define gamma distributions at each time. A
-variance parameter determines the influence between times.
-
-Average values derived from the life tables are used in the Gamma
-process. These are age-sex-country standardised. The below plot shows
-the mean, median and a sample of hazard curves for the checkmate data
-set. The underlying hazard curve for 0-100 year olds is shifted left
-depending on the starting age of an individual in the cohort.
-
-```{r, echo=FALSE, fig.align='center', out.width="60%"}
-knitr::include_graphics("../docs/background_average_rate_plot.png")
-```
-
-#### Additional model structure
-
-The two regression models can be extended to more complex structures,
-for instance by including a mixture model in one or both (and eventually
-by including some further correlation structure in the mixing
-parameters).
-
-For this analysis it was unnecessary but we may generalise the model so
-that the cure fraction is dependent on covariates. Therefore, the
-posterior with $\beta^{cf}$ representing the coefficients of the cure
-fraction regression is
-
-$$
-p(\boldsymbol{\beta^u},\boldsymbol{\beta^*}, \boldsymbol{\beta^{cf}} | \boldsymbol{\delta}, \boldsymbol{x}) \propto L(\boldsymbol{\beta^u},\boldsymbol{\beta^*}, \boldsymbol{\beta^{cf}} | \boldsymbol{\delta}, \boldsymbol{x}) g_1(\boldsymbol{\beta^{cf}})  g_2(\boldsymbol{\beta^u}) g_3(\boldsymbol{\beta^*})
-$$
 
 ## References

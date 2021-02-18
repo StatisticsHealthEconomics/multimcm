@@ -18,7 +18,6 @@ source("R/prep_stan_params.R")
 source("R/prep_shared_params.R")
 source("R/prep_stan_data.R")
 
-
 rstan_options(auto_write = TRUE)
 options(mc.cores = parallel::detectCores() - 1)
 
@@ -35,13 +34,13 @@ surv_input_data$OS_rate <- surv_input_data$OS_rate/12
 
 save_res <- TRUE
 
-trta_idx <- 3
+trta_idx <- 1
 all_tx_names <- c("IPILIMUMAB", "NIVOLUMAB", "NIVOLUMAB+IPILIMUMAB")
 trta <- all_tx_names[trta_idx]
 
-model_os_idx <- 4
-model_pfs_idx <- 4
-model_names <- c("exp", "weibull", "gompertz", "loglogistic")
+model_os_idx <- 5
+model_pfs_idx <- 5
+model_names <- c("exp", "weibull", "gompertz", "loglogistic", "lognormal", "gengamma")
 model_os <- model_names[model_os_idx]
 model_pfs <- model_names[model_pfs_idx]
 
@@ -75,7 +74,29 @@ params_pfs <-
          list(a_shape = 1,
               b_shape = 1,
               mu_0 = c(3, 0),
-              sigma_0 = c(0.5, 0.01)))
+              sigma_0 = c(0.5, 0.01)),
+       weibull =
+         list(a_shape = 1,
+              b_shape = 1,
+              mu_0 = c(3, 0),
+              sigma_0 = c(0.5, 0.01)),
+       gompertz =
+         list(a_shape = 1,
+              b_shape = 1000,
+              mu_0 = c(-3, 0),
+              sigma_0 = c(0.5, 0.01)),
+       lognormal =
+         list(a_sd = 1,
+              b_sd = 1,
+              mu_0 = c(-3, 0),
+              sigma_0 = c(0.5, 1)),
+       gengamma =
+         list(a_mu = 1,
+              b_mu = 1,
+              a_Q = 1,
+              b_Q = 1,
+              mu_0 = c(-3, 0),
+              sigma_0 = c(0.5, 1)))
 
 params_os <-
   list(exp =
@@ -85,7 +106,27 @@ params_os <-
          list(a_shape = 1,
               b_shape = 1,
               mu_0 = c(3, 0),
-              sigma_0 = c(0.4, 1)))
+              sigma_0 = c(0.4, 1)),
+       weibull =
+         list(a_shape = 1,
+              b_shape = 1,
+              mu_0 = c(3, 0),
+              sigma_0 = c(0.4, 1)),
+       gompertz =
+         list(a_shape = 1,
+              b_shape = 1000,
+              mu_0 = c(-3, 0),
+              sigma_0 = c(0.5, 1)),
+       lognormal =
+         list(a_sd = 1,
+              b_sd = 1,
+              mu_0 = c(-3, 0),
+              sigma_0 = c(0.5, 1)),
+       gengamma =
+         list(a_sigma = 1,
+              b_sigma = 1,
+              mu_0 = c(-3, 0),
+              sigma_0 = c(0.5, 1)))
 
 #######
 # run #

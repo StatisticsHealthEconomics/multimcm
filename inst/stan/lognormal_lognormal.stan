@@ -23,10 +23,10 @@ data {
   matrix[n_os, H_os] X_os;       // matrix of covariates (with n rows and H columns)
   matrix[n_pfs, H_pfs] X_pfs;
 
-  real<lower=0> a_shape_pfs;
-  real<lower=0> b_shape_pfs;
-  real<lower=0> a_shape_os;
-  real<lower=0> b_shape_os;
+  real<lower=0> a_sd_pfs;
+  real<lower=0> b_sd_pfs;
+  real<lower=0> a_sd_os;
+  real<lower=0> b_sd_os;
 
   vector[H_os] mu_0_os;          // os, pfs
   vector[H_pfs] mu_0_pfs;
@@ -78,8 +78,8 @@ transformed parameters {
   vector[n_os] lp_os_bg;
   vector[n_os] lp_pfs_bg;
 
-  vector[n_os] lambda_os;
-  vector[n_pfs] lambda_pfs;
+  vector[n_os] mean_os;
+  vector[n_pfs] mean_pfs;
   vector[n_os] lambda_os_bg;
   vector[n_os] lambda_pfs_bg;
 
@@ -107,9 +107,8 @@ transformed parameters {
   lambda_os_bg = exp(lp_os_bg);
   lambda_pfs_bg = exp(lp_pfs_bg);
 
-  // rate parameters
-  lambda_os = exp(lp_os);
-  lambda_pfs = exp(lp_pfs);
+  mean_os = lp_os;
+  mean_pfs = lp_pfs;
 
   if (cf_model == 3) {
     cf_global = inv_logit(lp_cf_global);
@@ -127,8 +126,8 @@ model {
   beta_os ~ normal(mu_0_os, sigma_0_os);
   beta_pfs ~ normal(mu_0_pfs, sigma_0_pfs);
 
-  shape_pfs ~ gamma(a_shape_pfs, b_shape_pfs);
-  shape_os ~ gamma(a_shape_os, b_shape_os);
+  sd_pfs ~ gamma(a_sd_pfs, b_sd_pfs);
+  sd_os ~ gamma(a_sd_os, b_sd_os);
 
   if (bg_model == 1) {
     beta_bg ~ normal(mu_bg, sigma_bg);
@@ -158,12 +157,12 @@ model {
                 log(cf_os) +
                 surv_exp_lpdf(t_os[i] | d_os[i], lambda_os_bg[i]),
                 log1m(cf_os) +
-                joint_exp_loglogistic_lpdf(t_os[i] | d_os[i], shape_os, lambda_os[i], lambda_os_bg[i])) +
+                joint_exp_lognormal_lpdf(t_os[i] | d_os[i], mean_os[i], sd_os, lambda_os_bg[i])) +
               log_sum_exp(
                 log(cf_pfs) +
                 surv_exp_lpdf(t_pfs[i] | d_pfs[i], lambda_pfs_bg[i]),
                 log1m(cf_pfs) +
-                joint_exp_loglogistic_lpdf(t_pfs[i] | d_pfs[i], shape_pfs, lambda_pfs[i], lambda_pfs_bg[i]));
+                joint_exp_lognormal_lpdf(t_pfs[i] | d_pfs[i], mean_pfs[i], sd_pfs, lambda_pfs_bg[i]));
   }
 }
 
@@ -197,8 +196,8 @@ generated quantities {
   real pbeta_os = normal_rng(mu_0_os[1], sigma_0_os[1]);
   real pbeta_pfs = normal_rng(mu_0_pfs[1], sigma_0_pfs[1]);
 
-  real pshape_pfs = gamma_rng(a_shape_pfs, b_shape_pfs);
-  real pshape_os = gamma_rng(a_shape_os, b_shape_os);
+  real psd_pfs = gamma_rng(a_sd_pfs, b_sd_pfs);
+  real psd_os = gamma_rng(a_sd_os, b_sd_os);
 
   real pbeta_bg;
 
@@ -235,8 +234,8 @@ generated quantities {
   }
 
   // intercepts
-  mean_os = exp(beta_os[1]);
-  mean_pfs = exp(beta_pfs[1]);
+  mean_os = beta_os[1];
+  mean_pfs = beta_pfs[1];
 
   //TODO: this is a short-term hack
   if (bg_model == 1) {
@@ -248,8 +247,8 @@ generated quantities {
 
   for (i in 1:t_max) {
     S_bg[i] = exp_Surv(i, mean_bg);
-    S_os[i] = exp_loglogistic_Surv(i, shape_os, mean_os, mean_bg);
-    S_pfs[i] = exp_loglogistic_Surv(i, shape_pfs, mean_pfs, mean_bg);
+    S_os[i] = exp_lognormal_Surv(i, sd_os, mean_os, mean_bg);
+    S_pfs[i] = exp_lognormal_Surv(i, sd_pfs, mean_pfs, mean_bg);
 
     S_os_pred[i] = cf_os*S_bg[i] + (1 - cf_os)*S_os[i];
     S_pfs_pred[i] = cf_pfs*S_bg[i] + (1 - cf_pfs)*S_pfs[i];
@@ -257,13 +256,13 @@ generated quantities {
 
   // prior checks
   pmean_os = exp(pbeta_os);
-  pmean_pfs = exp(pbeta_pfs);
-  pmean_bg = exp(pbeta_bg);
+  pmean_pfs = pbeta_pfs;
+  pmean_bg = pbeta_bg;
 
   for (i in 1:t_max) {
     pS_bg[i] = exp_Surv(i, pmean_bg);
-    pS_os[i] = exp_loglogistic_Surv(i, pshape_os, pmean_os, pmean_bg);
-    pS_pfs[i] = exp_loglogistic_Surv(i, pshape_pfs, pmean_pfs, pmean_bg);
+    pS_os[i] = exp_lognormal_Surv(i, psd_os, pmean_os, pmean_bg);
+    pS_pfs[i] = exp_lognormal_Surv(i, psd_pfs, pmean_pfs, pmean_bg);
 
     S_os_prior[i] = pmean_cf_os*pS_bg[i] + (1 - pmean_cf_os)*pS_os[i];
     S_pfs_prior[i] = pmean_cf_pfs*pS_bg[i] + (1 - pmean_cf_pfs)*pS_pfs[i];
@@ -277,12 +276,12 @@ generated quantities {
                    log(cf_os) +
                     surv_exp_lpdf(t_os[n] | d_os[n], lambda_os_bg[n]),
                   log1m(cf_os) +
-                    joint_exp_loglogistic_lpdf(t_os[n] | d_os[n], shape_os, lambda_os[n], lambda_os_bg[n])) +
+                    joint_exp_lognormal_lpdf(t_os[n] | d_os[n], mean_os[n], sd_os, lambda_os_bg[n])) +
                 log_sum_exp(
                   log(cf_pfs) +
                     surv_exp_lpdf(t_pfs[n] | d_pfs[n], lambda_pfs_bg[n]),
                   log1m(cf_pfs) +
-                    joint_exp_loglogistic_lpdf(t_pfs[n] | d_pfs[n], shape_pfs, lambda_pfs[n], lambda_pfs_bg[n]));
+                    joint_exp_lognormal_lpdf(t_pfs[n] | d_pfs[n], mean_pfs[n], sd_pfs, lambda_pfs_bg[n]));
   }
 
 }

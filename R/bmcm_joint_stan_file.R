@@ -79,11 +79,20 @@ bmcm_joint_stan_file <- function(input_data,
       else if (model_pfs == "weibull")  here::here("inst", "stan", "exp_weibull_joint_mix.stan")
     } else if (model_os == "weibull") {
       if (model_pfs == "exp")           here::here("inst", "stan", "weibull_exp_joint_mix.stan")
-      else if (model_pfs == "weibull")  here::here("inst", "stan", "weibull_weibull_joint_mix.stan")
+      else if (model_pfs == "weibull")  here::here("inst", "stan", "weibull_weibull.stan")
     } else if (model_os == "loglogistic") {
       if (model_pfs == "exp")           here::here("inst", "stan", "weibull_exp_joint_mix.stan")
-      else if (model_pfs == "weibull")  here::here("inst", "stan", "weibull_weibull_joint_mix.stan")
+      else if (model_pfs == "weibull")  here::here("inst", "stan", "loglogistic_weibull.stan")
       else if (model_pfs == "loglogistic")  here::here("inst", "stan", "loglogistic_loglogistic.stan")
+    } else if (model_os == "lognormal") {
+      if (model_pfs == "exp")           here::here("inst", "stan", "exp_lognormal.stan")
+      else if (model_pfs == "lognormal")here::here("inst", "stan", "lognormal_lognormal.stan")
+    } else if (model_os == "gengamma") {
+      if (model_pfs == "exp")           here::here("inst", "stan", "weibull_exp_joint_mix.stan")
+      else if (model_pfs == "weibull")  here::here("inst", "stan", "gengamma_gengamma.stan")
+    } else if (model_os == "gompertz") {
+      if (model_pfs == "exp")           here::here("inst", "stan", "weibull_exp_joint_mix.stan")
+      else if (model_pfs == "gompertz") here::here("inst", "stan", "gompertz_gompertz.stan")
     }
 
   rstan_options(auto_write = TRUE)

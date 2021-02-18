@@ -1,4 +1,4 @@
-// exponential mixture cure model
+// weibull mixture cure model
 // joint relative survival
 
 
@@ -28,7 +28,7 @@ data {
   real<lower=0> a_shape_os;
   real<lower=0> b_shape_os;
 
-  vector[H_os] mu_0_os;          // os, pfs
+  vector[H_os] mu_0_os;          // os, pfs scale regression
   vector[H_pfs] mu_0_pfs;
   vector<lower=0> [H_os] sigma_0_os;
   vector<lower=0> [H_pfs] sigma_0_pfs;
@@ -158,12 +158,12 @@ model {
                 log(cf_os) +
                 surv_exp_lpdf(t_os[i] | d_os[i], lambda_os_bg[i]),
                 log1m(cf_os) +
-                joint_exp_loglogistic_lpdf(t_os[i] | d_os[i], shape_os, lambda_os[i], lambda_os_bg[i])) +
+                joint_exp_weibull_lpdf(t_os[i] | d_os[i], shape_os, lambda_os[i], lambda_os_bg[i])) +
               log_sum_exp(
                 log(cf_pfs) +
                 surv_exp_lpdf(t_pfs[i] | d_pfs[i], lambda_pfs_bg[i]),
                 log1m(cf_pfs) +
-                joint_exp_loglogistic_lpdf(t_pfs[i] | d_pfs[i], shape_pfs, lambda_pfs[i], lambda_pfs_bg[i]));
+                joint_exp_weibull_lpdf(t_pfs[i] | d_pfs[i], shape_pfs, lambda_pfs[i], lambda_pfs_bg[i]));
   }
 }
 
@@ -248,8 +248,8 @@ generated quantities {
 
   for (i in 1:t_max) {
     S_bg[i] = exp_Surv(i, mean_bg);
-    S_os[i] = exp_loglogistic_Surv(i, shape_os, mean_os, mean_bg);
-    S_pfs[i] = exp_loglogistic_Surv(i, shape_pfs, mean_pfs, mean_bg);
+    S_os[i] = exp_weibull_Surv(i, shape_os, mean_os, mean_bg);
+    S_pfs[i] = exp_weibull_Surv(i, shape_pfs, mean_pfs, mean_bg);
 
     S_os_pred[i] = cf_os*S_bg[i] + (1 - cf_os)*S_os[i];
     S_pfs_pred[i] = cf_pfs*S_bg[i] + (1 - cf_pfs)*S_pfs[i];
@@ -262,8 +262,8 @@ generated quantities {
 
   for (i in 1:t_max) {
     pS_bg[i] = exp_Surv(i, pmean_bg);
-    pS_os[i] = exp_loglogistic_Surv(i, pshape_os, pmean_os, pmean_bg);
-    pS_pfs[i] = exp_loglogistic_Surv(i, pshape_pfs, pmean_pfs, pmean_bg);
+    pS_os[i] = exp_weibull_Surv(i, pshape_os, pmean_os, pmean_bg);
+    pS_pfs[i] = exp_weibull_Surv(i, pshape_pfs, pmean_pfs, pmean_bg);
 
     S_os_prior[i] = pmean_cf_os*pS_bg[i] + (1 - pmean_cf_os)*pS_os[i];
     S_pfs_prior[i] = pmean_cf_pfs*pS_bg[i] + (1 - pmean_cf_pfs)*pS_pfs[i];
@@ -277,12 +277,12 @@ generated quantities {
                    log(cf_os) +
                     surv_exp_lpdf(t_os[n] | d_os[n], lambda_os_bg[n]),
                   log1m(cf_os) +
-                    joint_exp_loglogistic_lpdf(t_os[n] | d_os[n], shape_os, lambda_os[n], lambda_os_bg[n])) +
+                    joint_exp_weibull_lpdf(t_os[n] | d_os[n], shape_os, lambda_os[n], lambda_os_bg[n])) +
                 log_sum_exp(
                   log(cf_pfs) +
                     surv_exp_lpdf(t_pfs[n] | d_pfs[n], lambda_pfs_bg[n]),
                   log1m(cf_pfs) +
-                    joint_exp_loglogistic_lpdf(t_pfs[n] | d_pfs[n], shape_pfs, lambda_pfs[n], lambda_pfs_bg[n]));
+                    joint_exp_weibull_lpdf(t_pfs[n] | d_pfs[n], shape_pfs, lambda_pfs[n], lambda_pfs_bg[n]));
   }
 
 }

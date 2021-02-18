@@ -28,7 +28,7 @@ data {
   real<lower=0> a_shape_os;
   real<lower=0> b_shape_os;
 
-  vector[H_os] mu_0_os;          // os, pfs
+  vector[H_os] mu_0_os;          // os, pfs scale regression
   vector[H_pfs] mu_0_pfs;
   vector<lower=0> [H_os] sigma_0_os;
   vector<lower=0> [H_pfs] sigma_0_pfs;

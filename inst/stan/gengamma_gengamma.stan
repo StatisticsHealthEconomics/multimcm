@@ -174,7 +174,7 @@ model {
                 log(cf_pfs) +
                 surv_exp_lpdf(t_pfs[i] | d_pfs[i], lambda_pfs_bg[i]),
                 log1m(cf_pfs) +
-                joint_exp_gengamma_lpdf(t_pfs[i] | d_pfs[i], mu_pfs, sigma_pfs[i], Q_os, lambda_pfs_bg[i]));
+                joint_exp_gengamma_lpdf(t_pfs[i] | d_pfs[i], mu_pfs, sigma_pfs[i], Q_pfs, lambda_pfs_bg[i]));
   }
 }
 

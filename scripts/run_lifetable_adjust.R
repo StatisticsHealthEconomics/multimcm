@@ -28,7 +28,7 @@ surv_input_data$os <- surv_input_data$os/12
 dat <- surv_input_data %>% filter(best_overall_resp == "CR")
 
 # avoid log(0)
-dat$OS_rate[dat$OS_rate == 0] <- 1e-6
+dat$OS_rate[dat$OS_rate == 0] <- 1e-20
 
 out <-
   rstan::stan(
@@ -48,6 +48,37 @@ out <-
     chains = 2)
 
 res <- extract(out)
+hist(res$alpha, breaks = 20)
+
+
+## test with dummy data
+
+n <- 20
+rate1 <- 3 # known times
+rate2 <- 2 # known curve
+
+times <- rexp(n, rate1)
+h_hat <- rep(rate2, n)
+S_hat <- exp(-rate2*times)
+
+out <-
+  rstan::stan(
+    file = "inst/stan/lifetable_adjust.stan",
+    data = list(
+      n = n,
+      d = rep(1, n),
+      S_hat = S_hat,
+      h_hat = h_hat,
+      a_alpha = 1,
+      b_alpha = 1),
+    warmup = 100,
+    iter = 1000,
+    thin = 10,
+    control = list(adapt_delta = 0.99,
+                   max_treedepth = 20),
+    chains = 2)
+
+res <- rstan::extract(out)
 hist(res$alpha, breaks = 20)
 
 

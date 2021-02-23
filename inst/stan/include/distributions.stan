@@ -197,6 +197,7 @@ real surv_loglogistic_lpdf (real t, real d, real shape, real scale) {
 * @param Q shape
 * @return Real
 */
+// without censoring
 real gen_gamma_lpdf(real t, real mu, real sigma, real Q) {
   real prob;
   real w;
@@ -205,8 +206,35 @@ real gen_gamma_lpdf(real t, real mu, real sigma, real Q) {
   return prob;
 }
 
-real gen_gamma_cens_lpdf(real t, real d, real mu, real sigma, real Q) {
-  // Rescales the distribution accounting for right censoring
+real gen_gamma_Surv(real t, real mu, real sigma, real Q) {
+  real Surv;
+  real w = (log(t) - mu) / sigma;
+  real qq = 1/(Q * Q);
+  real expnu = exp(Q * w) * qq;
+  Surv =  1 - gamma_cdf(expnu, qq, 1);
+  return Surv;
+}
+
+real gen_gamma_log_S(real t, real mu, real sigma, real Q) {
+  real log_S;
+  log_S = log(gen_gamma_Surv(t, mu, sigma, Q));
+  return log_S;
+}
+
+real gen_gamma_log_h(real t, real mu, real sigma, real Q) {
+  real log_h;
+  log_h = gen_gamma_lpdf(t | mu, sigma, Q) - gen_gamma_log_S(t, mu, sigma, Q);
+  return log_h;
+}
+
+real gen_gamma_haz(real t, real mu, real sigma, real Q) {
+  real haz;
+  haz = exp(gen_gamma_log_h(t, mu, sigma, Q));
+  return haz;
+}
+
+real surv_gen_gamma_lpdf(real t, real d, real mu, real sigma, real Q) {
+  // rescale the distribution accounting for right censoring
   real prob;
   real w;
   real tr;
@@ -221,30 +249,48 @@ real gen_gamma_cens_lpdf(real t, real d, real mu, real sigma, real Q) {
 * log-normal
 *
 * @param t time
-* @param shape
-* @param scale
-* @return A real
+* @param mu
+* @param sigma
+* @return real
 */
-// Defines the log survival
-real log_S (real t, real mean, real sd) {
+// log survival
+real lognormal_log_S (real t, real mu, real sigma) {
   real log_S;
-  log_S = log(1 - Phi((log(t) - mean)/sd));
+  log_S = log(1 - Phi((log(t) - mu)/sigma));
   return log_S;
 }
 
-// Defines the log hazard
-real log_h (real t, real mean, real sd) {
+// log hazard
+real lognormal_log_h (real t, real mu, real sigma) {
   real log_h;
-  real ls;
-  ls = log_S(t, mean, sd);
-  log_h = lognormal_lpdf(t | mean, sd) - ls;
+  log_h = -log(t*sigma) + normal_lpdf(log(t) | mu, sigma) - log(1 - Phi((log(t) - mu)/sigma));
   return log_h;
 }
 
-// Defines the sampling distribution
-real surv_lognormal_lpdf (real t, real d, real mean, real sd) {
+// survival
+real lognormal_Surv (real t, real mu, real sigma) {
+ real Surv;
+ Surv = 1 - Phi((log(t) - mu)/sigma);
+ return Surv;
+}
+
+// hazard
+real lognormal_haz (real t, real mu, real sigma) {
+  real haz;
+  haz = (1/(t*sigma)) * exp(normal_lpdf(log(t) | mu, sigma)) / (1 - Phi((log(t) - mu)/sigma));
+  return haz;
+}
+
+// sampling distribution
+real surv_lognormal_pdf (real t, real d, real mu, real sigma) {
+  real lik;
+  lik = pow(lognormal_haz(t, mu, sigma), d) * lognormal_Surv(t, mu, sigma);
+  return lik;
+}
+
+real surv_lognormal_lpdf (real t, real d, real mu, real sigma) {
   real log_lik;
-  log_lik = d * log_h(t, mean, sd) + log_S(t, mean, sd);
+  log_lik = d * lognormal_log_h(t, mu, sigma) + lognormal_log_S(t, mu, sigma);
   return log_lik;
 }
 
@@ -322,23 +368,23 @@ real exp_loglogistic_Surv(real t, real shape, real scale, real rate) {
 
 // log-normal
 
-real joint_exp_lognormal_pdf(real t, real d, real shape, real scale, real rate) {
+real joint_exp_lognormal_pdf(real t, real d, real mu, real sigma, real rate) {
   real lik;
-    lik = exp_Surv(t, rate) * lognormal_Surv(t, shape, scale) *
-            pow(exp_haz(t, rate) + lognormal_haz(t, shape, scale), d);
+  lik = exp_Surv(t, rate) * lognormal_Surv(t, mu, sigma) *
+        pow(exp_haz(t, rate) + lognormal_haz(t, mu, sigma), d);
   return lik;
 }
 
-real joint_exp_lognormal_lpdf(real t, real d, real shape, real scale, real rate) {
+real joint_exp_lognormal_lpdf(real t, real d, real mu, real sigma, real rate) {
   real log_lik;
-    log_lik = d * log(exp_haz(t, rate) + lognormal_haz(t, shape, scale)) +
-            exp_log_S(t, rate) + lognormal_log_S(t, shape, scale);
+  log_lik = d * log(exp_haz(t, rate) + lognormal_haz(t, mu, sigma)) +
+            exp_log_S(t, rate) + lognormal_log_S(t, mu, sigma);
   return log_lik;
 }
 
-real exp_lognormal_Surv(real t, real shape, real scale, real rate) {
+real exp_lognormal_Surv(real t, real mu, real sigma, real rate) {
   real Surv;
-    Surv = exp_Surv(t, rate) * lognormal_Surv(t, shape, scale);
+  Surv = exp_Surv(t, rate) * lognormal_Surv(t, mu, sigma);
   return Surv;
 }
 
@@ -346,21 +392,21 @@ real exp_lognormal_Surv(real t, real shape, real scale, real rate) {
 
 real joint_exp_gengamma_pdf(real t, real d, real mu, real scale, real Q, real rate) {
   real lik;
-  lik = exp_Surv(t, rate) * gengamma_Surv(t, mu, scale, Q) *
-            pow(exp_haz(t, rate) + gengamma_haz(t, mu, scale, Q), d);
+  lik = exp_Surv(t, rate) * gen_gamma_Surv(t, mu, scale, Q) *
+            pow(exp_haz(t, rate) + gen_gamma_haz(t, mu, scale, Q), d);
   return lik;
 }
 
 real joint_exp_gengamma_lpdf(real t, real d, real mu, real scale, real Q, real rate) {
   real log_lik;
-  log_lik = d * log(exp_haz(t, rate) + gengamma_haz(t, mu, scale, Q)) +
-            exp_log_S(t, rate) + gengamma_log_S(t, mu, scale, Q);
+  log_lik = d * log(exp_haz(t, rate) + gen_gamma_haz(t, mu, scale, Q)) +
+            exp_log_S(t, rate) + gen_gamma_log_S(t, mu, scale, Q);
   return log_lik;
 }
 
 real exp_gengamma_Surv(real t, real mu, real scale, real Q, real rate) {
   real Surv;
-  Surv = exp_Surv(t, rate) * gengamma_Surv(t, mu, scale, Q);
+  Surv = exp_Surv(t, rate) * gen_gamma_Surv(t, mu, scale, Q);
   return Surv;
 }
 

@@ -86,8 +86,8 @@ transformed parameters {
   vector[n_os] lp_os_bg;
   vector[n_os] lp_pfs_bg;
 
-  vector[n_os] lambda_os;
-  vector[n_pfs] lambda_pfs;
+  vector[n_os] sigma_os;
+  vector[n_pfs] sigma_pfs;
   vector[n_os] lambda_os_bg;
   vector[n_os] lambda_pfs_bg;
 
@@ -262,8 +262,8 @@ generated quantities {
 
   for (i in 1:t_max) {
     S_bg[i] = exp_Surv(i, mean_bg);
-    S_os[i] = exp_gengamma_Surv(i, mu_os, sigma_os, Q_os, mean_bg);
-    S_pfs[i] = exp_gengamma_Surv(i, mu_pfs, sigma_pfs, Q_os, mean_bg);
+    S_os[i] = exp_gengamma_Surv(i, mu_os, mean_os, Q_os, mean_bg);
+    S_pfs[i] = exp_gengamma_Surv(i, mu_pfs, mean_pfs, Q_os, mean_bg);
 
     S_os_pred[i] = cf_os*S_bg[i] + (1 - cf_os)*S_os[i];
     S_pfs_pred[i] = cf_pfs*S_bg[i] + (1 - cf_pfs)*S_pfs[i];

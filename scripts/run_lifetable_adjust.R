@@ -30,6 +30,9 @@ dat <- surv_input_data %>% filter(best_overall_resp == "CR")
 # avoid log(0)
 dat$OS_rate[dat$OS_rate == 0] <- 1e-20
 
+# alpha prior
+# hist(rgamma(400, 15, 10), breaks = 50)
+
 out <-
   rstan::stan(
     file = "inst/stan/lifetable_adjust.stan",
@@ -38,8 +41,8 @@ out <-
       d = dat$os_event,
       S_hat = dat$OS_S,
       h_hat = dat$OS_rate,
-      a_alpha = 1,
-      b_alpha = 1),
+      a_alpha = 15,
+      b_alpha = 10),
     warmup = 100,
     iter = 1000,
     thin = 10,
@@ -53,9 +56,9 @@ hist(res$alpha, breaks = 20)
 
 ## test with dummy data
 
-n <- 20
-rate1 <- 3 # known times
-rate2 <- 2 # known curve
+n <- 200
+rate1 <- 3 # known times i.e. OS events
+rate2 <- 2 # known curve i.e. life-table
 
 times <- rexp(n, rate1)
 h_hat <- rep(rate2, n)

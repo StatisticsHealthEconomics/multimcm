@@ -27,4 +27,3 @@ model {
 
 generated quantities {
 }
-

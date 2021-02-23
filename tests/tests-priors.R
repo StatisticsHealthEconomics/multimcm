@@ -13,7 +13,7 @@ library(rstan)
 library(shinystan)
 library(dplyr)
 library(ggplot2)
-devtools::load_all()
+# devtools::load_all()
 
 # load("~/R/rstanbmcm/data/surv_input_data.RData")
 data("surv_input_data")
@@ -385,7 +385,9 @@ out <-
 plot_prior_predictive(out, event_type = "pfs")
 
 
-## hierarchical cure fraction
+### hierarchical cure fraction
+
+## exponential
 
 out <-
   bmcm_joint_stan_file(
@@ -473,7 +475,7 @@ out <-
 plot_prior_predictive(out, event_type = "pfs")
 plot_prior_predictive(out, event_type = "os")
 
-## lognormal
+## log-normal
 
 out <-
   bmcm_joint_stan_file(
@@ -482,15 +484,15 @@ out <-
     model_pfs = "lognormal",
     tx_name = "IPILIMUMAB",
     params_pfs = list(a_sd = 1,
-                      b_sd = 1,
-                      mu_0 = c(-3, 0),
+                      b_sd = 2,
+                      mu_0 = c(1.5, 0),
                       sigma_0 = c(0.5, 0.01)),
-    params_os = list(a_sd = 0.5,
-                     b_sd = 0.5,
-                     mu_0 = c(-3, 0),
+    params_os = list(a_sd = 2,
+                     b_sd = 1,
+                     mu_0 = c(2.5, 0),
                      sigma_0 = c(0.4, 1)),
-    params_cf = list(mu_cf_gl = array(-0.8, 1),
-                     sigma_cf_gl = array(2, 1),
+    params_cf = list(mu_cf_gl = array(-1.8, 1),
+                     sigma_cf_gl = array(1, 1),
                      sd_cf_os = array(0.5, 1),
                      sd_cf_pfs = array(0.5, 1)),
     cf_model = 3,
@@ -504,5 +506,39 @@ out <-
 plot_prior_predictive(out, event_type = "pfs")
 plot_prior_predictive(out, event_type = "os")
 
+## generalised gamma
+
+out <-
+  bmcm_joint_stan_file(
+    input_data = surv_input_data,
+    model_os = "gengamma",
+    model_pfs = "gengamma",
+    tx_name = "IPILIMUMAB",
+    params_pfs = list(a_mu = 1,
+                      b_mu = 1,
+                      a_Q = 2,
+                      b_Q = 1,
+                      mu_0 = c(-3, 0),
+                      sigma_0 = c(0.5, 0.01)),
+    params_os = list(a_mu = 1,
+                     b_mu = 1,
+                     a_Q = 1,
+                     b_Q = 1,
+                     mu_0 = c(-3, 0),
+                     sigma_0 = c(0.4, 1)),
+    params_cf = list(mu_cf_gl = array(-0.1, 1),
+                     sigma_cf_gl = array(1, 1),
+                     sd_cf_os = array(1, 1),
+                     sd_cf_pfs = array(1, 1)),
+    cf_model = 3,
+    joint_model = FALSE,
+    bg_model = 2,
+    algorithm = "Fixed_param",
+    warmup = 1,
+    iter = 100,
+    thin = 1)
+
+plot_prior_predictive(out, event_type = "pfs")
+plot_prior_predictive(out, event_type = "os")
 
 

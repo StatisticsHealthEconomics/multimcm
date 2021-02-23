@@ -18,7 +18,7 @@ source("R/prep_stan_params.R")
 source("R/prep_shared_params.R")
 source("R/prep_stan_data.R")
 
-rstan_options(auto_write = TRUE)
+# rstan_options(auto_write = TRUE)
 options(mc.cores = parallel::detectCores() - 1)
 
 # load("~/Documents/R/mixture_cure_model/data/surv_input_data.RData")
@@ -38,14 +38,20 @@ trta_idx <- 1
 all_tx_names <- c("IPILIMUMAB", "NIVOLUMAB", "NIVOLUMAB+IPILIMUMAB")
 trta <- all_tx_names[trta_idx]
 
-model_os_idx <- 5
-model_pfs_idx <- 5
+model_os_idx <- 6
+model_pfs_idx <- 6
 model_names <- c("exp", "weibull", "gompertz", "loglogistic", "lognormal", "gengamma")
 model_os <- model_names[model_os_idx]
 model_pfs <- model_names[model_pfs_idx]
 
 cf_idx <- 3
 cf_model_names <- c("cf pooled", "cf separate", "cf hier")
+
+cf_hier <-
+  list(mu_cf_gl = array(-0.8, 1),
+       sigma_cf_gl = array(2, 1),
+       sd_cf_os = array(0.5, 1),
+       sd_cf_pfs = array(0.5, 1))
 
 params_cf <-
   list("cf pooled" =
@@ -57,10 +63,16 @@ params_cf <-
               sd_cf_os = array(0.5, 1),
               sd_cf_pfs = array(0.5, 1)),
        "cf hier" =
-         list(mu_cf_gl = array(-0.8, 1),
-              sigma_cf_gl = array(2, 1),
-              sd_cf_os = array(0.5, 1),
-              sd_cf_pfs = array(0.5, 1)))
+         list(exp = cf_hier,
+              weibull = cf_hier,
+              gompertz = cf_hier,
+              loglogistic = cf_hier,
+              gengamma = cf_hier,
+              lognormal =
+                list(mu_cf_gl = array(-1.8, 1),
+                     sigma_cf_gl = array(1, 1),
+                     sd_cf_os = array(0.5, 1),
+                     sd_cf_pfs = array(0.5, 1))))
 
 bg_model_idx <- 2
 bg_model_names <- c("bg_distn", "bg_fixed")
@@ -87,16 +99,16 @@ params_pfs <-
               sigma_0 = c(0.5, 0.01)),
        lognormal =
          list(a_sd = 1,
-              b_sd = 1,
-              mu_0 = c(-3, 0),
-              sigma_0 = c(0.5, 1)),
+              b_sd = 2,
+              mu_0 = c(1.5, 0),
+              sigma_0 = c(0.5, 0.01)),
        gengamma =
          list(a_mu = 1,
               b_mu = 1,
-              a_Q = 1,
+              a_Q = 2,
               b_Q = 1,
               mu_0 = c(-3, 0),
-              sigma_0 = c(0.5, 1)))
+              sigma_0 = c(0.5, 0.01)))
 
 params_os <-
   list(exp =
@@ -118,15 +130,17 @@ params_os <-
               mu_0 = c(-3, 0),
               sigma_0 = c(0.5, 1)),
        lognormal =
-         list(a_sd = 1,
+         list(a_sd = 2,
               b_sd = 1,
-              mu_0 = c(-3, 0),
-              sigma_0 = c(0.5, 1)),
+              mu_0 = c(2.5, 0),
+              sigma_0 = c(0.5, 0.01)),
        gengamma =
-         list(a_sigma = 1,
-              b_sigma = 1,
+         list(a_mu = 1,
+              b_mu = 1,
+              a_Q = 2,
+              b_Q = 1,
               mu_0 = c(-3, 0),
-              sigma_0 = c(0.5, 1)))
+              sigma_0 = c(0.5, 0.01)))
 
 #######
 # run #
@@ -140,7 +154,7 @@ out <-
     tx_name = trta,
     params_pfs = params_pfs[[model_pfs]],
     params_os = params_os[[model_os]],
-    params_cf = params_cf[[cf_idx]],
+    params_cf = params_cf[[cf_idx]][[model_pfs]],
     cf_model = cf_idx,                # 1- shared; 2- separate; 3- hierarchical
     joint_model = FALSE,
     bg_model = bg_model_idx,

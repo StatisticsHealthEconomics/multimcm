@@ -23,12 +23,12 @@ data {
   matrix[n_os, H_os] X_os;       // matrix of covariates (with n rows and H columns)
   matrix[n_pfs, H_pfs] X_pfs;
 
-  real<lower=0> a_sd_pfs;
+  real<lower=0> a_sd_pfs;        // gamma hyper-parameters
   real<lower=0> b_sd_pfs;
   real<lower=0> a_sd_os;
   real<lower=0> b_sd_os;
 
-  vector[H_os] mu_0_os;          // os, pfs
+  vector[H_os] mu_0_os;          // mean linear predictor os, pfs
   vector[H_pfs] mu_0_pfs;
   vector<lower=0> [H_os] sigma_0_os;
   vector<lower=0> [H_pfs] sigma_0_pfs;
@@ -63,8 +63,8 @@ parameters {
   vector[bg_model == 1 ? H_os : 0] beta_bg;
   real beta_joint[joint_model];
 
-  real<lower=0> shape_pfs;
-  real<lower=0> shape_os;
+  real<lower=0> sd_pfs;
+  real<lower=0> sd_os;
 
   real<lower=0, upper=1> cf_pooled[cf_model == 1 ? 1 : 0];
   real lp_cf_global[cf_model == 3 ? 1 : 0];
@@ -150,6 +150,7 @@ model {
   }
 
   //TODO: could just use surv point estimate directly for life-table background?
+  //      instead of exp distn
 
   // likelihood
   for (i in 1:n_os) {
@@ -168,9 +169,9 @@ model {
 
 generated quantities {
   // posterior
-  real mean_os;
-  real mean_pfs;
-  real mean_bg;
+  real mean_lp_os;
+  real mean_lp_pfs;
+  real mean_lp_bg;
 
   vector[t_max] S_bg;
   vector[t_max] S_os;
@@ -234,35 +235,35 @@ generated quantities {
   }
 
   // intercepts
-  mean_os = beta_os[1];
-  mean_pfs = beta_pfs[1];
+  mean_lp_os = beta_os[1];
+  mean_lp_pfs = beta_pfs[1];
 
   //TODO: this is a short-term hack
   if (bg_model == 1) {
-    mean_bg = exp(beta_bg[1]);
+    mean_lp_bg = exp(beta_bg[1]);
   } else {
-    mean_bg = 0.001;
+    mean_lp_bg = 0.001;
     // mean_bg = mean(h_bg_os);
   }
 
   for (i in 1:t_max) {
-    S_bg[i] = exp_Surv(i, mean_bg);
-    S_os[i] = exp_lognormal_Surv(i, sd_os, mean_os, mean_bg);
-    S_pfs[i] = exp_lognormal_Surv(i, sd_pfs, mean_pfs, mean_bg);
+    S_bg[i] = exp_Surv(i, mean_lp_bg);
+    S_os[i] = exp_lognormal_Surv(i, mean_lp_os, sd_os, mean_lp_bg);
+    S_pfs[i] = exp_lognormal_Surv(i, mean_lp_pfs, sd_pfs, mean_lp_bg);
 
     S_os_pred[i] = cf_os*S_bg[i] + (1 - cf_os)*S_os[i];
     S_pfs_pred[i] = cf_pfs*S_bg[i] + (1 - cf_pfs)*S_pfs[i];
   }
 
   // prior checks
-  pmean_os = exp(pbeta_os);
+  pmean_os = pbeta_os;
   pmean_pfs = pbeta_pfs;
-  pmean_bg = pbeta_bg;
+  pmean_bg = exp(pbeta_bg);
 
   for (i in 1:t_max) {
     pS_bg[i] = exp_Surv(i, pmean_bg);
-    pS_os[i] = exp_lognormal_Surv(i, psd_os, pmean_os, pmean_bg);
-    pS_pfs[i] = exp_lognormal_Surv(i, psd_pfs, pmean_pfs, pmean_bg);
+    pS_os[i] = exp_lognormal_Surv(i, pmean_os, psd_os, pmean_bg);
+    pS_pfs[i] = exp_lognormal_Surv(i, pmean_pfs, psd_pfs, pmean_bg);
 
     S_os_prior[i] = pmean_cf_os*pS_bg[i] + (1 - pmean_cf_os)*pS_os[i];
     S_pfs_prior[i] = pmean_cf_pfs*pS_bg[i] + (1 - pmean_cf_pfs)*pS_pfs[i];

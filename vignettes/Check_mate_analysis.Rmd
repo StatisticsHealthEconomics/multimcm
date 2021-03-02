@@ -331,56 +331,70 @@ For each model and treatment we produce two figures:
 Figures \ref{fig:IPI}, \ref{fig:NIVO}, and \ref{fig:NIVO+IPI} show
 posterior survival curves for the Exponential and log-logistic models.
 
-```{r fig.show='hold',fig.align='center', out.width="100%", echo=FALSE, fig.cap="\\label{fig:IPI}Posterior survival curves for the mixture cure model and ipilimumab. The red line is cured background, light green and blue are uncured, and dark green and magenta are combined. a) Exponential uncured; b) Log-logistic uncured."}
-rl <- list()
-rl[[1]] <- png::readPNG("../plots/S_plots_exp_exp_cf hier_bg_fixed_IPILIMUMAB.png")
-rl[[2]] <- png::readPNG("../plots/S_plots_loglogistic_loglogistic_cf hier_bg_fixed_IPILIMUMAB.png")
-rl[[3]] <- png::readPNG("../plots/S_plots_gompertz_gompertz_cf hier_bg_fixed_IPILIMUMAB.png")
-rl[[4]] <- png::readPNG("../plots/S_plots_weibull_weibull_cf hier_bg_fixed_IPILIMUMAB.png")
-rl[[5]] <- png::readPNG("../plots/S_plots_lognormal_lognormal_cf hier_bg_fixed_NIVOLUMAB+IPILIMUMAB.png")
-
-gl = lapply(rl, grid::rasterGrob)
-gridExtra::marrangeGrob(grobs = gl, nrow = 2, ncol = 3, top = "",
-                        vp=grid::viewport(width=1, height=1, clip = TRUE))
-```
-
-```{r}
+```{r fig.show='hold',fig.align='center', out.width="100%", echo=FALSE, message = FALSE, warning = FALSE, fig.cap="\\label{fig:IPI}Posterior survival curves for the mixture cure model and ipilimumab. The red line is cured background, light green and blue are uncured, and dark green and magenta are combined. a) Exponential uncured; b) Log-logistic uncured."}
 library(magick)
-ff <- list()
-ff[[1]] <- image_read("../plots/S_plots_exp_exp_cf hier_bg_fixed_IPILIMUMAB.png")
-ff[[2]] <- image_read("../plots/S_plots_exp_exp_cf hier_bg_fixed_IPILIMUMAB.png")
-ff[[3]] <- image_read("../plots/S_plots_exp_exp_cf hier_bg_fixed_IPILIMUMAB.png")
-ff[[4]] <- image_read("../plots/S_plots_exp_exp_cf hier_bg_fixed_IPILIMUMAB.png")
-ff[[1]] <- image_annotate(ff[[1]], " a)", size = 70)
-ff[[2]] <- image_annotate(ff[[2]], " a)", size = 70)
-ff[[3]] <- image_annotate(ff[[3]], " a)", size = 70)
-ff[[4]] <- image_annotate(ff[[4]], " a)", size = 70)
-gl = lapply(ff, grid::rasterGrob)
-gridExtra::marrangeGrob(grobs = gl, nrow = 2, ncol = 3, top = "",
-                        vp=grid::viewport(width=1, height=1, clip = TRUE))
-```
-
-
-```{r fig.show='hold',fig.align='center', out.width="100%", echo=FALSE, fig.cap="\\label{fig:NIVO}Posterior survival curves for the mixture cure model and nivolumab. The red line is cured background, light green and blue are uncured, and dark green and magenta are combined. a) Exponential uncured; b) Log-logistic uncured."}
 rl <- list()
-rl[[1]] <- png::readPNG("../plots/S_plots_exp_exp_cf hier_bg_fixed_NIVOLUMAB.png")
-rl[[2]] <- png::readPNG("../plots/S_plots_loglogistic_loglogistic_cf hier_bg_fixed_NIVOLUMAB.png")
-rl[[3]] <- png::readPNG("../plots/S_plots_gompertz_gompertz_cf hier_bg_fixed_NIVOLUMAB.png")
-rl[[4]] <- png::readPNG("../plots/S_plots_weibull_weibull_cf hier_bg_fixed_NIVOLUMAB.png")
-rl[[5]] <- png::readPNG("../plots/S_plots_lognormal_lognormal_cf hier_bg_fixed_NIVOLUMAB+IPILIMUMAB.png")  #
+rl[[1]] <-
+  image_read("../plots/S_plots_exp_exp_cf hier_bg_fixed_IPILIMUMAB.png") %>%
+  image_annotate(" a)", size = 70)
+rl[[2]] <-
+  image_read("../plots/S_plots_loglogistic_loglogistic_cf hier_bg_fixed_IPILIMUMAB.png") %>%
+  image_annotate(" b)", size = 70)
+rl[[3]] <-
+  image_read("../plots/S_plots_gompertz_gompertz_cf hier_bg_fixed_IPILIMUMAB.png") %>%
+  image_annotate(" c)", size = 70)
+rl[[4]] <-
+  image_read("../plots/S_plots_weibull_weibull_cf hier_bg_fixed_IPILIMUMAB.png") %>%
+  image_annotate(" d)", size = 70)
+rl[[5]] <-
+  image_read("../plots/S_plots_lognormal_lognormal_cf hier_bg_fixed_NIVOLUMAB+IPILIMUMAB.png") %>%
+  image_annotate(" e)", size = 70)
 
 gl = lapply(rl, grid::rasterGrob)
 gridExtra::marrangeGrob(grobs = gl, nrow = 2, ncol = 3, top = "",
                         vp=grid::viewport(width=1, height=1, clip = TRUE))
 ```
 
-```{r fig.show='hold',fig.align='center', out.width="100%", echo=FALSE, fig.cap="\\label{fig:NIVO+IPI}Posterior survival curves for the mixture cure model and dual ipilimumab and nivolumab. The red line is cured background, light green and blue are uncured, and dark green and magenta are combined. a) Exponential uncured; b) Log-logistic uncured."}
+```{r fig.show='hold',fig.align='center', out.width="100%", echo=FALSE, message = FALSE, warning = FALSE, fig.cap="\\label{fig:NIVO}Posterior survival curves for the mixture cure model and nivolumab. The red line is cured background, light green and blue are uncured, and dark green and magenta are combined. a) Exponential uncured; b) Log-logistic uncured."}
 rl <- list()
-rl[[1]] <- png::readPNG("../plots/S_plots_exp_exp_cf hier_bg_fixed_NIVOLUMAB.png")
-rl[[2]] <- png::readPNG("../plots/S_plots_loglogistic_loglogistic_cf hier_bg_fixed_NIVOLUMAB+IPILIMUMAB.png")
-rl[[3]] <- png::readPNG("../plots/S_plots_gompertz_gompertz_cf hier_bg_fixed_NIVOLUMAB+IPILIMUMAB.png")
-rl[[4]] <- png::readPNG("../plots/S_plots_weibull_weibull_cf hier_bg_fixed_NIVOLUMAB+IPILIMUMAB.png")
-rl[[5]] <- png::readPNG("../plots/S_plots_lognormal_lognormal_cf hier_bg_fixed_NIVOLUMAB+IPILIMUMAB.png")
+rl[[1]] <-
+  image_read("../plots/S_plots_exp_exp_cf hier_bg_fixed_NIVOLUMAB.png") %>%
+  image_annotate(" a)", size = 70)
+rl[[2]] <-
+  image_read("../plots/S_plots_loglogistic_loglogistic_cf hier_bg_fixed_NIVOLUMAB.png") %>%
+  image_annotate(" b)", size = 70)
+rl[[3]] <-
+  image_read("../plots/S_plots_gompertz_gompertz_cf hier_bg_fixed_NIVOLUMAB.png") %>%
+  image_annotate(" c)", size = 70)
+rl[[4]] <-
+  image_read("../plots/S_plots_weibull_weibull_cf hier_bg_fixed_NIVOLUMAB.png") %>%
+  image_annotate(" d)", size = 70)
+rl[[5]] <-
+  image_read("../plots/S_plots_lognormal_lognormal_cf hier_bg_fixed_NIVOLUMAB+IPILIMUMAB.png") %>%
+  image_annotate(" e)", size = 70)
+
+gl = lapply(rl, grid::rasterGrob)
+gridExtra::marrangeGrob(grobs = gl, nrow = 2, ncol = 3, top = "",
+                        vp=grid::viewport(width=1, height=1, clip = TRUE))
+```
+
+```{r fig.show='hold',fig.align='center', out.width="100%", echo=FALSE, message = FALSE, warning = FALSE, fig.cap="\\label{fig:NIVO+IPI}Posterior survival curves for the mixture cure model and dual ipilimumab and nivolumab. The red line is cured background, light green and blue are uncured, and dark green and magenta are combined. a) Exponential uncured; b) Log-logistic uncured."}
+rl <- list()
+rl[[1]] <-
+  image_read("../plots/S_plots_exp_exp_cf hier_bg_fixed_NIVOLUMAB.png") %>%
+  image_annotate(" a)", size = 70)
+rl[[2]] <-
+  image_read("../plots/S_plots_loglogistic_loglogistic_cf hier_bg_fixed_NIVOLUMAB+IPILIMUMAB.png") %>%
+  image_annotate(" b)", size = 70)
+rl[[3]] <-
+  image_read("../plots/S_plots_gompertz_gompertz_cf hier_bg_fixed_NIVOLUMAB+IPILIMUMAB.png") %>%
+  image_annotate(" c)", size = 70)
+rl[[4]] <-
+  image_read("../plots/S_plots_weibull_weibull_cf hier_bg_fixed_NIVOLUMAB+IPILIMUMAB.png") %>%
+  image_annotate(" d)", size = 70)
+rl[[5]] <-
+  image_read("../plots/S_plots_lognormal_lognormal_cf hier_bg_fixed_NIVOLUMAB+IPILIMUMAB.png") %>%
+  image_annotate(" e)", size = 70)
 
 gl = lapply(rl, grid::rasterGrob)
 gridExtra::marrangeGrob(grobs = gl, nrow = 2, ncol = 3, top = "",

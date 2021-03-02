@@ -56,10 +56,13 @@ tab_cf_pfs <-
                       round(quantile(x, 0.975),3), ")")}) %>%
   do.call(rbind, .)
 
-scenarios <-
+scenarios_str <-
   dir("data/independent/cf hier/bg_fixed") %>%
   gsub("stan_", "", .) %>%
-  gsub(".Rds", "", .) %>%
+  gsub(".Rds", "", .)
+
+scenarios <-
+  scenarios_str %>%
   stringr::str_split("_") %>%
   do.call(rbind, .)
 
@@ -70,20 +73,39 @@ knitr::kable(
         "$cf_{OS}$ (CrI)" = tab_cf_os,
         "$cf_{PFS}$ (CrI)" = tab_cf_pfs))
 
-# forest plot
+
+# forest plot ----
 ##TODO: automate names...
 xx <-
   cbind(
-    as.data.frame(cf_global),
-    as.data.frame(cf_os),
-    as.data.frame(cf_pfs)) %>%
-  setNames(c("cf_global_ipi_exp", "cf_global_nivo_exp", "cf_global_both_exp", "cf_global_ipi_llog", "cf_global_nivo_llog", "cf_global_both_llog",
-             "cf_os_ipi_exp", "cf_os_nivo_exp", "cf_os_both_exp", "cf_os_ipi_llog", "cf_os_nivo_llog", "cf_os_both_llog",
-             "cf_pfs_ipi_exp", "cf_pfs_nivo_exp", "cf_pfs_both_exp", "cf_pfs_ipi_llog", "cf_pfs_nivo_llog", "cf_pfs_both_llog"))
+    as.data.frame(cf_global) %>% setNames(paste("cf global", scenarios_str)),
+    as.data.frame(cf_os) %>% setNames(paste("cf os", scenarios_str)),
+    as.data.frame(cf_pfs) %>% setNames(paste("cf pfs", scenarios_str))) #%>%
+  # setNames(c("cf_global_ipi_exp", "cf_global_nivo_exp", "cf_global_both_exp", "cf_global_ipi_llog", "cf_global_nivo_llog", "cf_global_both_llog",
+  #            "cf_os_ipi_exp", "cf_os_nivo_exp", "cf_os_both_exp", "cf_os_ipi_llog", "cf_os_nivo_llog", "cf_os_both_llog",
+  #            "cf_pfs_ipi_exp", "cf_pfs_nivo_exp", "cf_pfs_both_exp", "cf_pfs_ipi_llog", "cf_pfs_nivo_llog", "cf_pfs_both_llog"))
 
 mcmc_intervals(xx) + xlim(0, 0.65)
 
 ggsave(filename = "plots/cf_forest_plot.png")
+
+as.data.frame(cf_global) %>%
+  setNames(scenarios_str) %>%
+  mcmc_intervals() +
+  xlim(0, 0.65)
+ggsave(filename = "plots/cf_global_forest_plot.png")
+
+as.data.frame(cf_os) %>%
+  setNames(scenarios_str) %>%
+  mcmc_intervals() +
+  xlim(0, 0.65)
+ggsave(filename = "plots/cf_os_forest_plot.png")
+
+as.data.frame(cf_pfs) %>%
+  setNames(scenarios_str) %>%
+  mcmc_intervals() +
+  xlim(0, 0.65)
+ggsave(filename = "plots/cf_pfs_forest_plot.png")
 
 
 ## joint, separate

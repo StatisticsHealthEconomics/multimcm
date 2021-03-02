@@ -201,34 +201,22 @@ real gen_gamma_lpdf(vector x, vector mu, real sigma, real Q) {
   // mu = location
   // sigma = scale
   // Q = shape
-  vector[num_elements(x)] prob;
-  real lprob;
-  vector[num_elements(x)] w;
-  // Constructs the log-density for each observation
-  w = ((log(x)-mu))/sigma;
-  for (i in 1:num_elements(x)) {
-    prob[i] = -log(sigma*x[i]) + log(fabs(Q)) + pow(Q, -2)*log(pow(Q, -2)) + pow(Q, -2)*(Q*w[i]-exp(Q*w[i])) - lgamma(pow(Q, -2));
-  }
-  // And the total log-density (as a sum of the individual terms)
-  lprob = sum((prob));
-  return lprob;
+  real prob;
+  real w;
+  w = (log(x) - mu)/sigma;
+  prob = -log(sigma*x) + log(fabs(Q)) + pow(Q, -2)*log(pow(Q, -2)) + pow(Q, -2)*(Q*w - exp(Q*w)) - lgamma(pow(Q, -2));
+  return prob;
 }
 
-real gen_gamma_cens_lpdf(vector x, vector mu, real sigma, real Q, vector u) {
+real gen_gamma_cens_lpdf(real x, vector mu, real sigma, real Q, vector u) {
   // Rescales the distribution accounting for right censoring
-  vector[num_elements(x)] prob;
-  real lprob;
-  vector[num_elements(x)] w;
-  vector[num_elements(x)] tr;
-  // Constructs the log-density for each observation
-  tr = x .* u;
-  w = ((log(tr)-mu))/sigma;
-  for (i in 1:num_elements(x)) {
-    prob[i] = log(u[i]) - log(sigma*tr[i]) + log(fabs(Q)) + pow(Q, -2)*log(pow(Q, -2)) + pow(Q, -2)*(Q*w[i] - exp(Q*w[i])) - lgamma(pow(Q, -2));
-  }
-  // And the total log-density (as a sum of the individual terms)
-  lprob = sum((prob));
-  return lprob;
+  real prob;
+  real w;
+  real tr;
+  tr = x * u;
+  w = (log(tr) - mu)/sigma;
+  prob = log(u) - log(sigma*tr) + log(fabs(Q)) + pow(Q, -2)*log(pow(Q, -2)) + pow(Q, -2)*(Q*w - exp(Q*w)) - lgamma(pow(Q, -2));
+  return prob;
 }
 
 
@@ -241,33 +229,28 @@ real gen_gamma_cens_lpdf(vector x, vector mu, real sigma, real Q, vector u) {
 * @param scale
 * @return A real
 */
-// Defines the log survival
-vector log_S (vector t, vector mean, real sd) {
-  vector[num_elements(t)] log_S;
-  for (i in 1:num_elements(t)) {
-    log_S[i] = log(1 - Phi((log(t[i]) - mean[i])/sd));
-  }
+// log survival
+real log_S (real t, vector mean, real sd) {
+  real log_S;
+  log_S = log(1 - Phi((log(t) - mean)/sd));
   return log_S;
 }
 
-// Defines the log hazard
-vector log_h (vector t, vector mean, real sd) {
-  vector[num_elements(t)] log_h;
-  vector[num_elements(t)] ls;
+// log hazard
+real log_h (real t, vector mean, real sd) {
+  real log_h;
+  real ls;
   ls = log_S(t, mean, sd);
-  for (i in 1:num_elements(t)) {
-    log_h[i] = lognormal_lpdf(t[i]|mean[i],sd) - ls[i];
-  }
+  log_h = lognormal_lpdf(t | mean, sd) - ls;
   return log_h;
 }
 
-// Defines the sampling distribution
-real surv_lognormal_lpdf (vector t, vector d, vector mean, real sd) {
-  vector[num_elements(t)] log_lik;
+// sampling distribution
+real surv_lognormal_lpdf (real t, vector d, vector mean, real sd) {
+  real log_lik;
   real prob;
-  log_lik = d .* log_h(t, mean, sd) + log_S(t, mean, sd);
-  prob = sum(log_lik);
-  return prob;
+  log_lik = d * log_h(t, mean, sd) + log_S(t, mean, sd);
+  return log_lik;
 }
 
 

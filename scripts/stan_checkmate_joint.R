@@ -17,6 +17,8 @@ source("R/bmcm_joint_stan_file.R")
 source("R/prep_stan_params.R")
 source("R/prep_shared_params.R")
 source("R/prep_stan_data.R")
+source("R/plot_post_pred_KM.R")
+
 
 # rstan_options(auto_write = TRUE)
 options(mc.cores = parallel::detectCores() - 1)
@@ -38,8 +40,8 @@ trta_idx <- 3
 all_tx_names <- c("IPILIMUMAB", "NIVOLUMAB", "NIVOLUMAB+IPILIMUMAB")
 trta <- all_tx_names[trta_idx]
 
-model_os_idx <- 5
-model_pfs_idx <- 5
+model_os_idx <- 2
+model_pfs_idx <- 2
 model_names <- c("exp", "weibull", "gompertz", "loglogistic", "lognormal", "gengamma")
 model_os <- model_names[model_os_idx]
 model_pfs <- model_names[model_pfs_idx]
@@ -218,6 +220,9 @@ ggsave(s_plot,
 plot_prior_predictive(out, event_type = "os")
 plot_prior_predictive(out, event_type = "pfs")
 
-fileloc_out <- glue::glue("plots/post_pred_{model_os}_{model_pfs}_{cf_model_names[cf_idx]}_{bg_model}_{trta}.png")
-plot_post_pred_KM(out, trta, surv_input_data)
+
+##TODO: for all distns
+# fileloc_out <- glue::glue("plots/post_pred_{model_os}_{model_pfs}_{cf_model_names[cf_idx]}_{bg_model}_{trta}.png")
+# plot_post_pred_KM(out, trta, surv_input_data)
+# plot_post_pred_KM(out, trta, surv_input_data, fileloc_out)
 

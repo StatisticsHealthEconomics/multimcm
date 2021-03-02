@@ -57,8 +57,8 @@ hist(res$alpha, breaks = 20)
 ## test with dummy data
 
 n <- 200
-rate1 <- 3 # known times i.e. OS events
-rate2 <- 2 # known curve i.e. life-table
+rate1 <- 2 # known times i.e. OS events
+rate2 <- 3 # known curve i.e. life-table
 
 times <- rexp(n, rate1)
 h_hat <- rep(rate2, n)

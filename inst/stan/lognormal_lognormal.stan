@@ -202,6 +202,10 @@ generated quantities {
 
   real pbeta_bg;
 
+  real<lower=0, upper=1> cf_tilde[n_os] ;
+  real<lower=0> t_os_tilde[n_os];
+  real<lower=0> t_pfs_tilde[n_os];
+
   // if (cf_model == 3) {
     // real vpc_os;
     // real vpc_pfs;
@@ -283,6 +287,25 @@ generated quantities {
                     surv_exp_lpdf(t_pfs[n] | d_pfs[n], lambda_pfs_bg[n]),
                   log1m(cf_pfs) +
                     joint_exp_lognormal_lpdf(t_pfs[n] | d_pfs[n], mean_pfs[n], sd_pfs, lambda_pfs_bg[n]));
+  }
+
+
+  // posterior predictive values
+  for (i in 1:n_os) {
+
+    cf_tilde[i] = uniform_rng(0, 1);
+
+    if (cf_tilde[i] < cf_os) {
+      t_os_tilde[i] = exponential_rng(lambda_os_bg[i]);
+    } else {
+      t_os_tilde[i] = exp_lognormal_rng(mean_os[i], sd_os, lambda_os_bg[i]);
+    }
+
+    if (cf_tilde[i] < cf_pfs) {
+      t_pfs_tilde[i] = exponential_rng(lambda_pfs_bg[i]);
+    } else {
+      t_pfs_tilde[i] = exp_lognormal_rng(mean_pfs[i], sd_pfs, lambda_pfs_bg[i]);
+    }
   }
 
 }

@@ -516,7 +516,7 @@ out <-
     tx_name = "IPILIMUMAB",
     params_pfs = list(a_mu = 1,
                       b_mu = 1,
-                      a_Q = 2,
+                      a_Q = 1,
                       b_Q = 1,
                       mu_0 = c(-3, 0),
                       sigma_0 = c(0.5, 0.01)),

@@ -1,4 +1,12 @@
 
+//
+real normal_pdf (real t, real mu, real sigma) {
+  real pdf;
+  pdf = 1/(sigma*sqrt(2*pi())) * exp(-0.5*pow((t - mu)/sigma, 2));
+  return pdf;
+}
+
+
 /**
 * exponential distribution
 *
@@ -254,6 +262,7 @@ real surv_gen_gamma_lpdf(real t, real d, real mu, real sigma, real Q) {
 * @return real
 */
 // log survival
+//lognormal_lccdf()
 real lognormal_log_S (real t, real mu, real sigma) {
   real log_S;
   log_S = log(1 - Phi((log(t) - mu)/sigma));
@@ -263,11 +272,13 @@ real lognormal_log_S (real t, real mu, real sigma) {
 // log hazard
 real lognormal_log_h (real t, real mu, real sigma) {
   real log_h;
-  log_h = -log(t*sigma) + normal_lpdf(log(t) | mu, sigma) - log(1 - Phi((log(t) - mu)/sigma));
+  // log_h = -log(t*sigma) + normal_lpdf(log(t) | mu, sigma) - log(1 - Phi((log(t) - mu)/sigma));
+  log_h = lognormal_lpdf(t | mu, sigma) - lognormal_lccdf(t | mu, sigma);
   return log_h;
 }
 
 // survival
+//1 - lognormal_cdf()
 real lognormal_Surv (real t, real mu, real sigma) {
  real Surv;
  Surv = 1 - Phi((log(t) - mu)/sigma);
@@ -277,7 +288,7 @@ real lognormal_Surv (real t, real mu, real sigma) {
 // hazard
 real lognormal_haz (real t, real mu, real sigma) {
   real haz;
-  haz = (1/(t*sigma)) * exp(normal_lpdf(log(t) | mu, sigma)) / (1 - Phi((log(t) - mu)/sigma));
+  haz = (1/(t*sigma)) * normal_pdf(log(t), mu, sigma) / (1 - Phi((log(t) - mu)/sigma));
   return haz;
 }
 
@@ -387,6 +398,16 @@ real exp_lognormal_Surv(real t, real mu, real sigma, real rate) {
   Surv = exp_Surv(t, rate) * lognormal_Surv(t, mu, sigma);
   return Surv;
 }
+
+real exp_lognormal_rng(real mu, real sigma, real lambda) {
+ real t_latent[2];
+ real t_min;
+ t_latent[1] = exponential_rng(lambda);
+ t_latent[2] = lognormal_rng(mu, sigma);
+ t_min = min(t_latent);
+ return t_min;
+}
+
 
 // generalised gamma
 

@@ -44,10 +44,13 @@ functions {
 
 data {
   int<lower=1> n; // num individuals
+  real<lower=1> os_model;
+  real<lower=1> pfs_model;
 
   int<lower=1> n_samples;
   real<lower=0, upper=1> cf_os[n_samples];
   real<lower=0, upper=1> cf_pfs[n_samples];
+
   matrix[n_samples, n] lambda_os;
   matrix[n_samples, n] lambda_pfs;
   matrix[n_samples, n] lambda_os_bg;

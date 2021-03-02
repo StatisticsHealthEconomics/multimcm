@@ -2,6 +2,7 @@
 #' Plot posterior predictive Kaplan-Meier
 #'
 #' Base R used.
+#' stand-alone generated values as input.
 #'
 #' @param res Stan output
 #' @param tx_name "IPILIMUMAB", "NIVOLUMAB", "NIVOLUMAB+IPILIMUMAB"
@@ -26,14 +27,16 @@ plot_post_pred_KM <- function(res,
                               orig_data,
                               fileloc_out = NA,
                               casemix = TRUE) {
-
   real_data <- orig_data[orig_data$TRTA == tx_name, ]
   yy <- rstan::extract(res)
-  n_post <- dim(yy$t_os_tilde)[2]
+  # n_post <- dim(yy$t_os_tilde)[2] # stand-alone
+  n_post <- dim(yy$t_os_tilde)[1]
 
   if (casemix) {
-    t_os <- yy$t_os_tilde[1, , ]
-    t_pfs <- yy$t_pfs_tilde[1, , ]
+    # t_os <- yy$t_os_tilde[1, , ]   # stand-alone
+    # t_pfs <- yy$t_pfs_tilde[1, , ]
+    t_os <- yy$t_os_tilde
+    t_pfs <- yy$t_pfs_tilde
   } else{
     t_os <- yy$t_os_bar[1, , ]
     t_pfs <- yy$t_pfs_bar[1, , ]
@@ -52,6 +55,7 @@ plot_post_pred_KM <- function(res,
        type = "n",
        col = "lightblue",
        xlim = c(0, 60),
+       ylim = c(0,1),
        conf.int = FALSE,
        main = "OS",
        ylab = "Survival",
@@ -73,9 +77,11 @@ plot_post_pred_KM <- function(res,
        type = "n",
        col = "lightblue",
        xlim = c(0, 60),
+       ylim = c(0,1),
        conf.int = FALSE,
        main = "PFS",
        xlab = "Month",
+       ylab = "",
        bty = "n")
 
   for (i in seq_len(n_post)) {

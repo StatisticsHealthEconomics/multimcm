@@ -46,7 +46,17 @@ tab <-
 
 purrr::map(log_lik_sep_distn, waic)
 
-knitr::kable(tab)
+scenarios <-
+  dir("data/independent/cf hier/bg_fixed") %>%
+  gsub("stan_", "", .) %>%
+  gsub(".Rds", "", .) %>%
+  stringr::str_split("_") %>%
+  do.call(rbind, .)
+
+
+knitr::kable(
+  cbind(scenarios,
+        tab))
 
 # ----
 
@@ -67,6 +77,7 @@ vpc <- function(out) {
     vpc_os = round(sd(x$lp_cf_global)^2/(sd(x$lp_cf_global)^2 + sd(x$lp_cf_os)^2), 3))
 }
 
-knitr::kable(purrr::map_df(res_hier_fixed, vpc))
-
+knitr::kable(
+  cbind(scenarios,
+        purrr::map_df(res_hier_fixed, vpc)))
 

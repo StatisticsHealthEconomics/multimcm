@@ -35,9 +35,9 @@ stan::io::program_reader prog_reader__() {
     reader.add_event(0, 0, "start", "model_exp_exp_joint_hiercf");
     reader.add_event(5, 5, "include", "/include/distributions.stan");
     reader.add_event(5, 0, "start", "/include/distributions.stan");
-    reader.add_event(177, 172, "end", "/include/distributions.stan");
-    reader.add_event(177, 6, "restart", "model_exp_exp_joint_hiercf");
-    reader.add_event(409, 236, "end", "model_exp_exp_joint_hiercf");
+    reader.add_event(419, 414, "end", "/include/distributions.stan");
+    reader.add_event(419, 6, "restart", "model_exp_exp_joint_hiercf");
+    reader.add_event(687, 272, "end", "model_exp_exp_joint_hiercf");
     return reader;
 }
 template <typename T0__, typename T1__>
@@ -53,14 +53,14 @@ exp_log_h(const T0__& t,
     int current_statement_begin__ = -1;
     try {
         {
-        current_statement_begin__ = 15;
+        current_statement_begin__ = 17;
         local_scalar_t__ logh(DUMMY_VAR__);
         (void) logh;  // dummy to suppress unused var warning
         stan::math::initialize(logh, DUMMY_VAR__);
         stan::math::fill(logh, DUMMY_VAR__);
-        current_statement_begin__ = 16;
+        current_statement_begin__ = 18;
         stan::math::assign(logh, stan::math::log(rate));
-        current_statement_begin__ = 17;
+        current_statement_begin__ = 19;
         return stan::math::promote_scalar<fun_return_scalar_t__>(logh);
         }
     } catch (const std::exception& e) {
@@ -90,14 +90,14 @@ exp_haz(const T0__& t,
     int current_statement_begin__ = -1;
     try {
         {
-        current_statement_begin__ = 22;
+        current_statement_begin__ = 24;
         local_scalar_t__ h(DUMMY_VAR__);
         (void) h;  // dummy to suppress unused var warning
         stan::math::initialize(h, DUMMY_VAR__);
         stan::math::fill(h, DUMMY_VAR__);
-        current_statement_begin__ = 23;
+        current_statement_begin__ = 25;
         stan::math::assign(h, rate);
-        current_statement_begin__ = 24;
+        current_statement_begin__ = 26;
         return stan::math::promote_scalar<fun_return_scalar_t__>(h);
         }
     } catch (const std::exception& e) {
@@ -127,14 +127,14 @@ exp_log_S(const T0__& t,
     int current_statement_begin__ = -1;
     try {
         {
-        current_statement_begin__ = 30;
+        current_statement_begin__ = 32;
         local_scalar_t__ logS(DUMMY_VAR__);
         (void) logS;  // dummy to suppress unused var warning
         stan::math::initialize(logS, DUMMY_VAR__);
         stan::math::fill(logS, DUMMY_VAR__);
-        current_statement_begin__ = 31;
+        current_statement_begin__ = 33;
         stan::math::assign(logS, (-(rate) * t));
-        current_statement_begin__ = 32;
+        current_statement_begin__ = 34;
         return stan::math::promote_scalar<fun_return_scalar_t__>(logS);
         }
     } catch (const std::exception& e) {
@@ -164,14 +164,14 @@ exp_Surv(const T0__& t,
     int current_statement_begin__ = -1;
     try {
         {
-        current_statement_begin__ = 37;
+        current_statement_begin__ = 39;
         local_scalar_t__ S(DUMMY_VAR__);
         (void) S;  // dummy to suppress unused var warning
         stan::math::initialize(S, DUMMY_VAR__);
         stan::math::fill(S, DUMMY_VAR__);
-        current_statement_begin__ = 38;
+        current_statement_begin__ = 40;
         stan::math::assign(S, stan::math::exp((-(rate) * t)));
-        current_statement_begin__ = 39;
+        current_statement_begin__ = 41;
         return stan::math::promote_scalar<fun_return_scalar_t__>(S);
         }
     } catch (const std::exception& e) {
@@ -202,14 +202,14 @@ surv_exp_pdf(const T0__& t,
     int current_statement_begin__ = -1;
     try {
         {
-        current_statement_begin__ = 44;
+        current_statement_begin__ = 46;
         local_scalar_t__ lik(DUMMY_VAR__);
         (void) lik;  // dummy to suppress unused var warning
         stan::math::initialize(lik, DUMMY_VAR__);
         stan::math::fill(lik, DUMMY_VAR__);
-        current_statement_begin__ = 45;
+        current_statement_begin__ = 47;
         stan::math::assign(lik, (pow(exp_haz(t, rate, pstream__), d) * exp_Surv(t, rate, pstream__)));
-        current_statement_begin__ = 46;
+        current_statement_begin__ = 48;
         return stan::math::promote_scalar<fun_return_scalar_t__>(lik);
         }
     } catch (const std::exception& e) {
@@ -241,14 +241,14 @@ surv_exp_lpdf(const T0__& t,
     int current_statement_begin__ = -1;
     try {
         {
-        current_statement_begin__ = 51;
+        current_statement_begin__ = 53;
         local_scalar_t__ log_lik(DUMMY_VAR__);
         (void) log_lik;  // dummy to suppress unused var warning
         stan::math::initialize(log_lik, DUMMY_VAR__);
         stan::math::fill(log_lik, DUMMY_VAR__);
-        current_statement_begin__ = 52;
+        current_statement_begin__ = 54;
         stan::math::assign(log_lik, ((d * exp_log_h(t, rate, pstream__)) + exp_log_S(t, rate, pstream__)));
-        current_statement_begin__ = 53;
+        current_statement_begin__ = 55;
         return stan::math::promote_scalar<fun_return_scalar_t__>(log_lik);
         }
     } catch (const std::exception& e) {
@@ -287,14 +287,14 @@ weibull_log_h(const T0__& t,
     int current_statement_begin__ = -1;
     try {
         {
-        current_statement_begin__ = 65;
+        current_statement_begin__ = 69;
         local_scalar_t__ logh(DUMMY_VAR__);
         (void) logh;  // dummy to suppress unused var warning
         stan::math::initialize(logh, DUMMY_VAR__);
         stan::math::fill(logh, DUMMY_VAR__);
-        current_statement_begin__ = 66;
+        current_statement_begin__ = 70;
         stan::math::assign(logh, ((stan::math::log(shape) + ((shape - 1) * stan::math::log((t / scale)))) - stan::math::log(scale)));
-        current_statement_begin__ = 67;
+        current_statement_begin__ = 71;
         return stan::math::promote_scalar<fun_return_scalar_t__>(logh);
         }
     } catch (const std::exception& e) {
@@ -326,14 +326,14 @@ weibull_haz(const T0__& t,
     int current_statement_begin__ = -1;
     try {
         {
-        current_statement_begin__ = 71;
+        current_statement_begin__ = 76;
         local_scalar_t__ h(DUMMY_VAR__);
         (void) h;  // dummy to suppress unused var warning
         stan::math::initialize(h, DUMMY_VAR__);
         stan::math::fill(h, DUMMY_VAR__);
-        current_statement_begin__ = 72;
+        current_statement_begin__ = 77;
         stan::math::assign(h, ((shape / scale) * pow((t / scale), (shape - 1))));
-        current_statement_begin__ = 73;
+        current_statement_begin__ = 78;
         return stan::math::promote_scalar<fun_return_scalar_t__>(h);
         }
     } catch (const std::exception& e) {
@@ -365,14 +365,14 @@ weibull_log_S(const T0__& t,
     int current_statement_begin__ = -1;
     try {
         {
-        current_statement_begin__ = 79;
+        current_statement_begin__ = 84;
         local_scalar_t__ logS(DUMMY_VAR__);
         (void) logS;  // dummy to suppress unused var warning
         stan::math::initialize(logS, DUMMY_VAR__);
         stan::math::fill(logS, DUMMY_VAR__);
-        current_statement_begin__ = 80;
+        current_statement_begin__ = 85;
         stan::math::assign(logS, -(pow((t / scale), shape)));
-        current_statement_begin__ = 81;
+        current_statement_begin__ = 86;
         return stan::math::promote_scalar<fun_return_scalar_t__>(logS);
         }
     } catch (const std::exception& e) {
@@ -404,14 +404,14 @@ weibull_Surv(const T0__& t,
     int current_statement_begin__ = -1;
     try {
         {
-        current_statement_begin__ = 86;
+        current_statement_begin__ = 91;
         local_scalar_t__ S(DUMMY_VAR__);
         (void) S;  // dummy to suppress unused var warning
         stan::math::initialize(S, DUMMY_VAR__);
         stan::math::fill(S, DUMMY_VAR__);
-        current_statement_begin__ = 87;
+        current_statement_begin__ = 92;
         stan::math::assign(S, stan::math::exp(-(pow((t / scale), shape))));
-        current_statement_begin__ = 88;
+        current_statement_begin__ = 93;
         return stan::math::promote_scalar<fun_return_scalar_t__>(S);
         }
     } catch (const std::exception& e) {
@@ -444,14 +444,14 @@ surv_weibull_lpdf(const T0__& t,
     int current_statement_begin__ = -1;
     try {
         {
-        current_statement_begin__ = 93;
+        current_statement_begin__ = 98;
         local_scalar_t__ log_lik(DUMMY_VAR__);
         (void) log_lik;  // dummy to suppress unused var warning
         stan::math::initialize(log_lik, DUMMY_VAR__);
         stan::math::fill(log_lik, DUMMY_VAR__);
-        current_statement_begin__ = 94;
+        current_statement_begin__ = 99;
         stan::math::assign(log_lik, ((d * weibull_log_h(t, shape, scale, pstream__)) + weibull_log_S(t, shape, scale, pstream__)));
-        current_statement_begin__ = 95;
+        current_statement_begin__ = 100;
         return stan::math::promote_scalar<fun_return_scalar_t__>(log_lik);
         }
     } catch (const std::exception& e) {
@@ -482,7 +482,7 @@ template <typename T0__, typename T1__, typename T2__>
 typename boost::math::tools::promote_args<T0__, T1__, T2__>::type
 gompertz_log_h(const T0__& t,
                    const T1__& shape,
-                   const T2__& rate, std::ostream* pstream__) {
+                   const T2__& scale, std::ostream* pstream__) {
     typedef typename boost::math::tools::promote_args<T0__, T1__, T2__>::type local_scalar_t__;
     typedef local_scalar_t__ fun_return_scalar_t__;
     const static bool propto__ = true;
@@ -492,14 +492,14 @@ gompertz_log_h(const T0__& t,
     int current_statement_begin__ = -1;
     try {
         {
-        current_statement_begin__ = 107;
+        current_statement_begin__ = 114;
         local_scalar_t__ log_h(DUMMY_VAR__);
         (void) log_h;  // dummy to suppress unused var warning
         stan::math::initialize(log_h, DUMMY_VAR__);
         stan::math::fill(log_h, DUMMY_VAR__);
-        current_statement_begin__ = 108;
-        stan::math::assign(log_h, (stan::math::log(rate) + (shape * t)));
-        current_statement_begin__ = 109;
+        current_statement_begin__ = 115;
+        stan::math::assign(log_h, (stan::math::log(scale) + (shape * t)));
+        current_statement_begin__ = 116;
         return stan::math::promote_scalar<fun_return_scalar_t__>(log_h);
         }
     } catch (const std::exception& e) {
@@ -513,15 +513,15 @@ struct gompertz_log_h_functor__ {
         typename boost::math::tools::promote_args<T0__, T1__, T2__>::type
     operator()(const T0__& t,
                    const T1__& shape,
-                   const T2__& rate, std::ostream* pstream__) const {
-        return gompertz_log_h(t, shape, rate, pstream__);
+                   const T2__& scale, std::ostream* pstream__) const {
+        return gompertz_log_h(t, shape, scale, pstream__);
     }
 };
 template <typename T0__, typename T1__, typename T2__>
 typename boost::math::tools::promote_args<T0__, T1__, T2__>::type
 gompertz_haz(const T0__& t,
                  const T1__& shape,
-                 const T2__& rate, std::ostream* pstream__) {
+                 const T2__& scale, std::ostream* pstream__) {
     typedef typename boost::math::tools::promote_args<T0__, T1__, T2__>::type local_scalar_t__;
     typedef local_scalar_t__ fun_return_scalar_t__;
     const static bool propto__ = true;
@@ -531,14 +531,14 @@ gompertz_haz(const T0__& t,
     int current_statement_begin__ = -1;
     try {
         {
-        current_statement_begin__ = 113;
+        current_statement_begin__ = 121;
         local_scalar_t__ h(DUMMY_VAR__);
         (void) h;  // dummy to suppress unused var warning
         stan::math::initialize(h, DUMMY_VAR__);
         stan::math::fill(h, DUMMY_VAR__);
-        current_statement_begin__ = 114;
-        stan::math::assign(h, (rate * stan::math::exp((shape * t))));
-        current_statement_begin__ = 115;
+        current_statement_begin__ = 122;
+        stan::math::assign(h, (scale * stan::math::exp((shape * t))));
+        current_statement_begin__ = 123;
         return stan::math::promote_scalar<fun_return_scalar_t__>(h);
         }
     } catch (const std::exception& e) {
@@ -552,15 +552,15 @@ struct gompertz_haz_functor__ {
         typename boost::math::tools::promote_args<T0__, T1__, T2__>::type
     operator()(const T0__& t,
                  const T1__& shape,
-                 const T2__& rate, std::ostream* pstream__) const {
-        return gompertz_haz(t, shape, rate, pstream__);
+                 const T2__& scale, std::ostream* pstream__) const {
+        return gompertz_haz(t, shape, scale, pstream__);
     }
 };
 template <typename T0__, typename T1__, typename T2__>
 typename boost::math::tools::promote_args<T0__, T1__, T2__>::type
 gompertz_log_S(const T0__& t,
                    const T1__& shape,
-                   const T2__& rate, std::ostream* pstream__) {
+                   const T2__& scale, std::ostream* pstream__) {
     typedef typename boost::math::tools::promote_args<T0__, T1__, T2__>::type local_scalar_t__;
     typedef local_scalar_t__ fun_return_scalar_t__;
     const static bool propto__ = true;
@@ -570,14 +570,14 @@ gompertz_log_S(const T0__& t,
     int current_statement_begin__ = -1;
     try {
         {
-        current_statement_begin__ = 120;
+        current_statement_begin__ = 128;
         local_scalar_t__ log_S(DUMMY_VAR__);
         (void) log_S;  // dummy to suppress unused var warning
         stan::math::initialize(log_S, DUMMY_VAR__);
         stan::math::fill(log_S, DUMMY_VAR__);
-        current_statement_begin__ = 121;
-        stan::math::assign(log_S, ((-(rate) / shape) * (stan::math::exp((shape * t)) - 1)));
-        current_statement_begin__ = 122;
+        current_statement_begin__ = 129;
+        stan::math::assign(log_S, ((-(scale) / shape) * (stan::math::exp((shape * t)) - 1)));
+        current_statement_begin__ = 130;
         return stan::math::promote_scalar<fun_return_scalar_t__>(log_S);
         }
     } catch (const std::exception& e) {
@@ -591,15 +591,15 @@ struct gompertz_log_S_functor__ {
         typename boost::math::tools::promote_args<T0__, T1__, T2__>::type
     operator()(const T0__& t,
                    const T1__& shape,
-                   const T2__& rate, std::ostream* pstream__) const {
-        return gompertz_log_S(t, shape, rate, pstream__);
+                   const T2__& scale, std::ostream* pstream__) const {
+        return gompertz_log_S(t, shape, scale, pstream__);
     }
 };
 template <typename T0__, typename T1__, typename T2__>
 typename boost::math::tools::promote_args<T0__, T1__, T2__>::type
 gompertz_Surv(const T0__& t,
                   const T1__& shape,
-                  const T2__& rate, std::ostream* pstream__) {
+                  const T2__& scale, std::ostream* pstream__) {
     typedef typename boost::math::tools::promote_args<T0__, T1__, T2__>::type local_scalar_t__;
     typedef local_scalar_t__ fun_return_scalar_t__;
     const static bool propto__ = true;
@@ -609,14 +609,14 @@ gompertz_Surv(const T0__& t,
     int current_statement_begin__ = -1;
     try {
         {
-        current_statement_begin__ = 127;
+        current_statement_begin__ = 135;
         local_scalar_t__ S(DUMMY_VAR__);
         (void) S;  // dummy to suppress unused var warning
         stan::math::initialize(S, DUMMY_VAR__);
         stan::math::fill(S, DUMMY_VAR__);
-        current_statement_begin__ = 128;
-        stan::math::assign(S, stan::math::exp(((-(rate) / shape) * (stan::math::exp((shape * t)) - 1))));
-        current_statement_begin__ = 129;
+        current_statement_begin__ = 136;
+        stan::math::assign(S, stan::math::exp(((-(scale) / shape) * (stan::math::exp((shape * t)) - 1))));
+        current_statement_begin__ = 137;
         return stan::math::promote_scalar<fun_return_scalar_t__>(S);
         }
     } catch (const std::exception& e) {
@@ -630,8 +630,8 @@ struct gompertz_Surv_functor__ {
         typename boost::math::tools::promote_args<T0__, T1__, T2__>::type
     operator()(const T0__& t,
                   const T1__& shape,
-                  const T2__& rate, std::ostream* pstream__) const {
-        return gompertz_Surv(t, shape, rate, pstream__);
+                  const T2__& scale, std::ostream* pstream__) const {
+        return gompertz_Surv(t, shape, scale, pstream__);
     }
 };
 template <bool propto, typename T0__, typename T1__, typename T2__, typename T3__>
@@ -639,7 +639,7 @@ typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__>::type
 surv_gompertz_lpdf(const T0__& t,
                        const T1__& d,
                        const T2__& shape,
-                       const T3__& rate, std::ostream* pstream__) {
+                       const T3__& scale, std::ostream* pstream__) {
     typedef typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__>::type local_scalar_t__;
     typedef local_scalar_t__ fun_return_scalar_t__;
     const static bool propto__ = true;
@@ -649,14 +649,14 @@ surv_gompertz_lpdf(const T0__& t,
     int current_statement_begin__ = -1;
     try {
         {
-        current_statement_begin__ = 134;
+        current_statement_begin__ = 142;
         local_scalar_t__ log_lik(DUMMY_VAR__);
         (void) log_lik;  // dummy to suppress unused var warning
         stan::math::initialize(log_lik, DUMMY_VAR__);
         stan::math::fill(log_lik, DUMMY_VAR__);
-        current_statement_begin__ = 135;
-        stan::math::assign(log_lik, ((d * gompertz_log_h(t, shape, rate, pstream__)) + gompertz_log_S(t, shape, rate, pstream__)));
-        current_statement_begin__ = 136;
+        current_statement_begin__ = 143;
+        stan::math::assign(log_lik, ((d * gompertz_log_h(t, shape, scale, pstream__)) + gompertz_log_S(t, shape, scale, pstream__)));
+        current_statement_begin__ = 144;
         return stan::math::promote_scalar<fun_return_scalar_t__>(log_lik);
         }
     } catch (const std::exception& e) {
@@ -670,8 +670,8 @@ typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__>::type
 surv_gompertz_lpdf(const T0__& t,
                        const T1__& d,
                        const T2__& shape,
-                       const T3__& rate, std::ostream* pstream__) {
-    return surv_gompertz_lpdf<false>(t,d,shape,rate, pstream__);
+                       const T3__& scale, std::ostream* pstream__) {
+    return surv_gompertz_lpdf<false>(t,d,shape,scale, pstream__);
 }
 struct surv_gompertz_lpdf_functor__ {
     template <bool propto, typename T0__, typename T1__, typename T2__, typename T3__>
@@ -679,8 +679,763 @@ struct surv_gompertz_lpdf_functor__ {
     operator()(const T0__& t,
                        const T1__& d,
                        const T2__& shape,
-                       const T3__& rate, std::ostream* pstream__) const {
-        return surv_gompertz_lpdf(t, d, shape, rate, pstream__);
+                       const T3__& scale, std::ostream* pstream__) const {
+        return surv_gompertz_lpdf(t, d, shape, scale, pstream__);
+    }
+};
+template <typename T0__, typename T1__, typename T2__>
+typename boost::math::tools::promote_args<T0__, T1__, T2__>::type
+loglogistic_log_h(const T0__& t,
+                      const T1__& shape,
+                      const T2__& scale, std::ostream* pstream__) {
+    typedef typename boost::math::tools::promote_args<T0__, T1__, T2__>::type local_scalar_t__;
+    typedef local_scalar_t__ fun_return_scalar_t__;
+    const static bool propto__ = true;
+    (void) propto__;
+        local_scalar_t__ DUMMY_VAR__(std::numeric_limits<double>::quiet_NaN());
+        (void) DUMMY_VAR__;  // suppress unused var warning
+    int current_statement_begin__ = -1;
+    try {
+        {
+        current_statement_begin__ = 159;
+        local_scalar_t__ log_h(DUMMY_VAR__);
+        (void) log_h;  // dummy to suppress unused var warning
+        stan::math::initialize(log_h, DUMMY_VAR__);
+        stan::math::fill(log_h, DUMMY_VAR__);
+        current_statement_begin__ = 160;
+        stan::math::assign(log_h, (((stan::math::log(shape) - stan::math::log(scale)) + ((shape - 1) * (stan::math::log(t) - stan::math::log(scale)))) - stan::math::log((1 + pow((t / scale), shape)))));
+        current_statement_begin__ = 163;
+        return stan::math::promote_scalar<fun_return_scalar_t__>(log_h);
+        }
+    } catch (const std::exception& e) {
+        stan::lang::rethrow_located(e, current_statement_begin__, prog_reader__());
+        // Next line prevents compiler griping about no return
+        throw std::runtime_error("*** IF YOU SEE THIS, PLEASE REPORT A BUG ***");
+    }
+}
+struct loglogistic_log_h_functor__ {
+    template <typename T0__, typename T1__, typename T2__>
+        typename boost::math::tools::promote_args<T0__, T1__, T2__>::type
+    operator()(const T0__& t,
+                      const T1__& shape,
+                      const T2__& scale, std::ostream* pstream__) const {
+        return loglogistic_log_h(t, shape, scale, pstream__);
+    }
+};
+template <typename T0__, typename T1__, typename T2__>
+typename boost::math::tools::promote_args<T0__, T1__, T2__>::type
+loglogistic_haz(const T0__& t,
+                    const T1__& shape,
+                    const T2__& scale, std::ostream* pstream__) {
+    typedef typename boost::math::tools::promote_args<T0__, T1__, T2__>::type local_scalar_t__;
+    typedef local_scalar_t__ fun_return_scalar_t__;
+    const static bool propto__ = true;
+    (void) propto__;
+        local_scalar_t__ DUMMY_VAR__(std::numeric_limits<double>::quiet_NaN());
+        (void) DUMMY_VAR__;  // suppress unused var warning
+    int current_statement_begin__ = -1;
+    try {
+        {
+        current_statement_begin__ = 168;
+        local_scalar_t__ haz(DUMMY_VAR__);
+        (void) haz;  // dummy to suppress unused var warning
+        stan::math::initialize(haz, DUMMY_VAR__);
+        stan::math::fill(haz, DUMMY_VAR__);
+        current_statement_begin__ = 169;
+        stan::math::assign(haz, (((shape / scale) * pow((t / scale), (shape - 1))) / (1 + pow((t / scale), shape))));
+        current_statement_begin__ = 171;
+        return stan::math::promote_scalar<fun_return_scalar_t__>(haz);
+        }
+    } catch (const std::exception& e) {
+        stan::lang::rethrow_located(e, current_statement_begin__, prog_reader__());
+        // Next line prevents compiler griping about no return
+        throw std::runtime_error("*** IF YOU SEE THIS, PLEASE REPORT A BUG ***");
+    }
+}
+struct loglogistic_haz_functor__ {
+    template <typename T0__, typename T1__, typename T2__>
+        typename boost::math::tools::promote_args<T0__, T1__, T2__>::type
+    operator()(const T0__& t,
+                    const T1__& shape,
+                    const T2__& scale, std::ostream* pstream__) const {
+        return loglogistic_haz(t, shape, scale, pstream__);
+    }
+};
+template <typename T0__, typename T1__, typename T2__>
+typename boost::math::tools::promote_args<T0__, T1__, T2__>::type
+loglogistic_log_S(const T0__& t,
+                      const T1__& shape,
+                      const T2__& scale, std::ostream* pstream__) {
+    typedef typename boost::math::tools::promote_args<T0__, T1__, T2__>::type local_scalar_t__;
+    typedef local_scalar_t__ fun_return_scalar_t__;
+    const static bool propto__ = true;
+    (void) propto__;
+        local_scalar_t__ DUMMY_VAR__(std::numeric_limits<double>::quiet_NaN());
+        (void) DUMMY_VAR__;  // suppress unused var warning
+    int current_statement_begin__ = -1;
+    try {
+        {
+        current_statement_begin__ = 176;
+        local_scalar_t__ log_S(DUMMY_VAR__);
+        (void) log_S;  // dummy to suppress unused var warning
+        stan::math::initialize(log_S, DUMMY_VAR__);
+        stan::math::fill(log_S, DUMMY_VAR__);
+        current_statement_begin__ = 177;
+        stan::math::assign(log_S, -(stan::math::log((1 + pow((t / scale), shape)))));
+        current_statement_begin__ = 178;
+        return stan::math::promote_scalar<fun_return_scalar_t__>(log_S);
+        }
+    } catch (const std::exception& e) {
+        stan::lang::rethrow_located(e, current_statement_begin__, prog_reader__());
+        // Next line prevents compiler griping about no return
+        throw std::runtime_error("*** IF YOU SEE THIS, PLEASE REPORT A BUG ***");
+    }
+}
+struct loglogistic_log_S_functor__ {
+    template <typename T0__, typename T1__, typename T2__>
+        typename boost::math::tools::promote_args<T0__, T1__, T2__>::type
+    operator()(const T0__& t,
+                      const T1__& shape,
+                      const T2__& scale, std::ostream* pstream__) const {
+        return loglogistic_log_S(t, shape, scale, pstream__);
+    }
+};
+template <typename T0__, typename T1__, typename T2__>
+typename boost::math::tools::promote_args<T0__, T1__, T2__>::type
+loglogistic_Surv(const T0__& t,
+                     const T1__& shape,
+                     const T2__& scale, std::ostream* pstream__) {
+    typedef typename boost::math::tools::promote_args<T0__, T1__, T2__>::type local_scalar_t__;
+    typedef local_scalar_t__ fun_return_scalar_t__;
+    const static bool propto__ = true;
+    (void) propto__;
+        local_scalar_t__ DUMMY_VAR__(std::numeric_limits<double>::quiet_NaN());
+        (void) DUMMY_VAR__;  // suppress unused var warning
+    int current_statement_begin__ = -1;
+    try {
+        {
+        current_statement_begin__ = 183;
+        local_scalar_t__ Surv(DUMMY_VAR__);
+        (void) Surv;  // dummy to suppress unused var warning
+        stan::math::initialize(Surv, DUMMY_VAR__);
+        stan::math::fill(Surv, DUMMY_VAR__);
+        current_statement_begin__ = 184;
+        stan::math::assign(Surv, (1 / (1 + pow((t / scale), shape))));
+        current_statement_begin__ = 185;
+        return stan::math::promote_scalar<fun_return_scalar_t__>(Surv);
+        }
+    } catch (const std::exception& e) {
+        stan::lang::rethrow_located(e, current_statement_begin__, prog_reader__());
+        // Next line prevents compiler griping about no return
+        throw std::runtime_error("*** IF YOU SEE THIS, PLEASE REPORT A BUG ***");
+    }
+}
+struct loglogistic_Surv_functor__ {
+    template <typename T0__, typename T1__, typename T2__>
+        typename boost::math::tools::promote_args<T0__, T1__, T2__>::type
+    operator()(const T0__& t,
+                     const T1__& shape,
+                     const T2__& scale, std::ostream* pstream__) const {
+        return loglogistic_Surv(t, shape, scale, pstream__);
+    }
+};
+template <bool propto, typename T0__, typename T1__, typename T2__, typename T3__>
+typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__>::type
+surv_loglogistic_lpdf(const T0__& t,
+                          const T1__& d,
+                          const T2__& shape,
+                          const T3__& scale, std::ostream* pstream__) {
+    typedef typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__>::type local_scalar_t__;
+    typedef local_scalar_t__ fun_return_scalar_t__;
+    const static bool propto__ = true;
+    (void) propto__;
+        local_scalar_t__ DUMMY_VAR__(std::numeric_limits<double>::quiet_NaN());
+        (void) DUMMY_VAR__;  // suppress unused var warning
+    int current_statement_begin__ = -1;
+    try {
+        {
+        current_statement_begin__ = 190;
+        local_scalar_t__ log_lik(DUMMY_VAR__);
+        (void) log_lik;  // dummy to suppress unused var warning
+        stan::math::initialize(log_lik, DUMMY_VAR__);
+        stan::math::fill(log_lik, DUMMY_VAR__);
+        current_statement_begin__ = 191;
+        stan::math::assign(log_lik, ((d * loglogistic_log_h(t, shape, scale, pstream__)) + loglogistic_log_S(t, shape, scale, pstream__)));
+        current_statement_begin__ = 192;
+        return stan::math::promote_scalar<fun_return_scalar_t__>(log_lik);
+        }
+    } catch (const std::exception& e) {
+        stan::lang::rethrow_located(e, current_statement_begin__, prog_reader__());
+        // Next line prevents compiler griping about no return
+        throw std::runtime_error("*** IF YOU SEE THIS, PLEASE REPORT A BUG ***");
+    }
+}
+template <typename T0__, typename T1__, typename T2__, typename T3__>
+typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__>::type
+surv_loglogistic_lpdf(const T0__& t,
+                          const T1__& d,
+                          const T2__& shape,
+                          const T3__& scale, std::ostream* pstream__) {
+    return surv_loglogistic_lpdf<false>(t,d,shape,scale, pstream__);
+}
+struct surv_loglogistic_lpdf_functor__ {
+    template <bool propto, typename T0__, typename T1__, typename T2__, typename T3__>
+        typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__>::type
+    operator()(const T0__& t,
+                          const T1__& d,
+                          const T2__& shape,
+                          const T3__& scale, std::ostream* pstream__) const {
+        return surv_loglogistic_lpdf(t, d, shape, scale, pstream__);
+    }
+};
+template <bool propto, typename T0__, typename T1__, typename T2__, typename T3__>
+typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__>::type
+gen_gamma_lpdf(const T0__& t,
+                   const T1__& mu,
+                   const T2__& sigma,
+                   const T3__& Q, std::ostream* pstream__) {
+    typedef typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__>::type local_scalar_t__;
+    typedef local_scalar_t__ fun_return_scalar_t__;
+    const static bool propto__ = true;
+    (void) propto__;
+        local_scalar_t__ DUMMY_VAR__(std::numeric_limits<double>::quiet_NaN());
+        (void) DUMMY_VAR__;  // suppress unused var warning
+    int current_statement_begin__ = -1;
+    try {
+        {
+        current_statement_begin__ = 206;
+        local_scalar_t__ prob(DUMMY_VAR__);
+        (void) prob;  // dummy to suppress unused var warning
+        stan::math::initialize(prob, DUMMY_VAR__);
+        stan::math::fill(prob, DUMMY_VAR__);
+        current_statement_begin__ = 207;
+        local_scalar_t__ w(DUMMY_VAR__);
+        (void) w;  // dummy to suppress unused var warning
+        stan::math::initialize(w, DUMMY_VAR__);
+        stan::math::fill(w, DUMMY_VAR__);
+        current_statement_begin__ = 208;
+        stan::math::assign(w, ((stan::math::log(t) - mu) / sigma));
+        current_statement_begin__ = 209;
+        stan::math::assign(prob, ((((-(stan::math::log((sigma * t))) + stan::math::log(stan::math::fabs(Q))) + (pow(Q, -(2)) * stan::math::log(pow(Q, -(2))))) + (pow(Q, -(2)) * ((Q * w) - stan::math::exp((Q * w))))) - stan::math::lgamma(pow(Q, -(2)))));
+        current_statement_begin__ = 210;
+        return stan::math::promote_scalar<fun_return_scalar_t__>(prob);
+        }
+    } catch (const std::exception& e) {
+        stan::lang::rethrow_located(e, current_statement_begin__, prog_reader__());
+        // Next line prevents compiler griping about no return
+        throw std::runtime_error("*** IF YOU SEE THIS, PLEASE REPORT A BUG ***");
+    }
+}
+template <typename T0__, typename T1__, typename T2__, typename T3__>
+typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__>::type
+gen_gamma_lpdf(const T0__& t,
+                   const T1__& mu,
+                   const T2__& sigma,
+                   const T3__& Q, std::ostream* pstream__) {
+    return gen_gamma_lpdf<false>(t,mu,sigma,Q, pstream__);
+}
+struct gen_gamma_lpdf_functor__ {
+    template <bool propto, typename T0__, typename T1__, typename T2__, typename T3__>
+        typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__>::type
+    operator()(const T0__& t,
+                   const T1__& mu,
+                   const T2__& sigma,
+                   const T3__& Q, std::ostream* pstream__) const {
+        return gen_gamma_lpdf(t, mu, sigma, Q, pstream__);
+    }
+};
+template <typename T0__, typename T1__, typename T2__, typename T3__>
+typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__>::type
+gen_gamma_Surv(const T0__& t,
+                   const T1__& mu,
+                   const T2__& sigma,
+                   const T3__& Q, std::ostream* pstream__) {
+    typedef typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__>::type local_scalar_t__;
+    typedef local_scalar_t__ fun_return_scalar_t__;
+    const static bool propto__ = true;
+    (void) propto__;
+        local_scalar_t__ DUMMY_VAR__(std::numeric_limits<double>::quiet_NaN());
+        (void) DUMMY_VAR__;  // suppress unused var warning
+    int current_statement_begin__ = -1;
+    try {
+        {
+        current_statement_begin__ = 214;
+        local_scalar_t__ Surv(DUMMY_VAR__);
+        (void) Surv;  // dummy to suppress unused var warning
+        stan::math::initialize(Surv, DUMMY_VAR__);
+        stan::math::fill(Surv, DUMMY_VAR__);
+        current_statement_begin__ = 215;
+        local_scalar_t__ w(DUMMY_VAR__);
+        (void) w;  // dummy to suppress unused var warning
+        stan::math::initialize(w, DUMMY_VAR__);
+        stan::math::fill(w, DUMMY_VAR__);
+        stan::math::assign(w,((stan::math::log(t) - mu) / sigma));
+        current_statement_begin__ = 216;
+        local_scalar_t__ qq(DUMMY_VAR__);
+        (void) qq;  // dummy to suppress unused var warning
+        stan::math::initialize(qq, DUMMY_VAR__);
+        stan::math::fill(qq, DUMMY_VAR__);
+        stan::math::assign(qq,(1 / (Q * Q)));
+        current_statement_begin__ = 217;
+        local_scalar_t__ expnu(DUMMY_VAR__);
+        (void) expnu;  // dummy to suppress unused var warning
+        stan::math::initialize(expnu, DUMMY_VAR__);
+        stan::math::fill(expnu, DUMMY_VAR__);
+        stan::math::assign(expnu,(stan::math::exp((Q * w)) * qq));
+        current_statement_begin__ = 218;
+        stan::math::assign(Surv, (1 - gamma_cdf(expnu, qq, 1)));
+        current_statement_begin__ = 219;
+        return stan::math::promote_scalar<fun_return_scalar_t__>(Surv);
+        }
+    } catch (const std::exception& e) {
+        stan::lang::rethrow_located(e, current_statement_begin__, prog_reader__());
+        // Next line prevents compiler griping about no return
+        throw std::runtime_error("*** IF YOU SEE THIS, PLEASE REPORT A BUG ***");
+    }
+}
+struct gen_gamma_Surv_functor__ {
+    template <typename T0__, typename T1__, typename T2__, typename T3__>
+        typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__>::type
+    operator()(const T0__& t,
+                   const T1__& mu,
+                   const T2__& sigma,
+                   const T3__& Q, std::ostream* pstream__) const {
+        return gen_gamma_Surv(t, mu, sigma, Q, pstream__);
+    }
+};
+template <typename T0__, typename T1__, typename T2__, typename T3__>
+typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__>::type
+gen_gamma_log_S(const T0__& t,
+                    const T1__& mu,
+                    const T2__& sigma,
+                    const T3__& Q, std::ostream* pstream__) {
+    typedef typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__>::type local_scalar_t__;
+    typedef local_scalar_t__ fun_return_scalar_t__;
+    const static bool propto__ = true;
+    (void) propto__;
+        local_scalar_t__ DUMMY_VAR__(std::numeric_limits<double>::quiet_NaN());
+        (void) DUMMY_VAR__;  // suppress unused var warning
+    int current_statement_begin__ = -1;
+    try {
+        {
+        current_statement_begin__ = 223;
+        local_scalar_t__ log_S(DUMMY_VAR__);
+        (void) log_S;  // dummy to suppress unused var warning
+        stan::math::initialize(log_S, DUMMY_VAR__);
+        stan::math::fill(log_S, DUMMY_VAR__);
+        current_statement_begin__ = 224;
+        stan::math::assign(log_S, stan::math::log(gen_gamma_Surv(t, mu, sigma, Q, pstream__)));
+        current_statement_begin__ = 225;
+        return stan::math::promote_scalar<fun_return_scalar_t__>(log_S);
+        }
+    } catch (const std::exception& e) {
+        stan::lang::rethrow_located(e, current_statement_begin__, prog_reader__());
+        // Next line prevents compiler griping about no return
+        throw std::runtime_error("*** IF YOU SEE THIS, PLEASE REPORT A BUG ***");
+    }
+}
+struct gen_gamma_log_S_functor__ {
+    template <typename T0__, typename T1__, typename T2__, typename T3__>
+        typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__>::type
+    operator()(const T0__& t,
+                    const T1__& mu,
+                    const T2__& sigma,
+                    const T3__& Q, std::ostream* pstream__) const {
+        return gen_gamma_log_S(t, mu, sigma, Q, pstream__);
+    }
+};
+template <typename T0__, typename T1__, typename T2__, typename T3__>
+typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__>::type
+gen_gamma_log_h(const T0__& t,
+                    const T1__& mu,
+                    const T2__& sigma,
+                    const T3__& Q, std::ostream* pstream__) {
+    typedef typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__>::type local_scalar_t__;
+    typedef local_scalar_t__ fun_return_scalar_t__;
+    const static bool propto__ = true;
+    (void) propto__;
+        local_scalar_t__ DUMMY_VAR__(std::numeric_limits<double>::quiet_NaN());
+        (void) DUMMY_VAR__;  // suppress unused var warning
+    int current_statement_begin__ = -1;
+    try {
+        {
+        current_statement_begin__ = 229;
+        local_scalar_t__ log_h(DUMMY_VAR__);
+        (void) log_h;  // dummy to suppress unused var warning
+        stan::math::initialize(log_h, DUMMY_VAR__);
+        stan::math::fill(log_h, DUMMY_VAR__);
+        current_statement_begin__ = 230;
+        stan::math::assign(log_h, (gen_gamma_lpdf(t, mu, sigma, Q, pstream__) - gen_gamma_log_S(t, mu, sigma, Q, pstream__)));
+        current_statement_begin__ = 231;
+        return stan::math::promote_scalar<fun_return_scalar_t__>(log_h);
+        }
+    } catch (const std::exception& e) {
+        stan::lang::rethrow_located(e, current_statement_begin__, prog_reader__());
+        // Next line prevents compiler griping about no return
+        throw std::runtime_error("*** IF YOU SEE THIS, PLEASE REPORT A BUG ***");
+    }
+}
+struct gen_gamma_log_h_functor__ {
+    template <typename T0__, typename T1__, typename T2__, typename T3__>
+        typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__>::type
+    operator()(const T0__& t,
+                    const T1__& mu,
+                    const T2__& sigma,
+                    const T3__& Q, std::ostream* pstream__) const {
+        return gen_gamma_log_h(t, mu, sigma, Q, pstream__);
+    }
+};
+template <typename T0__, typename T1__, typename T2__, typename T3__>
+typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__>::type
+gen_gamma_haz(const T0__& t,
+                  const T1__& mu,
+                  const T2__& sigma,
+                  const T3__& Q, std::ostream* pstream__) {
+    typedef typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__>::type local_scalar_t__;
+    typedef local_scalar_t__ fun_return_scalar_t__;
+    const static bool propto__ = true;
+    (void) propto__;
+        local_scalar_t__ DUMMY_VAR__(std::numeric_limits<double>::quiet_NaN());
+        (void) DUMMY_VAR__;  // suppress unused var warning
+    int current_statement_begin__ = -1;
+    try {
+        {
+        current_statement_begin__ = 235;
+        local_scalar_t__ haz(DUMMY_VAR__);
+        (void) haz;  // dummy to suppress unused var warning
+        stan::math::initialize(haz, DUMMY_VAR__);
+        stan::math::fill(haz, DUMMY_VAR__);
+        current_statement_begin__ = 236;
+        stan::math::assign(haz, stan::math::exp(gen_gamma_log_h(t, mu, sigma, Q, pstream__)));
+        current_statement_begin__ = 237;
+        return stan::math::promote_scalar<fun_return_scalar_t__>(haz);
+        }
+    } catch (const std::exception& e) {
+        stan::lang::rethrow_located(e, current_statement_begin__, prog_reader__());
+        // Next line prevents compiler griping about no return
+        throw std::runtime_error("*** IF YOU SEE THIS, PLEASE REPORT A BUG ***");
+    }
+}
+struct gen_gamma_haz_functor__ {
+    template <typename T0__, typename T1__, typename T2__, typename T3__>
+        typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__>::type
+    operator()(const T0__& t,
+                  const T1__& mu,
+                  const T2__& sigma,
+                  const T3__& Q, std::ostream* pstream__) const {
+        return gen_gamma_haz(t, mu, sigma, Q, pstream__);
+    }
+};
+template <bool propto, typename T0__, typename T1__, typename T2__, typename T3__, typename T4__>
+typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__, typename boost::math::tools::promote_args<T4__>::type>::type
+gen_gamma_cens_lpdf(const T0__& t,
+                        const T1__& d,
+                        const T2__& mu,
+                        const T3__& sigma,
+                        const T4__& Q, std::ostream* pstream__) {
+    typedef typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__, typename boost::math::tools::promote_args<T4__>::type>::type local_scalar_t__;
+    typedef local_scalar_t__ fun_return_scalar_t__;
+    const static bool propto__ = true;
+    (void) propto__;
+        local_scalar_t__ DUMMY_VAR__(std::numeric_limits<double>::quiet_NaN());
+        (void) DUMMY_VAR__;  // suppress unused var warning
+    int current_statement_begin__ = -1;
+    try {
+        {
+        current_statement_begin__ = 242;
+        local_scalar_t__ prob(DUMMY_VAR__);
+        (void) prob;  // dummy to suppress unused var warning
+        stan::math::initialize(prob, DUMMY_VAR__);
+        stan::math::fill(prob, DUMMY_VAR__);
+        current_statement_begin__ = 243;
+        local_scalar_t__ w(DUMMY_VAR__);
+        (void) w;  // dummy to suppress unused var warning
+        stan::math::initialize(w, DUMMY_VAR__);
+        stan::math::fill(w, DUMMY_VAR__);
+        current_statement_begin__ = 244;
+        local_scalar_t__ tr(DUMMY_VAR__);
+        (void) tr;  // dummy to suppress unused var warning
+        stan::math::initialize(tr, DUMMY_VAR__);
+        stan::math::fill(tr, DUMMY_VAR__);
+        current_statement_begin__ = 245;
+        stan::math::assign(tr, (t * d));
+        current_statement_begin__ = 246;
+        stan::math::assign(w, ((stan::math::log(tr) - mu) / sigma));
+        current_statement_begin__ = 247;
+        stan::math::assign(prob, (((((stan::math::log(d) - stan::math::log((sigma * tr))) + stan::math::log(stan::math::fabs(Q))) + (pow(Q, -(2)) * stan::math::log(pow(Q, -(2))))) + (pow(Q, -(2)) * ((Q * w) - stan::math::exp((Q * w))))) - stan::math::lgamma(pow(Q, -(2)))));
+        current_statement_begin__ = 248;
+        return stan::math::promote_scalar<fun_return_scalar_t__>(prob);
+        }
+    } catch (const std::exception& e) {
+        stan::lang::rethrow_located(e, current_statement_begin__, prog_reader__());
+        // Next line prevents compiler griping about no return
+        throw std::runtime_error("*** IF YOU SEE THIS, PLEASE REPORT A BUG ***");
+    }
+}
+template <typename T0__, typename T1__, typename T2__, typename T3__, typename T4__>
+typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__, typename boost::math::tools::promote_args<T4__>::type>::type
+gen_gamma_cens_lpdf(const T0__& t,
+                        const T1__& d,
+                        const T2__& mu,
+                        const T3__& sigma,
+                        const T4__& Q, std::ostream* pstream__) {
+    return gen_gamma_cens_lpdf<false>(t,d,mu,sigma,Q, pstream__);
+}
+struct gen_gamma_cens_lpdf_functor__ {
+    template <bool propto, typename T0__, typename T1__, typename T2__, typename T3__, typename T4__>
+        typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__, typename boost::math::tools::promote_args<T4__>::type>::type
+    operator()(const T0__& t,
+                        const T1__& d,
+                        const T2__& mu,
+                        const T3__& sigma,
+                        const T4__& Q, std::ostream* pstream__) const {
+        return gen_gamma_cens_lpdf(t, d, mu, sigma, Q, pstream__);
+    }
+};
+template <typename T0__, typename T1__, typename T2__>
+typename boost::math::tools::promote_args<T0__, T1__, T2__>::type
+lognormal_log_S(const T0__& t,
+                    const T1__& mean,
+                    const T2__& sd, std::ostream* pstream__) {
+    typedef typename boost::math::tools::promote_args<T0__, T1__, T2__>::type local_scalar_t__;
+    typedef local_scalar_t__ fun_return_scalar_t__;
+    const static bool propto__ = true;
+    (void) propto__;
+        local_scalar_t__ DUMMY_VAR__(std::numeric_limits<double>::quiet_NaN());
+        (void) DUMMY_VAR__;  // suppress unused var warning
+    int current_statement_begin__ = -1;
+    try {
+        {
+        current_statement_begin__ = 262;
+        local_scalar_t__ log_S(DUMMY_VAR__);
+        (void) log_S;  // dummy to suppress unused var warning
+        stan::math::initialize(log_S, DUMMY_VAR__);
+        stan::math::fill(log_S, DUMMY_VAR__);
+        current_statement_begin__ = 263;
+        stan::math::assign(log_S, stan::math::log((1 - Phi(((stan::math::log(t) - mean) / sd)))));
+        current_statement_begin__ = 264;
+        return stan::math::promote_scalar<fun_return_scalar_t__>(log_S);
+        }
+    } catch (const std::exception& e) {
+        stan::lang::rethrow_located(e, current_statement_begin__, prog_reader__());
+        // Next line prevents compiler griping about no return
+        throw std::runtime_error("*** IF YOU SEE THIS, PLEASE REPORT A BUG ***");
+    }
+}
+struct lognormal_log_S_functor__ {
+    template <typename T0__, typename T1__, typename T2__>
+        typename boost::math::tools::promote_args<T0__, T1__, T2__>::type
+    operator()(const T0__& t,
+                    const T1__& mean,
+                    const T2__& sd, std::ostream* pstream__) const {
+        return lognormal_log_S(t, mean, sd, pstream__);
+    }
+};
+template <typename T0__, typename T1__, typename T2__>
+typename boost::math::tools::promote_args<T0__, T1__, T2__>::type
+lognormal_log_h(const T0__& t,
+                    const T1__& mean,
+                    const T2__& sd, std::ostream* pstream__) {
+    typedef typename boost::math::tools::promote_args<T0__, T1__, T2__>::type local_scalar_t__;
+    typedef local_scalar_t__ fun_return_scalar_t__;
+    const static bool propto__ = true;
+    (void) propto__;
+        local_scalar_t__ DUMMY_VAR__(std::numeric_limits<double>::quiet_NaN());
+        (void) DUMMY_VAR__;  // suppress unused var warning
+    int current_statement_begin__ = -1;
+    try {
+        {
+        current_statement_begin__ = 269;
+        local_scalar_t__ log_h(DUMMY_VAR__);
+        (void) log_h;  // dummy to suppress unused var warning
+        stan::math::initialize(log_h, DUMMY_VAR__);
+        stan::math::fill(log_h, DUMMY_VAR__);
+        current_statement_begin__ = 270;
+        stan::math::assign(log_h, ((-(stan::math::log((t * sd))) + normal_log(stan::math::log(t), mean, sd)) - stan::math::log((1 - Phi(((stan::math::log(t) - mean) / sd))))));
+        current_statement_begin__ = 271;
+        return stan::math::promote_scalar<fun_return_scalar_t__>(log_h);
+        }
+    } catch (const std::exception& e) {
+        stan::lang::rethrow_located(e, current_statement_begin__, prog_reader__());
+        // Next line prevents compiler griping about no return
+        throw std::runtime_error("*** IF YOU SEE THIS, PLEASE REPORT A BUG ***");
+    }
+}
+struct lognormal_log_h_functor__ {
+    template <typename T0__, typename T1__, typename T2__>
+        typename boost::math::tools::promote_args<T0__, T1__, T2__>::type
+    operator()(const T0__& t,
+                    const T1__& mean,
+                    const T2__& sd, std::ostream* pstream__) const {
+        return lognormal_log_h(t, mean, sd, pstream__);
+    }
+};
+template <typename T0__, typename T1__, typename T2__>
+typename boost::math::tools::promote_args<T0__, T1__, T2__>::type
+lognormal_Surv(const T0__& t,
+                   const T1__& mean,
+                   const T2__& sd, std::ostream* pstream__) {
+    typedef typename boost::math::tools::promote_args<T0__, T1__, T2__>::type local_scalar_t__;
+    typedef local_scalar_t__ fun_return_scalar_t__;
+    const static bool propto__ = true;
+    (void) propto__;
+        local_scalar_t__ DUMMY_VAR__(std::numeric_limits<double>::quiet_NaN());
+        (void) DUMMY_VAR__;  // suppress unused var warning
+    int current_statement_begin__ = -1;
+    try {
+        {
+        current_statement_begin__ = 276;
+        local_scalar_t__ Surv(DUMMY_VAR__);
+        (void) Surv;  // dummy to suppress unused var warning
+        stan::math::initialize(Surv, DUMMY_VAR__);
+        stan::math::fill(Surv, DUMMY_VAR__);
+        current_statement_begin__ = 277;
+        stan::math::assign(Surv, (1 - Phi(((stan::math::log(t) - mean) / sd))));
+        current_statement_begin__ = 278;
+        return stan::math::promote_scalar<fun_return_scalar_t__>(Surv);
+        }
+    } catch (const std::exception& e) {
+        stan::lang::rethrow_located(e, current_statement_begin__, prog_reader__());
+        // Next line prevents compiler griping about no return
+        throw std::runtime_error("*** IF YOU SEE THIS, PLEASE REPORT A BUG ***");
+    }
+}
+struct lognormal_Surv_functor__ {
+    template <typename T0__, typename T1__, typename T2__>
+        typename boost::math::tools::promote_args<T0__, T1__, T2__>::type
+    operator()(const T0__& t,
+                   const T1__& mean,
+                   const T2__& sd, std::ostream* pstream__) const {
+        return lognormal_Surv(t, mean, sd, pstream__);
+    }
+};
+template <typename T0__, typename T1__, typename T2__>
+typename boost::math::tools::promote_args<T0__, T1__, T2__>::type
+lognormal_haz(const T0__& t,
+                  const T1__& mean,
+                  const T2__& sd, std::ostream* pstream__) {
+    typedef typename boost::math::tools::promote_args<T0__, T1__, T2__>::type local_scalar_t__;
+    typedef local_scalar_t__ fun_return_scalar_t__;
+    const static bool propto__ = true;
+    (void) propto__;
+        local_scalar_t__ DUMMY_VAR__(std::numeric_limits<double>::quiet_NaN());
+        (void) DUMMY_VAR__;  // suppress unused var warning
+    int current_statement_begin__ = -1;
+    try {
+        {
+        current_statement_begin__ = 283;
+        local_scalar_t__ haz(DUMMY_VAR__);
+        (void) haz;  // dummy to suppress unused var warning
+        stan::math::initialize(haz, DUMMY_VAR__);
+        stan::math::fill(haz, DUMMY_VAR__);
+        current_statement_begin__ = 284;
+        stan::math::assign(haz, (((1 / (t * sd)) * stan::math::exp(normal_log(stan::math::log(t), mean, sd))) / (1 - Phi(((stan::math::log(t) - mean) / sd)))));
+        current_statement_begin__ = 285;
+        return stan::math::promote_scalar<fun_return_scalar_t__>(haz);
+        }
+    } catch (const std::exception& e) {
+        stan::lang::rethrow_located(e, current_statement_begin__, prog_reader__());
+        // Next line prevents compiler griping about no return
+        throw std::runtime_error("*** IF YOU SEE THIS, PLEASE REPORT A BUG ***");
+    }
+}
+struct lognormal_haz_functor__ {
+    template <typename T0__, typename T1__, typename T2__>
+        typename boost::math::tools::promote_args<T0__, T1__, T2__>::type
+    operator()(const T0__& t,
+                  const T1__& mean,
+                  const T2__& sd, std::ostream* pstream__) const {
+        return lognormal_haz(t, mean, sd, pstream__);
+    }
+};
+template <typename T0__, typename T1__, typename T2__, typename T3__>
+typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__>::type
+surv_lognormal_pdf(const T0__& t,
+                       const T1__& d,
+                       const T2__& mean,
+                       const T3__& sd, std::ostream* pstream__) {
+    typedef typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__>::type local_scalar_t__;
+    typedef local_scalar_t__ fun_return_scalar_t__;
+    const static bool propto__ = true;
+    (void) propto__;
+        local_scalar_t__ DUMMY_VAR__(std::numeric_limits<double>::quiet_NaN());
+        (void) DUMMY_VAR__;  // suppress unused var warning
+    int current_statement_begin__ = -1;
+    try {
+        {
+        current_statement_begin__ = 290;
+        local_scalar_t__ lik(DUMMY_VAR__);
+        (void) lik;  // dummy to suppress unused var warning
+        stan::math::initialize(lik, DUMMY_VAR__);
+        stan::math::fill(lik, DUMMY_VAR__);
+        current_statement_begin__ = 291;
+        stan::math::assign(lik, (pow(lognormal_haz(t, mean, sd, pstream__), d) * lognormal_Surv(t, mean, sd, pstream__)));
+        current_statement_begin__ = 292;
+        return stan::math::promote_scalar<fun_return_scalar_t__>(lik);
+        }
+    } catch (const std::exception& e) {
+        stan::lang::rethrow_located(e, current_statement_begin__, prog_reader__());
+        // Next line prevents compiler griping about no return
+        throw std::runtime_error("*** IF YOU SEE THIS, PLEASE REPORT A BUG ***");
+    }
+}
+struct surv_lognormal_pdf_functor__ {
+    template <typename T0__, typename T1__, typename T2__, typename T3__>
+        typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__>::type
+    operator()(const T0__& t,
+                       const T1__& d,
+                       const T2__& mean,
+                       const T3__& sd, std::ostream* pstream__) const {
+        return surv_lognormal_pdf(t, d, mean, sd, pstream__);
+    }
+};
+template <bool propto, typename T0__, typename T1__, typename T2__, typename T3__>
+typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__>::type
+surv_lognormal_lpdf(const T0__& t,
+                        const T1__& d,
+                        const T2__& mean,
+                        const T3__& sd, std::ostream* pstream__) {
+    typedef typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__>::type local_scalar_t__;
+    typedef local_scalar_t__ fun_return_scalar_t__;
+    const static bool propto__ = true;
+    (void) propto__;
+        local_scalar_t__ DUMMY_VAR__(std::numeric_limits<double>::quiet_NaN());
+        (void) DUMMY_VAR__;  // suppress unused var warning
+    int current_statement_begin__ = -1;
+    try {
+        {
+        current_statement_begin__ = 296;
+        local_scalar_t__ log_lik(DUMMY_VAR__);
+        (void) log_lik;  // dummy to suppress unused var warning
+        stan::math::initialize(log_lik, DUMMY_VAR__);
+        stan::math::fill(log_lik, DUMMY_VAR__);
+        current_statement_begin__ = 297;
+        stan::math::assign(log_lik, ((d * lognormal_log_h(t, mean, sd, pstream__)) + lognormal_log_S(t, mean, sd, pstream__)));
+        current_statement_begin__ = 298;
+        return stan::math::promote_scalar<fun_return_scalar_t__>(log_lik);
+        }
+    } catch (const std::exception& e) {
+        stan::lang::rethrow_located(e, current_statement_begin__, prog_reader__());
+        // Next line prevents compiler griping about no return
+        throw std::runtime_error("*** IF YOU SEE THIS, PLEASE REPORT A BUG ***");
+    }
+}
+template <typename T0__, typename T1__, typename T2__, typename T3__>
+typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__>::type
+surv_lognormal_lpdf(const T0__& t,
+                        const T1__& d,
+                        const T2__& mean,
+                        const T3__& sd, std::ostream* pstream__) {
+    return surv_lognormal_lpdf<false>(t,d,mean,sd, pstream__);
+}
+struct surv_lognormal_lpdf_functor__ {
+    template <bool propto, typename T0__, typename T1__, typename T2__, typename T3__>
+        typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__>::type
+    operator()(const T0__& t,
+                        const T1__& d,
+                        const T2__& mean,
+                        const T3__& sd, std::ostream* pstream__) const {
+        return surv_lognormal_lpdf(t, d, mean, sd, pstream__);
     }
 };
 template <typename T0__, typename T1__, typename T2__, typename T3__, typename T4__>
@@ -699,15 +1454,15 @@ joint_exp_weibull_pdf(const T0__& t,
     int current_statement_begin__ = -1;
     try {
         {
-        current_statement_begin__ = 148;
-        local_scalar_t__ log_lik(DUMMY_VAR__);
-        (void) log_lik;  // dummy to suppress unused var warning
-        stan::math::initialize(log_lik, DUMMY_VAR__);
-        stan::math::fill(log_lik, DUMMY_VAR__);
-        current_statement_begin__ = 149;
-        stan::math::assign(log_lik, ((exp_Surv(t, rate, pstream__) * weibull_Surv(t, shape, scale, pstream__)) * pow((exp_haz(t, rate, pstream__) + weibull_haz(t, shape, scale, pstream__)), d)));
-        current_statement_begin__ = 151;
-        return stan::math::promote_scalar<fun_return_scalar_t__>(log_lik);
+        current_statement_begin__ = 310;
+        local_scalar_t__ lik(DUMMY_VAR__);
+        (void) lik;  // dummy to suppress unused var warning
+        stan::math::initialize(lik, DUMMY_VAR__);
+        stan::math::fill(lik, DUMMY_VAR__);
+        current_statement_begin__ = 311;
+        stan::math::assign(lik, ((exp_Surv(t, rate, pstream__) * weibull_Surv(t, shape, scale, pstream__)) * pow((exp_haz(t, rate, pstream__) + weibull_haz(t, shape, scale, pstream__)), d)));
+        current_statement_begin__ = 313;
+        return stan::math::promote_scalar<fun_return_scalar_t__>(lik);
         }
     } catch (const std::exception& e) {
         stan::lang::rethrow_located(e, current_statement_begin__, prog_reader__());
@@ -742,14 +1497,14 @@ joint_exp_weibull_lpdf(const T0__& t,
     int current_statement_begin__ = -1;
     try {
         {
-        current_statement_begin__ = 155;
+        current_statement_begin__ = 317;
         local_scalar_t__ log_lik(DUMMY_VAR__);
         (void) log_lik;  // dummy to suppress unused var warning
         stan::math::initialize(log_lik, DUMMY_VAR__);
         stan::math::fill(log_lik, DUMMY_VAR__);
-        current_statement_begin__ = 156;
+        current_statement_begin__ = 318;
         stan::math::assign(log_lik, (((d * stan::math::log((exp_haz(t, rate, pstream__) + weibull_haz(t, shape, scale, pstream__)))) + exp_log_S(t, rate, pstream__)) + weibull_log_S(t, shape, scale, pstream__)));
-        current_statement_begin__ = 158;
+        current_statement_begin__ = 320;
         return stan::math::promote_scalar<fun_return_scalar_t__>(log_lik);
         }
     } catch (const std::exception& e) {
@@ -778,6 +1533,47 @@ struct joint_exp_weibull_lpdf_functor__ {
         return joint_exp_weibull_lpdf(t, d, shape, scale, rate, pstream__);
     }
 };
+template <typename T0__, typename T1__, typename T2__, typename T3__>
+typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__>::type
+exp_weibull_Surv(const T0__& t,
+                     const T1__& shape,
+                     const T2__& scale,
+                     const T3__& rate, std::ostream* pstream__) {
+    typedef typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__>::type local_scalar_t__;
+    typedef local_scalar_t__ fun_return_scalar_t__;
+    const static bool propto__ = true;
+    (void) propto__;
+        local_scalar_t__ DUMMY_VAR__(std::numeric_limits<double>::quiet_NaN());
+        (void) DUMMY_VAR__;  // suppress unused var warning
+    int current_statement_begin__ = -1;
+    try {
+        {
+        current_statement_begin__ = 324;
+        local_scalar_t__ Surv(DUMMY_VAR__);
+        (void) Surv;  // dummy to suppress unused var warning
+        stan::math::initialize(Surv, DUMMY_VAR__);
+        stan::math::fill(Surv, DUMMY_VAR__);
+        current_statement_begin__ = 325;
+        stan::math::assign(Surv, (exp_Surv(t, rate, pstream__) * weibull_Surv(t, shape, scale, pstream__)));
+        current_statement_begin__ = 326;
+        return stan::math::promote_scalar<fun_return_scalar_t__>(Surv);
+        }
+    } catch (const std::exception& e) {
+        stan::lang::rethrow_located(e, current_statement_begin__, prog_reader__());
+        // Next line prevents compiler griping about no return
+        throw std::runtime_error("*** IF YOU SEE THIS, PLEASE REPORT A BUG ***");
+    }
+}
+struct exp_weibull_Surv_functor__ {
+    template <typename T0__, typename T1__, typename T2__, typename T3__>
+        typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__>::type
+    operator()(const T0__& t,
+                     const T1__& shape,
+                     const T2__& scale,
+                     const T3__& rate, std::ostream* pstream__) const {
+        return exp_weibull_Surv(t, shape, scale, rate, pstream__);
+    }
+};
 template <typename T0__, typename T1__, typename T2__, typename T3__, typename T4__>
 typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__, typename boost::math::tools::promote_args<T4__>::type>::type
 joint_exp_gompertz_pdf(const T0__& t,
@@ -794,15 +1590,15 @@ joint_exp_gompertz_pdf(const T0__& t,
     int current_statement_begin__ = -1;
     try {
         {
-        current_statement_begin__ = 164;
-        local_scalar_t__ log_lik(DUMMY_VAR__);
-        (void) log_lik;  // dummy to suppress unused var warning
-        stan::math::initialize(log_lik, DUMMY_VAR__);
-        stan::math::fill(log_lik, DUMMY_VAR__);
-        current_statement_begin__ = 165;
-        stan::math::assign(log_lik, ((exp_Surv(t, rate, pstream__) * gompertz_Surv(t, shape, scale, pstream__)) * pow((exp_haz(t, rate, pstream__) + gompertz_haz(t, shape, scale, pstream__)), d)));
-        current_statement_begin__ = 167;
-        return stan::math::promote_scalar<fun_return_scalar_t__>(log_lik);
+        current_statement_begin__ = 332;
+        local_scalar_t__ lik(DUMMY_VAR__);
+        (void) lik;  // dummy to suppress unused var warning
+        stan::math::initialize(lik, DUMMY_VAR__);
+        stan::math::fill(lik, DUMMY_VAR__);
+        current_statement_begin__ = 333;
+        stan::math::assign(lik, ((exp_Surv(t, rate, pstream__) * gompertz_Surv(t, shape, scale, pstream__)) * pow((exp_haz(t, rate, pstream__) + gompertz_haz(t, shape, scale, pstream__)), d)));
+        current_statement_begin__ = 335;
+        return stan::math::promote_scalar<fun_return_scalar_t__>(lik);
         }
     } catch (const std::exception& e) {
         stan::lang::rethrow_located(e, current_statement_begin__, prog_reader__());
@@ -837,14 +1633,14 @@ joint_exp_gompertz_lpdf(const T0__& t,
     int current_statement_begin__ = -1;
     try {
         {
-        current_statement_begin__ = 171;
+        current_statement_begin__ = 339;
         local_scalar_t__ log_lik(DUMMY_VAR__);
         (void) log_lik;  // dummy to suppress unused var warning
         stan::math::initialize(log_lik, DUMMY_VAR__);
         stan::math::fill(log_lik, DUMMY_VAR__);
-        current_statement_begin__ = 172;
+        current_statement_begin__ = 340;
         stan::math::assign(log_lik, (((d * stan::math::log((exp_haz(t, rate, pstream__) + gompertz_haz(t, shape, scale, pstream__)))) + exp_log_S(t, rate, pstream__)) + gompertz_log_S(t, shape, scale, pstream__)));
-        current_statement_begin__ = 174;
+        current_statement_begin__ = 342;
         return stan::math::promote_scalar<fun_return_scalar_t__>(log_lik);
         }
     } catch (const std::exception& e) {
@@ -873,6 +1669,472 @@ struct joint_exp_gompertz_lpdf_functor__ {
         return joint_exp_gompertz_lpdf(t, d, shape, scale, rate, pstream__);
     }
 };
+template <typename T0__, typename T1__, typename T2__, typename T3__>
+typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__>::type
+exp_gompertz_Surv(const T0__& t,
+                      const T1__& shape,
+                      const T2__& scale,
+                      const T3__& rate, std::ostream* pstream__) {
+    typedef typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__>::type local_scalar_t__;
+    typedef local_scalar_t__ fun_return_scalar_t__;
+    const static bool propto__ = true;
+    (void) propto__;
+        local_scalar_t__ DUMMY_VAR__(std::numeric_limits<double>::quiet_NaN());
+        (void) DUMMY_VAR__;  // suppress unused var warning
+    int current_statement_begin__ = -1;
+    try {
+        {
+        current_statement_begin__ = 346;
+        local_scalar_t__ Surv(DUMMY_VAR__);
+        (void) Surv;  // dummy to suppress unused var warning
+        stan::math::initialize(Surv, DUMMY_VAR__);
+        stan::math::fill(Surv, DUMMY_VAR__);
+        current_statement_begin__ = 347;
+        stan::math::assign(Surv, (exp_Surv(t, rate, pstream__) * gompertz_Surv(t, shape, scale, pstream__)));
+        current_statement_begin__ = 348;
+        return stan::math::promote_scalar<fun_return_scalar_t__>(Surv);
+        }
+    } catch (const std::exception& e) {
+        stan::lang::rethrow_located(e, current_statement_begin__, prog_reader__());
+        // Next line prevents compiler griping about no return
+        throw std::runtime_error("*** IF YOU SEE THIS, PLEASE REPORT A BUG ***");
+    }
+}
+struct exp_gompertz_Surv_functor__ {
+    template <typename T0__, typename T1__, typename T2__, typename T3__>
+        typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__>::type
+    operator()(const T0__& t,
+                      const T1__& shape,
+                      const T2__& scale,
+                      const T3__& rate, std::ostream* pstream__) const {
+        return exp_gompertz_Surv(t, shape, scale, rate, pstream__);
+    }
+};
+template <typename T0__, typename T1__, typename T2__, typename T3__, typename T4__>
+typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__, typename boost::math::tools::promote_args<T4__>::type>::type
+joint_exp_loglogistic_pdf(const T0__& t,
+                              const T1__& d,
+                              const T2__& shape,
+                              const T3__& scale,
+                              const T4__& rate, std::ostream* pstream__) {
+    typedef typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__, typename boost::math::tools::promote_args<T4__>::type>::type local_scalar_t__;
+    typedef local_scalar_t__ fun_return_scalar_t__;
+    const static bool propto__ = true;
+    (void) propto__;
+        local_scalar_t__ DUMMY_VAR__(std::numeric_limits<double>::quiet_NaN());
+        (void) DUMMY_VAR__;  // suppress unused var warning
+    int current_statement_begin__ = -1;
+    try {
+        {
+        current_statement_begin__ = 354;
+        local_scalar_t__ lik(DUMMY_VAR__);
+        (void) lik;  // dummy to suppress unused var warning
+        stan::math::initialize(lik, DUMMY_VAR__);
+        stan::math::fill(lik, DUMMY_VAR__);
+        current_statement_begin__ = 355;
+        stan::math::assign(lik, ((exp_Surv(t, rate, pstream__) * loglogistic_Surv(t, shape, scale, pstream__)) * pow((exp_haz(t, rate, pstream__) + loglogistic_haz(t, shape, scale, pstream__)), d)));
+        current_statement_begin__ = 357;
+        return stan::math::promote_scalar<fun_return_scalar_t__>(lik);
+        }
+    } catch (const std::exception& e) {
+        stan::lang::rethrow_located(e, current_statement_begin__, prog_reader__());
+        // Next line prevents compiler griping about no return
+        throw std::runtime_error("*** IF YOU SEE THIS, PLEASE REPORT A BUG ***");
+    }
+}
+struct joint_exp_loglogistic_pdf_functor__ {
+    template <typename T0__, typename T1__, typename T2__, typename T3__, typename T4__>
+        typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__, typename boost::math::tools::promote_args<T4__>::type>::type
+    operator()(const T0__& t,
+                              const T1__& d,
+                              const T2__& shape,
+                              const T3__& scale,
+                              const T4__& rate, std::ostream* pstream__) const {
+        return joint_exp_loglogistic_pdf(t, d, shape, scale, rate, pstream__);
+    }
+};
+template <bool propto, typename T0__, typename T1__, typename T2__, typename T3__, typename T4__>
+typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__, typename boost::math::tools::promote_args<T4__>::type>::type
+joint_exp_loglogistic_lpdf(const T0__& t,
+                               const T1__& d,
+                               const T2__& shape,
+                               const T3__& scale,
+                               const T4__& rate, std::ostream* pstream__) {
+    typedef typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__, typename boost::math::tools::promote_args<T4__>::type>::type local_scalar_t__;
+    typedef local_scalar_t__ fun_return_scalar_t__;
+    const static bool propto__ = true;
+    (void) propto__;
+        local_scalar_t__ DUMMY_VAR__(std::numeric_limits<double>::quiet_NaN());
+        (void) DUMMY_VAR__;  // suppress unused var warning
+    int current_statement_begin__ = -1;
+    try {
+        {
+        current_statement_begin__ = 361;
+        local_scalar_t__ log_lik(DUMMY_VAR__);
+        (void) log_lik;  // dummy to suppress unused var warning
+        stan::math::initialize(log_lik, DUMMY_VAR__);
+        stan::math::fill(log_lik, DUMMY_VAR__);
+        current_statement_begin__ = 362;
+        stan::math::assign(log_lik, (((d * stan::math::log((exp_haz(t, rate, pstream__) + loglogistic_haz(t, shape, scale, pstream__)))) + exp_log_S(t, rate, pstream__)) + loglogistic_log_S(t, shape, scale, pstream__)));
+        current_statement_begin__ = 364;
+        return stan::math::promote_scalar<fun_return_scalar_t__>(log_lik);
+        }
+    } catch (const std::exception& e) {
+        stan::lang::rethrow_located(e, current_statement_begin__, prog_reader__());
+        // Next line prevents compiler griping about no return
+        throw std::runtime_error("*** IF YOU SEE THIS, PLEASE REPORT A BUG ***");
+    }
+}
+template <typename T0__, typename T1__, typename T2__, typename T3__, typename T4__>
+typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__, typename boost::math::tools::promote_args<T4__>::type>::type
+joint_exp_loglogistic_lpdf(const T0__& t,
+                               const T1__& d,
+                               const T2__& shape,
+                               const T3__& scale,
+                               const T4__& rate, std::ostream* pstream__) {
+    return joint_exp_loglogistic_lpdf<false>(t,d,shape,scale,rate, pstream__);
+}
+struct joint_exp_loglogistic_lpdf_functor__ {
+    template <bool propto, typename T0__, typename T1__, typename T2__, typename T3__, typename T4__>
+        typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__, typename boost::math::tools::promote_args<T4__>::type>::type
+    operator()(const T0__& t,
+                               const T1__& d,
+                               const T2__& shape,
+                               const T3__& scale,
+                               const T4__& rate, std::ostream* pstream__) const {
+        return joint_exp_loglogistic_lpdf(t, d, shape, scale, rate, pstream__);
+    }
+};
+template <typename T0__, typename T1__, typename T2__, typename T3__>
+typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__>::type
+exp_loglogistic_Surv(const T0__& t,
+                         const T1__& shape,
+                         const T2__& scale,
+                         const T3__& rate, std::ostream* pstream__) {
+    typedef typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__>::type local_scalar_t__;
+    typedef local_scalar_t__ fun_return_scalar_t__;
+    const static bool propto__ = true;
+    (void) propto__;
+        local_scalar_t__ DUMMY_VAR__(std::numeric_limits<double>::quiet_NaN());
+        (void) DUMMY_VAR__;  // suppress unused var warning
+    int current_statement_begin__ = -1;
+    try {
+        {
+        current_statement_begin__ = 368;
+        local_scalar_t__ Surv(DUMMY_VAR__);
+        (void) Surv;  // dummy to suppress unused var warning
+        stan::math::initialize(Surv, DUMMY_VAR__);
+        stan::math::fill(Surv, DUMMY_VAR__);
+        current_statement_begin__ = 369;
+        stan::math::assign(Surv, (exp_Surv(t, rate, pstream__) * loglogistic_Surv(t, shape, scale, pstream__)));
+        current_statement_begin__ = 370;
+        return stan::math::promote_scalar<fun_return_scalar_t__>(Surv);
+        }
+    } catch (const std::exception& e) {
+        stan::lang::rethrow_located(e, current_statement_begin__, prog_reader__());
+        // Next line prevents compiler griping about no return
+        throw std::runtime_error("*** IF YOU SEE THIS, PLEASE REPORT A BUG ***");
+    }
+}
+struct exp_loglogistic_Surv_functor__ {
+    template <typename T0__, typename T1__, typename T2__, typename T3__>
+        typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__>::type
+    operator()(const T0__& t,
+                         const T1__& shape,
+                         const T2__& scale,
+                         const T3__& rate, std::ostream* pstream__) const {
+        return exp_loglogistic_Surv(t, shape, scale, rate, pstream__);
+    }
+};
+template <typename T0__, typename T1__, typename T2__, typename T3__, typename T4__>
+typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__, typename boost::math::tools::promote_args<T4__>::type>::type
+joint_exp_lognormal_pdf(const T0__& t,
+                            const T1__& d,
+                            const T2__& mean,
+                            const T3__& sd,
+                            const T4__& rate, std::ostream* pstream__) {
+    typedef typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__, typename boost::math::tools::promote_args<T4__>::type>::type local_scalar_t__;
+    typedef local_scalar_t__ fun_return_scalar_t__;
+    const static bool propto__ = true;
+    (void) propto__;
+        local_scalar_t__ DUMMY_VAR__(std::numeric_limits<double>::quiet_NaN());
+        (void) DUMMY_VAR__;  // suppress unused var warning
+    int current_statement_begin__ = -1;
+    try {
+        {
+        current_statement_begin__ = 376;
+        local_scalar_t__ lik(DUMMY_VAR__);
+        (void) lik;  // dummy to suppress unused var warning
+        stan::math::initialize(lik, DUMMY_VAR__);
+        stan::math::fill(lik, DUMMY_VAR__);
+        current_statement_begin__ = 377;
+        stan::math::assign(lik, ((exp_Surv(t, rate, pstream__) * lognormal_Surv(t, mean, sd, pstream__)) * pow((exp_haz(t, rate, pstream__) + lognormal_haz(t, mean, sd, pstream__)), d)));
+        current_statement_begin__ = 379;
+        return stan::math::promote_scalar<fun_return_scalar_t__>(lik);
+        }
+    } catch (const std::exception& e) {
+        stan::lang::rethrow_located(e, current_statement_begin__, prog_reader__());
+        // Next line prevents compiler griping about no return
+        throw std::runtime_error("*** IF YOU SEE THIS, PLEASE REPORT A BUG ***");
+    }
+}
+struct joint_exp_lognormal_pdf_functor__ {
+    template <typename T0__, typename T1__, typename T2__, typename T3__, typename T4__>
+        typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__, typename boost::math::tools::promote_args<T4__>::type>::type
+    operator()(const T0__& t,
+                            const T1__& d,
+                            const T2__& mean,
+                            const T3__& sd,
+                            const T4__& rate, std::ostream* pstream__) const {
+        return joint_exp_lognormal_pdf(t, d, mean, sd, rate, pstream__);
+    }
+};
+template <bool propto, typename T0__, typename T1__, typename T2__, typename T3__, typename T4__>
+typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__, typename boost::math::tools::promote_args<T4__>::type>::type
+joint_exp_lognormal_lpdf(const T0__& t,
+                             const T1__& d,
+                             const T2__& mean,
+                             const T3__& sd,
+                             const T4__& rate, std::ostream* pstream__) {
+    typedef typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__, typename boost::math::tools::promote_args<T4__>::type>::type local_scalar_t__;
+    typedef local_scalar_t__ fun_return_scalar_t__;
+    const static bool propto__ = true;
+    (void) propto__;
+        local_scalar_t__ DUMMY_VAR__(std::numeric_limits<double>::quiet_NaN());
+        (void) DUMMY_VAR__;  // suppress unused var warning
+    int current_statement_begin__ = -1;
+    try {
+        {
+        current_statement_begin__ = 383;
+        local_scalar_t__ log_lik(DUMMY_VAR__);
+        (void) log_lik;  // dummy to suppress unused var warning
+        stan::math::initialize(log_lik, DUMMY_VAR__);
+        stan::math::fill(log_lik, DUMMY_VAR__);
+        current_statement_begin__ = 384;
+        stan::math::assign(log_lik, (((d * stan::math::log((exp_haz(t, rate, pstream__) + lognormal_haz(t, mean, sd, pstream__)))) + exp_log_S(t, rate, pstream__)) + lognormal_log_S(t, mean, sd, pstream__)));
+        current_statement_begin__ = 386;
+        return stan::math::promote_scalar<fun_return_scalar_t__>(log_lik);
+        }
+    } catch (const std::exception& e) {
+        stan::lang::rethrow_located(e, current_statement_begin__, prog_reader__());
+        // Next line prevents compiler griping about no return
+        throw std::runtime_error("*** IF YOU SEE THIS, PLEASE REPORT A BUG ***");
+    }
+}
+template <typename T0__, typename T1__, typename T2__, typename T3__, typename T4__>
+typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__, typename boost::math::tools::promote_args<T4__>::type>::type
+joint_exp_lognormal_lpdf(const T0__& t,
+                             const T1__& d,
+                             const T2__& mean,
+                             const T3__& sd,
+                             const T4__& rate, std::ostream* pstream__) {
+    return joint_exp_lognormal_lpdf<false>(t,d,mean,sd,rate, pstream__);
+}
+struct joint_exp_lognormal_lpdf_functor__ {
+    template <bool propto, typename T0__, typename T1__, typename T2__, typename T3__, typename T4__>
+        typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__, typename boost::math::tools::promote_args<T4__>::type>::type
+    operator()(const T0__& t,
+                             const T1__& d,
+                             const T2__& mean,
+                             const T3__& sd,
+                             const T4__& rate, std::ostream* pstream__) const {
+        return joint_exp_lognormal_lpdf(t, d, mean, sd, rate, pstream__);
+    }
+};
+template <typename T0__, typename T1__, typename T2__, typename T3__>
+typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__>::type
+exp_lognormal_Surv(const T0__& t,
+                       const T1__& mean,
+                       const T2__& sd,
+                       const T3__& rate, std::ostream* pstream__) {
+    typedef typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__>::type local_scalar_t__;
+    typedef local_scalar_t__ fun_return_scalar_t__;
+    const static bool propto__ = true;
+    (void) propto__;
+        local_scalar_t__ DUMMY_VAR__(std::numeric_limits<double>::quiet_NaN());
+        (void) DUMMY_VAR__;  // suppress unused var warning
+    int current_statement_begin__ = -1;
+    try {
+        {
+        current_statement_begin__ = 390;
+        local_scalar_t__ Surv(DUMMY_VAR__);
+        (void) Surv;  // dummy to suppress unused var warning
+        stan::math::initialize(Surv, DUMMY_VAR__);
+        stan::math::fill(Surv, DUMMY_VAR__);
+        current_statement_begin__ = 391;
+        stan::math::assign(Surv, (exp_Surv(t, rate, pstream__) * lognormal_Surv(t, mean, sd, pstream__)));
+        current_statement_begin__ = 392;
+        if (pstream__) {
+            stan_print(pstream__,mean);
+            *pstream__ << std::endl;
+        }
+        current_statement_begin__ = 393;
+        if (pstream__) {
+            stan_print(pstream__,sd);
+            *pstream__ << std::endl;
+        }
+        current_statement_begin__ = 395;
+        return stan::math::promote_scalar<fun_return_scalar_t__>(Surv);
+        }
+    } catch (const std::exception& e) {
+        stan::lang::rethrow_located(e, current_statement_begin__, prog_reader__());
+        // Next line prevents compiler griping about no return
+        throw std::runtime_error("*** IF YOU SEE THIS, PLEASE REPORT A BUG ***");
+    }
+}
+struct exp_lognormal_Surv_functor__ {
+    template <typename T0__, typename T1__, typename T2__, typename T3__>
+        typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__>::type
+    operator()(const T0__& t,
+                       const T1__& mean,
+                       const T2__& sd,
+                       const T3__& rate, std::ostream* pstream__) const {
+        return exp_lognormal_Surv(t, mean, sd, rate, pstream__);
+    }
+};
+template <typename T0__, typename T1__, typename T2__, typename T3__, typename T4__, typename T5__>
+typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__, typename boost::math::tools::promote_args<T4__, T5__>::type>::type
+joint_exp_gengamma_pdf(const T0__& t,
+                           const T1__& d,
+                           const T2__& mu,
+                           const T3__& scale,
+                           const T4__& Q,
+                           const T5__& rate, std::ostream* pstream__) {
+    typedef typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__, typename boost::math::tools::promote_args<T4__, T5__>::type>::type local_scalar_t__;
+    typedef local_scalar_t__ fun_return_scalar_t__;
+    const static bool propto__ = true;
+    (void) propto__;
+        local_scalar_t__ DUMMY_VAR__(std::numeric_limits<double>::quiet_NaN());
+        (void) DUMMY_VAR__;  // suppress unused var warning
+    int current_statement_begin__ = -1;
+    try {
+        {
+        current_statement_begin__ = 401;
+        local_scalar_t__ lik(DUMMY_VAR__);
+        (void) lik;  // dummy to suppress unused var warning
+        stan::math::initialize(lik, DUMMY_VAR__);
+        stan::math::fill(lik, DUMMY_VAR__);
+        current_statement_begin__ = 402;
+        stan::math::assign(lik, ((exp_Surv(t, rate, pstream__) * gen_gamma_Surv(t, mu, scale, Q, pstream__)) * pow((exp_haz(t, rate, pstream__) + gen_gamma_haz(t, mu, scale, Q, pstream__)), d)));
+        current_statement_begin__ = 404;
+        return stan::math::promote_scalar<fun_return_scalar_t__>(lik);
+        }
+    } catch (const std::exception& e) {
+        stan::lang::rethrow_located(e, current_statement_begin__, prog_reader__());
+        // Next line prevents compiler griping about no return
+        throw std::runtime_error("*** IF YOU SEE THIS, PLEASE REPORT A BUG ***");
+    }
+}
+struct joint_exp_gengamma_pdf_functor__ {
+    template <typename T0__, typename T1__, typename T2__, typename T3__, typename T4__, typename T5__>
+        typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__, typename boost::math::tools::promote_args<T4__, T5__>::type>::type
+    operator()(const T0__& t,
+                           const T1__& d,
+                           const T2__& mu,
+                           const T3__& scale,
+                           const T4__& Q,
+                           const T5__& rate, std::ostream* pstream__) const {
+        return joint_exp_gengamma_pdf(t, d, mu, scale, Q, rate, pstream__);
+    }
+};
+template <bool propto, typename T0__, typename T1__, typename T2__, typename T3__, typename T4__, typename T5__>
+typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__, typename boost::math::tools::promote_args<T4__, T5__>::type>::type
+joint_exp_gengamma_lpdf(const T0__& t,
+                            const T1__& d,
+                            const T2__& mu,
+                            const T3__& scale,
+                            const T4__& Q,
+                            const T5__& rate, std::ostream* pstream__) {
+    typedef typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__, typename boost::math::tools::promote_args<T4__, T5__>::type>::type local_scalar_t__;
+    typedef local_scalar_t__ fun_return_scalar_t__;
+    const static bool propto__ = true;
+    (void) propto__;
+        local_scalar_t__ DUMMY_VAR__(std::numeric_limits<double>::quiet_NaN());
+        (void) DUMMY_VAR__;  // suppress unused var warning
+    int current_statement_begin__ = -1;
+    try {
+        {
+        current_statement_begin__ = 408;
+        local_scalar_t__ log_lik(DUMMY_VAR__);
+        (void) log_lik;  // dummy to suppress unused var warning
+        stan::math::initialize(log_lik, DUMMY_VAR__);
+        stan::math::fill(log_lik, DUMMY_VAR__);
+        current_statement_begin__ = 409;
+        stan::math::assign(log_lik, (((d * stan::math::log((exp_haz(t, rate, pstream__) + gen_gamma_haz(t, mu, scale, Q, pstream__)))) + exp_log_S(t, rate, pstream__)) + gen_gamma_log_S(t, mu, scale, Q, pstream__)));
+        current_statement_begin__ = 411;
+        return stan::math::promote_scalar<fun_return_scalar_t__>(log_lik);
+        }
+    } catch (const std::exception& e) {
+        stan::lang::rethrow_located(e, current_statement_begin__, prog_reader__());
+        // Next line prevents compiler griping about no return
+        throw std::runtime_error("*** IF YOU SEE THIS, PLEASE REPORT A BUG ***");
+    }
+}
+template <typename T0__, typename T1__, typename T2__, typename T3__, typename T4__, typename T5__>
+typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__, typename boost::math::tools::promote_args<T4__, T5__>::type>::type
+joint_exp_gengamma_lpdf(const T0__& t,
+                            const T1__& d,
+                            const T2__& mu,
+                            const T3__& scale,
+                            const T4__& Q,
+                            const T5__& rate, std::ostream* pstream__) {
+    return joint_exp_gengamma_lpdf<false>(t,d,mu,scale,Q,rate, pstream__);
+}
+struct joint_exp_gengamma_lpdf_functor__ {
+    template <bool propto, typename T0__, typename T1__, typename T2__, typename T3__, typename T4__, typename T5__>
+        typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__, typename boost::math::tools::promote_args<T4__, T5__>::type>::type
+    operator()(const T0__& t,
+                            const T1__& d,
+                            const T2__& mu,
+                            const T3__& scale,
+                            const T4__& Q,
+                            const T5__& rate, std::ostream* pstream__) const {
+        return joint_exp_gengamma_lpdf(t, d, mu, scale, Q, rate, pstream__);
+    }
+};
+template <typename T0__, typename T1__, typename T2__, typename T3__, typename T4__>
+typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__, typename boost::math::tools::promote_args<T4__>::type>::type
+exp_gengamma_Surv(const T0__& t,
+                      const T1__& mu,
+                      const T2__& scale,
+                      const T3__& Q,
+                      const T4__& rate, std::ostream* pstream__) {
+    typedef typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__, typename boost::math::tools::promote_args<T4__>::type>::type local_scalar_t__;
+    typedef local_scalar_t__ fun_return_scalar_t__;
+    const static bool propto__ = true;
+    (void) propto__;
+        local_scalar_t__ DUMMY_VAR__(std::numeric_limits<double>::quiet_NaN());
+        (void) DUMMY_VAR__;  // suppress unused var warning
+    int current_statement_begin__ = -1;
+    try {
+        {
+        current_statement_begin__ = 415;
+        local_scalar_t__ Surv(DUMMY_VAR__);
+        (void) Surv;  // dummy to suppress unused var warning
+        stan::math::initialize(Surv, DUMMY_VAR__);
+        stan::math::fill(Surv, DUMMY_VAR__);
+        current_statement_begin__ = 416;
+        stan::math::assign(Surv, (exp_Surv(t, rate, pstream__) * gen_gamma_Surv(t, mu, scale, Q, pstream__)));
+        current_statement_begin__ = 417;
+        return stan::math::promote_scalar<fun_return_scalar_t__>(Surv);
+        }
+    } catch (const std::exception& e) {
+        stan::lang::rethrow_located(e, current_statement_begin__, prog_reader__());
+        // Next line prevents compiler griping about no return
+        throw std::runtime_error("*** IF YOU SEE THIS, PLEASE REPORT A BUG ***");
+    }
+}
+struct exp_gengamma_Surv_functor__ {
+    template <typename T0__, typename T1__, typename T2__, typename T3__, typename T4__>
+        typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__, typename boost::math::tools::promote_args<T4__>::type>::type
+    operator()(const T0__& t,
+                      const T1__& mu,
+                      const T2__& scale,
+                      const T3__& Q,
+                      const T4__& rate, std::ostream* pstream__) const {
+        return exp_gengamma_Surv(t, mu, scale, Q, rate, pstream__);
+    }
+};
 #include <stan_meta_header.hpp>
 class model_exp_exp_joint_hiercf
   : public stan::model::model_base_crtp<model_exp_exp_joint_hiercf> {
@@ -891,8 +2153,11 @@ private:
         vector_d mu_0_pfs;
         vector_d sigma_0_os;
         vector_d sigma_0_pfs;
+        int bg_model;
         vector_d mu_bg;
         vector_d sigma_bg;
+        vector_d h_bg_os;
+        vector_d h_bg_pfs;
         int joint_model;
         std::vector<double> mu_joint;
         std::vector<double> sigma_joint;
@@ -936,35 +2201,35 @@ public:
         (void) DUMMY_VAR__;  // suppress unused var warning
         try {
             // initialize data block variables from context__
-            current_statement_begin__ = 182;
+            current_statement_begin__ = 424;
             context__.validate_dims("data initialization", "n_os", "int", context__.to_vec());
             n_os = int(0);
             vals_i__ = context__.vals_i("n_os");
             pos__ = 0;
             n_os = vals_i__[pos__++];
             check_greater_or_equal(function__, "n_os", n_os, 0);
-            current_statement_begin__ = 183;
+            current_statement_begin__ = 425;
             context__.validate_dims("data initialization", "n_pfs", "int", context__.to_vec());
             n_pfs = int(0);
             vals_i__ = context__.vals_i("n_pfs");
             pos__ = 0;
             n_pfs = vals_i__[pos__++];
             check_greater_or_equal(function__, "n_pfs", n_pfs, 0);
-            current_statement_begin__ = 184;
+            current_statement_begin__ = 426;
             context__.validate_dims("data initialization", "H_os", "int", context__.to_vec());
             H_os = int(0);
             vals_i__ = context__.vals_i("H_os");
             pos__ = 0;
             H_os = vals_i__[pos__++];
             check_greater_or_equal(function__, "H_os", H_os, 0);
-            current_statement_begin__ = 185;
+            current_statement_begin__ = 427;
             context__.validate_dims("data initialization", "H_pfs", "int", context__.to_vec());
             H_pfs = int(0);
             vals_i__ = context__.vals_i("H_pfs");
             pos__ = 0;
             H_pfs = vals_i__[pos__++];
             check_greater_or_equal(function__, "H_pfs", H_pfs, 0);
-            current_statement_begin__ = 188;
+            current_statement_begin__ = 430;
             validate_non_negative_index("t_os", "n_os", n_os);
             context__.validate_dims("data initialization", "t_os", "vector_d", context__.to_vec(n_os));
             t_os = Eigen::Matrix<double, Eigen::Dynamic, 1>(n_os);
@@ -974,7 +2239,7 @@ public:
             for (size_t j_1__ = 0; j_1__ < t_os_j_1_max__; ++j_1__) {
                 t_os(j_1__) = vals_r__[pos__++];
             }
-            current_statement_begin__ = 189;
+            current_statement_begin__ = 431;
             validate_non_negative_index("t_pfs", "n_pfs", n_pfs);
             context__.validate_dims("data initialization", "t_pfs", "vector_d", context__.to_vec(n_pfs));
             t_pfs = Eigen::Matrix<double, Eigen::Dynamic, 1>(n_pfs);
@@ -984,7 +2249,7 @@ public:
             for (size_t j_1__ = 0; j_1__ < t_pfs_j_1_max__; ++j_1__) {
                 t_pfs(j_1__) = vals_r__[pos__++];
             }
-            current_statement_begin__ = 191;
+            current_statement_begin__ = 433;
             validate_non_negative_index("d_os", "n_os", n_os);
             context__.validate_dims("data initialization", "d_os", "vector_d", context__.to_vec(n_os));
             d_os = Eigen::Matrix<double, Eigen::Dynamic, 1>(n_os);
@@ -994,7 +2259,7 @@ public:
             for (size_t j_1__ = 0; j_1__ < d_os_j_1_max__; ++j_1__) {
                 d_os(j_1__) = vals_r__[pos__++];
             }
-            current_statement_begin__ = 192;
+            current_statement_begin__ = 434;
             validate_non_negative_index("d_pfs", "n_pfs", n_pfs);
             context__.validate_dims("data initialization", "d_pfs", "vector_d", context__.to_vec(n_pfs));
             d_pfs = Eigen::Matrix<double, Eigen::Dynamic, 1>(n_pfs);
@@ -1004,7 +2269,7 @@ public:
             for (size_t j_1__ = 0; j_1__ < d_pfs_j_1_max__; ++j_1__) {
                 d_pfs(j_1__) = vals_r__[pos__++];
             }
-            current_statement_begin__ = 194;
+            current_statement_begin__ = 436;
             validate_non_negative_index("X_os", "n_os", n_os);
             validate_non_negative_index("X_os", "H_os", H_os);
             context__.validate_dims("data initialization", "X_os", "matrix_d", context__.to_vec(n_os,H_os));
@@ -1018,7 +2283,7 @@ public:
                     X_os(j_1__, j_2__) = vals_r__[pos__++];
                 }
             }
-            current_statement_begin__ = 195;
+            current_statement_begin__ = 437;
             validate_non_negative_index("X_pfs", "n_pfs", n_pfs);
             validate_non_negative_index("X_pfs", "H_pfs", H_pfs);
             context__.validate_dims("data initialization", "X_pfs", "matrix_d", context__.to_vec(n_pfs,H_pfs));
@@ -1032,7 +2297,7 @@ public:
                     X_pfs(j_1__, j_2__) = vals_r__[pos__++];
                 }
             }
-            current_statement_begin__ = 197;
+            current_statement_begin__ = 439;
             validate_non_negative_index("mu_0_os", "H_os", H_os);
             context__.validate_dims("data initialization", "mu_0_os", "vector_d", context__.to_vec(H_os));
             mu_0_os = Eigen::Matrix<double, Eigen::Dynamic, 1>(H_os);
@@ -1042,7 +2307,7 @@ public:
             for (size_t j_1__ = 0; j_1__ < mu_0_os_j_1_max__; ++j_1__) {
                 mu_0_os(j_1__) = vals_r__[pos__++];
             }
-            current_statement_begin__ = 198;
+            current_statement_begin__ = 440;
             validate_non_negative_index("mu_0_pfs", "H_pfs", H_pfs);
             context__.validate_dims("data initialization", "mu_0_pfs", "vector_d", context__.to_vec(H_pfs));
             mu_0_pfs = Eigen::Matrix<double, Eigen::Dynamic, 1>(H_pfs);
@@ -1052,7 +2317,7 @@ public:
             for (size_t j_1__ = 0; j_1__ < mu_0_pfs_j_1_max__; ++j_1__) {
                 mu_0_pfs(j_1__) = vals_r__[pos__++];
             }
-            current_statement_begin__ = 199;
+            current_statement_begin__ = 441;
             validate_non_negative_index("sigma_0_os", "H_os", H_os);
             context__.validate_dims("data initialization", "sigma_0_os", "vector_d", context__.to_vec(H_os));
             sigma_0_os = Eigen::Matrix<double, Eigen::Dynamic, 1>(H_os);
@@ -1063,7 +2328,7 @@ public:
                 sigma_0_os(j_1__) = vals_r__[pos__++];
             }
             check_greater_or_equal(function__, "sigma_0_os", sigma_0_os, 0);
-            current_statement_begin__ = 200;
+            current_statement_begin__ = 442;
             validate_non_negative_index("sigma_0_pfs", "H_pfs", H_pfs);
             context__.validate_dims("data initialization", "sigma_0_pfs", "vector_d", context__.to_vec(H_pfs));
             sigma_0_pfs = Eigen::Matrix<double, Eigen::Dynamic, 1>(H_pfs);
@@ -1074,28 +2339,56 @@ public:
                 sigma_0_pfs(j_1__) = vals_r__[pos__++];
             }
             check_greater_or_equal(function__, "sigma_0_pfs", sigma_0_pfs, 0);
-            current_statement_begin__ = 203;
-            validate_non_negative_index("mu_bg", "H_os", H_os);
-            context__.validate_dims("data initialization", "mu_bg", "vector_d", context__.to_vec(H_os));
-            mu_bg = Eigen::Matrix<double, Eigen::Dynamic, 1>(H_os);
+            current_statement_begin__ = 445;
+            context__.validate_dims("data initialization", "bg_model", "int", context__.to_vec());
+            bg_model = int(0);
+            vals_i__ = context__.vals_i("bg_model");
+            pos__ = 0;
+            bg_model = vals_i__[pos__++];
+            check_greater_or_equal(function__, "bg_model", bg_model, 1);
+            check_less_or_equal(function__, "bg_model", bg_model, 2);
+            current_statement_begin__ = 446;
+            validate_non_negative_index("mu_bg", "(logical_eq(bg_model, 1) ? H_os : 0 )", (logical_eq(bg_model, 1) ? H_os : 0 ));
+            context__.validate_dims("data initialization", "mu_bg", "vector_d", context__.to_vec((logical_eq(bg_model, 1) ? H_os : 0 )));
+            mu_bg = Eigen::Matrix<double, Eigen::Dynamic, 1>((logical_eq(bg_model, 1) ? H_os : 0 ));
             vals_r__ = context__.vals_r("mu_bg");
             pos__ = 0;
-            size_t mu_bg_j_1_max__ = H_os;
+            size_t mu_bg_j_1_max__ = (logical_eq(bg_model, 1) ? H_os : 0 );
             for (size_t j_1__ = 0; j_1__ < mu_bg_j_1_max__; ++j_1__) {
                 mu_bg(j_1__) = vals_r__[pos__++];
             }
-            current_statement_begin__ = 204;
-            validate_non_negative_index("sigma_bg", "H_os", H_os);
-            context__.validate_dims("data initialization", "sigma_bg", "vector_d", context__.to_vec(H_os));
-            sigma_bg = Eigen::Matrix<double, Eigen::Dynamic, 1>(H_os);
+            current_statement_begin__ = 447;
+            validate_non_negative_index("sigma_bg", "(logical_eq(bg_model, 1) ? H_os : 0 )", (logical_eq(bg_model, 1) ? H_os : 0 ));
+            context__.validate_dims("data initialization", "sigma_bg", "vector_d", context__.to_vec((logical_eq(bg_model, 1) ? H_os : 0 )));
+            sigma_bg = Eigen::Matrix<double, Eigen::Dynamic, 1>((logical_eq(bg_model, 1) ? H_os : 0 ));
             vals_r__ = context__.vals_r("sigma_bg");
             pos__ = 0;
-            size_t sigma_bg_j_1_max__ = H_os;
+            size_t sigma_bg_j_1_max__ = (logical_eq(bg_model, 1) ? H_os : 0 );
             for (size_t j_1__ = 0; j_1__ < sigma_bg_j_1_max__; ++j_1__) {
                 sigma_bg(j_1__) = vals_r__[pos__++];
             }
             check_greater_or_equal(function__, "sigma_bg", sigma_bg, 0);
-            current_statement_begin__ = 206;
+            current_statement_begin__ = 448;
+            validate_non_negative_index("h_bg_os", "(logical_eq(bg_model, 2) ? n_os : 0 )", (logical_eq(bg_model, 2) ? n_os : 0 ));
+            context__.validate_dims("data initialization", "h_bg_os", "vector_d", context__.to_vec((logical_eq(bg_model, 2) ? n_os : 0 )));
+            h_bg_os = Eigen::Matrix<double, Eigen::Dynamic, 1>((logical_eq(bg_model, 2) ? n_os : 0 ));
+            vals_r__ = context__.vals_r("h_bg_os");
+            pos__ = 0;
+            size_t h_bg_os_j_1_max__ = (logical_eq(bg_model, 2) ? n_os : 0 );
+            for (size_t j_1__ = 0; j_1__ < h_bg_os_j_1_max__; ++j_1__) {
+                h_bg_os(j_1__) = vals_r__[pos__++];
+            }
+            current_statement_begin__ = 449;
+            validate_non_negative_index("h_bg_pfs", "(logical_eq(bg_model, 2) ? n_pfs : 0 )", (logical_eq(bg_model, 2) ? n_pfs : 0 ));
+            context__.validate_dims("data initialization", "h_bg_pfs", "vector_d", context__.to_vec((logical_eq(bg_model, 2) ? n_pfs : 0 )));
+            h_bg_pfs = Eigen::Matrix<double, Eigen::Dynamic, 1>((logical_eq(bg_model, 2) ? n_pfs : 0 ));
+            vals_r__ = context__.vals_r("h_bg_pfs");
+            pos__ = 0;
+            size_t h_bg_pfs_j_1_max__ = (logical_eq(bg_model, 2) ? n_pfs : 0 );
+            for (size_t j_1__ = 0; j_1__ < h_bg_pfs_j_1_max__; ++j_1__) {
+                h_bg_pfs(j_1__) = vals_r__[pos__++];
+            }
+            current_statement_begin__ = 451;
             context__.validate_dims("data initialization", "joint_model", "int", context__.to_vec());
             joint_model = int(0);
             vals_i__ = context__.vals_i("joint_model");
@@ -1103,7 +2396,7 @@ public:
             joint_model = vals_i__[pos__++];
             check_greater_or_equal(function__, "joint_model", joint_model, 0);
             check_less_or_equal(function__, "joint_model", joint_model, 1);
-            current_statement_begin__ = 207;
+            current_statement_begin__ = 452;
             validate_non_negative_index("mu_joint", "joint_model", joint_model);
             context__.validate_dims("data initialization", "mu_joint", "double", context__.to_vec(joint_model));
             mu_joint = std::vector<double>(joint_model, double(0));
@@ -1113,7 +2406,7 @@ public:
             for (size_t k_0__ = 0; k_0__ < mu_joint_k_0_max__; ++k_0__) {
                 mu_joint[k_0__] = vals_r__[pos__++];
             }
-            current_statement_begin__ = 208;
+            current_statement_begin__ = 453;
             validate_non_negative_index("sigma_joint", "joint_model", joint_model);
             context__.validate_dims("data initialization", "sigma_joint", "double", context__.to_vec(joint_model));
             sigma_joint = std::vector<double>(joint_model, double(0));
@@ -1127,7 +2420,7 @@ public:
             for (size_t i_0__ = 0; i_0__ < sigma_joint_i_0_max__; ++i_0__) {
                 check_greater_or_equal(function__, "sigma_joint[i_0__]", sigma_joint[i_0__], 0);
             }
-            current_statement_begin__ = 210;
+            current_statement_begin__ = 455;
             context__.validate_dims("data initialization", "cf_model", "int", context__.to_vec());
             cf_model = int(0);
             vals_i__ = context__.vals_i("cf_model");
@@ -1135,7 +2428,7 @@ public:
             cf_model = vals_i__[pos__++];
             check_greater_or_equal(function__, "cf_model", cf_model, 1);
             check_less_or_equal(function__, "cf_model", cf_model, 3);
-            current_statement_begin__ = 211;
+            current_statement_begin__ = 456;
             validate_non_negative_index("mu_cf_gl", "(logical_eq(cf_model, 3) ? 1 : 0 )", (logical_eq(cf_model, 3) ? 1 : 0 ));
             context__.validate_dims("data initialization", "mu_cf_gl", "double", context__.to_vec((logical_eq(cf_model, 3) ? 1 : 0 )));
             mu_cf_gl = std::vector<double>((logical_eq(cf_model, 3) ? 1 : 0 ), double(0));
@@ -1145,7 +2438,7 @@ public:
             for (size_t k_0__ = 0; k_0__ < mu_cf_gl_k_0_max__; ++k_0__) {
                 mu_cf_gl[k_0__] = vals_r__[pos__++];
             }
-            current_statement_begin__ = 212;
+            current_statement_begin__ = 457;
             validate_non_negative_index("mu_cf_os", "(logical_eq(cf_model, 2) ? 1 : 0 )", (logical_eq(cf_model, 2) ? 1 : 0 ));
             context__.validate_dims("data initialization", "mu_cf_os", "double", context__.to_vec((logical_eq(cf_model, 2) ? 1 : 0 )));
             mu_cf_os = std::vector<double>((logical_eq(cf_model, 2) ? 1 : 0 ), double(0));
@@ -1155,7 +2448,7 @@ public:
             for (size_t k_0__ = 0; k_0__ < mu_cf_os_k_0_max__; ++k_0__) {
                 mu_cf_os[k_0__] = vals_r__[pos__++];
             }
-            current_statement_begin__ = 213;
+            current_statement_begin__ = 458;
             validate_non_negative_index("mu_cf_pfs", "(logical_eq(cf_model, 2) ? 1 : 0 )", (logical_eq(cf_model, 2) ? 1 : 0 ));
             context__.validate_dims("data initialization", "mu_cf_pfs", "double", context__.to_vec((logical_eq(cf_model, 2) ? 1 : 0 )));
             mu_cf_pfs = std::vector<double>((logical_eq(cf_model, 2) ? 1 : 0 ), double(0));
@@ -1165,7 +2458,7 @@ public:
             for (size_t k_0__ = 0; k_0__ < mu_cf_pfs_k_0_max__; ++k_0__) {
                 mu_cf_pfs[k_0__] = vals_r__[pos__++];
             }
-            current_statement_begin__ = 214;
+            current_statement_begin__ = 459;
             validate_non_negative_index("sigma_cf_gl", "(logical_eq(cf_model, 3) ? 1 : 0 )", (logical_eq(cf_model, 3) ? 1 : 0 ));
             context__.validate_dims("data initialization", "sigma_cf_gl", "double", context__.to_vec((logical_eq(cf_model, 3) ? 1 : 0 )));
             sigma_cf_gl = std::vector<double>((logical_eq(cf_model, 3) ? 1 : 0 ), double(0));
@@ -1179,7 +2472,7 @@ public:
             for (size_t i_0__ = 0; i_0__ < sigma_cf_gl_i_0_max__; ++i_0__) {
                 check_greater_or_equal(function__, "sigma_cf_gl[i_0__]", sigma_cf_gl[i_0__], 0);
             }
-            current_statement_begin__ = 215;
+            current_statement_begin__ = 460;
             validate_non_negative_index("sd_cf_os", "(logical_neq(cf_model, 1) ? 1 : 0 )", (logical_neq(cf_model, 1) ? 1 : 0 ));
             context__.validate_dims("data initialization", "sd_cf_os", "double", context__.to_vec((logical_neq(cf_model, 1) ? 1 : 0 )));
             sd_cf_os = std::vector<double>((logical_neq(cf_model, 1) ? 1 : 0 ), double(0));
@@ -1193,7 +2486,7 @@ public:
             for (size_t i_0__ = 0; i_0__ < sd_cf_os_i_0_max__; ++i_0__) {
                 check_greater_or_equal(function__, "sd_cf_os[i_0__]", sd_cf_os[i_0__], 0);
             }
-            current_statement_begin__ = 216;
+            current_statement_begin__ = 461;
             validate_non_negative_index("sd_cf_pfs", "(logical_neq(cf_model, 1) ? 1 : 0 )", (logical_neq(cf_model, 1) ? 1 : 0 ));
             context__.validate_dims("data initialization", "sd_cf_pfs", "double", context__.to_vec((logical_neq(cf_model, 1) ? 1 : 0 )));
             sd_cf_pfs = std::vector<double>((logical_neq(cf_model, 1) ? 1 : 0 ), double(0));
@@ -1207,7 +2500,7 @@ public:
             for (size_t i_0__ = 0; i_0__ < sd_cf_pfs_i_0_max__; ++i_0__) {
                 check_greater_or_equal(function__, "sd_cf_pfs[i_0__]", sd_cf_pfs[i_0__], 0);
             }
-            current_statement_begin__ = 217;
+            current_statement_begin__ = 462;
             validate_non_negative_index("a_cf", "(logical_eq(cf_model, 1) ? 1 : 0 )", (logical_eq(cf_model, 1) ? 1 : 0 ));
             context__.validate_dims("data initialization", "a_cf", "double", context__.to_vec((logical_eq(cf_model, 1) ? 1 : 0 )));
             a_cf = std::vector<double>((logical_eq(cf_model, 1) ? 1 : 0 ), double(0));
@@ -1217,7 +2510,7 @@ public:
             for (size_t k_0__ = 0; k_0__ < a_cf_k_0_max__; ++k_0__) {
                 a_cf[k_0__] = vals_r__[pos__++];
             }
-            current_statement_begin__ = 218;
+            current_statement_begin__ = 463;
             validate_non_negative_index("b_cf", "(logical_eq(cf_model, 1) ? 1 : 0 )", (logical_eq(cf_model, 1) ? 1 : 0 ));
             context__.validate_dims("data initialization", "b_cf", "double", context__.to_vec((logical_eq(cf_model, 1) ? 1 : 0 )));
             b_cf = std::vector<double>((logical_eq(cf_model, 1) ? 1 : 0 ), double(0));
@@ -1227,7 +2520,7 @@ public:
             for (size_t k_0__ = 0; k_0__ < b_cf_k_0_max__; ++k_0__) {
                 b_cf[k_0__] = vals_r__[pos__++];
             }
-            current_statement_begin__ = 220;
+            current_statement_begin__ = 465;
             context__.validate_dims("data initialization", "t_max", "int", context__.to_vec());
             t_max = int(0);
             vals_i__ = context__.vals_i("t_max");
@@ -1240,28 +2533,28 @@ public:
             // validate, set parameter ranges
             num_params_r__ = 0U;
             param_ranges_i__.clear();
-            current_statement_begin__ = 224;
+            current_statement_begin__ = 469;
             validate_non_negative_index("beta_os", "H_os", H_os);
             num_params_r__ += H_os;
-            current_statement_begin__ = 225;
+            current_statement_begin__ = 470;
             validate_non_negative_index("beta_pfs", "H_pfs", H_pfs);
             num_params_r__ += H_pfs;
-            current_statement_begin__ = 226;
-            validate_non_negative_index("beta_bg", "H_os", H_os);
-            num_params_r__ += H_os;
-            current_statement_begin__ = 227;
+            current_statement_begin__ = 471;
+            validate_non_negative_index("beta_bg", "(logical_eq(bg_model, 1) ? H_os : 0 )", (logical_eq(bg_model, 1) ? H_os : 0 ));
+            num_params_r__ += (logical_eq(bg_model, 1) ? H_os : 0 );
+            current_statement_begin__ = 472;
             validate_non_negative_index("beta_joint", "joint_model", joint_model);
             num_params_r__ += (1 * joint_model);
-            current_statement_begin__ = 229;
+            current_statement_begin__ = 474;
             validate_non_negative_index("cf_pooled", "(logical_eq(cf_model, 1) ? 1 : 0 )", (logical_eq(cf_model, 1) ? 1 : 0 ));
             num_params_r__ += (1 * (logical_eq(cf_model, 1) ? 1 : 0 ));
-            current_statement_begin__ = 230;
+            current_statement_begin__ = 475;
             validate_non_negative_index("lp_cf_global", "(logical_eq(cf_model, 3) ? 1 : 0 )", (logical_eq(cf_model, 3) ? 1 : 0 ));
             num_params_r__ += (1 * (logical_eq(cf_model, 3) ? 1 : 0 ));
-            current_statement_begin__ = 231;
+            current_statement_begin__ = 476;
             validate_non_negative_index("lp_cf_os", "(logical_neq(cf_model, 1) ? 1 : 0 )", (logical_neq(cf_model, 1) ? 1 : 0 ));
             num_params_r__ += (1 * (logical_neq(cf_model, 1) ? 1 : 0 ));
-            current_statement_begin__ = 232;
+            current_statement_begin__ = 477;
             validate_non_negative_index("lp_cf_pfs", "(logical_neq(cf_model, 1) ? 1 : 0 )", (logical_neq(cf_model, 1) ? 1 : 0 ));
             num_params_r__ += (1 * (logical_neq(cf_model, 1) ? 1 : 0 ));
         } catch (const std::exception& e) {
@@ -1281,7 +2574,7 @@ public:
         (void) pos__; // dummy call to supress warning
         std::vector<double> vals_r__;
         std::vector<int> vals_i__;
-        current_statement_begin__ = 224;
+        current_statement_begin__ = 469;
         if (!(context__.contains_r("beta_os")))
             stan::lang::rethrow_located(std::runtime_error(std::string("Variable beta_os missing")), current_statement_begin__, prog_reader__());
         vals_r__ = context__.vals_r("beta_os");
@@ -1298,7 +2591,7 @@ public:
         } catch (const std::exception& e) {
             stan::lang::rethrow_located(std::runtime_error(std::string("Error transforming variable beta_os: ") + e.what()), current_statement_begin__, prog_reader__());
         }
-        current_statement_begin__ = 225;
+        current_statement_begin__ = 470;
         if (!(context__.contains_r("beta_pfs")))
             stan::lang::rethrow_located(std::runtime_error(std::string("Variable beta_pfs missing")), current_statement_begin__, prog_reader__());
         vals_r__ = context__.vals_r("beta_pfs");
@@ -1315,15 +2608,15 @@ public:
         } catch (const std::exception& e) {
             stan::lang::rethrow_located(std::runtime_error(std::string("Error transforming variable beta_pfs: ") + e.what()), current_statement_begin__, prog_reader__());
         }
-        current_statement_begin__ = 226;
+        current_statement_begin__ = 471;
         if (!(context__.contains_r("beta_bg")))
             stan::lang::rethrow_located(std::runtime_error(std::string("Variable beta_bg missing")), current_statement_begin__, prog_reader__());
         vals_r__ = context__.vals_r("beta_bg");
         pos__ = 0U;
-        validate_non_negative_index("beta_bg", "H_os", H_os);
-        context__.validate_dims("parameter initialization", "beta_bg", "vector_d", context__.to_vec(H_os));
-        Eigen::Matrix<double, Eigen::Dynamic, 1> beta_bg(H_os);
-        size_t beta_bg_j_1_max__ = H_os;
+        validate_non_negative_index("beta_bg", "(logical_eq(bg_model, 1) ? H_os : 0 )", (logical_eq(bg_model, 1) ? H_os : 0 ));
+        context__.validate_dims("parameter initialization", "beta_bg", "vector_d", context__.to_vec((logical_eq(bg_model, 1) ? H_os : 0 )));
+        Eigen::Matrix<double, Eigen::Dynamic, 1> beta_bg((logical_eq(bg_model, 1) ? H_os : 0 ));
+        size_t beta_bg_j_1_max__ = (logical_eq(bg_model, 1) ? H_os : 0 );
         for (size_t j_1__ = 0; j_1__ < beta_bg_j_1_max__; ++j_1__) {
             beta_bg(j_1__) = vals_r__[pos__++];
         }
@@ -1332,7 +2625,7 @@ public:
         } catch (const std::exception& e) {
             stan::lang::rethrow_located(std::runtime_error(std::string("Error transforming variable beta_bg: ") + e.what()), current_statement_begin__, prog_reader__());
         }
-        current_statement_begin__ = 227;
+        current_statement_begin__ = 472;
         if (!(context__.contains_r("beta_joint")))
             stan::lang::rethrow_located(std::runtime_error(std::string("Variable beta_joint missing")), current_statement_begin__, prog_reader__());
         vals_r__ = context__.vals_r("beta_joint");
@@ -1352,7 +2645,7 @@ public:
                 stan::lang::rethrow_located(std::runtime_error(std::string("Error transforming variable beta_joint: ") + e.what()), current_statement_begin__, prog_reader__());
             }
         }
-        current_statement_begin__ = 229;
+        current_statement_begin__ = 474;
         if (!(context__.contains_r("cf_pooled")))
             stan::lang::rethrow_located(std::runtime_error(std::string("Variable cf_pooled missing")), current_statement_begin__, prog_reader__());
         vals_r__ = context__.vals_r("cf_pooled");
@@ -1372,7 +2665,7 @@ public:
                 stan::lang::rethrow_located(std::runtime_error(std::string("Error transforming variable cf_pooled: ") + e.what()), current_statement_begin__, prog_reader__());
             }
         }
-        current_statement_begin__ = 230;
+        current_statement_begin__ = 475;
         if (!(context__.contains_r("lp_cf_global")))
             stan::lang::rethrow_located(std::runtime_error(std::string("Variable lp_cf_global missing")), current_statement_begin__, prog_reader__());
         vals_r__ = context__.vals_r("lp_cf_global");
@@ -1392,7 +2685,7 @@ public:
                 stan::lang::rethrow_located(std::runtime_error(std::string("Error transforming variable lp_cf_global: ") + e.what()), current_statement_begin__, prog_reader__());
             }
         }
-        current_statement_begin__ = 231;
+        current_statement_begin__ = 476;
         if (!(context__.contains_r("lp_cf_os")))
             stan::lang::rethrow_located(std::runtime_error(std::string("Variable lp_cf_os missing")), current_statement_begin__, prog_reader__());
         vals_r__ = context__.vals_r("lp_cf_os");
@@ -1412,7 +2705,7 @@ public:
                 stan::lang::rethrow_located(std::runtime_error(std::string("Error transforming variable lp_cf_os: ") + e.what()), current_statement_begin__, prog_reader__());
             }
         }
-        current_statement_begin__ = 232;
+        current_statement_begin__ = 477;
         if (!(context__.contains_r("lp_cf_pfs")))
             stan::lang::rethrow_located(std::runtime_error(std::string("Variable lp_cf_pfs missing")), current_statement_begin__, prog_reader__());
         vals_r__ = context__.vals_r("lp_cf_pfs");
@@ -1457,28 +2750,28 @@ public:
         try {
             stan::io::reader<local_scalar_t__> in__(params_r__, params_i__);
             // model parameters
-            current_statement_begin__ = 224;
+            current_statement_begin__ = 469;
             Eigen::Matrix<local_scalar_t__, Eigen::Dynamic, 1> beta_os;
             (void) beta_os;  // dummy to suppress unused var warning
             if (jacobian__)
                 beta_os = in__.vector_constrain(H_os, lp__);
             else
                 beta_os = in__.vector_constrain(H_os);
-            current_statement_begin__ = 225;
+            current_statement_begin__ = 470;
             Eigen::Matrix<local_scalar_t__, Eigen::Dynamic, 1> beta_pfs;
             (void) beta_pfs;  // dummy to suppress unused var warning
             if (jacobian__)
                 beta_pfs = in__.vector_constrain(H_pfs, lp__);
             else
                 beta_pfs = in__.vector_constrain(H_pfs);
-            current_statement_begin__ = 226;
+            current_statement_begin__ = 471;
             Eigen::Matrix<local_scalar_t__, Eigen::Dynamic, 1> beta_bg;
             (void) beta_bg;  // dummy to suppress unused var warning
             if (jacobian__)
-                beta_bg = in__.vector_constrain(H_os, lp__);
+                beta_bg = in__.vector_constrain((logical_eq(bg_model, 1) ? H_os : 0 ), lp__);
             else
-                beta_bg = in__.vector_constrain(H_os);
-            current_statement_begin__ = 227;
+                beta_bg = in__.vector_constrain((logical_eq(bg_model, 1) ? H_os : 0 ));
+            current_statement_begin__ = 472;
             std::vector<local_scalar_t__> beta_joint;
             size_t beta_joint_d_0_max__ = joint_model;
             beta_joint.reserve(beta_joint_d_0_max__);
@@ -1488,7 +2781,7 @@ public:
                 else
                     beta_joint.push_back(in__.scalar_constrain());
             }
-            current_statement_begin__ = 229;
+            current_statement_begin__ = 474;
             std::vector<local_scalar_t__> cf_pooled;
             size_t cf_pooled_d_0_max__ = (logical_eq(cf_model, 1) ? 1 : 0 );
             cf_pooled.reserve(cf_pooled_d_0_max__);
@@ -1498,7 +2791,7 @@ public:
                 else
                     cf_pooled.push_back(in__.scalar_lub_constrain(0, 1));
             }
-            current_statement_begin__ = 230;
+            current_statement_begin__ = 475;
             std::vector<local_scalar_t__> lp_cf_global;
             size_t lp_cf_global_d_0_max__ = (logical_eq(cf_model, 3) ? 1 : 0 );
             lp_cf_global.reserve(lp_cf_global_d_0_max__);
@@ -1508,7 +2801,7 @@ public:
                 else
                     lp_cf_global.push_back(in__.scalar_constrain());
             }
-            current_statement_begin__ = 231;
+            current_statement_begin__ = 476;
             std::vector<local_scalar_t__> lp_cf_os;
             size_t lp_cf_os_d_0_max__ = (logical_neq(cf_model, 1) ? 1 : 0 );
             lp_cf_os.reserve(lp_cf_os_d_0_max__);
@@ -1518,7 +2811,7 @@ public:
                 else
                     lp_cf_os.push_back(in__.scalar_constrain());
             }
-            current_statement_begin__ = 232;
+            current_statement_begin__ = 477;
             std::vector<local_scalar_t__> lp_cf_pfs;
             size_t lp_cf_pfs_d_0_max__ = (logical_neq(cf_model, 1) ? 1 : 0 );
             lp_cf_pfs.reserve(lp_cf_pfs_d_0_max__);
@@ -1529,105 +2822,113 @@ public:
                     lp_cf_pfs.push_back(in__.scalar_constrain());
             }
             // transformed parameters
-            current_statement_begin__ = 236;
+            current_statement_begin__ = 481;
             validate_non_negative_index("lp_os", "n_os", n_os);
             Eigen::Matrix<local_scalar_t__, Eigen::Dynamic, 1> lp_os(n_os);
             stan::math::initialize(lp_os, DUMMY_VAR__);
             stan::math::fill(lp_os, DUMMY_VAR__);
-            current_statement_begin__ = 237;
+            current_statement_begin__ = 482;
             validate_non_negative_index("lp_pfs", "n_pfs", n_pfs);
             Eigen::Matrix<local_scalar_t__, Eigen::Dynamic, 1> lp_pfs(n_pfs);
             stan::math::initialize(lp_pfs, DUMMY_VAR__);
             stan::math::fill(lp_pfs, DUMMY_VAR__);
-            current_statement_begin__ = 238;
+            current_statement_begin__ = 483;
             validate_non_negative_index("lp_os_bg", "n_os", n_os);
             Eigen::Matrix<local_scalar_t__, Eigen::Dynamic, 1> lp_os_bg(n_os);
             stan::math::initialize(lp_os_bg, DUMMY_VAR__);
             stan::math::fill(lp_os_bg, DUMMY_VAR__);
-            current_statement_begin__ = 239;
+            current_statement_begin__ = 484;
             validate_non_negative_index("lp_pfs_bg", "n_os", n_os);
             Eigen::Matrix<local_scalar_t__, Eigen::Dynamic, 1> lp_pfs_bg(n_os);
             stan::math::initialize(lp_pfs_bg, DUMMY_VAR__);
             stan::math::fill(lp_pfs_bg, DUMMY_VAR__);
-            current_statement_begin__ = 241;
+            current_statement_begin__ = 486;
             validate_non_negative_index("lambda_os", "n_os", n_os);
             Eigen::Matrix<local_scalar_t__, Eigen::Dynamic, 1> lambda_os(n_os);
             stan::math::initialize(lambda_os, DUMMY_VAR__);
             stan::math::fill(lambda_os, DUMMY_VAR__);
-            current_statement_begin__ = 242;
+            current_statement_begin__ = 487;
             validate_non_negative_index("lambda_pfs", "n_pfs", n_pfs);
             Eigen::Matrix<local_scalar_t__, Eigen::Dynamic, 1> lambda_pfs(n_pfs);
             stan::math::initialize(lambda_pfs, DUMMY_VAR__);
             stan::math::fill(lambda_pfs, DUMMY_VAR__);
-            current_statement_begin__ = 243;
+            current_statement_begin__ = 488;
             validate_non_negative_index("lambda_os_bg", "n_os", n_os);
             Eigen::Matrix<local_scalar_t__, Eigen::Dynamic, 1> lambda_os_bg(n_os);
             stan::math::initialize(lambda_os_bg, DUMMY_VAR__);
             stan::math::fill(lambda_os_bg, DUMMY_VAR__);
-            current_statement_begin__ = 244;
+            current_statement_begin__ = 489;
             validate_non_negative_index("lambda_pfs_bg", "n_os", n_os);
             Eigen::Matrix<local_scalar_t__, Eigen::Dynamic, 1> lambda_pfs_bg(n_os);
             stan::math::initialize(lambda_pfs_bg, DUMMY_VAR__);
             stan::math::fill(lambda_pfs_bg, DUMMY_VAR__);
-            current_statement_begin__ = 246;
+            current_statement_begin__ = 491;
             validate_non_negative_index("cf_global", "(logical_eq(cf_model, 3) ? 1 : 0 )", (logical_eq(cf_model, 3) ? 1 : 0 ));
             std::vector<local_scalar_t__> cf_global((logical_eq(cf_model, 3) ? 1 : 0 ), local_scalar_t__(0));
             stan::math::initialize(cf_global, DUMMY_VAR__);
             stan::math::fill(cf_global, DUMMY_VAR__);
-            current_statement_begin__ = 247;
+            current_statement_begin__ = 492;
             local_scalar_t__ cf_os;
             (void) cf_os;  // dummy to suppress unused var warning
             stan::math::initialize(cf_os, DUMMY_VAR__);
             stan::math::fill(cf_os, DUMMY_VAR__);
-            current_statement_begin__ = 248;
+            current_statement_begin__ = 493;
             local_scalar_t__ cf_pfs;
             (void) cf_pfs;  // dummy to suppress unused var warning
             stan::math::initialize(cf_pfs, DUMMY_VAR__);
             stan::math::fill(cf_pfs, DUMMY_VAR__);
             // transformed parameters block statements
-            current_statement_begin__ = 251;
+            current_statement_begin__ = 496;
             if (as_bool(joint_model)) {
-                current_statement_begin__ = 252;
+                current_statement_begin__ = 497;
                 stan::math::assign(lp_os, add(multiply(X_os, beta_os), multiply(get_base1(beta_joint, 1, "beta_joint", 1), subtract(t_pfs, (1 / stan::math::exp(get_base1(beta_pfs, 1, "beta_pfs", 1)))))));
             } else {
-                current_statement_begin__ = 254;
+                current_statement_begin__ = 499;
                 stan::math::assign(lp_os, multiply(X_os, beta_os));
             }
-            current_statement_begin__ = 257;
+            current_statement_begin__ = 502;
             stan::math::assign(lp_pfs, multiply(X_pfs, beta_pfs));
-            current_statement_begin__ = 259;
-            stan::math::assign(lp_os_bg, multiply(X_os, beta_bg));
-            current_statement_begin__ = 260;
-            stan::math::assign(lp_pfs_bg, multiply(X_pfs, beta_bg));
-            current_statement_begin__ = 263;
-            stan::math::assign(lambda_os, stan::math::exp(lp_os));
-            current_statement_begin__ = 264;
-            stan::math::assign(lambda_pfs, stan::math::exp(lp_pfs));
-            current_statement_begin__ = 265;
+            current_statement_begin__ = 504;
+            if (as_bool(logical_eq(bg_model, 1))) {
+                current_statement_begin__ = 505;
+                stan::math::assign(lp_os_bg, multiply(X_os, beta_bg));
+                current_statement_begin__ = 506;
+                stan::math::assign(lp_pfs_bg, multiply(X_pfs, beta_bg));
+            } else {
+                current_statement_begin__ = 508;
+                stan::math::assign(lp_os_bg, stan::math::log(h_bg_os));
+                current_statement_begin__ = 509;
+                stan::math::assign(lp_pfs_bg, stan::math::log(h_bg_pfs));
+            }
+            current_statement_begin__ = 512;
             stan::math::assign(lambda_os_bg, stan::math::exp(lp_os_bg));
-            current_statement_begin__ = 266;
+            current_statement_begin__ = 513;
             stan::math::assign(lambda_pfs_bg, stan::math::exp(lp_pfs_bg));
-            current_statement_begin__ = 268;
+            current_statement_begin__ = 516;
+            stan::math::assign(lambda_os, stan::math::exp(lp_os));
+            current_statement_begin__ = 517;
+            stan::math::assign(lambda_pfs, stan::math::exp(lp_pfs));
+            current_statement_begin__ = 519;
             if (as_bool(logical_eq(cf_model, 3))) {
-                current_statement_begin__ = 269;
+                current_statement_begin__ = 520;
                 stan::math::assign(cf_global, inv_logit(lp_cf_global));
             }
-            current_statement_begin__ = 271;
+            current_statement_begin__ = 522;
             if (as_bool(logical_neq(cf_model, 1))) {
-                current_statement_begin__ = 272;
+                current_statement_begin__ = 523;
                 stan::math::assign(cf_os, inv_logit(get_base1(lp_cf_os, 1, "lp_cf_os", 1)));
-                current_statement_begin__ = 273;
+                current_statement_begin__ = 524;
                 stan::math::assign(cf_pfs, inv_logit(get_base1(lp_cf_pfs, 1, "lp_cf_pfs", 1)));
             } else {
-                current_statement_begin__ = 275;
+                current_statement_begin__ = 526;
                 stan::math::assign(cf_os, get_base1(cf_pooled, 1, "cf_pooled", 1));
-                current_statement_begin__ = 276;
+                current_statement_begin__ = 527;
                 stan::math::assign(cf_pfs, get_base1(cf_pooled, 1, "cf_pooled", 1));
             }
             // validate transformed parameters
             const char* function__ = "validate transformed params";
             (void) function__;  // dummy to suppress unused var warning
-            current_statement_begin__ = 236;
+            current_statement_begin__ = 481;
             size_t lp_os_j_1_max__ = n_os;
             for (size_t j_1__ = 0; j_1__ < lp_os_j_1_max__; ++j_1__) {
                 if (stan::math::is_uninitialized(lp_os(j_1__))) {
@@ -1636,7 +2937,7 @@ public:
                     stan::lang::rethrow_located(std::runtime_error(std::string("Error initializing variable lp_os: ") + msg__.str()), current_statement_begin__, prog_reader__());
                 }
             }
-            current_statement_begin__ = 237;
+            current_statement_begin__ = 482;
             size_t lp_pfs_j_1_max__ = n_pfs;
             for (size_t j_1__ = 0; j_1__ < lp_pfs_j_1_max__; ++j_1__) {
                 if (stan::math::is_uninitialized(lp_pfs(j_1__))) {
@@ -1645,7 +2946,7 @@ public:
                     stan::lang::rethrow_located(std::runtime_error(std::string("Error initializing variable lp_pfs: ") + msg__.str()), current_statement_begin__, prog_reader__());
                 }
             }
-            current_statement_begin__ = 238;
+            current_statement_begin__ = 483;
             size_t lp_os_bg_j_1_max__ = n_os;
             for (size_t j_1__ = 0; j_1__ < lp_os_bg_j_1_max__; ++j_1__) {
                 if (stan::math::is_uninitialized(lp_os_bg(j_1__))) {
@@ -1654,7 +2955,7 @@ public:
                     stan::lang::rethrow_located(std::runtime_error(std::string("Error initializing variable lp_os_bg: ") + msg__.str()), current_statement_begin__, prog_reader__());
                 }
             }
-            current_statement_begin__ = 239;
+            current_statement_begin__ = 484;
             size_t lp_pfs_bg_j_1_max__ = n_os;
             for (size_t j_1__ = 0; j_1__ < lp_pfs_bg_j_1_max__; ++j_1__) {
                 if (stan::math::is_uninitialized(lp_pfs_bg(j_1__))) {
@@ -1663,7 +2964,7 @@ public:
                     stan::lang::rethrow_located(std::runtime_error(std::string("Error initializing variable lp_pfs_bg: ") + msg__.str()), current_statement_begin__, prog_reader__());
                 }
             }
-            current_statement_begin__ = 241;
+            current_statement_begin__ = 486;
             size_t lambda_os_j_1_max__ = n_os;
             for (size_t j_1__ = 0; j_1__ < lambda_os_j_1_max__; ++j_1__) {
                 if (stan::math::is_uninitialized(lambda_os(j_1__))) {
@@ -1672,7 +2973,7 @@ public:
                     stan::lang::rethrow_located(std::runtime_error(std::string("Error initializing variable lambda_os: ") + msg__.str()), current_statement_begin__, prog_reader__());
                 }
             }
-            current_statement_begin__ = 242;
+            current_statement_begin__ = 487;
             size_t lambda_pfs_j_1_max__ = n_pfs;
             for (size_t j_1__ = 0; j_1__ < lambda_pfs_j_1_max__; ++j_1__) {
                 if (stan::math::is_uninitialized(lambda_pfs(j_1__))) {
@@ -1681,7 +2982,7 @@ public:
                     stan::lang::rethrow_located(std::runtime_error(std::string("Error initializing variable lambda_pfs: ") + msg__.str()), current_statement_begin__, prog_reader__());
                 }
             }
-            current_statement_begin__ = 243;
+            current_statement_begin__ = 488;
             size_t lambda_os_bg_j_1_max__ = n_os;
             for (size_t j_1__ = 0; j_1__ < lambda_os_bg_j_1_max__; ++j_1__) {
                 if (stan::math::is_uninitialized(lambda_os_bg(j_1__))) {
@@ -1690,7 +2991,7 @@ public:
                     stan::lang::rethrow_located(std::runtime_error(std::string("Error initializing variable lambda_os_bg: ") + msg__.str()), current_statement_begin__, prog_reader__());
                 }
             }
-            current_statement_begin__ = 244;
+            current_statement_begin__ = 489;
             size_t lambda_pfs_bg_j_1_max__ = n_os;
             for (size_t j_1__ = 0; j_1__ < lambda_pfs_bg_j_1_max__; ++j_1__) {
                 if (stan::math::is_uninitialized(lambda_pfs_bg(j_1__))) {
@@ -1699,7 +3000,7 @@ public:
                     stan::lang::rethrow_located(std::runtime_error(std::string("Error initializing variable lambda_pfs_bg: ") + msg__.str()), current_statement_begin__, prog_reader__());
                 }
             }
-            current_statement_begin__ = 246;
+            current_statement_begin__ = 491;
             size_t cf_global_k_0_max__ = (logical_eq(cf_model, 3) ? 1 : 0 );
             for (size_t k_0__ = 0; k_0__ < cf_global_k_0_max__; ++k_0__) {
                 if (stan::math::is_uninitialized(cf_global[k_0__])) {
@@ -1713,7 +3014,7 @@ public:
                 check_greater_or_equal(function__, "cf_global[i_0__]", cf_global[i_0__], 0);
                 check_less_or_equal(function__, "cf_global[i_0__]", cf_global[i_0__], 1);
             }
-            current_statement_begin__ = 247;
+            current_statement_begin__ = 492;
             if (stan::math::is_uninitialized(cf_os)) {
                 std::stringstream msg__;
                 msg__ << "Undefined transformed parameter: cf_os";
@@ -1721,7 +3022,7 @@ public:
             }
             check_greater_or_equal(function__, "cf_os", cf_os, 0);
             check_less_or_equal(function__, "cf_os", cf_os, 1);
-            current_statement_begin__ = 248;
+            current_statement_begin__ = 493;
             if (stan::math::is_uninitialized(cf_pfs)) {
                 std::stringstream msg__;
                 msg__ << "Undefined transformed parameter: cf_pfs";
@@ -1730,37 +3031,40 @@ public:
             check_greater_or_equal(function__, "cf_pfs", cf_pfs, 0);
             check_less_or_equal(function__, "cf_pfs", cf_pfs, 1);
             // model body
-            current_statement_begin__ = 281;
+            current_statement_begin__ = 532;
             lp_accum__.add(normal_log<propto__>(beta_os, mu_0_os, sigma_0_os));
-            current_statement_begin__ = 282;
+            current_statement_begin__ = 533;
             lp_accum__.add(normal_log<propto__>(beta_pfs, mu_0_pfs, sigma_0_pfs));
-            current_statement_begin__ = 283;
-            lp_accum__.add(normal_log<propto__>(beta_bg, mu_bg, sigma_bg));
-            current_statement_begin__ = 285;
+            current_statement_begin__ = 535;
+            if (as_bool(logical_eq(bg_model, 1))) {
+                current_statement_begin__ = 536;
+                lp_accum__.add(normal_log<propto__>(beta_bg, mu_bg, sigma_bg));
+            }
+            current_statement_begin__ = 539;
             if (as_bool(joint_model)) {
-                current_statement_begin__ = 286;
+                current_statement_begin__ = 540;
                 lp_accum__.add(normal_log<propto__>(beta_joint, mu_joint, sigma_joint));
             }
-            current_statement_begin__ = 290;
+            current_statement_begin__ = 544;
             if (as_bool(logical_eq(cf_model, 3))) {
-                current_statement_begin__ = 291;
+                current_statement_begin__ = 545;
                 lp_accum__.add(normal_log<propto__>(lp_cf_global, mu_cf_gl, sigma_cf_gl));
-                current_statement_begin__ = 292;
+                current_statement_begin__ = 546;
                 lp_accum__.add(normal_log<propto__>(lp_cf_os, lp_cf_global, sd_cf_os));
-                current_statement_begin__ = 293;
+                current_statement_begin__ = 547;
                 lp_accum__.add(normal_log<propto__>(lp_cf_pfs, lp_cf_global, sd_cf_pfs));
             } else if (as_bool(logical_eq(cf_model, 2))) {
-                current_statement_begin__ = 295;
+                current_statement_begin__ = 549;
                 lp_accum__.add(normal_log<propto__>(lp_cf_os, mu_cf_os, sd_cf_os));
-                current_statement_begin__ = 296;
+                current_statement_begin__ = 550;
                 lp_accum__.add(normal_log<propto__>(lp_cf_pfs, mu_cf_pfs, sd_cf_pfs));
             } else {
-                current_statement_begin__ = 298;
+                current_statement_begin__ = 552;
                 lp_accum__.add(beta_log<propto__>(cf_pooled, a_cf, b_cf));
             }
-            current_statement_begin__ = 302;
+            current_statement_begin__ = 556;
             for (int i = 1; i <= n_os; ++i) {
-                current_statement_begin__ = 303;
+                current_statement_begin__ = 557;
                 lp_accum__.add((log_sum_exp((stan::math::log(cf_os) + surv_exp_lpdf(get_base1(t_os, i, "t_os", 1), get_base1(d_os, i, "d_os", 1), get_base1(lambda_os_bg, i, "lambda_os_bg", 1), pstream__)), (log1m(cf_os) + surv_exp_lpdf(get_base1(t_os, i, "t_os", 1), get_base1(d_os, i, "d_os", 1), (get_base1(lambda_os_bg, i, "lambda_os_bg", 1) + get_base1(lambda_os, i, "lambda_os", 1)), pstream__))) + log_sum_exp((stan::math::log(cf_pfs) + surv_exp_lpdf(get_base1(t_pfs, i, "t_pfs", 1), get_base1(d_pfs, i, "d_pfs", 1), get_base1(lambda_pfs_bg, i, "lambda_pfs_bg", 1), pstream__)), (log1m(cf_pfs) + surv_exp_lpdf(get_base1(t_pfs, i, "t_pfs", 1), get_base1(d_pfs, i, "d_pfs", 1), (get_base1(lambda_pfs_bg, i, "lambda_pfs_bg", 1) + get_base1(lambda_pfs, i, "lambda_pfs", 1)), pstream__)))));
             }
         } catch (const std::exception& e) {
@@ -1835,7 +3139,7 @@ public:
         dims__.push_back(H_pfs);
         dimss__.push_back(dims__);
         dims__.resize(0);
-        dims__.push_back(H_os);
+        dims__.push_back((logical_eq(bg_model, 1) ? H_os : 0 ));
         dimss__.push_back(dims__);
         dims__.resize(0);
         dims__.push_back(joint_model);
@@ -1963,8 +3267,8 @@ public:
         for (size_t j_1__ = 0; j_1__ < beta_pfs_j_1_max__; ++j_1__) {
             vars__.push_back(beta_pfs(j_1__));
         }
-        Eigen::Matrix<double, Eigen::Dynamic, 1> beta_bg = in__.vector_constrain(H_os);
-        size_t beta_bg_j_1_max__ = H_os;
+        Eigen::Matrix<double, Eigen::Dynamic, 1> beta_bg = in__.vector_constrain((logical_eq(bg_model, 1) ? H_os : 0 ));
+        size_t beta_bg_j_1_max__ = (logical_eq(bg_model, 1) ? H_os : 0 );
         for (size_t j_1__ = 0; j_1__ < beta_bg_j_1_max__; ++j_1__) {
             vars__.push_back(beta_bg(j_1__));
         }
@@ -2026,115 +3330,123 @@ public:
         if (!include_tparams__ && !include_gqs__) return;
         try {
             // declare and define transformed parameters
-            current_statement_begin__ = 236;
+            current_statement_begin__ = 481;
             validate_non_negative_index("lp_os", "n_os", n_os);
             Eigen::Matrix<double, Eigen::Dynamic, 1> lp_os(n_os);
             stan::math::initialize(lp_os, DUMMY_VAR__);
             stan::math::fill(lp_os, DUMMY_VAR__);
-            current_statement_begin__ = 237;
+            current_statement_begin__ = 482;
             validate_non_negative_index("lp_pfs", "n_pfs", n_pfs);
             Eigen::Matrix<double, Eigen::Dynamic, 1> lp_pfs(n_pfs);
             stan::math::initialize(lp_pfs, DUMMY_VAR__);
             stan::math::fill(lp_pfs, DUMMY_VAR__);
-            current_statement_begin__ = 238;
+            current_statement_begin__ = 483;
             validate_non_negative_index("lp_os_bg", "n_os", n_os);
             Eigen::Matrix<double, Eigen::Dynamic, 1> lp_os_bg(n_os);
             stan::math::initialize(lp_os_bg, DUMMY_VAR__);
             stan::math::fill(lp_os_bg, DUMMY_VAR__);
-            current_statement_begin__ = 239;
+            current_statement_begin__ = 484;
             validate_non_negative_index("lp_pfs_bg", "n_os", n_os);
             Eigen::Matrix<double, Eigen::Dynamic, 1> lp_pfs_bg(n_os);
             stan::math::initialize(lp_pfs_bg, DUMMY_VAR__);
             stan::math::fill(lp_pfs_bg, DUMMY_VAR__);
-            current_statement_begin__ = 241;
+            current_statement_begin__ = 486;
             validate_non_negative_index("lambda_os", "n_os", n_os);
             Eigen::Matrix<double, Eigen::Dynamic, 1> lambda_os(n_os);
             stan::math::initialize(lambda_os, DUMMY_VAR__);
             stan::math::fill(lambda_os, DUMMY_VAR__);
-            current_statement_begin__ = 242;
+            current_statement_begin__ = 487;
             validate_non_negative_index("lambda_pfs", "n_pfs", n_pfs);
             Eigen::Matrix<double, Eigen::Dynamic, 1> lambda_pfs(n_pfs);
             stan::math::initialize(lambda_pfs, DUMMY_VAR__);
             stan::math::fill(lambda_pfs, DUMMY_VAR__);
-            current_statement_begin__ = 243;
+            current_statement_begin__ = 488;
             validate_non_negative_index("lambda_os_bg", "n_os", n_os);
             Eigen::Matrix<double, Eigen::Dynamic, 1> lambda_os_bg(n_os);
             stan::math::initialize(lambda_os_bg, DUMMY_VAR__);
             stan::math::fill(lambda_os_bg, DUMMY_VAR__);
-            current_statement_begin__ = 244;
+            current_statement_begin__ = 489;
             validate_non_negative_index("lambda_pfs_bg", "n_os", n_os);
             Eigen::Matrix<double, Eigen::Dynamic, 1> lambda_pfs_bg(n_os);
             stan::math::initialize(lambda_pfs_bg, DUMMY_VAR__);
             stan::math::fill(lambda_pfs_bg, DUMMY_VAR__);
-            current_statement_begin__ = 246;
+            current_statement_begin__ = 491;
             validate_non_negative_index("cf_global", "(logical_eq(cf_model, 3) ? 1 : 0 )", (logical_eq(cf_model, 3) ? 1 : 0 ));
             std::vector<double> cf_global((logical_eq(cf_model, 3) ? 1 : 0 ), double(0));
             stan::math::initialize(cf_global, DUMMY_VAR__);
             stan::math::fill(cf_global, DUMMY_VAR__);
-            current_statement_begin__ = 247;
+            current_statement_begin__ = 492;
             double cf_os;
             (void) cf_os;  // dummy to suppress unused var warning
             stan::math::initialize(cf_os, DUMMY_VAR__);
             stan::math::fill(cf_os, DUMMY_VAR__);
-            current_statement_begin__ = 248;
+            current_statement_begin__ = 493;
             double cf_pfs;
             (void) cf_pfs;  // dummy to suppress unused var warning
             stan::math::initialize(cf_pfs, DUMMY_VAR__);
             stan::math::fill(cf_pfs, DUMMY_VAR__);
             // do transformed parameters statements
-            current_statement_begin__ = 251;
+            current_statement_begin__ = 496;
             if (as_bool(joint_model)) {
-                current_statement_begin__ = 252;
+                current_statement_begin__ = 497;
                 stan::math::assign(lp_os, add(multiply(X_os, beta_os), multiply(get_base1(beta_joint, 1, "beta_joint", 1), subtract(t_pfs, (1 / stan::math::exp(get_base1(beta_pfs, 1, "beta_pfs", 1)))))));
             } else {
-                current_statement_begin__ = 254;
+                current_statement_begin__ = 499;
                 stan::math::assign(lp_os, multiply(X_os, beta_os));
             }
-            current_statement_begin__ = 257;
+            current_statement_begin__ = 502;
             stan::math::assign(lp_pfs, multiply(X_pfs, beta_pfs));
-            current_statement_begin__ = 259;
-            stan::math::assign(lp_os_bg, multiply(X_os, beta_bg));
-            current_statement_begin__ = 260;
-            stan::math::assign(lp_pfs_bg, multiply(X_pfs, beta_bg));
-            current_statement_begin__ = 263;
-            stan::math::assign(lambda_os, stan::math::exp(lp_os));
-            current_statement_begin__ = 264;
-            stan::math::assign(lambda_pfs, stan::math::exp(lp_pfs));
-            current_statement_begin__ = 265;
+            current_statement_begin__ = 504;
+            if (as_bool(logical_eq(bg_model, 1))) {
+                current_statement_begin__ = 505;
+                stan::math::assign(lp_os_bg, multiply(X_os, beta_bg));
+                current_statement_begin__ = 506;
+                stan::math::assign(lp_pfs_bg, multiply(X_pfs, beta_bg));
+            } else {
+                current_statement_begin__ = 508;
+                stan::math::assign(lp_os_bg, stan::math::log(h_bg_os));
+                current_statement_begin__ = 509;
+                stan::math::assign(lp_pfs_bg, stan::math::log(h_bg_pfs));
+            }
+            current_statement_begin__ = 512;
             stan::math::assign(lambda_os_bg, stan::math::exp(lp_os_bg));
-            current_statement_begin__ = 266;
+            current_statement_begin__ = 513;
             stan::math::assign(lambda_pfs_bg, stan::math::exp(lp_pfs_bg));
-            current_statement_begin__ = 268;
+            current_statement_begin__ = 516;
+            stan::math::assign(lambda_os, stan::math::exp(lp_os));
+            current_statement_begin__ = 517;
+            stan::math::assign(lambda_pfs, stan::math::exp(lp_pfs));
+            current_statement_begin__ = 519;
             if (as_bool(logical_eq(cf_model, 3))) {
-                current_statement_begin__ = 269;
+                current_statement_begin__ = 520;
                 stan::math::assign(cf_global, inv_logit(lp_cf_global));
             }
-            current_statement_begin__ = 271;
+            current_statement_begin__ = 522;
             if (as_bool(logical_neq(cf_model, 1))) {
-                current_statement_begin__ = 272;
+                current_statement_begin__ = 523;
                 stan::math::assign(cf_os, inv_logit(get_base1(lp_cf_os, 1, "lp_cf_os", 1)));
-                current_statement_begin__ = 273;
+                current_statement_begin__ = 524;
                 stan::math::assign(cf_pfs, inv_logit(get_base1(lp_cf_pfs, 1, "lp_cf_pfs", 1)));
             } else {
-                current_statement_begin__ = 275;
+                current_statement_begin__ = 526;
                 stan::math::assign(cf_os, get_base1(cf_pooled, 1, "cf_pooled", 1));
-                current_statement_begin__ = 276;
+                current_statement_begin__ = 527;
                 stan::math::assign(cf_pfs, get_base1(cf_pooled, 1, "cf_pooled", 1));
             }
             if (!include_gqs__ && !include_tparams__) return;
             // validate transformed parameters
             const char* function__ = "validate transformed params";
             (void) function__;  // dummy to suppress unused var warning
-            current_statement_begin__ = 246;
+            current_statement_begin__ = 491;
             size_t cf_global_i_0_max__ = (logical_eq(cf_model, 3) ? 1 : 0 );
             for (size_t i_0__ = 0; i_0__ < cf_global_i_0_max__; ++i_0__) {
                 check_greater_or_equal(function__, "cf_global[i_0__]", cf_global[i_0__], 0);
                 check_less_or_equal(function__, "cf_global[i_0__]", cf_global[i_0__], 1);
             }
-            current_statement_begin__ = 247;
+            current_statement_begin__ = 492;
             check_greater_or_equal(function__, "cf_os", cf_os, 0);
             check_less_or_equal(function__, "cf_os", cf_os, 1);
-            current_statement_begin__ = 248;
+            current_statement_begin__ = 493;
             check_greater_or_equal(function__, "cf_pfs", cf_pfs, 0);
             check_less_or_equal(function__, "cf_pfs", cf_pfs, 1);
             // write transformed parameters
@@ -2180,320 +3492,333 @@ public:
             }
             if (!include_gqs__) return;
             // declare and define generated quantities
-            current_statement_begin__ = 318;
+            current_statement_begin__ = 572;
             double mean_os;
             (void) mean_os;  // dummy to suppress unused var warning
             stan::math::initialize(mean_os, DUMMY_VAR__);
             stan::math::fill(mean_os, DUMMY_VAR__);
-            current_statement_begin__ = 319;
+            current_statement_begin__ = 573;
             double mean_pfs;
             (void) mean_pfs;  // dummy to suppress unused var warning
             stan::math::initialize(mean_pfs, DUMMY_VAR__);
             stan::math::fill(mean_pfs, DUMMY_VAR__);
-            current_statement_begin__ = 320;
+            current_statement_begin__ = 574;
             double mean_bg;
             (void) mean_bg;  // dummy to suppress unused var warning
             stan::math::initialize(mean_bg, DUMMY_VAR__);
             stan::math::fill(mean_bg, DUMMY_VAR__);
-            current_statement_begin__ = 322;
+            current_statement_begin__ = 576;
             validate_non_negative_index("S_bg", "t_max", t_max);
             Eigen::Matrix<double, Eigen::Dynamic, 1> S_bg(t_max);
             stan::math::initialize(S_bg, DUMMY_VAR__);
             stan::math::fill(S_bg, DUMMY_VAR__);
-            current_statement_begin__ = 323;
+            current_statement_begin__ = 577;
             validate_non_negative_index("S_os", "t_max", t_max);
             Eigen::Matrix<double, Eigen::Dynamic, 1> S_os(t_max);
             stan::math::initialize(S_os, DUMMY_VAR__);
             stan::math::fill(S_os, DUMMY_VAR__);
-            current_statement_begin__ = 324;
+            current_statement_begin__ = 578;
             validate_non_negative_index("S_pfs", "t_max", t_max);
             Eigen::Matrix<double, Eigen::Dynamic, 1> S_pfs(t_max);
             stan::math::initialize(S_pfs, DUMMY_VAR__);
             stan::math::fill(S_pfs, DUMMY_VAR__);
-            current_statement_begin__ = 325;
+            current_statement_begin__ = 579;
             validate_non_negative_index("S_os_pred", "t_max", t_max);
             Eigen::Matrix<double, Eigen::Dynamic, 1> S_os_pred(t_max);
             stan::math::initialize(S_os_pred, DUMMY_VAR__);
             stan::math::fill(S_os_pred, DUMMY_VAR__);
-            current_statement_begin__ = 326;
+            current_statement_begin__ = 580;
             validate_non_negative_index("S_pfs_pred", "t_max", t_max);
             Eigen::Matrix<double, Eigen::Dynamic, 1> S_pfs_pred(t_max);
             stan::math::initialize(S_pfs_pred, DUMMY_VAR__);
             stan::math::fill(S_pfs_pred, DUMMY_VAR__);
-            current_statement_begin__ = 329;
+            current_statement_begin__ = 583;
             double pmean_os;
             (void) pmean_os;  // dummy to suppress unused var warning
             stan::math::initialize(pmean_os, DUMMY_VAR__);
             stan::math::fill(pmean_os, DUMMY_VAR__);
-            current_statement_begin__ = 330;
+            current_statement_begin__ = 584;
             double pmean_pfs;
             (void) pmean_pfs;  // dummy to suppress unused var warning
             stan::math::initialize(pmean_pfs, DUMMY_VAR__);
             stan::math::fill(pmean_pfs, DUMMY_VAR__);
-            current_statement_begin__ = 331;
+            current_statement_begin__ = 585;
             double pmean_bg;
             (void) pmean_bg;  // dummy to suppress unused var warning
             stan::math::initialize(pmean_bg, DUMMY_VAR__);
             stan::math::fill(pmean_bg, DUMMY_VAR__);
-            current_statement_begin__ = 332;
+            current_statement_begin__ = 586;
             double pmean_cf_os;
             (void) pmean_cf_os;  // dummy to suppress unused var warning
             stan::math::initialize(pmean_cf_os, DUMMY_VAR__);
             stan::math::fill(pmean_cf_os, DUMMY_VAR__);
-            current_statement_begin__ = 333;
+            current_statement_begin__ = 587;
             double pmean_cf_pfs;
             (void) pmean_cf_pfs;  // dummy to suppress unused var warning
             stan::math::initialize(pmean_cf_pfs, DUMMY_VAR__);
             stan::math::fill(pmean_cf_pfs, DUMMY_VAR__);
-            current_statement_begin__ = 335;
+            current_statement_begin__ = 589;
             validate_non_negative_index("pS_bg", "t_max", t_max);
             Eigen::Matrix<double, Eigen::Dynamic, 1> pS_bg(t_max);
             stan::math::initialize(pS_bg, DUMMY_VAR__);
             stan::math::fill(pS_bg, DUMMY_VAR__);
-            current_statement_begin__ = 336;
+            current_statement_begin__ = 590;
             validate_non_negative_index("pS_os", "t_max", t_max);
             Eigen::Matrix<double, Eigen::Dynamic, 1> pS_os(t_max);
             stan::math::initialize(pS_os, DUMMY_VAR__);
             stan::math::fill(pS_os, DUMMY_VAR__);
-            current_statement_begin__ = 337;
+            current_statement_begin__ = 591;
             validate_non_negative_index("pS_pfs", "t_max", t_max);
             Eigen::Matrix<double, Eigen::Dynamic, 1> pS_pfs(t_max);
             stan::math::initialize(pS_pfs, DUMMY_VAR__);
             stan::math::fill(pS_pfs, DUMMY_VAR__);
-            current_statement_begin__ = 338;
+            current_statement_begin__ = 592;
             validate_non_negative_index("S_os_prior", "t_max", t_max);
             Eigen::Matrix<double, Eigen::Dynamic, 1> S_os_prior(t_max);
             stan::math::initialize(S_os_prior, DUMMY_VAR__);
             stan::math::fill(S_os_prior, DUMMY_VAR__);
-            current_statement_begin__ = 339;
+            current_statement_begin__ = 593;
             validate_non_negative_index("S_pfs_prior", "t_max", t_max);
             Eigen::Matrix<double, Eigen::Dynamic, 1> S_pfs_prior(t_max);
             stan::math::initialize(S_pfs_prior, DUMMY_VAR__);
             stan::math::fill(S_pfs_prior, DUMMY_VAR__);
-            current_statement_begin__ = 341;
+            current_statement_begin__ = 595;
             validate_non_negative_index("log_lik", "n_os", n_os);
             Eigen::Matrix<double, Eigen::Dynamic, 1> log_lik(n_os);
             stan::math::initialize(log_lik, DUMMY_VAR__);
             stan::math::fill(log_lik, DUMMY_VAR__);
-            current_statement_begin__ = 343;
+            current_statement_begin__ = 597;
             double pbeta_os;
             (void) pbeta_os;  // dummy to suppress unused var warning
             stan::math::initialize(pbeta_os, DUMMY_VAR__);
             stan::math::fill(pbeta_os, DUMMY_VAR__);
             stan::math::assign(pbeta_os,normal_rng(get_base1(mu_0_os, 1, "mu_0_os", 1), get_base1(sigma_0_os, 1, "sigma_0_os", 1), base_rng__));
-            current_statement_begin__ = 344;
+            current_statement_begin__ = 598;
             double pbeta_pfs;
             (void) pbeta_pfs;  // dummy to suppress unused var warning
             stan::math::initialize(pbeta_pfs, DUMMY_VAR__);
             stan::math::fill(pbeta_pfs, DUMMY_VAR__);
             stan::math::assign(pbeta_pfs,normal_rng(get_base1(mu_0_pfs, 1, "mu_0_pfs", 1), get_base1(sigma_0_pfs, 1, "sigma_0_pfs", 1), base_rng__));
-            current_statement_begin__ = 345;
+            current_statement_begin__ = 600;
             double pbeta_bg;
             (void) pbeta_bg;  // dummy to suppress unused var warning
             stan::math::initialize(pbeta_bg, DUMMY_VAR__);
             stan::math::fill(pbeta_bg, DUMMY_VAR__);
-            stan::math::assign(pbeta_bg,normal_rng(get_base1(mu_bg, 1, "mu_bg", 1), get_base1(sigma_bg, 1, "sigma_bg", 1), base_rng__));
             // generated quantities statements
-            current_statement_begin__ = 348;
+            current_statement_begin__ = 610;
+            if (as_bool(logical_eq(bg_model, 1))) {
+                current_statement_begin__ = 611;
+                stan::math::assign(pbeta_bg, normal_rng(get_base1(mu_bg, 1, "mu_bg", 1), get_base1(sigma_bg, 1, "sigma_bg", 1), base_rng__));
+            } else {
+                current_statement_begin__ = 614;
+                stan::math::assign(pbeta_bg, stan::math::log(0.001));
+            }
+            current_statement_begin__ = 618;
             if (as_bool(logical_eq(cf_model, 3))) {
                 {
-                current_statement_begin__ = 350;
+                current_statement_begin__ = 620;
                 local_scalar_t__ pcurefrac(DUMMY_VAR__);
                 (void) pcurefrac;  // dummy to suppress unused var warning
                 stan::math::initialize(pcurefrac, DUMMY_VAR__);
                 stan::math::fill(pcurefrac, DUMMY_VAR__);
                 stan::math::assign(pcurefrac,normal_rng(get_base1(mu_cf_gl, 1, "mu_cf_gl", 1), get_base1(sigma_cf_gl, 1, "sigma_cf_gl", 1), base_rng__));
-                current_statement_begin__ = 351;
+                current_statement_begin__ = 621;
                 stan::math::assign(pmean_cf_os, inv_logit(pcurefrac));
-                current_statement_begin__ = 352;
+                current_statement_begin__ = 622;
                 stan::math::assign(pmean_cf_pfs, inv_logit(pcurefrac));
                 }
             } else if (as_bool(logical_eq(cf_model, 2))) {
                 {
-                current_statement_begin__ = 354;
+                current_statement_begin__ = 624;
                 local_scalar_t__ pcf_os(DUMMY_VAR__);
                 (void) pcf_os;  // dummy to suppress unused var warning
                 stan::math::initialize(pcf_os, DUMMY_VAR__);
                 stan::math::fill(pcf_os, DUMMY_VAR__);
                 stan::math::assign(pcf_os,normal_rng(get_base1(mu_cf_os, 1, "mu_cf_os", 1), get_base1(sd_cf_os, 1, "sd_cf_os", 1), base_rng__));
-                current_statement_begin__ = 355;
+                current_statement_begin__ = 625;
                 local_scalar_t__ pcf_pfs(DUMMY_VAR__);
                 (void) pcf_pfs;  // dummy to suppress unused var warning
                 stan::math::initialize(pcf_pfs, DUMMY_VAR__);
                 stan::math::fill(pcf_pfs, DUMMY_VAR__);
                 stan::math::assign(pcf_pfs,normal_rng(get_base1(mu_cf_pfs, 1, "mu_cf_pfs", 1), get_base1(sd_cf_pfs, 1, "sd_cf_pfs", 1), base_rng__));
-                current_statement_begin__ = 356;
+                current_statement_begin__ = 626;
                 stan::math::assign(pmean_cf_os, inv_logit(pcf_os));
-                current_statement_begin__ = 357;
+                current_statement_begin__ = 627;
                 stan::math::assign(pmean_cf_pfs, inv_logit(pcf_pfs));
                 }
             } else {
                 {
-                current_statement_begin__ = 359;
+                current_statement_begin__ = 629;
                 local_scalar_t__ pcurefrac(DUMMY_VAR__);
                 (void) pcurefrac;  // dummy to suppress unused var warning
                 stan::math::initialize(pcurefrac, DUMMY_VAR__);
                 stan::math::fill(pcurefrac, DUMMY_VAR__);
                 stan::math::assign(pcurefrac,beta_rng(get_base1(a_cf, 1, "a_cf", 1), get_base1(b_cf, 1, "b_cf", 1), base_rng__));
-                current_statement_begin__ = 360;
+                current_statement_begin__ = 630;
                 stan::math::assign(pmean_cf_os, pcurefrac);
-                current_statement_begin__ = 361;
+                current_statement_begin__ = 631;
                 stan::math::assign(pmean_cf_pfs, pcurefrac);
                 }
             }
-            current_statement_begin__ = 365;
+            current_statement_begin__ = 635;
             stan::math::assign(mean_os, stan::math::exp(get_base1(beta_os, 1, "beta_os", 1)));
-            current_statement_begin__ = 366;
+            current_statement_begin__ = 636;
             stan::math::assign(mean_pfs, stan::math::exp(get_base1(beta_pfs, 1, "beta_pfs", 1)));
-            current_statement_begin__ = 367;
-            stan::math::assign(mean_bg, stan::math::exp(get_base1(beta_bg, 1, "beta_bg", 1)));
-            current_statement_begin__ = 369;
+            current_statement_begin__ = 639;
+            if (as_bool(logical_eq(bg_model, 1))) {
+                current_statement_begin__ = 640;
+                stan::math::assign(mean_bg, stan::math::exp(get_base1(beta_bg, 1, "beta_bg", 1)));
+            } else {
+                current_statement_begin__ = 642;
+                stan::math::assign(mean_bg, 0.001);
+            }
+            current_statement_begin__ = 646;
             for (int i = 1; i <= t_max; ++i) {
-                current_statement_begin__ = 370;
+                current_statement_begin__ = 647;
                 stan::model::assign(S_bg, 
                             stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
                             exp_Surv(i, mean_bg, pstream__), 
                             "assigning variable S_bg");
-                current_statement_begin__ = 371;
+                current_statement_begin__ = 648;
                 stan::model::assign(S_os, 
                             stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
                             exp_Surv(i, (mean_bg + mean_os), pstream__), 
                             "assigning variable S_os");
-                current_statement_begin__ = 372;
+                current_statement_begin__ = 649;
                 stan::model::assign(S_pfs, 
                             stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
                             exp_Surv(i, (mean_bg + mean_pfs), pstream__), 
                             "assigning variable S_pfs");
-                current_statement_begin__ = 374;
+                current_statement_begin__ = 651;
                 stan::model::assign(S_os_pred, 
                             stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
                             ((cf_os * get_base1(S_bg, i, "S_bg", 1)) + ((1 - cf_os) * get_base1(S_os, i, "S_os", 1))), 
                             "assigning variable S_os_pred");
-                current_statement_begin__ = 375;
+                current_statement_begin__ = 652;
                 stan::model::assign(S_pfs_pred, 
                             stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
                             ((cf_pfs * get_base1(S_bg, i, "S_bg", 1)) + ((1 - cf_pfs) * get_base1(S_pfs, i, "S_pfs", 1))), 
                             "assigning variable S_pfs_pred");
             }
-            current_statement_begin__ = 379;
+            current_statement_begin__ = 656;
             stan::math::assign(pmean_os, stan::math::exp(pbeta_os));
-            current_statement_begin__ = 380;
+            current_statement_begin__ = 657;
             stan::math::assign(pmean_pfs, stan::math::exp(pbeta_pfs));
-            current_statement_begin__ = 381;
+            current_statement_begin__ = 658;
             stan::math::assign(pmean_bg, stan::math::exp(pbeta_bg));
-            current_statement_begin__ = 383;
+            current_statement_begin__ = 660;
             for (int i = 1; i <= t_max; ++i) {
-                current_statement_begin__ = 384;
+                current_statement_begin__ = 661;
                 stan::model::assign(pS_bg, 
                             stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
                             exp_Surv(i, pmean_bg, pstream__), 
                             "assigning variable pS_bg");
-                current_statement_begin__ = 385;
+                current_statement_begin__ = 662;
                 stan::model::assign(pS_os, 
                             stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
                             exp_Surv(i, (pmean_bg + pmean_os), pstream__), 
                             "assigning variable pS_os");
-                current_statement_begin__ = 386;
+                current_statement_begin__ = 663;
                 stan::model::assign(pS_pfs, 
                             stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
                             exp_Surv(i, (pmean_bg + pmean_pfs), pstream__), 
                             "assigning variable pS_pfs");
-                current_statement_begin__ = 388;
+                current_statement_begin__ = 665;
                 stan::model::assign(S_os_prior, 
                             stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
                             ((pmean_cf_os * get_base1(pS_bg, i, "pS_bg", 1)) + ((1 - pmean_cf_os) * get_base1(pS_os, i, "pS_os", 1))), 
                             "assigning variable S_os_prior");
-                current_statement_begin__ = 389;
+                current_statement_begin__ = 666;
                 stan::model::assign(S_pfs_prior, 
                             stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
                             ((pmean_cf_pfs * get_base1(pS_bg, i, "pS_bg", 1)) + ((1 - pmean_cf_pfs) * get_base1(pS_pfs, i, "pS_pfs", 1))), 
                             "assigning variable S_pfs_prior");
             }
-            current_statement_begin__ = 395;
+            current_statement_begin__ = 672;
             for (int n = 1; n <= n_os; ++n) {
-                current_statement_begin__ = 396;
+                current_statement_begin__ = 673;
                 stan::model::assign(log_lik, 
                             stan::model::cons_list(stan::model::index_uni(n), stan::model::nil_index_list()), 
                             (log_sum_exp((stan::math::log(cf_os) + surv_exp_lpdf(get_base1(t_os, n, "t_os", 1), get_base1(d_os, n, "d_os", 1), get_base1(lambda_os_bg, n, "lambda_os_bg", 1), pstream__)), (log1m(cf_os) + surv_exp_lpdf(get_base1(t_os, n, "t_os", 1), get_base1(d_os, n, "d_os", 1), (get_base1(lambda_os_bg, n, "lambda_os_bg", 1) + get_base1(lambda_os, n, "lambda_os", 1)), pstream__))) + log_sum_exp((stan::math::log(cf_pfs) + surv_exp_lpdf(get_base1(t_pfs, n, "t_pfs", 1), get_base1(d_pfs, n, "d_pfs", 1), get_base1(lambda_pfs_bg, n, "lambda_pfs_bg", 1), pstream__)), (log1m(cf_pfs) + surv_exp_lpdf(get_base1(t_pfs, n, "t_pfs", 1), get_base1(d_pfs, n, "d_pfs", 1), (get_base1(lambda_pfs_bg, n, "lambda_pfs_bg", 1) + get_base1(lambda_pfs, n, "lambda_pfs", 1)), pstream__)))), 
                             "assigning variable log_lik");
             }
             // validate, write generated quantities
-            current_statement_begin__ = 318;
+            current_statement_begin__ = 572;
             vars__.push_back(mean_os);
-            current_statement_begin__ = 319;
+            current_statement_begin__ = 573;
             vars__.push_back(mean_pfs);
-            current_statement_begin__ = 320;
+            current_statement_begin__ = 574;
             vars__.push_back(mean_bg);
-            current_statement_begin__ = 322;
+            current_statement_begin__ = 576;
             size_t S_bg_j_1_max__ = t_max;
             for (size_t j_1__ = 0; j_1__ < S_bg_j_1_max__; ++j_1__) {
                 vars__.push_back(S_bg(j_1__));
             }
-            current_statement_begin__ = 323;
+            current_statement_begin__ = 577;
             size_t S_os_j_1_max__ = t_max;
             for (size_t j_1__ = 0; j_1__ < S_os_j_1_max__; ++j_1__) {
                 vars__.push_back(S_os(j_1__));
             }
-            current_statement_begin__ = 324;
+            current_statement_begin__ = 578;
             size_t S_pfs_j_1_max__ = t_max;
             for (size_t j_1__ = 0; j_1__ < S_pfs_j_1_max__; ++j_1__) {
                 vars__.push_back(S_pfs(j_1__));
             }
-            current_statement_begin__ = 325;
+            current_statement_begin__ = 579;
             size_t S_os_pred_j_1_max__ = t_max;
             for (size_t j_1__ = 0; j_1__ < S_os_pred_j_1_max__; ++j_1__) {
                 vars__.push_back(S_os_pred(j_1__));
             }
-            current_statement_begin__ = 326;
+            current_statement_begin__ = 580;
             size_t S_pfs_pred_j_1_max__ = t_max;
             for (size_t j_1__ = 0; j_1__ < S_pfs_pred_j_1_max__; ++j_1__) {
                 vars__.push_back(S_pfs_pred(j_1__));
             }
-            current_statement_begin__ = 329;
+            current_statement_begin__ = 583;
             vars__.push_back(pmean_os);
-            current_statement_begin__ = 330;
+            current_statement_begin__ = 584;
             vars__.push_back(pmean_pfs);
-            current_statement_begin__ = 331;
+            current_statement_begin__ = 585;
             vars__.push_back(pmean_bg);
-            current_statement_begin__ = 332;
+            current_statement_begin__ = 586;
             vars__.push_back(pmean_cf_os);
-            current_statement_begin__ = 333;
+            current_statement_begin__ = 587;
             vars__.push_back(pmean_cf_pfs);
-            current_statement_begin__ = 335;
+            current_statement_begin__ = 589;
             size_t pS_bg_j_1_max__ = t_max;
             for (size_t j_1__ = 0; j_1__ < pS_bg_j_1_max__; ++j_1__) {
                 vars__.push_back(pS_bg(j_1__));
             }
-            current_statement_begin__ = 336;
+            current_statement_begin__ = 590;
             size_t pS_os_j_1_max__ = t_max;
             for (size_t j_1__ = 0; j_1__ < pS_os_j_1_max__; ++j_1__) {
                 vars__.push_back(pS_os(j_1__));
             }
-            current_statement_begin__ = 337;
+            current_statement_begin__ = 591;
             size_t pS_pfs_j_1_max__ = t_max;
             for (size_t j_1__ = 0; j_1__ < pS_pfs_j_1_max__; ++j_1__) {
                 vars__.push_back(pS_pfs(j_1__));
             }
-            current_statement_begin__ = 338;
+            current_statement_begin__ = 592;
             size_t S_os_prior_j_1_max__ = t_max;
             for (size_t j_1__ = 0; j_1__ < S_os_prior_j_1_max__; ++j_1__) {
                 vars__.push_back(S_os_prior(j_1__));
             }
-            current_statement_begin__ = 339;
+            current_statement_begin__ = 593;
             size_t S_pfs_prior_j_1_max__ = t_max;
             for (size_t j_1__ = 0; j_1__ < S_pfs_prior_j_1_max__; ++j_1__) {
                 vars__.push_back(S_pfs_prior(j_1__));
             }
-            current_statement_begin__ = 341;
+            current_statement_begin__ = 595;
             size_t log_lik_j_1_max__ = n_os;
             for (size_t j_1__ = 0; j_1__ < log_lik_j_1_max__; ++j_1__) {
                 vars__.push_back(log_lik(j_1__));
             }
-            current_statement_begin__ = 343;
+            current_statement_begin__ = 597;
             vars__.push_back(pbeta_os);
-            current_statement_begin__ = 344;
+            current_statement_begin__ = 598;
             vars__.push_back(pbeta_pfs);
-            current_statement_begin__ = 345;
+            current_statement_begin__ = 600;
             vars__.push_back(pbeta_bg);
         } catch (const std::exception& e) {
             stan::lang::rethrow_located(e, current_statement_begin__, prog_reader__());
@@ -2537,7 +3862,7 @@ public:
             param_name_stream__ << "beta_pfs" << '.' << j_1__ + 1;
             param_names__.push_back(param_name_stream__.str());
         }
-        size_t beta_bg_j_1_max__ = H_os;
+        size_t beta_bg_j_1_max__ = (logical_eq(bg_model, 1) ? H_os : 0 );
         for (size_t j_1__ = 0; j_1__ < beta_bg_j_1_max__; ++j_1__) {
             param_name_stream__.str(std::string());
             param_name_stream__ << "beta_bg" << '.' << j_1__ + 1;
@@ -2753,7 +4078,7 @@ public:
             param_name_stream__ << "beta_pfs" << '.' << j_1__ + 1;
             param_names__.push_back(param_name_stream__.str());
         }
-        size_t beta_bg_j_1_max__ = H_os;
+        size_t beta_bg_j_1_max__ = (logical_eq(bg_model, 1) ? H_os : 0 );
         for (size_t j_1__ = 0; j_1__ < beta_bg_j_1_max__; ++j_1__) {
             param_name_stream__.str(std::string());
             param_name_stream__ << "beta_bg" << '.' << j_1__ + 1;

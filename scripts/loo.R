@@ -33,18 +33,19 @@ purrr::map(res_sep_distn, loo, cores = 2)
 
 # waic table ----
 
-log_lik_hier_fix <- purrr::map(res_hier_fixed, extract_log_lik)
-log_lik_sep_distn <- purrr::map(res_hier_fixed, extract_log_lik)
+log_lik_hier_fix <-
+  purrr::map(res_hier_fixed, extract_log_lik)
+# log_lik_sep_distn <- purrr::map(res_hier_fixed, extract_log_lik)
 
 tab <-
   purrr::map(log_lik_hier_fix,
-             ~round(waic(.x)[["estimates"]],2)) %>%
+             ~round(waic(.x)[["estimates"]], 2)) %>%
   do.call(rbind, .) %>%
   as.data.frame %>%
   rownames_to_column(var = "Statistic") %>%
   arrange(Statistic)
 
-purrr::map(log_lik_sep_distn, waic)
+# purrr::map(log_lik_sep_distn, waic)
 
 scenarios <-
   dir("data/independent/cf hier/bg_fixed") %>%

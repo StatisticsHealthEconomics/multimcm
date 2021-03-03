@@ -76,6 +76,18 @@ knitr::kable(
 
 # forest plot ----
 ##TODO: automate names...
+
+cf_global[[12]] <- cf_global[[1]][1:90, ]
+cf_os[[12]] <- cf_global[[1]][1:90, ]
+cf_pfs[[12]] <- cf_global[[1]][1:90, ]
+
+
+yy <- gsub("exp_exp_", "Exponential ", scenarios_str)
+yy <- gsub("gompertz_gompertz_", "Gompertz ", yy)
+yy <- gsub("weibull_weibull_", "Weibull ", yy)
+yy <- gsub("loglogistic_loglogistic_", "Log-logistic ", yy)
+yy <- gsub("lognormal_lognormal_", "Log-Normal ", yy)
+
 xx <-
   cbind(
     as.data.frame(cf_global) %>% setNames(paste("cf global", scenarios_str)),

@@ -105,17 +105,19 @@
 
 In this project we formulate and demonstrate the application of a
 Bayesian mixture cure model (MCM) using the Checkmate 067 study dataset
-and the Exponential and log-logistic distributions for event times.
-Analogous results to those created previously for the frequentist MCM
-approach are produced and we extend the Bayesian MCM to incorporate
-additional structure, including the joining of overall survival (OS) and
-progression-free survival (PFS) models using a hierarchical struture on
-the cure fraction. We show that the Exponential and in particular the
-log-logistic OS and PFS Bayesian MCMs perform reasonably well for the
-Checkmate 067 data. The real benefit of this approach may be with other
-dataset where there is short follow-up or small sample sizes. The
-associated R code for this work, held in a private on-line repository,
-has been written for re-use and generalisability to other problems.
+for a range of survival distributions. Analogous results to those
+created previously for the frequentist MCM approach are produced and we
+extend the Bayesian MCM to incorporate additional structure. This
+includes modelling the cure fractions separately for OS and PFS (as in
+the frequentist approach), as a pooled, single estimate and by joining
+the overall survival (OS) and progression-free survival (PFS) models
+using a hierarchical (multilevel) structure on the cure fraction. We
+show that the Exponential and in particular the log-logistic OS and PFS
+Bayesian MCMs perform reasonably well for the Checkmate 067 data. The
+real benefit of this approach may be with other dataset where there is
+short follow-up or small sample sizes. The associated R code for this
+work, held in a private on-line repository, has been written for re-use
+and generalisability to other problems.
 
 \hypertarget{background}{%
 \subsection{Background}\label{background}}
@@ -364,50 +366,11 @@ This also forces consistency across fits. Denote the WHO estimates for
 individual \(i\) as \(\hat{f}_i, \hat{S}_i, \hat{h}_i\) for the density,
 survival and hazard respectively.
 
-\hypertarget{exponentially-distributed-event-times}{%
-\subsection{Exponentially distributed event
-times}\label{exponentially-distributed-event-times}}
-
-Consider the straightforward case where both the cancer times to event
-follow Exponential distributions.
-
-Define \(f(t)\) density, \(S(t)\) survival and \(h(t)\) hazard
-functions.
+This gives the likelihood
 
 \[
-f(t) = \lambda \exp(-\lambda t), \;\; S(t) = \exp(-\lambda t), \;\; h(t) = \lambda
-\]
-
-Which gives the likelihood
-
-\[
-L(\pi, \lambda_u | \boldsymbol{\delta}, \boldsymbol{x}, \hat{S}, \hat{h}) =
- \sum_i \hat{S}_i \hat{h}_i^{\delta_i}[\pi(x) +
-   (1 − \pi(x)) \exp(-\lambda_u t) \lambda_u^{\delta_i}])
-\]
-
-Substituting \(S(t)\) and \(h(t)\) into (**)
-
-\[
-f^*_u = e^{-\lambda^* t} e^{-\lambda_u t} (\lambda^* + \lambda_u)^{\delta} \;\;\; i.e. \mbox{for no censoring} \;\; T \sim Exp(\lambda^* + \lambda_u)
-\]
-
-\hypertarget{log-logistic-distributed-event-times}{%
-\subsection{Log-logistic distributed event
-times}\label{log-logistic-distributed-event-times}}
-
-In the frequentist analysis, generally the log-logistic is the one of
-the best fitting distributions. The relevant functions are
-
-\[
-f(t) = \frac{(\beta/\alpha)(t/\alpha)^{\beta - 1}}{(1 + (t/\alpha)^{\beta})^2}, \;\; S(t) = (1 + (t/\alpha)^{\beta})^{-1}, \;\; h(t) = \frac{(\beta/\alpha)(t/\alpha)^{\beta - 1}}{1 + (t/\alpha)^{\beta}}
-\]
-
-which gives the likelihood
-
-\[
-L(\pi, \alpha, \beta | \boldsymbol{\delta}, \boldsymbol{x}, \hat{S}, \hat{h}) =
-\sum_i \hat{S}_i \hat{h}_i^{\delta_i} \left[ \pi(x) - (1 - \pi(x))(1 + (t/\alpha)^{\beta})^{-1} \left(\frac{(\beta/\alpha)(t/\alpha)^{\beta - 1}}{1 + (t/\alpha)^{\beta}} \right)^{\delta_i} \right]
+L(\pi | \boldsymbol{\delta}, \boldsymbol{x}, \hat{S}, \hat{h}) =
+\sum_i \hat{S}_i \hat{h}_i^{\delta_i} \left[ \pi(x) + (1 - \pi(x)) S_{u, i} h_{u , i}^{\delta_i} \right]
 \]
 
 \hypertarget{results}{%
@@ -416,58 +379,49 @@ L(\pi, \alpha, \beta | \boldsymbol{\delta}, \boldsymbol{x}, \hat{S}, \hat{h}) =
 We fit the exponential hazard model to the study data and produced the
 posterior survival curves below.
 
-For each model and treatment we produce two figures:
-
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\item
-  The expected survival curves with 95\% Credible Intervals (CrI). The
-  OS curves are to the left-hand side and PFS curves to the right-hand
-  side. Background mortality (i.e.~cured patients) is indicated by the
-  red line. Non-cured patients survival curves are shown in dark green
-  and blue for OS and PFS respectively. Light green and magenta are the
-  total sample. The black line is the Kaplan-Meier curve for the
-  observed data. Note that these plots are for an average individual,
-  e.g.~at average age, and so we would not expect them to perfectly
-  match the sample data Kaplan-Meier.
-\item
-  Kaplan-Meier curves for 50 simulated trials using the posterior
-  prediction distribution for time to event. This is a good model
-  checking plot, indicating if we can replicate data similar to the
-  observed data using the fitted model.
-\end{enumerate}
+For each model and treatment we produce the expected survival curves
+with 95\% Credible Intervals (CrI). The OS curves are to the left-hand
+side and PFS curves to the right-hand side. Background mortality
+(i.e.~cured patients) is indicated by the red line. Non-cured patients
+survival curves are shown in dark green and blue for OS and PFS
+respectively. Light green and magenta are the total sample. The black
+line is the Kaplan-Meier curve for the observed data. Note that these
+plots are for an average individual, e.g.~at average age, and so we
+would not expect them to perfectly match the sample data Kaplan-Meier.
 
 Figures \ref{fig:IPI}, \ref{fig:NIVO}, and \ref{fig:NIVO+IPI} show
-posterior survival curves for the Exponential and log-logistic models.
+posterior survival curves for the Exponential, log-logistic, Gompertz,
+Weibull and log-Normal models.
 
 \begin{figure}
 
-{\centering \includegraphics[width=0.4\linewidth]{../plots/S_plots_exp_exp_cf hier_bg_fixed_IPILIMUMAB} \includegraphics[width=0.4\linewidth]{../plots/S_plots_loglogistic_loglogistic_cf hier_bg_fixed_IPILIMUMAB} 
+{\centering \includegraphics[width=25cm,height=40cm]{Check_mate_analysis_files/figure-latex/unnamed-chunk-3-1} 
 
 }
 
-\caption{\label{fig:IPI}Posterior survival curves for the mixture cure model and ipilimumab. The red line is cured background, light green and blue are uncured, and dark green and magenta are combined. a) Exponential uncured; b) Log-logistic uncured.}\label{fig:unnamed-chunk-3}
+\caption{\label{fig:IPI}Posterior survival curves for the mixture cure model and $ipilimumab$. The red line is cured background, light green and blue are uncured, and dark green and magenta are combined. a) Exponential uncured; b) Log-logistic uncured c) Gompertz uncured d) Weibull uncured e) Log-Normal uncured.}\label{fig:unnamed-chunk-3}
 \end{figure}
 
 \begin{figure}
 
-{\centering \includegraphics[width=0.4\linewidth]{../plots/S_plots_exp_exp_cf hier_bg_fixed_NIVOLUMAB} \includegraphics[width=0.4\linewidth]{../plots/S_plots_loglogistic_loglogistic_cf hier_bg_fixed_NIVOLUMAB} 
+{\centering \includegraphics[width=25cm,height=40cm]{Check_mate_analysis_files/figure-latex/unnamed-chunk-4-1} 
 
 }
 
-\caption{\label{fig:NIVO}Posterior survival curves for the mixture cure model and nivolumab. The red line is cured background, light green and blue are uncured, and dark green and magenta are combined. a) Exponential uncured; b) Log-logistic uncured.}\label{fig:unnamed-chunk-4}
+\caption{\label{fig:NIVO}Posterior survival curves for the mixture cure model and $nivolumab$. The red line is cured background, light green and blue are uncured, and dark green and magenta are combined. a) Exponential uncured; b) Log-logistic uncured c) Gompertz uncured d) Weibull uncured e) Log-Normal uncured.}\label{fig:unnamed-chunk-4}
 \end{figure}
 
 \begin{figure}
 
-{\centering \includegraphics[width=0.4\linewidth]{../plots/S_plots_exp_exp_cf_hier_bg_fixed_NIVO+IPI} \includegraphics[width=0.4\linewidth]{../plots/S_plots_loglogistic_loglogistic_cf hier_bg_fixed_NIVOLUMAB+IPILIMUMAB} 
+{\centering \includegraphics[width=25cm,height=40cm]{Check_mate_analysis_files/figure-latex/unnamed-chunk-5-1} 
 
 }
 
-\caption{\label{fig:NIVO+IPI}Posterior survival curves for the mixture cure model and dual ipilimumab and nivolumab. The red line is cured background, light green and blue are uncured, and dark green and magenta are combined. a) Exponential uncured; b) Log-logistic uncured.}\label{fig:unnamed-chunk-5}
+\caption{\label{fig:NIVO+IPI}Posterior survival curves for the mixture cure model and dual $ipilimumab$ and $nivolumab$. The red line is cured background, light green and blue are uncured, and dark green and magenta are combined. a) Exponential uncured; b) Log-logistic uncured c) Gompertz uncured d) Weibull uncured e) Log-Normal uncured.}\label{fig:unnamed-chunk-5}
 \end{figure}
 
-Figure \ref{fig:forest} show the forest plot of cure fraction posterior
+Figures \ref{fig:forest_global}, \ref{fig:forest_os} and
+\ref{fig:forest_pfs} show the forest plots of cure fraction posterior
 distributions. We see that the values are generally similar for the
 Exponential and log-logistic fits. This clearly shows how the global
 cure fraction posterior distribution lies partway between the PFS and OS
@@ -475,11 +429,29 @@ distributions.
 
 \begin{figure}
 
-{\centering \includegraphics[width=0.6\linewidth]{../plots/cf_forest_plot} 
+{\centering \includegraphics[width=0.6\linewidth]{../plots/cf_global_forest_plot} 
 
 }
 
-\caption{\label{fig:forest}Forest plot of cure fraction posterior distributions.}\label{fig:unnamed-chunk-6}
+\caption{\label{fig:forest_global}Forest plot of global cure fraction posterior distributions.}\label{fig:unnamed-chunk-6}
+\end{figure}
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.6\linewidth]{../plots/cf_os_forest_plot} 
+
+}
+
+\caption{\label{fig:forest_os}Forest plot of OS cure fraction posterior distributions.}\label{fig:unnamed-chunk-7}
+\end{figure}
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.6\linewidth]{../plots/cf_pfs_forest_plot} 
+
+}
+
+\caption{\label{fig:forest_pfs}Forest plot of PFS cure fraction posterior distributions.}\label{fig:unnamed-chunk-8}
 \end{figure}
 
 The table below summarises the cure fraction posterior distribution for
@@ -487,28 +459,28 @@ each scenario.
 
 \begin{longtable}[]{@{}lllllll@{}}
 \toprule
-\begin{minipage}[b]{0.04\columnwidth}\raggedright
+\begin{minipage}[b]{0.03\columnwidth}\raggedright
 \strut
-\end{minipage} & \begin{minipage}[b]{0.08\columnwidth}\raggedright
-OS D istn\strut
-\end{minipage} & \begin{minipage}[b]{0.08\columnwidth}\raggedright
-PFS D istn\strut
+\end{minipage} & \begin{minipage}[b]{0.09\columnwidth}\raggedright
+OS Distn\strut
+\end{minipage} & \begin{minipage}[b]{0.09\columnwidth}\raggedright
+PFS Distn\strut
 \end{minipage} & \begin{minipage}[b]{0.15\columnwidth}\raggedright
 Treatment\strut
 \end{minipage} & \begin{minipage}[b]{0.15\columnwidth}\raggedright
 \(cf\) (CrI)\strut
 \end{minipage} & \begin{minipage}[b]{0.15\columnwidth}\raggedright
 \(cf_{OS}\) (CrI)\strut
-\end{minipage} & \begin{minipage}[b]{0.16\columnwidth}\raggedright
+\end{minipage} & \begin{minipage}[b]{0.15\columnwidth}\raggedright
 \(cf_{PFS}\) (CrI)\strut
 \end{minipage}\tabularnewline
 \midrule
 \endhead
-\begin{minipage}[t]{0.04\columnwidth}\raggedright
+\begin{minipage}[t]{0.03\columnwidth}\raggedright
 1\strut
-\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright
+\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
 exp\strut
-\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright
+\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
 exp\strut
 \end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
 IPILIMUMAB\strut
@@ -516,14 +488,14 @@ IPILIMUMAB\strut
 0.151 (0.068, 0.26)\strut
 \end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
 0.196 (0.136, 0.255)\strut
-\end{minipage} & \begin{minipage}[t]{0.16\columnwidth}\raggedright
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
 0.112 (0.079, 0.155)\strut
 \end{minipage}\tabularnewline
-\begin{minipage}[t]{0.04\columnwidth}\raggedright
+\begin{minipage}[t]{0.03\columnwidth}\raggedright
 2\strut
-\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright
+\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
 exp\strut
-\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright
+\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
 exp\strut
 \end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
 NIVOLUMAB\strut
@@ -531,68 +503,203 @@ NIVOLUMAB\strut
 0.378 (0.216, 0.557)\strut
 \end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
 0.412 (0.35, 0.479)\strut
-\end{minipage} & \begin{minipage}[t]{0.16\columnwidth}\raggedright
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
 0.321 (0.262, 0.379)\strut
 \end{minipage}\tabularnewline
-\begin{minipage}[t]{0.04\columnwidth}\raggedright
+\begin{minipage}[t]{0.03\columnwidth}\raggedright
 3\strut
-\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright
+\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
 exp\strut
-\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright
+\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
 exp\strut
 \end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
-NIVOLUMAB + IPILIMUMAB\strut
+NIVOLUMAB+IPILIMUMAB\strut
 \end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
-0.463 (0.322, 0.62)\strut
+0.463 (0.328, 0.626)\strut
 \end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
-0.519 (0.448, 0.585)\strut
-\end{minipage} & \begin{minipage}[t]{0.16\columnwidth}\raggedright
-0.398 (0.336, 0.455)\strut
+0.526 (0.452, 0.597)\strut
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+0.392 (0.334, 0.448)\strut
 \end{minipage}\tabularnewline
-\begin{minipage}[t]{0.04\columnwidth}\raggedright
+\begin{minipage}[t]{0.03\columnwidth}\raggedright
 4\strut
-\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright
-log logi stic\strut
-\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright
-log logi stic\strut
+\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+gompertz\strut
+\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+gompertz\strut
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+IPILIMUMAB\strut
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+0.164 (0.088, 0.275)\strut
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+0.207 (0.13, 0.266)\strut
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+0.114 (0.079, 0.148)\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.03\columnwidth}\raggedright
+5\strut
+\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+gompertz\strut
+\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+gompertz\strut
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+NIVOLUMAB\strut
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+0.368 (0.247, 0.517)\strut
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+0.423 (0.358, 0.494)\strut
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+0.321 (0.261, 0.369)\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.03\columnwidth}\raggedright
+6\strut
+\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+gompertz\strut
+\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+gompertz\strut
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+NIVOLUMAB+IPILIMUMAB\strut
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+0.458 (0.318, 0.612)\strut
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+0.529 (0.477, 0.594)\strut
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+0.395 (0.346, 0.446)\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.03\columnwidth}\raggedright
+7\strut
+\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+loglogistic\strut
+\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+loglogistic\strut
 \end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
 IPILIMUMAB\strut
 \end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
 0.133 (0.061, 0.278)\strut
 \end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
 0.133 (0.054, 0.206)\strut
-\end{minipage} & \begin{minipage}[t]{0.16\columnwidth}\raggedright
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
 0.113 (0.075, 0.152)\strut
 \end{minipage}\tabularnewline
-\begin{minipage}[t]{0.04\columnwidth}\raggedright
-5\strut
-\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright
-log logi stic\strut
-\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright
-log logi stic\strut
+\begin{minipage}[t]{0.03\columnwidth}\raggedright
+8\strut
+\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+loglogistic\strut
+\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+loglogistic\strut
 \end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
 NIVOLUMAB\strut
 \end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
 0.348 (0.191, 0.526)\strut
 \end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
 0.345 (0.231, 0.456)\strut
-\end{minipage} & \begin{minipage}[t]{0.16\columnwidth}\raggedright
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
 0.325 (0.264, 0.382)\strut
 \end{minipage}\tabularnewline
-\begin{minipage}[t]{0.04\columnwidth}\raggedright
-6\strut
-\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright
-log logi stic\strut
-\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright
-log logi stic\strut
+\begin{minipage}[t]{0.03\columnwidth}\raggedright
+9\strut
+\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+loglogistic\strut
+\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+loglogistic\strut
 \end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
-NIVOLUMAB + IPILIMUMAB\strut
+NIVOLUMAB+IPILIMUMAB\strut
 \end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
 0.421 (0.266, 0.599)\strut
 \end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
 0.459 (0.37, 0.535)\strut
-\end{minipage} & \begin{minipage}[t]{0.16\columnwidth}\raggedright
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
 0.375 (0.327, 0.421)\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.03\columnwidth}\raggedright
+10\strut
+\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+lognormal\strut
+\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+lognormal\strut
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+IPILIMUMAB\strut
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+0.236 (0.127, 0.303)\strut
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+0.285 (0.198, 0.468)\strut
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+0.177 (0.136, 0.293)\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.03\columnwidth}\raggedright
+11\strut
+\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+lognormal\strut
+\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+lognormal\strut
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+NIVOLUMAB\strut
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+0.425 (0.286, 0.588)\strut
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+0.486 (0.431, 0.546)\strut
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+0.437 (0.39, 0.48)\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.03\columnwidth}\raggedright
+12\strut
+\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+lognormal\strut
+\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+lognormal\strut
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+NIVOLUMAB+IPILIMUMAB\strut
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+0.431 (0.301, 0.581)\strut
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+0.556 (0.494, 0.619)\strut
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+0.42 (0.37, 0.481)\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.03\columnwidth}\raggedright
+13\strut
+\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+weibull\strut
+\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+weibull\strut
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+IPILIMUMAB\strut
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+0.184 (0.095, 0.29)\strut
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+0.229 (0.157, 0.295)\strut
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+0.141 (0.107, 0.177)\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.03\columnwidth}\raggedright
+14\strut
+\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+weibull\strut
+\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+weibull\strut
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+NIVOLUMAB\strut
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+0.375 (0.242, 0.541)\strut
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+0.427 (0.346, 0.494)\strut
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+0.326 (0.27, 0.394)\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.03\columnwidth}\raggedright
+15\strut
+\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+weibull\strut
+\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+weibull\strut
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+NIVOLUMAB+IPILIMUMAB\strut
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+0.471 (0.328, 0.647)\strut
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+0.523 (0.461, 0.58)\strut
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+0.399 (0.35, 0.462)\strut
 \end{minipage}\tabularnewline
 \bottomrule
 \end{longtable}
@@ -608,33 +715,79 @@ SE\tabularnewline
 \endhead
 exp & exp & IPILIMUMAB & elpd\_waic & -1838.83 & 36.07\tabularnewline
 exp & exp & NIVOLUMAB & elpd\_waic & -1679.59 & 45.69\tabularnewline
-exp & exp & NIVOLUMAB+IPILIMUMAB & elpd\_waic & -1543.24 &
-53.80\tabularnewline
-loglogistic & loglogistic & IPILIMUMAB & elpd\_waic & -1768.17 &
+exp & exp & NIVOLUMAB+IPILIMUMAB & elpd\_waic & -1549.68 &
+60.15\tabularnewline
+gompertz & gompertz & IPILIMUMAB & elpd\_waic & -1488.81 &
+58.20\tabularnewline
+gompertz & gompertz & NIVOLUMAB & elpd\_waic & -1819.89 &
+39.69\tabularnewline
+gompertz & gompertz & NIVOLUMAB+IPILIMUMAB & elpd\_waic & -1680.25 &
+45.91\tabularnewline
+loglogistic & loglogistic & IPILIMUMAB & elpd\_waic & -1544.04 &
+54.19\tabularnewline
+loglogistic & loglogistic & NIVOLUMAB & elpd\_waic & -1543.49 &
+53.87\tabularnewline
+loglogistic & loglogistic & NIVOLUMAB+IPILIMUMAB & elpd\_waic & -1839.34
+& 36.27\tabularnewline
+lognormal & lognormal & IPILIMUMAB & elpd\_waic & -1679.48 &
+45.80\tabularnewline
+lognormal & lognormal & NIVOLUMAB & elpd\_waic & -1543.81 &
+54.03\tabularnewline
+lognormal & lognormal & NIVOLUMAB+IPILIMUMAB & elpd\_waic & -1768.17 &
 39.20\tabularnewline
-loglogistic & loglogistic & NIVOLUMAB & elpd\_waic & -1651.73 &
+weibull & weibull & IPILIMUMAB & elpd\_waic & -1651.73 &
 46.02\tabularnewline
-loglogistic & loglogistic & NIVOLUMAB+IPILIMUMAB & elpd\_waic & -1533.95
-& 53.17\tabularnewline
+weibull & weibull & NIVOLUMAB & elpd\_waic & -1533.95 &
+53.17\tabularnewline
+weibull & weibull & NIVOLUMAB+IPILIMUMAB & elpd\_waic & -1566.33 &
+55.91\tabularnewline
 exp & exp & IPILIMUMAB & p\_waic & 5.37 & 0.48\tabularnewline
 exp & exp & NIVOLUMAB & p\_waic & 7.45 & 0.62\tabularnewline
-exp & exp & NIVOLUMAB+IPILIMUMAB & p\_waic & 6.67 & 0.52\tabularnewline
-loglogistic & loglogistic & IPILIMUMAB & p\_waic & 9.19 &
+exp & exp & NIVOLUMAB+IPILIMUMAB & p\_waic & 15.46 & 1.44\tabularnewline
+gompertz & gompertz & IPILIMUMAB & p\_waic & 14.55 & 1.26\tabularnewline
+gompertz & gompertz & NIVOLUMAB & p\_waic & 9.46 & 0.96\tabularnewline
+gompertz & gompertz & NIVOLUMAB+IPILIMUMAB & p\_waic & 8.70 &
+0.75\tabularnewline
+loglogistic & loglogistic & IPILIMUMAB & p\_waic & 7.70 &
+0.72\tabularnewline
+loglogistic & loglogistic & NIVOLUMAB & p\_waic & 7.15 &
+0.60\tabularnewline
+loglogistic & loglogistic & NIVOLUMAB+IPILIMUMAB & p\_waic & 5.91 &
+0.52\tabularnewline
+lognormal & lognormal & IPILIMUMAB & p\_waic & 6.96 &
 0.56\tabularnewline
-loglogistic & loglogistic & NIVOLUMAB & p\_waic & 9.20 &
-0.53\tabularnewline
-loglogistic & loglogistic & NIVOLUMAB+IPILIMUMAB & p\_waic & 6.10 &
-0.50\tabularnewline
+lognormal & lognormal & NIVOLUMAB & p\_waic & 7.07 & 0.78\tabularnewline
+lognormal & lognormal & NIVOLUMAB+IPILIMUMAB & p\_waic & 9.19 &
+0.56\tabularnewline
+weibull & weibull & IPILIMUMAB & p\_waic & 9.20 & 0.53\tabularnewline
+weibull & weibull & NIVOLUMAB & p\_waic & 6.10 & 0.50\tabularnewline
+weibull & weibull & NIVOLUMAB+IPILIMUMAB & p\_waic & 20.04 &
+1.20\tabularnewline
 exp & exp & IPILIMUMAB & waic & 3677.65 & 72.13\tabularnewline
 exp & exp & NIVOLUMAB & waic & 3359.19 & 91.37\tabularnewline
-exp & exp & NIVOLUMAB+IPILIMUMAB & waic & 3086.47 &
-107.61\tabularnewline
-loglogistic & loglogistic & IPILIMUMAB & waic & 3536.33 &
+exp & exp & NIVOLUMAB+IPILIMUMAB & waic & 3099.36 &
+120.30\tabularnewline
+gompertz & gompertz & IPILIMUMAB & waic & 2977.62 &
+116.41\tabularnewline
+gompertz & gompertz & NIVOLUMAB & waic & 3639.77 & 79.38\tabularnewline
+gompertz & gompertz & NIVOLUMAB+IPILIMUMAB & waic & 3360.49 &
+91.83\tabularnewline
+loglogistic & loglogistic & IPILIMUMAB & waic & 3088.08 &
+108.39\tabularnewline
+loglogistic & loglogistic & NIVOLUMAB & waic & 3086.98 &
+107.74\tabularnewline
+loglogistic & loglogistic & NIVOLUMAB+IPILIMUMAB & waic & 3678.68 &
+72.53\tabularnewline
+lognormal & lognormal & IPILIMUMAB & waic & 3358.96 &
+91.59\tabularnewline
+lognormal & lognormal & NIVOLUMAB & waic & 3087.62 &
+108.05\tabularnewline
+lognormal & lognormal & NIVOLUMAB+IPILIMUMAB & waic & 3536.33 &
 78.40\tabularnewline
-loglogistic & loglogistic & NIVOLUMAB & waic & 3303.47 &
-92.04\tabularnewline
-loglogistic & loglogistic & NIVOLUMAB+IPILIMUMAB & waic & 3067.91 &
-106.35\tabularnewline
+weibull & weibull & IPILIMUMAB & waic & 3303.47 & 92.04\tabularnewline
+weibull & weibull & NIVOLUMAB & waic & 3067.91 & 106.35\tabularnewline
+weibull & weibull & NIVOLUMAB+IPILIMUMAB & waic & 3132.66 &
+111.82\tabularnewline
 \bottomrule
 \end{longtable}
 
@@ -651,11 +804,22 @@ OS Distn & PFS Distn & Treatment & PFS & OS\tabularnewline
 \endhead
 exp & exp & IPILIMUMAB & 0.813 & 0.784\tabularnewline
 exp & exp & NIVOLUMAB & 0.876 & 0.877\tabularnewline
-exp & exp & NIVOLUMAB+IPILIMUMAB & 0.857 & 0.846\tabularnewline
+exp & exp & NIVOLUMAB+IPILIMUMAB & 0.865 & 0.860\tabularnewline
+gompertz & gompertz & IPILIMUMAB & 0.781 & 0.743\tabularnewline
+gompertz & gompertz & NIVOLUMAB & 0.858 & 0.808\tabularnewline
+gompertz & gompertz & NIVOLUMAB+IPILIMUMAB & 0.899 &
+0.888\tabularnewline
 loglogistic & loglogistic & IPILIMUMAB & 0.812 & 0.604\tabularnewline
 loglogistic & loglogistic & NIVOLUMAB & 0.890 & 0.672\tabularnewline
 loglogistic & loglogistic & NIVOLUMAB+IPILIMUMAB & 0.915 &
 0.786\tabularnewline
+lognormal & lognormal & IPILIMUMAB & 0.607 & 0.513\tabularnewline
+lognormal & lognormal & NIVOLUMAB & 0.928 & 0.881\tabularnewline
+lognormal & lognormal & NIVOLUMAB+IPILIMUMAB & 0.868 &
+0.862\tabularnewline
+weibull & weibull & IPILIMUMAB & 0.841 & 0.726\tabularnewline
+weibull & weibull & NIVOLUMAB & 0.865 & 0.822\tabularnewline
+weibull & weibull & NIVOLUMAB+IPILIMUMAB & 0.891 & 0.863\tabularnewline
 \bottomrule
 \end{longtable}
 

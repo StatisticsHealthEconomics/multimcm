@@ -29,17 +29,20 @@ knitr::opts_chunk$set(
 
 In this project we formulate and demonstrate the application of a
 Bayesian mixture cure model (MCM) using the Checkmate 067 study dataset
-and the Exponential and log-logistic distributions for event times.
+for a range of survival distributions.
 Analogous results to those created previously for the frequentist MCM
 approach are produced and we extend the Bayesian MCM to incorporate
-additional structure, including the joining of overall survival (OS) and
-progression-free survival (PFS) models using a hierarchical struture on
-the cure fraction. We show that the Exponential and in particular the
+additional structure. This includes modelling the cure fractions separately
+for OS and PFS (as in the frequentist approach), as a pooled, single estimate
+and by joining the overall survival (OS) and
+progression-free survival (PFS) models using a hierarchical (multilevel)
+structure on the cure fraction. We show that the Exponential and in particular the
 log-logistic OS and PFS Bayesian MCMs perform reasonably well for the
 Checkmate 067 data. The real benefit of this approach may be with other
 dataset where there is short follow-up or small sample sizes. The
 associated R code for this work, held in a private on-line repository,
 has been written for re-use and generalisability to other problems.
+
 
 ## Background
 
@@ -265,55 +268,20 @@ This also forces consistency across fits. Denote the WHO estimates for
 individual $i$ as $\hat{f}_i, \hat{S}_i, \hat{h}_i$ for the density,
 survival and hazard respectively.
 
-## Exponentially distributed event times
-
-Consider the straightforward case where both the cancer times to event
-follow Exponential distributions.
-
-Define $f(t)$ density, $S(t)$ survival and $h(t)$ hazard functions.
+This gives the likelihood
 
 $$
-f(t) = \lambda \exp(-\lambda t), \;\; S(t) = \exp(-\lambda t), \;\; h(t) = \lambda
+L(\pi | \boldsymbol{\delta}, \boldsymbol{x}, \hat{S}, \hat{h}) =
+\sum_i \hat{S}_i \hat{h}_i^{\delta_i} \left[ \pi(x) + (1 - \pi(x)) S_{u, i} h_{u , i}^{\delta_i} \right]
 $$
 
-Which gives the likelihood
-
-$$
-L(\pi, \lambda_u | \boldsymbol{\delta}, \boldsymbol{x}, \hat{S}, \hat{h}) =
- \sum_i \hat{S}_i \hat{h}_i^{\delta_i}[\pi(x) +
-   (1 − \pi(x)) \exp(-\lambda_u t) \lambda_u^{\delta_i}])
-$$
-
-Substituting $S(t)$ and $h(t)$ into (\*\*)
-
-$$
-f^*_u = e^{-\lambda^* t} e^{-\lambda_u t} (\lambda^* + \lambda_u)^{\delta} \;\;\; i.e. \mbox{for no censoring} \;\; T \sim Exp(\lambda^* + \lambda_u)
-$$
-
-## Log-logistic distributed event times
-
-In the frequentist analysis, generally the log-logistic is the one of
-the best fitting distributions. The relevant functions are
-
-$$
-f(t) = \frac{(\beta/\alpha)(t/\alpha)^{\beta - 1}}{(1 + (t/\alpha)^{\beta})^2}, \;\; S(t) = (1 + (t/\alpha)^{\beta})^{-1}, \;\; h(t) = \frac{(\beta/\alpha)(t/\alpha)^{\beta - 1}}{1 + (t/\alpha)^{\beta}}
-$$
-
-which gives the likelihood
-
-$$
-L(\pi, \alpha, \beta | \boldsymbol{\delta}, \boldsymbol{x}, \hat{S}, \hat{h}) =
-\sum_i \hat{S}_i \hat{h}_i^{\delta_i} \left[ \pi(x) - (1 - \pi(x))(1 + (t/\alpha)^{\beta})^{-1} \left(\frac{(\beta/\alpha)(t/\alpha)^{\beta - 1}}{1 + (t/\alpha)^{\beta}} \right)^{\delta_i} \right]
-$$
 
 ## Results
 
 We fit the exponential hazard model to the study data and produced the
 posterior survival curves below.
 
-For each model and treatment we produce two figures:
-
-1.  The expected survival curves with 95% Credible Intervals (CrI). The
+For each model and treatment we produce the expected survival curves with 95% Credible Intervals (CrI). The
     OS curves are to the left-hand side and PFS curves to the right-hand
     side. Background mortality (i.e. cured patients) is indicated by the
     red line. Non-cured patients survival curves are shown in dark green
@@ -323,16 +291,13 @@ For each model and treatment we produce two figures:
     e.g. at average age, and so we would not expect them to perfectly
     match the sample data Kaplan-Meier.
 
-2.  Kaplan-Meier curves for 50 simulated trials using the posterior
-    prediction distribution for time to event. This is a good model
-    checking plot, indicating if we can replicate data similar to the
-    observed data using the fitted model.
-
 Figures \ref{fig:IPI}, \ref{fig:NIVO}, and \ref{fig:NIVO+IPI} show
-posterior survival curves for the Exponential and log-logistic models.
+posterior survival curves for the Exponential, log-logistic, Gompertz, Weibull and log-Normal models.
 
-```{r fig.show='hold', fig.align='center', out.width="100%", echo=FALSE, message = FALSE, warning = FALSE, fig.cap="\\label{fig:IPI}Posterior survival curves for the mixture cure model and $ipilimumab$. The red line is cured background, light green and blue are uncured, and dark green and magenta are combined. a) Exponential uncured; b) Log-logistic uncured c) Gompertz uncured d) Weibull uncured e) Log-Normal uncured."}
+```{r fig.show='hold', fig.align='center', out.width="25cm", out.height="40cm", echo=FALSE, message = FALSE, warning = FALSE, fig.cap="\\label{fig:IPI}Posterior survival curves for the mixture cure model and $ipilimumab$. The red line is cured background, light green and blue are uncured, and dark green and magenta are combined. a) Exponential uncured b) Log-logistic uncured c) Gompertz uncured d) Weibull uncured e) Log-Normal uncured."}
 library(magick)
+library(grid)
+
 rl <- list()
 rl[[1]] <-
   image_read("../plots/S_plots_exp_exp_cf hier_bg_fixed_IPILIMUMAB.png") %>%
@@ -351,11 +316,14 @@ rl[[5]] <-
   image_annotate(" e)", size = 70)
 
 gl = lapply(rl, grid::rasterGrob)
-gridExtra::marrangeGrob(grobs = gl, nrow = 2, ncol = 3, top = "",
-                        vp=grid::viewport(width=1, height=1, clip = TRUE))
+gridExtra::marrangeGrob(grobs = gl, nrow = 3, ncol = 2, top = "",
+                        # heights = unit(c(4,4,4), "cm"),
+                        widths = c(4,4,4)#,
+                        # vp=grid::viewport(width=0.5, height=1, clip = TRUE)
+                        )
 ```
 
-```{r fig.show='hold', fig.align='center', out.width="100%", echo=FALSE, message = FALSE, warning = FALSE, fig.cap="\\label{fig:NIVO}Posterior survival curves for the mixture cure model and $nivolumab$. The red line is cured background, light green and blue are uncured, and dark green and magenta are combined. a) Exponential uncured; b) Log-logistic uncured c) Gompertz uncured d) Weibull uncured e) Log-Normal uncured."}
+```{r fig.show='hold', fig.align='center', out.width="25cm", out.height="40cm", echo=FALSE, message = FALSE, warning = FALSE, fig.cap="\\label{fig:NIVO}Posterior survival curves for the mixture cure model and $nivolumab$. The red line is cured background, light green and blue are uncured, and dark green and magenta are combined. a) Exponential uncured b) Log-logistic uncured c) Gompertz uncured d) Weibull uncured e) Log-Normal uncured."}
 rl <- list()
 rl[[1]] <-
   image_read("../plots/S_plots_exp_exp_cf hier_bg_fixed_NIVOLUMAB.png") %>%
@@ -374,11 +342,13 @@ rl[[5]] <-
   image_annotate(" e)", size = 70)
 
 gl = lapply(rl, grid::rasterGrob)
-gridExtra::marrangeGrob(grobs = gl, nrow = 2, ncol = 3, top = "",
-                        vp=grid::viewport(width=1, height=1, clip = TRUE))
+gridExtra::marrangeGrob(grobs = gl, nrow = 3, ncol = 2, top = "",
+                        widths = c(4,4,4)#,
+                        # vp=grid::viewport(width=1, height=1, clip = TRUE)
+                        )
 ```
 
-```{r fig.show='hold', fig.align='center', out.width="100%", echo=FALSE, message = FALSE, warning = FALSE, fig.cap="\\label{fig:NIVO+IPI}Posterior survival curves for the mixture cure model and dual $ipilimumab$ and $nivolumab$. The red line is cured background, light green and blue are uncured, and dark green and magenta are combined. a) Exponential uncured; b) Log-logistic uncured c) Gompertz uncured d) Weibull uncured e) Log-Normal uncured."}
+```{r fig.show='hold', fig.align='center', out.width="25cm", out.height="40cm", echo=FALSE, message = FALSE, warning = FALSE, fig.cap="\\label{fig:NIVO+IPI}Posterior survival curves for the mixture cure model and dual $ipilimumab$ and $nivolumab$. The red line is cured background, light green and blue are uncured, and dark green and magenta are combined. a) Exponential uncured b) Log-logistic uncured c) Gompertz uncured d) Weibull uncured e) Log-Normal uncured."}
 rl <- list()
 rl[[1]] <-
   image_read("../plots/S_plots_exp_exp_cf hier_bg_fixed_NIVOLUMAB+IPILIMUMAB.png") %>%
@@ -397,20 +367,29 @@ rl[[5]] <-
   image_annotate(" e)", size = 70)
 
 gl = lapply(rl, grid::rasterGrob)
-gridExtra::marrangeGrob(grobs = gl, nrow = 2, ncol = 3, top = "",
-                        vp=grid::viewport(width=1, height=1, clip = TRUE))
+gridExtra::marrangeGrob(grobs = gl, nrow = 3, ncol = 2, top = "",
+                        widths = c(4,4,4)#,
+                        # vp=grid::viewport(width=1, height=1, clip = TRUE)
+                        )
 ```
 
-Figure \ref{fig:forest} show the forest plot of cure fraction posterior
+Figures \ref{fig:forest_global}, \ref{fig:forest_os} and \ref{fig:forest_pfs}
+show the forest plots of cure fraction posterior
 distributions. We see that the values are generally similar for the
 Exponential and log-logistic fits. This clearly shows how the global
 cure fraction posterior distribution lies partway between the PFS and OS
 distributions.
 
-```{r fig.show='hold', fig.align='center', out.width="60%", echo=FALSE, fig.cap="\\label{fig:forest}Forest plot of cure fraction posterior distributions."}
+```{r fig.show='hold', fig.align='center', out.width="60%", echo=FALSE, fig.cap="\\label{fig:forest_global}Forest plot of global cure fraction posterior distributions."}
 # knitr::include_graphics("../plots/cf_forest_plot.png")
 knitr::include_graphics("../plots/cf_global_forest_plot.png")
+```
+
+```{r fig.show='hold', fig.align='center', out.width="60%", echo=FALSE, fig.cap="\\label{fig:forest_os}Forest plot of OS cure fraction posterior distributions."}
 knitr::include_graphics("../plots/cf_os_forest_plot.png")
+```
+
+```{r fig.show='hold', fig.align='center', out.width="60%", echo=FALSE, fig.cap="\\label{fig:forest_pfs}Forest plot of PFS cure fraction posterior distributions."}
 knitr::include_graphics("../plots/cf_pfs_forest_plot.png")
 ```
 
@@ -456,35 +435,35 @@ each model fit.
 |weibull     |weibull     |NIVOLUMAB            |elpd_waic    | -1533.95|  53.17|
 |weibull     |weibull     |NIVOLUMAB+IPILIMUMAB |elpd_waic    | -1566.33|  55.91|
 |exp         |exp         |IPILIMUMAB           |p_waic       |     5.37|   0.48|
-|exp         |exp         |NIVOLUMAB            |p_waic.1     |     7.45|   0.62|
-|exp         |exp         |NIVOLUMAB+IPILIMUMAB |p_waic.10    |    15.46|   1.44|
-|gompertz    |gompertz    |IPILIMUMAB           |p_waic.11    |    14.55|   1.26|
-|gompertz    |gompertz    |NIVOLUMAB            |p_waic.12    |     9.46|   0.96|
-|gompertz    |gompertz    |NIVOLUMAB+IPILIMUMAB |p_waic.13    |     8.70|   0.75|
-|loglogistic |loglogistic |IPILIMUMAB           |p_waic.14    |     7.70|   0.72|
-|loglogistic |loglogistic |NIVOLUMAB            |p_waic.2     |     7.15|   0.60|
-|loglogistic |loglogistic |NIVOLUMAB+IPILIMUMAB |p_waic.3     |     5.91|   0.52|
-|lognormal   |lognormal   |IPILIMUMAB           |p_waic.4     |     6.96|   0.56|
-|lognormal   |lognormal   |NIVOLUMAB            |p_waic.5     |     7.07|   0.78|
-|lognormal   |lognormal   |NIVOLUMAB+IPILIMUMAB |p_waic.6     |     9.19|   0.56|
-|weibull     |weibull     |IPILIMUMAB           |p_waic.7     |     9.20|   0.53|
-|weibull     |weibull     |NIVOLUMAB            |p_waic.8     |     6.10|   0.50|
-|weibull     |weibull     |NIVOLUMAB+IPILIMUMAB |p_waic.9     |    20.04|   1.20|
+|exp         |exp         |NIVOLUMAB            |p_waic       |     7.45|   0.62|
+|exp         |exp         |NIVOLUMAB+IPILIMUMAB |p_waic       |    15.46|   1.44|
+|gompertz    |gompertz    |IPILIMUMAB           |p_waic       |    14.55|   1.26|
+|gompertz    |gompertz    |NIVOLUMAB            |p_waic       |     9.46|   0.96|
+|gompertz    |gompertz    |NIVOLUMAB+IPILIMUMAB |p_waic       |     8.70|   0.75|
+|loglogistic |loglogistic |IPILIMUMAB           |p_waic       |     7.70|   0.72|
+|loglogistic |loglogistic |NIVOLUMAB            |p_waic       |     7.15|   0.60|
+|loglogistic |loglogistic |NIVOLUMAB+IPILIMUMAB |p_waic       |     5.91|   0.52|
+|lognormal   |lognormal   |IPILIMUMAB           |p_waic       |     6.96|   0.56|
+|lognormal   |lognormal   |NIVOLUMAB            |p_waic       |     7.07|   0.78|
+|lognormal   |lognormal   |NIVOLUMAB+IPILIMUMAB |p_waic       |     9.19|   0.56|
+|weibull     |weibull     |IPILIMUMAB           |p_waic       |     9.20|   0.53|
+|weibull     |weibull     |NIVOLUMAB            |p_waic       |     6.10|   0.50|
+|weibull     |weibull     |NIVOLUMAB+IPILIMUMAB |p_waic       |    20.04|   1.20|
 |exp         |exp         |IPILIMUMAB           |waic         |  3677.65|  72.13|
-|exp         |exp         |NIVOLUMAB            |waic.1       |  3359.19|  91.37|
-|exp         |exp         |NIVOLUMAB+IPILIMUMAB |waic.10      |  3099.36| 120.30|
-|gompertz    |gompertz    |IPILIMUMAB           |waic.11      |  2977.62| 116.41|
-|gompertz    |gompertz    |NIVOLUMAB            |waic.12      |  3639.77|  79.38|
-|gompertz    |gompertz    |NIVOLUMAB+IPILIMUMAB |waic.13      |  3360.49|  91.83|
-|loglogistic |loglogistic |IPILIMUMAB           |waic.14      |  3088.08| 108.39|
-|loglogistic |loglogistic |NIVOLUMAB            |waic.2       |  3086.98| 107.74|
-|loglogistic |loglogistic |NIVOLUMAB+IPILIMUMAB |waic.3       |  3678.68|  72.53|
-|lognormal   |lognormal   |IPILIMUMAB           |waic.4       |  3358.96|  91.59|
-|lognormal   |lognormal   |NIVOLUMAB            |waic.5       |  3087.62| 108.05|
-|lognormal   |lognormal   |NIVOLUMAB+IPILIMUMAB |waic.6       |  3536.33|  78.40|
-|weibull     |weibull     |IPILIMUMAB           |waic.7       |  3303.47|  92.04|
-|weibull     |weibull     |NIVOLUMAB            |waic.8       |  3067.91| 106.35|
-|weibull     |weibull     |NIVOLUMAB+IPILIMUMAB |waic.9       |  3132.66| 111.82|
+|exp         |exp         |NIVOLUMAB            |waic         |  3359.19|  91.37|
+|exp         |exp         |NIVOLUMAB+IPILIMUMAB |waic         |  3099.36| 120.30|
+|gompertz    |gompertz    |IPILIMUMAB           |waic         |  2977.62| 116.41|
+|gompertz    |gompertz    |NIVOLUMAB            |waic         |  3639.77|  79.38|
+|gompertz    |gompertz    |NIVOLUMAB+IPILIMUMAB |waic         |  3360.49|  91.83|
+|loglogistic |loglogistic |IPILIMUMAB           |waic         |  3088.08| 108.39|
+|loglogistic |loglogistic |NIVOLUMAB            |waic         |  3086.98| 107.74|
+|loglogistic |loglogistic |NIVOLUMAB+IPILIMUMAB |waic         |  3678.68|  72.53|
+|lognormal   |lognormal   |IPILIMUMAB           |waic         |  3358.96|  91.59|
+|lognormal   |lognormal   |NIVOLUMAB            |waic         |  3087.62| 108.05|
+|lognormal   |lognormal   |NIVOLUMAB+IPILIMUMAB |waic         |  3536.33|  78.40|
+|weibull     |weibull     |IPILIMUMAB           |waic         |  3303.47|  92.04|
+|weibull     |weibull     |NIVOLUMAB            |waic         |  3067.91| 106.35|
+|weibull     |weibull     |NIVOLUMAB+IPILIMUMAB |waic         |  3132.66| 111.82|
 
 The variance partition coefficient (VPC) is defined as
 $\sigma_{global}^2/ (\sigma_{global}^2 + \sigma_{e}^2)$ where $e = PFS$

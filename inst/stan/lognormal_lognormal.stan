@@ -150,7 +150,7 @@ model {
   }
 
   //TODO: could just use surv point estimate directly for life-table background?
-  //      instead of exp distn
+  //      instead of via exp distn
 
   // likelihood
   for (i in 1:n_os) {

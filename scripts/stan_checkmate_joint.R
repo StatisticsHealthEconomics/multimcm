@@ -173,6 +173,34 @@ if (save_res) {
 stan_list <- list(out) %>% setNames(trta)
 
 
+
+
+source("R/create_stancode.R")
+source("R/create_block_code.R")
+source("R/bmcm_joint_stan_string.R")
+
+out <-
+  bmcm_joint_stan_string(
+    input_data = surv_input_data,
+    model_os = model_os,
+    model_pfs = model_pfs,
+    tx_name = trta,
+    params_pfs = params_pfs[[model_pfs]],
+    params_os = params_os[[model_os]],
+    params_cf = params_cf[[cf_idx]][[model_pfs]],
+    cf_model = cf_idx,
+    joint_model = FALSE,
+    bg_model = bg_model_idx,
+    warmup = 100,
+    iter = 1000,
+    thin = 10)
+
+
+
+
+
+
+
 #########
 # plots #
 #########

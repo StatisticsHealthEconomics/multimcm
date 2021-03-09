@@ -40,8 +40,8 @@ trta_idx <- 3
 all_tx_names <- c("IPILIMUMAB", "NIVOLUMAB", "NIVOLUMAB+IPILIMUMAB")
 trta <- all_tx_names[trta_idx]
 
-model_os_idx <- 1
-model_pfs_idx <- 1
+model_os_idx <- 2
+model_pfs_idx <- 3
 model_names <- c("exp", "weibull", "gompertz", "loglogistic", "lognormal", "gengamma")
 model_os <- model_names[model_os_idx]
 model_pfs <- model_names[model_pfs_idx]
@@ -178,6 +178,7 @@ stan_list <- list(out) %>% setNames(trta)
 source("R/create_stancode.R")
 source("R/create_block_code.R")
 source("R/bmcm_joint_stan_string.R")
+setwd("~/R/rstanbmcm/inst/stan")
 
 out <-
   bmcm_joint_stan_string(

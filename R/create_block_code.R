@@ -18,18 +18,16 @@ create_pfs_code <- function(pfs_model) {
 
   scode$trans_params <- list(
     declarations =
-    c("\tvector[n_pfs] lp_pfs;
-      vector[n_os] lp_pfs_bg;
-      vector[n_os] lambda_pfs_bg;\n"))
+      c("\tvector[n_pfs] lp_pfs;\n"))
 
   if (pfs_model == "exp") {
-    scode$trans_params$declations <-
+    scode$trans_params$declarations <-
       paste0(scode$trans_params$declarations,
-      c("// rate parameters
-        vector[n_pfs] lambda_pfs;"))
+             c("// rate parameters
+             vector[n_pfs] lambda_pfs;"))
 
     scode$trans_params$main <-
-        c("lambda_pfs = exp(lp_pfs);\n")
+      c("lambda_pfs = exp(lp_pfs);\n")
   }
 
   if (pfs_model %in% c("gompertz", "loglogistic", "weibull")) {
@@ -41,10 +39,10 @@ create_pfs_code <- function(pfs_model) {
     scode$parameters <-
       c("\treal<lower=0> shape_pfs;\n")
 
-    scode$trans_params$declations <-
+    scode$trans_params$declarations <-
       paste0(scode$trans_params$declarations,
              c("// rate parameters
-        vector[n_pfs] lambda_pfs;"))
+               vector[n_pfs] lambda_pfs;"))
 
     scode$trans_params$main <-
       c("lambda_pfs = exp(lp_pfs);\n")
@@ -62,7 +60,7 @@ create_pfs_code <- function(pfs_model) {
     scode$parameters <-
       c("\treal<lower=0> sd_pfs;\n")
 
-    scode$trans_params$declations <-
+    scode$trans_params$declarations <-
       paste0(scode$trans_params$declarations,
              c("// rate parameters
         vector[n_pfs] mean_pfs;"))
@@ -93,15 +91,15 @@ create_os_code <- function(os_model) {
       vector<lower=0> [H_os] sigma_0_os;\n")
 
   scode$trans_params <-
-    c("\tvector[n_os] lp_os;
-      vector[n_os] lp_os_bg;
-      vector[n_os] lambda_os_bg;\n")
+    list(
+      declarations =
+        c("\tvector[n_os] lp_os;\n"))
 
   if (os_model == "exp") {
-    scode$trans_params$declations <-
+    scode$trans_params$declarations <-
       paste0(scode$trans_params$declarations,
              c("// rate parameters
-               vector[n_os] lambda_os;"))
+               vector[n_os] lambda_os;\n"))
 
     scode$trans_params$main <-
       c("lambda_os = exp(lp_os);\n")
@@ -116,7 +114,7 @@ create_os_code <- function(os_model) {
     scode$parameters <-
       c("\treal<lower=0> shape_os;\n")
 
-    scode$trans_params$declations <-
+    scode$trans_params$declarations <-
       paste0(scode$trans_params$declarations,
              c("// rate parameters
               vector[n_os] lambda_os;"))
@@ -231,9 +229,7 @@ create_code_skeleton <- function() {
 
   scode$trans_params <- list(
     declarations =
-      c("\t  vector[n_os] lp_os;
-      vector[n_pfs] lp_pfs;
-      vector[n_os] lp_os_bg;
+      c("\tvector[n_os] lp_os_bg;
       vector[n_os] lp_pfs_bg;
 
       vector[n_os] lambda_os_bg;

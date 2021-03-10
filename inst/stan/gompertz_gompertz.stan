@@ -197,10 +197,10 @@ generated quantities {
   real pbeta_os = normal_rng(mu_0_os[1], sigma_0_os[1]);
   real pbeta_pfs = normal_rng(mu_0_pfs[1], sigma_0_pfs[1]);
 
+  real pbeta_bg;
+
   real pshape_pfs = gamma_rng(a_shape_pfs, b_shape_pfs);
   real pshape_os = gamma_rng(a_shape_os, b_shape_os);
-
-  real pbeta_bg;
 
   // if (cf_model == 3) {
     // real vpc_os;

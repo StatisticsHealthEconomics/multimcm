@@ -1,6 +1,6 @@
 
 #' @examples
-#' lapply(create_pfs_code(1), cat)
+#' lapply(create_pfs_code("lognormal"), cat)
 #'
 create_pfs_code <- function(pfs_model) {
 
@@ -30,7 +30,7 @@ create_pfs_code <- function(pfs_model) {
               real<lower=0> b_shape_pfs;\n")
 
     scode$parameters <-
-      c("\treal<lower=0> shape_pfs;\n")
+      c("real<lower=0> shape_pfs;\n")
 
     scode$trans_params$def <-
       paste0(scode$trans_params$def,
@@ -41,7 +41,10 @@ create_pfs_code <- function(pfs_model) {
       c("lambda_pfs = exp(lp_pfs);\n")
 
     scode$model <-
-      c("\tshape_pfs ~ gamma(a_shape_pfs, b_shape_pfs);\n")
+      c("shape_pfs ~ gamma(a_shape_pfs, b_shape_pfs);\n")
+
+    scode$generated_quantities <-
+      c("real pshape_pfs = gamma_rng(a_shape_pfs, b_shape_pfs);")
   }
 
   if (pfs_model == "lognormal") {
@@ -56,10 +59,10 @@ create_pfs_code <- function(pfs_model) {
     scode$trans_params$def <-
       paste0(scode$trans_params$def,
              c("// rate parameters
-        vector[n_pfs] mean_pfs;"))
+              vector[n_pfs] mu_pfs;"))
 
     scode$trans_params$main <-
-      c("mean_pfs = lp_pfs;\n")
+      c("mu_pfs = lp_pfs;\n")
 
     scode$model <-
       c("\tsd_pfs ~ gamma(a_sd_pfs, b_sd_pfs);\n")
@@ -67,6 +70,7 @@ create_pfs_code <- function(pfs_model) {
 
   scode
 }
+
 
 #
 create_os_code <- function(os_model) {
@@ -98,7 +102,7 @@ create_os_code <- function(os_model) {
                real<lower=0> b_shape_os;\n")
 
     scode$parameters <-
-      c("\treal<lower=0> shape_os;\n")
+      c("real<lower=0> shape_os;\n")
 
     scode$trans_params$def <-
       paste0(scode$trans_params$def,
@@ -109,7 +113,10 @@ create_os_code <- function(os_model) {
       c("lambda_os = exp(lp_os);\n")
 
     scode$model <-
-      c("\tshape_os ~ gamma(a_shape_os, b_shape_os);\n")
+      c("shape_os ~ gamma(a_shape_os, b_shape_os);\n")
+
+    scode$generated_quantities <-
+      c("real pshape_os = gamma_rng(a_shape_os, b_shape_os);")
   }
 
   if (os_model == "lognormal") {
@@ -124,10 +131,10 @@ create_os_code <- function(os_model) {
     scode$trans_params$declations <-
       paste0(scode$trans_params$def,
              c("// rate parameters
-              vector[n_os] mean_os;"))
+              vector[n_os] mu_os;"))
 
     scode$trans_params$main <-
-      c("mean_os = lp_os;\n")
+      c("mu_os = lp_os;\n")
 
     scode$model <-
       c("\tsd_os ~ gamma(a_sd_os, b_sd_os);\n")
@@ -186,6 +193,24 @@ create_cf_code <- function(cf_model) {
         lp_cf_pfs ~ normal(mu_cf_pfs, sd_cf_pfs);
       } else {
         cf_pooled ~ beta(a_cf, b_cf);
+      }\n")
+
+  scode$generated_quantities <-
+    c("// cure fraction prior
+      if (cf_model == 3) {
+        //TODO: include extra sd_cf_os, sd_cf_pfs variation?
+        real pcurefrac = normal_rng(mu_cf_gl[1], sigma_cf_gl[1]);
+        pmean_cf_os = inv_logit(pcurefrac);
+        pmean_cf_pfs = inv_logit(pcurefrac);
+      } else if (cf_model == 2) {
+        real pcf_os = normal_rng(mu_cf_os[1], sd_cf_os[1]);
+        real pcf_pfs = normal_rng(mu_cf_pfs[1], sd_cf_pfs[1]);
+        pmean_cf_os = inv_logit(pcf_os);
+        pmean_cf_pfs = inv_logit(pcf_pfs);
+      } else {
+        real pcurefrac = beta_rng(a_cf[1], b_cf[1]);
+        pmean_cf_os = pcurefrac;
+        pmean_cf_pfs = pcurefrac;
       }\n")
 
   scode
@@ -248,6 +273,55 @@ create_code_skeleton <- function() {
         beta_joint ~ normal(mu_joint, sigma_joint);
       }\n")
 
+  scode$generated_quantities$def <-
+    c("\treal mean_os;
+      real mean_pfs;
+      real mean_bg;
+      \n
+      vector[t_max] S_bg;
+      vector[t_max] S_os;
+      vector[t_max] S_pfs;
+      vector[t_max] S_os_pred;
+      vector[t_max] S_pfs_pred;
+      \n
+      // prior pred
+      real pmean_os;
+      real pmean_pfs;
+      real pmean_bg;
+      real pmean_cf_os;
+      real pmean_cf_pfs;
+      \n
+      vector[t_max] pS_bg;
+      vector[t_max] pS_os;
+      vector[t_max] pS_pfs;
+      vector[t_max] S_os_prior;
+      vector[t_max] S_pfs_prior;
+      \n
+      vector[n_os] log_lik;
+      \n
+      real pbeta_os = normal_rng(mu_0_os[1], sigma_0_os[1]);
+      real pbeta_pfs = normal_rng(mu_0_pfs[1], sigma_0_pfs[1]);
+      \n
+      real pbeta_bg;\n")
+
+  scode$generated_quantities$main <-
+    c("if (bg_model == 1) {
+      pbeta_bg = normal_rng(mu_bg[1], sigma_bg[1]);
+      } else {
+      // pbeta_bg = log(mean(h_bg_os));
+      pbeta_bg = log(0.001);
+      }\n
+      \n
+      // intercepts
+      mean_os = exp(beta_os[1]);
+      mean_pfs = exp(beta_pfs[1]);
+      \n
+      if (bg_model == 1) {
+        mean_bg = exp(beta_bg[1]);
+      } else {
+        mean_bg = 0.001;
+      }\n")
+
   scode
 }
 
@@ -261,20 +335,20 @@ make_loglik <- function(os_model, pfs_model) {
          weibull = c("shape", "lambda"),
          gompertz = c("shape", "lambda"),
          loglogistic = c("shape", "lambda"),
-         lognormal = c("mean", "sd"),
+         lognormal = c("mu", "sd"),
          gengamma = "")
 
   os_params <- paste0(distn_params[[os_model]], "_os")
   pfs_params <- paste0(distn_params[[pfs_model]], "_pfs")
 
-  os_params[grep("mean", os_params)] <-
-    paste0(os_params[grep("mean", os_params)], "[i]")
+  os_params[grep("mu", os_params)] <-
+    paste0(os_params[grep("mu", os_params)], "[i]")
 
   os_params[grep("lambda", os_params)] <-
     paste0(os_params[grep("lambda", os_params)], "[i]")
 
-  pfs_params[grep("mean", pfs_params)] <-
-    paste0(os_params[grep("mean", pfs_params)], "[i]")
+  pfs_params[grep("mu", pfs_params)] <-
+    paste0(os_params[grep("mu", pfs_params)], "[i]")
 
   pfs_params[grep("lambda", pfs_params)] <-
     paste0(pfs_params[grep("lambda", pfs_params)], "[i]")
@@ -322,4 +396,114 @@ common_code_event_data <- function(e) {
     " vector<lower=0>[H_{e}] sigma_0_{e};\n")
 }
 
+
+make_postpred <- function(os_model, pfs_model) {
+
+  distn_params <-
+    list(exp = "mean",
+         weibull = c("shape", "mean"),
+         gompertz = c("shape", "mean"),
+         loglogistic = c("shape", "mean"),
+         lognormal = c("mean", "sd"),
+         gengamma = "")
+
+  os_params <- paste0(distn_params[[os_model]], "_os")
+  pfs_params <- paste0(distn_params[[pfs_model]], "_pfs")
+
+  pfs_params <- paste(pfs_params, collapse = ", ")
+  os_params <- paste(os_params, collapse = ", ")
+
+  glue(
+    "for (i in 1:t_max) {
+    S_bg[i] = exp_Surv(i, mean_bg);
+    S_os[i] = exp_{os_model}_Surv(i, {os_params}, mean_bg);
+    S_pfs[i] = exp_{pfs_model}_Surv(i, {pfs_params}, mean_bg);
+    S_os_pred[i] = cf_os*S_bg[i] + (1 - cf_os)*S_os[i];
+    S_pfs_pred[i] = cf_pfs*S_bg[i] + (1 - cf_pfs)*S_pfs[i];
+    }\n")
+}
+
+
+make_priorpred <- function(os_model, pfs_model) {
+
+  distn_params <-
+    list(exp = "pmean",
+         weibull = c("pshape", "pmean"),
+         gompertz = c("pshape", "pmean"),
+         loglogistic = c("pshape", "pmean"),
+         lognormal = c("pmean", "psd"),
+         gengamma = "")
+
+  os_params <- paste0(distn_params[[os_model]], "_os")
+  pfs_params <- paste0(distn_params[[pfs_model]], "_pfs")
+
+  pfs_params <- paste(pfs_params, collapse = ", ")
+  os_params <- paste(os_params, collapse = ", ")
+
+  glue(
+    "// prior checks
+    pmean_os = exp(pbeta_os);
+    pmean_pfs = exp(pbeta_pfs);
+    pmean_bg = exp(pbeta_bg);
+    \n
+    for (i in 1:t_max) {
+     pS_bg[i] = exp_Surv(i, pmean_bg);
+     pS_os[i] = exp_{os_model}_Surv(i, {os_params}, pmean_os, pmean_bg);
+     pS_pfs[i] = exp_{pfs_model}_Surv(i, {pfs_params}, pmean_pfs, pmean_bg);
+     S_os_prior[i] = pmean_cf_os*pS_bg[i] + (1 - pmean_cf_os)*pS_os[i];
+     S_pfs_prior[i] = pmean_cf_pfs*pS_bg[i] + (1 - pmean_cf_pfs)*pS_pfs[i];
+   }\n")
+}
+
+
+##TODO: duplication with make_loglik()
+make_loo <- function(os_model, pfs_model) {
+
+  distn_params <-
+    list(exp = "lambda",
+         weibull = c("shape", "lambda"),
+         gompertz = c("shape", "lambda"),
+         loglogistic = c("shape", "lambda"),
+         lognormal = c("mean", "sd"),
+         gengamma = "")
+
+  os_params <- paste0(distn_params[[os_model]], "_os")
+  pfs_params <- paste0(distn_params[[pfs_model]], "_pfs")
+
+  os_params[grep("mean", os_params)] <-
+    paste0(os_params[grep("mean", os_params)], "[i]")
+
+  os_params[grep("lambda", os_params)] <-
+    paste0(os_params[grep("lambda", os_params)], "[i]")
+
+  pfs_params[grep("mean", pfs_params)] <-
+    paste0(os_params[grep("mean", pfs_params)], "[i]")
+
+  pfs_params[grep("lambda", pfs_params)] <-
+    paste0(pfs_params[grep("lambda", pfs_params)], "[i]")
+
+  pfs_params <- paste(pfs_params, collapse = ", ")
+  os_params <- paste(os_params, collapse = ", ")
+
+  surv_lpdf_os <- glue("joint_exp_{os_model}_lpdf")
+  surv_lpdf_pfs <- glue("joint_exp_{pfs_model}_lpdf")
+
+  scode <-
+    glue("
+    // likelihood
+    for (i in 1:n_os) {{
+       log_lik[i] = log_sum_exp(
+        log(cf_os) +
+          surv_exp_lpdf(t_os[i] | d_os[i], lambda_os_bg[i]),
+        log1m(cf_os) +
+          {surv_lpdf_os}(t_os[i] | d_os[i], {os_params}, lambda_os_bg[i])) +
+        log_sum_exp(
+          log(cf_pfs) +
+            surv_exp_lpdf(t_pfs[i] | d_pfs[i], lambda_pfs_bg[i]),
+          log1m(cf_pfs) +
+            {surv_lpdf_pfs}(t_pfs[i] | d_pfs[i], {pfs_params}, lambda_pfs_bg[i]));
+         }\n")
+
+  scode
+}
 

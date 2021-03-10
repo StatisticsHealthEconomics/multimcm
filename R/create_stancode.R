@@ -22,6 +22,9 @@ create_stancode <- function(os_model,
   os_code <- create_os_code(os_model)
   cf_code <- create_cf_code(cf_model)
   loglik_code <- make_loglik(os_model, pfs_model)
+  priorpred_code <- make_priorpred(os_model, pfs_model)
+  postpred_code <- make_postpred(os_model, pfs_model)
+  loo_code <- make_loo(os_model, pfs_model)
 
   scode <- list()
 
@@ -74,15 +77,21 @@ create_stancode <- function(os_model,
     "\n}\n\n"
   )
 
-  # # generate generated quantities block
-  # scode$generated_quantities <- paste0(
-  #   "generated quantities {\n",
-  #   stancode$generated_quantities,
-  #   pfs_code$generated_quantities,
-  #   os_code$generated_quantities,
-  #   cf_code$generated_quantities,
-  #   "}\n"
-  # )
+  # generate generated quantities block
+  scode$generated_quantities <- paste0(
+    "generated quantities {\n",
+    stancode$generated_quantities$def,
+    pfs_code$generated_quantities$def,
+    os_code$generated_quantities$def,
+    stancode$generated_quantities$main,
+    cf_code$generated_quantities,
+    pfs_code$generated_quantities$main,
+    os_code$generated_quantities$main,
+    postpred_code,
+    priorpred_code,
+    loo_code,
+    "}\n"
+  )
 
   # combine all elements into a complete Stan model
   paste0(
@@ -90,8 +99,8 @@ create_stancode <- function(os_model,
     scode$data,
     scode$parameters,
     scode$trans_params,
-    scode$model#,
-    # scode$generated_quantities ##TODO:
+    scode$model,
+    scode$generated_quantities
     )
   }
 

@@ -1,21 +1,21 @@
 
 #' prep_S_data
-#' 
-#' @examples 
-#' 
+#'
+#' @examples
+#'
 #' stan_out <- rstan::extract(out)
 #' #' plot_dat <- prep_S_data(stan_out, event_type = "os")
-#' 
+#'
 #' ggplot(plot_dat, aes(month, mean, group = type, colour = type)) +
 #' geom_line() +
 #' ylab("Survival") +
 #' geom_ribbon(aes(x = month, ymin = lower, ymax = upper, fill = type),
 #'             linetype = 0,
 #'             alpha = 0.2)
-#'             
+#'
 prep_S_data <- function(stan_extract,
                         event_type = NA) {
-  
+
   if (is.na(event_type)) {
     S_pred <- "S_pred"
     S_0 <- "S_0"
@@ -26,7 +26,7 @@ prep_S_data <- function(stan_extract,
     S_pred <- "S_pfs_pred"
     S_0 <- "S_pfs"
   }
-  
+
   # rearrange to time as rows
   S_dat <-
     list(
@@ -42,7 +42,7 @@ prep_S_data <- function(stan_extract,
         as_tibble() %>%
         mutate(month = 1:n(),
                type = "S_bg"))
-  
+
   # means and credible intervals
   S_stats <-
     S_dat %>%
@@ -52,7 +52,7 @@ prep_S_data <- function(stan_extract,
     summarise(mean = mean(value),
               lower = quantile(value, probs = 0.025),
               upper = quantile(value, probs = 0.975))
-  
+
   S_stats
 }
 

@@ -87,6 +87,9 @@ yy <- gsub("gompertz_gompertz_", "Gompertz ", yy)
 yy <- gsub("weibull_weibull_", "Weibull ", yy)
 yy <- gsub("loglogistic_loglogistic_", "Log-logistic ", yy)
 yy <- gsub("lognormal_lognormal_", "Log-Normal ", yy)
+yy <- gsub("NIVOLUMAB\\+IPILIMUMAB", "Combined", yy)
+yy <- gsub("NIVOLUMAB", "Nivolumab", yy)
+yy <- gsub("IPILIMUMAB", "Ipilimumab", yy)
 
 xx <-
   cbind(
@@ -102,19 +105,19 @@ mcmc_intervals(xx) + xlim(0, 0.65)
 ggsave(filename = "plots/cf_forest_plot.png")
 
 as.data.frame(cf_global) %>%
-  setNames(scenarios_str) %>%
+  setNames(yy) %>%
   mcmc_intervals() +
   xlim(0, 0.65)
 ggsave(filename = "plots/cf_global_forest_plot.png")
 
 as.data.frame(cf_os) %>%
-  setNames(scenarios_str) %>%
+  setNames(yy) %>%
   mcmc_intervals() +
   xlim(0, 0.65)
 ggsave(filename = "plots/cf_os_forest_plot.png")
 
 as.data.frame(cf_pfs) %>%
-  setNames(scenarios_str) %>%
+  setNames(yy) %>%
   mcmc_intervals() +
   xlim(0, 0.65)
 ggsave(filename = "plots/cf_pfs_forest_plot.png")

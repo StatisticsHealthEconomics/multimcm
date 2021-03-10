@@ -9,6 +9,7 @@ library(dplyr)
 library(rstan)
 library(shinystan)
 library(dplyr)
+library(glue)
 library(ggplot2)
 
 # library(rstanbmcm)
@@ -196,7 +197,8 @@ out <-
     iter = 1000,
     thin = 10)
 
-
+setwd("~/R/rstanbmcm")
+stan_list <- list(out) %>% setNames(trta)
 
 
 

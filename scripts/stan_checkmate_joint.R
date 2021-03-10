@@ -174,7 +174,7 @@ stan_list <- list(out) %>% setNames(trta)
 
 
 
-
+## testing...
 source("R/create_stancode.R")
 source("R/create_block_code.R")
 source("R/bmcm_joint_stan_string.R")

@@ -6,23 +6,16 @@ create_pfs_code <- function(pfs_model) {
 
   scode <- list()
 
-  # common to all
   scode$data <-
-    c("\tint<lower=0> n_pfs;
-      int<lower=0> H_pfs;
-      vector[n_pfs] t_pfs;
-      vector[n_pfs] d_pfs;
-      matrix[n_pfs, H_pfs] X_pfs;
-      vector[H_pfs] mu_0_pfs;
-      vector<lower=0> [H_pfs] sigma_0_pfs;\n")
+    common_code_event_data("pfs")
 
   scode$trans_params <- list(
-    declarations =
+    def =
       c("\tvector[n_pfs] lp_pfs;\n"))
 
   if (pfs_model == "exp") {
-    scode$trans_params$declarations <-
-      paste0(scode$trans_params$declarations,
+    scode$trans_params$def <-
+      paste0(scode$trans_params$def,
              c("// rate parameters
              vector[n_pfs] lambda_pfs;"))
 
@@ -39,8 +32,8 @@ create_pfs_code <- function(pfs_model) {
     scode$parameters <-
       c("\treal<lower=0> shape_pfs;\n")
 
-    scode$trans_params$declarations <-
-      paste0(scode$trans_params$declarations,
+    scode$trans_params$def <-
+      paste0(scode$trans_params$def,
              c("// rate parameters
                vector[n_pfs] lambda_pfs;"))
 
@@ -60,8 +53,8 @@ create_pfs_code <- function(pfs_model) {
     scode$parameters <-
       c("\treal<lower=0> sd_pfs;\n")
 
-    scode$trans_params$declarations <-
-      paste0(scode$trans_params$declarations,
+    scode$trans_params$def <-
+      paste0(scode$trans_params$def,
              c("// rate parameters
         vector[n_pfs] mean_pfs;"))
 
@@ -75,29 +68,22 @@ create_pfs_code <- function(pfs_model) {
   scode
 }
 
-
+#
 create_os_code <- function(os_model) {
 
   scode <- list()
 
-  # common to all
   scode$data <-
-    c("\tint<lower=0> n_os;         // number of observations
-      int<lower=0> H_os;             // number of covariates
-      vector[n_os] t_os;             // observation times
-      vector[n_os] d_os;             // censoring indicator (1 = observed, 0 = censored)
-      matrix[n_os, H_os] X_os;       // matrix of covariates (with n rows and H columns)
-      vector[H_os] mu_0_os;
-      vector<lower=0> [H_os] sigma_0_os;\n")
+    common_code_event_data("os")
 
   scode$trans_params <-
     list(
-      declarations =
+      def =
         c("\tvector[n_os] lp_os;\n"))
 
   if (os_model == "exp") {
-    scode$trans_params$declarations <-
-      paste0(scode$trans_params$declarations,
+    scode$trans_params$def <-
+      paste0(scode$trans_params$def,
              c("// rate parameters
                vector[n_os] lambda_os;\n"))
 
@@ -114,8 +100,8 @@ create_os_code <- function(os_model) {
     scode$parameters <-
       c("\treal<lower=0> shape_os;\n")
 
-    scode$trans_params$declarations <-
-      paste0(scode$trans_params$declarations,
+    scode$trans_params$def <-
+      paste0(scode$trans_params$def,
              c("// rate parameters
               vector[n_os] lambda_os;"))
 
@@ -136,7 +122,7 @@ create_os_code <- function(os_model) {
       c("\treal<lower=0> sd_os;\n")
 
     scode$trans_params$declations <-
-      paste0(scode$trans_params$declarations,
+      paste0(scode$trans_params$def,
              c("// rate parameters
               vector[n_os] mean_os;"))
 
@@ -173,7 +159,7 @@ create_cf_code <- function(cf_model) {
       real lp_cf_pfs[cf_model != 1 ? 1 : 0];\n")
 
   scode$trans_params <- list(
-    declarations =
+    def =
       c("\treal<lower=0, upper=1> cf_global[cf_model == 3 ? 1 : 0];
       real<lower=0, upper=1> cf_os;
       real<lower=0, upper=1> cf_pfs;\n"),
@@ -228,7 +214,7 @@ create_code_skeleton <- function() {
       real beta_joint[joint_model];\n")
 
   scode$trans_params <- list(
-    declarations =
+    def =
       c("\tvector[n_os] lp_os_bg;
       vector[n_os] lp_pfs_bg;
 
@@ -323,4 +309,17 @@ tp <- function(wsp = 2) {
   wsp <- glue_collapse(rep(" ", wsp))
   paste0(wsp, "target += ")
 }
+
+
+common_code_event_data <- function(e) {
+  glue(
+    " int<lower=0> n_{e};\n",
+    " int<lower=0> H_{e};\n",
+    " vector[n_{e}] t_{e};\n",
+    " vector[n_{e}] d_{e};\n",
+    " matrix[n_{e}, H_{e}] X_{e};\n",
+    " vector[H_{e}] mu_0_{e};\n",
+    " vector<lower=0>[H_{e}] sigma_0_{e};\n")
+}
+
 

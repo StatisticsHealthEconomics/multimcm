@@ -8,6 +8,10 @@
 #'
 #' @return
 #' @export
+#' @importFrom glue glue
+#'
+#' @examples
+#' create_stancode("exp", "lognormal", 3, 1)
 #'
 create_stancode <- function(os_model,
                             pfs_model,
@@ -85,8 +89,6 @@ create_stancode <- function(os_model,
     os_code$generated_quantities$def,
     stancode$generated_quantities$main,
     cf_code$generated_quantities,
-    pfs_code$generated_quantities$main,
-    os_code$generated_quantities$main,
     postpred_code,
     priorpred_code,
     loo_code,

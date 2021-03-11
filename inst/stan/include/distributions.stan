@@ -311,6 +311,14 @@ real surv_lognormal_lpdf (real t, real d, real mu, real sigma) {
 * background (all-cause) and cancer
 */
 
+// alias for automated function name
+ real joint_exp_exp_lpdf(real t, real d, real rate1, real rate2) {
+  real lik;
+  lik = surv_exp_lpdf(t, d, rate1 + rate2);
+  return lik;
+ }
+
+
 // weibull
 
 real joint_exp_weibull_pdf(real t, real d, real shape, real scale, real rate) {

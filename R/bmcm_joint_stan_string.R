@@ -43,6 +43,10 @@ bmcm_joint_stan_string <- function(input_data,
                                    joint_model = TRUE,
                                    bg_model = 1,
                                    ...) {
+  rtn_wd <- getwd()
+  setwd("~/R/rstanbmcm/inst/stan")
+  on.exit(setwd(rtn_wd))
+
   data_os <-
     c(prep_stan_params(model_os, params_os),
       prep_stan_data(input_data,

@@ -81,6 +81,7 @@ bmcm_joint_stan_string <- function(input_data,
 
   res <-
     rstan::stan(
+      model_name = glue::glue("{model_os}_os {model_pfs}_pfs"),
       model_code = stancode,
       data = data_list,
       warmup = warmup,

@@ -6,6 +6,8 @@
 #'
 #' @param file_names Nested list of file names for Stan output
 #' @param stan_list List of Stan output
+#' @param facet Two separate plots for os and pfs?
+#' @param annot_cf Annotate with cure fractions?
 #'
 #' @return ggplot object
 #'
@@ -18,7 +20,9 @@
 #' load("data/file_names.RData")
 #'
 plot_S_joint <- function(file_names = NA,
-                         stan_list = NA) {
+                         stan_list = NA,
+                         facet = TRUE,
+                         annot_cf = TRUE) {
 
   fit_stan <- list()
   S_stats <- list()
@@ -68,16 +72,21 @@ plot_S_joint <- function(file_names = NA,
     bind_rows(.id = "event_type") %>%
     mutate(scenario = paste(event_type, Tx, sep = "_"))
 
+  add_facet <- function(facet) {list(if (facet) facet_grid(Tx ~ event_type))}
+
   p <-
     ggplot(plot_dat, aes(month, mean, group = type, colour = type)) +
     geom_line() +
-    facet_grid(Tx ~ event_type) +
+    add_facet(facet) +
     ylab("Survival") +
     geom_ribbon(aes(x = month, ymin = lower, ymax = upper, fill = type),
                 linetype = 0,
-                alpha = 0.2)
+                alpha = 0.2) +
+    ylim(0, 1)
 
-  p + geom_text(data = ann_text,
-                aes(x = 40, y = 1, label = label), inherit.aes = FALSE)
+  if (annot_cf) {
+    p <- p + geom_text(data = ann_text,
+                       aes(x = 40, y = 1, label = label), inherit.aes = FALSE)}
+  p
 }
 

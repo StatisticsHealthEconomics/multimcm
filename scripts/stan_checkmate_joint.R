@@ -45,7 +45,7 @@ trta_idx <- 3
 all_tx_names <- c("IPILIMUMAB", "NIVOLUMAB", "NIVOLUMAB+IPILIMUMAB")
 trta <- all_tx_names[trta_idx]
 
-model_os_idx <- 2
+model_os_idx <- 5
 model_pfs_idx <- 3
 model_names <- c("exp", "weibull", "gompertz", "loglogistic", "lognormal", "gengamma")
 model_os <- model_names[model_os_idx]
@@ -154,15 +154,19 @@ params_os <-
 #######
 
 out <-
-  bmcm_joint_stan_file(
-  # bmcm_joint_stan_string(
+  # bmcm_joint_stan_file(
+  bmcm_joint_stan_string(
     input_data = surv_input_data,
     model_os = model_os,
     model_pfs = model_pfs,
     tx_name = trta,
     params_pfs = params_pfs[[model_pfs]],
     params_os = params_os[[model_os]],
-    params_cf = params_cf[[cf_idx]][[model_pfs]],
+    params_cf =
+      if (is.null(params_cf[[cf_idx]][[model_pfs]])) {
+        params_cf[[cf_idx]]
+      } else {
+        params_cf[[cf_idx]][[model_pfs]]},
     cf_model = cf_idx,                # 1- shared; 2- separate; 3- hierarchical
     joint_model = FALSE,
     bg_model = bg_model_idx,
@@ -227,8 +231,31 @@ plot_prior_predictive(out, event_type = "os")
 plot_prior_predictive(out, event_type = "pfs")
 
 
+## posterior predictive checks
 ##TODO: for all distns
 # fileloc_out <- glue::glue("plots/post_pred_{model_os}_{model_pfs}_{cf_model_names[cf_idx]}_{bg_model}_{trta}.png")
 # plot_post_pred_KM(out, trta, surv_input_data)
 # plot_post_pred_KM(out, trta, surv_input_data, fileloc_out)
+
+
+# overlayed os, pfs plot
+
+gg <- plot_S_joint(stan_list = stan_list, facet = FALSE, annot_cf = FALSE)
+
+s_plot <-
+  gg +
+  geom_line(aes(x = time, y = surv),
+            data = km_data[km_data$event_type == "pfs", ],
+            lwd = 1,
+            inherit.aes = FALSE) +
+  geom_line(aes(x = time, y = surv),
+            data = km_data[km_data$event_type == "os", ],
+            lwd = 1,
+            inherit.aes = FALSE) +
+  xlim(0, 60)
+s_plot
+
+ggsave(s_plot,
+       filename = glue::glue(
+         "plots/S_plot_{model_os}_{model_pfs}_{cf_model_names[cf_idx]}_{bg_model}_{trta}.png"))
 

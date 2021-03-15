@@ -1,3 +1,5 @@
 ^rstanbmcm\.Rproj$
 ^\.Rproj\.user$
 ^README\.Rmd$
+data/
+plots/

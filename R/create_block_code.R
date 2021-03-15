@@ -45,6 +45,8 @@ create_pfs_code <- function(pfs_model) {
 
     scode$generated_quantities$def <-
       c("\treal pshape_pfs = gamma_rng(a_shape_pfs, b_shape_pfs);\n")
+    scode$generated_quantities$main <-
+      c("\tmean_pfs = exp(beta_pfs[1]);\n")
   }
 
   if (pfs_model == "lognormal") {
@@ -69,6 +71,8 @@ create_pfs_code <- function(pfs_model) {
 
     scode$generated_quantities$def <-
       c("\treal psd_pfs = gamma_rng(a_sd_pfs, b_sd_pfs);\n")
+    scode$generated_quantities$main <-
+      c("\tmean_pfs = beta_pfs[1];\n")
   }
 
   scode
@@ -110,7 +114,7 @@ create_os_code <- function(os_model) {
     scode$trans_params$def <-
       paste0(scode$trans_params$def,
              c("// rate parameters
-              vector[n_os] lambda_os;"))
+              vector[n_os] lambda_os;\n"))
 
     scode$trans_params$main <-
       c("lambda_os = exp(lp_os);\n")
@@ -119,22 +123,24 @@ create_os_code <- function(os_model) {
       c("shape_os ~ gamma(a_shape_os, b_shape_os);\n")
 
     scode$generated_quantities$def <-
-      c("\treal pshape_os = gamma_rng(a_shape_os, b_shape_os);")
+      c("\treal pshape_os = gamma_rng(a_shape_os, b_shape_os);\n")
+    scode$generated_quantities$main <-
+      c("\tmean_os = exp(beta_os[1]);\n")
   }
 
   if (os_model == "lognormal") {
     scode$data <-
-      c(scode$data,
-        "\treal<lower=0> a_sd_os;    // gamma hyper-parameters
-        real<lower=0> b_sd_os;\n")
+      paste0(scode$data,
+             c("\treal<lower=0> a_sd_os;    // gamma hyper-parameters
+              real<lower=0> b_sd_os;\n"))
 
     scode$parameters <-
       c("\treal<lower=0> sd_os;\n")
 
-    scode$trans_params$declations <-
+    scode$trans_params$def <-
       paste0(scode$trans_params$def,
              c("// rate parameters
-              vector[n_os] mu_os;"))
+              vector[n_os] mu_os;\n"))
 
     scode$trans_params$main <-
       c("mu_os = lp_os;\n")
@@ -143,7 +149,9 @@ create_os_code <- function(os_model) {
       c("\tsd_os ~ gamma(a_sd_os, b_sd_os);\n")
 
     scode$generated_quantities$def <-
-      c("\treal psd_os = gamma_rng(a_sd_os, b_sd_os);")
+      c("\treal psd_os = gamma_rng(a_sd_os, b_sd_os);\n")
+    scode$generated_quantities$main <-
+      c("\tmean_os = beta_os[1];\n")
   }
 
   scode
@@ -258,7 +266,8 @@ create_code_skeleton <- function() {
         lp_os = X_os*beta_os;
       }\n
       lp_pfs = X_pfs*beta_pfs;\n
-      if (bg_model == 1) {         // background survival with uncertainty
+      // background survival with uncertainty\n
+      if (bg_model == 1) {
         lp_os_bg = X_os*beta_bg;
         lp_pfs_bg = X_pfs*beta_bg;
       } else {
@@ -272,8 +281,8 @@ create_code_skeleton <- function() {
     c("\tbeta_os ~ normal(mu_0_os, sigma_0_os);
       beta_pfs ~ normal(mu_0_pfs, sigma_0_pfs);\n
       if (bg_model == 1) {
+        beta_bg ~ normal(mu_bg, sigma_bg);
       }\n
-      beta_bg ~ normal(mu_bg, sigma_bg);
       if (joint_model) {
         beta_joint ~ normal(mu_joint, sigma_joint);
       }\n")
@@ -316,11 +325,7 @@ create_code_skeleton <- function() {
       } else {
       // pbeta_bg = log(mean(h_bg_os));
       pbeta_bg = log(0.001);
-      }\n
-      // intercepts
-      mean_os = exp(beta_os[1]);
-      mean_pfs = exp(beta_pfs[1]);
-      \n
+      }\n\n
       if (bg_model == 1) {
         mean_bg = exp(beta_bg[1]);
       } else {
@@ -398,7 +403,7 @@ common_code_event_data <- function(e) {
     " vector[n_{e}] d_{e};\n",
     " matrix[n_{e}, H_{e}] X_{e};\n",
     " vector[H_{e}] mu_0_{e};\n",
-    " vector<lower=0>[H_{e}] sigma_0_{e};\n")
+    " vector<lower=0>[H_{e}] sigma_0_{e};\n\n")
 }
 
 
@@ -470,20 +475,20 @@ make_loo <- function(os_model, pfs_model) {
          weibull = c("shape", "lambda"),
          gompertz = c("shape", "lambda"),
          loglogistic = c("shape", "lambda"),
-         lognormal = c("mean", "sd"),
+         lognormal = c("mu", "sd"),
          gengamma = "")
 
   os_params <- paste0(distn_params[[os_model]], "_os")
   pfs_params <- paste0(distn_params[[pfs_model]], "_pfs")
 
-  os_params[grep("mean", os_params)] <-
-    paste0(os_params[grep("mean", os_params)], "[i]")
+  os_params[grep("mu", os_params)] <-
+    paste0(os_params[grep("mu", os_params)], "[i]")
 
   os_params[grep("lambda", os_params)] <-
     paste0(os_params[grep("lambda", os_params)], "[i]")
 
-  pfs_params[grep("mean", pfs_params)] <-
-    paste0(pfs_params[grep("mean", pfs_params)], "[i]")
+  pfs_params[grep("mu", pfs_params)] <-
+    paste0(pfs_params[grep("mu", pfs_params)], "[i]")
 
   pfs_params[grep("lambda", pfs_params)] <-
     paste0(pfs_params[grep("lambda", pfs_params)], "[i]")

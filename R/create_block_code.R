@@ -21,6 +21,9 @@ create_pfs_code <- function(pfs_model) {
 
     scode$trans_params$main <-
       c("lambda_pfs = exp(lp_pfs);\n")
+
+    scode$generated_quantities$main <-
+      c("\tmean_pfs = exp(beta_pfs[1]);\n")
   }
 
   if (pfs_model %in% c("gompertz", "loglogistic", "weibull")) {
@@ -100,6 +103,9 @@ create_os_code <- function(os_model) {
 
     scode$trans_params$main <-
       c("lambda_os = exp(lp_os);\n")
+
+    scode$generated_quantities$main <-
+      c("\tmean_os = exp(beta_os[1]);\n")
   }
 
   if (os_model %in% c("gompertz", "loglogistic", "weibull")) {

@@ -312,12 +312,17 @@ real surv_lognormal_lpdf (real t, real d, real mu, real sigma) {
 */
 
 // alias for automated function name
- real joint_exp_exp_lpdf(real t, real d, real rate1, real rate2) {
+real joint_exp_exp_lpdf(real t, real d, real rate1, real rate2) {
   real lik;
   lik = surv_exp_lpdf(t | d, rate1 + rate2);
   return lik;
- }
+}
 
+real exp_exp_Surv(real t, real rate1, real rate2) {
+  real Surv;
+  Surv = exp_Surv(t, rate1) * exp_Surv(t, rate2);
+  return Surv;
+}
 
 // weibull
 

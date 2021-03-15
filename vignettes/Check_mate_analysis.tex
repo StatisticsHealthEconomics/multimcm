@@ -44,6 +44,7 @@
 \urlstyle{same} % disable monospaced font for URLs
 \usepackage[margin=1in]{geometry}
 \usepackage{longtable,booktabs}
+\usepackage{calc} % for calculating minipage widths
 % Correct order of tables after \paragraph or \subparagraph
 \usepackage{etoolbox}
 \makeatletter
@@ -76,7 +77,7 @@
 \setlength{\cslhangindent}{1.5em}
 \newlength{\csllabelwidth}
 \setlength{\csllabelwidth}{3em}
-\newenvironment{CSLReferences}[3] % #1 hanging-ident, #2 entry spacing
+\newenvironment{CSLReferences}[2] % #1 hanging-ident, #2 entry spacing
  {% don't indent paragraphs
   \setlength{\parindent}{0pt}
   % turn on hanging indent if param 1 is 1
@@ -87,10 +88,10 @@
   \fi
  }%
  {}
-\usepackage{calc} % for \widthof, \maxof
+\usepackage{calc}
 \newcommand{\CSLBlock}[1]{#1\hfill\break}
-\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\maxof{\widthof{#1}}{\csllabelwidth}}{#1}}
-\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth}{#1}}
+\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{#1}}
+\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{#1}\break}
 \newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
 
 \title{Checkmate 067 study Bayesian mixture cure model analysis}
@@ -399,7 +400,7 @@ Weibull and log-Normal models.
 
 }
 
-\caption{\label{fig:IPI}Posterior survival curves for the mixture cure model and $ipilimumab$. The red line is cured background, light green and blue are uncured, and dark green and magenta are combined. a) Exponential uncured; b) Log-logistic uncured c) Gompertz uncured d) Weibull uncured e) Log-Normal uncured.}\label{fig:unnamed-chunk-3}
+\caption{\label{fig:IPI}Posterior survival curves for the mixture cure model and $ipilimumab$. The red line is cured background, light green and blue are uncured, and dark green and magenta are combined. a) Exponential uncured b) Log-logistic uncured c) Gompertz uncured d) Weibull uncured e) Log-Normal uncured.}\label{fig:unnamed-chunk-3}
 \end{figure}
 
 \begin{figure}
@@ -408,7 +409,7 @@ Weibull and log-Normal models.
 
 }
 
-\caption{\label{fig:NIVO}Posterior survival curves for the mixture cure model and $nivolumab$. The red line is cured background, light green and blue are uncured, and dark green and magenta are combined. a) Exponential uncured; b) Log-logistic uncured c) Gompertz uncured d) Weibull uncured e) Log-Normal uncured.}\label{fig:unnamed-chunk-4}
+\caption{\label{fig:NIVO}Posterior survival curves for the mixture cure model and $nivolumab$. The red line is cured background, light green and blue are uncured, and dark green and magenta are combined. a) Exponential uncured b) Log-logistic uncured c) Gompertz uncured d) Weibull uncured e) Log-Normal uncured.}\label{fig:unnamed-chunk-4}
 \end{figure}
 
 \begin{figure}
@@ -417,7 +418,7 @@ Weibull and log-Normal models.
 
 }
 
-\caption{\label{fig:NIVO+IPI}Posterior survival curves for the mixture cure model and dual $ipilimumab$ and $nivolumab$. The red line is cured background, light green and blue are uncured, and dark green and magenta are combined. a) Exponential uncured; b) Log-logistic uncured c) Gompertz uncured d) Weibull uncured e) Log-Normal uncured.}\label{fig:unnamed-chunk-5}
+\caption{\label{fig:NIVO+IPI}Posterior survival curves for the mixture cure model and dual $ipilimumab$ and $nivolumab$. The red line is cured background, light green and blue are uncured, and dark green and magenta are combined. a) Exponential uncured b) Log-logistic uncured c) Gompertz uncured d) Weibull uncured e) Log-Normal uncured.}\label{fig:unnamed-chunk-5}
 \end{figure}
 
 Figures \ref{fig:forest_global}, \ref{fig:forest_os} and
@@ -459,246 +460,342 @@ each scenario.
 
 \begin{longtable}[]{@{}lllllll@{}}
 \toprule
-\begin{minipage}[b]{0.03\columnwidth}\raggedright
+\begin{minipage}[b]{(\columnwidth - 6\tabcolsep) * \real{0.04}}\raggedright
 \strut
-\end{minipage} & \begin{minipage}[b]{0.09\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[b]{(\columnwidth - 6\tabcolsep) * \real{0.11}}\raggedright
 OS Distn\strut
-\end{minipage} & \begin{minipage}[b]{0.09\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[b]{(\columnwidth - 6\tabcolsep) * \real{0.11}}\raggedright
 PFS Distn\strut
-\end{minipage} & \begin{minipage}[b]{0.15\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[b]{(\columnwidth - 6\tabcolsep) * \real{0.18}}\raggedright
 Treatment\strut
-\end{minipage} & \begin{minipage}[b]{0.15\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[b]{(\columnwidth - 6\tabcolsep) * \real{0.18}}\raggedright
 \(cf\) (CrI)\strut
-\end{minipage} & \begin{minipage}[b]{0.15\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[b]{(\columnwidth - 6\tabcolsep) * \real{0.18}}\raggedright
 \(cf_{OS}\) (CrI)\strut
-\end{minipage} & \begin{minipage}[b]{0.15\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[b]{(\columnwidth - 6\tabcolsep) * \real{0.18}}\raggedright
 \(cf_{PFS}\) (CrI)\strut
 \end{minipage}\tabularnewline
 \midrule
 \endhead
-\begin{minipage}[t]{0.03\columnwidth}\raggedright
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.04}}\raggedright
 1\strut
-\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.11}}\raggedright
 exp\strut
-\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.11}}\raggedright
 exp\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.18}}\raggedright
 IPILIMUMAB\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.18}}\raggedright
 0.151 (0.068, 0.26)\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.18}}\raggedright
 0.196 (0.136, 0.255)\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.18}}\raggedright
 0.112 (0.079, 0.155)\strut
 \end{minipage}\tabularnewline
-\begin{minipage}[t]{0.03\columnwidth}\raggedright
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.04}}\raggedright
 2\strut
-\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.11}}\raggedright
 exp\strut
-\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.11}}\raggedright
 exp\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.18}}\raggedright
 NIVOLUMAB\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.18}}\raggedright
 0.378 (0.216, 0.557)\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.18}}\raggedright
 0.412 (0.35, 0.479)\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.18}}\raggedright
 0.321 (0.262, 0.379)\strut
 \end{minipage}\tabularnewline
-\begin{minipage}[t]{0.03\columnwidth}\raggedright
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.04}}\raggedright
 3\strut
-\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.11}}\raggedright
 exp\strut
-\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.11}}\raggedright
 exp\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.18}}\raggedright
 NIVOLUMAB+IPILIMUMAB\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.18}}\raggedright
 0.463 (0.328, 0.626)\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.18}}\raggedright
 0.526 (0.452, 0.597)\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.18}}\raggedright
 0.392 (0.334, 0.448)\strut
 \end{minipage}\tabularnewline
-\begin{minipage}[t]{0.03\columnwidth}\raggedright
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.04}}\raggedright
 4\strut
-\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.11}}\raggedright
 gompertz\strut
-\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.11}}\raggedright
 gompertz\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.18}}\raggedright
 IPILIMUMAB\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.18}}\raggedright
 0.164 (0.088, 0.275)\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.18}}\raggedright
 0.207 (0.13, 0.266)\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.18}}\raggedright
 0.114 (0.079, 0.148)\strut
 \end{minipage}\tabularnewline
-\begin{minipage}[t]{0.03\columnwidth}\raggedright
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.04}}\raggedright
 5\strut
-\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.11}}\raggedright
 gompertz\strut
-\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.11}}\raggedright
 gompertz\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.18}}\raggedright
 NIVOLUMAB\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.18}}\raggedright
 0.368 (0.247, 0.517)\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.18}}\raggedright
 0.423 (0.358, 0.494)\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.18}}\raggedright
 0.321 (0.261, 0.369)\strut
 \end{minipage}\tabularnewline
-\begin{minipage}[t]{0.03\columnwidth}\raggedright
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.04}}\raggedright
 6\strut
-\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.11}}\raggedright
 gompertz\strut
-\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.11}}\raggedright
 gompertz\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.18}}\raggedright
 NIVOLUMAB+IPILIMUMAB\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.18}}\raggedright
 0.458 (0.318, 0.612)\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.18}}\raggedright
 0.529 (0.477, 0.594)\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.18}}\raggedright
 0.395 (0.346, 0.446)\strut
 \end{minipage}\tabularnewline
-\begin{minipage}[t]{0.03\columnwidth}\raggedright
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.04}}\raggedright
 7\strut
-\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.11}}\raggedright
 loglogistic\strut
-\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.11}}\raggedright
 loglogistic\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.18}}\raggedright
 IPILIMUMAB\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.18}}\raggedright
 0.133 (0.061, 0.278)\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.18}}\raggedright
 0.133 (0.054, 0.206)\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.18}}\raggedright
 0.113 (0.075, 0.152)\strut
 \end{minipage}\tabularnewline
-\begin{minipage}[t]{0.03\columnwidth}\raggedright
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.04}}\raggedright
 8\strut
-\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.11}}\raggedright
 loglogistic\strut
-\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.11}}\raggedright
 loglogistic\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.18}}\raggedright
 NIVOLUMAB\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.18}}\raggedright
 0.348 (0.191, 0.526)\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.18}}\raggedright
 0.345 (0.231, 0.456)\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.18}}\raggedright
 0.325 (0.264, 0.382)\strut
 \end{minipage}\tabularnewline
-\begin{minipage}[t]{0.03\columnwidth}\raggedright
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.04}}\raggedright
 9\strut
-\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.11}}\raggedright
 loglogistic\strut
-\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.11}}\raggedright
 loglogistic\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.18}}\raggedright
 NIVOLUMAB+IPILIMUMAB\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.18}}\raggedright
 0.421 (0.266, 0.599)\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.18}}\raggedright
 0.459 (0.37, 0.535)\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.18}}\raggedright
 0.375 (0.327, 0.421)\strut
 \end{minipage}\tabularnewline
-\begin{minipage}[t]{0.03\columnwidth}\raggedright
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.04}}\raggedright
 10\strut
-\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.11}}\raggedright
 lognormal\strut
-\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.11}}\raggedright
 lognormal\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.18}}\raggedright
 IPILIMUMAB\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.18}}\raggedright
 0.236 (0.127, 0.303)\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.18}}\raggedright
 0.285 (0.198, 0.468)\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.18}}\raggedright
 0.177 (0.136, 0.293)\strut
 \end{minipage}\tabularnewline
-\begin{minipage}[t]{0.03\columnwidth}\raggedright
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.04}}\raggedright
 11\strut
-\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.11}}\raggedright
 lognormal\strut
-\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.11}}\raggedright
 lognormal\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.18}}\raggedright
 NIVOLUMAB\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.18}}\raggedright
 0.425 (0.286, 0.588)\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.18}}\raggedright
 0.486 (0.431, 0.546)\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.18}}\raggedright
 0.437 (0.39, 0.48)\strut
 \end{minipage}\tabularnewline
-\begin{minipage}[t]{0.03\columnwidth}\raggedright
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.04}}\raggedright
 12\strut
-\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.11}}\raggedright
 lognormal\strut
-\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.11}}\raggedright
 lognormal\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.18}}\raggedright
 NIVOLUMAB+IPILIMUMAB\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.18}}\raggedright
 0.431 (0.301, 0.581)\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.18}}\raggedright
 0.556 (0.494, 0.619)\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.18}}\raggedright
 0.42 (0.37, 0.481)\strut
 \end{minipage}\tabularnewline
-\begin{minipage}[t]{0.03\columnwidth}\raggedright
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.04}}\raggedright
 13\strut
-\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.11}}\raggedright
 weibull\strut
-\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.11}}\raggedright
 weibull\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.18}}\raggedright
 IPILIMUMAB\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.18}}\raggedright
 0.184 (0.095, 0.29)\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.18}}\raggedright
 0.229 (0.157, 0.295)\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.18}}\raggedright
 0.141 (0.107, 0.177)\strut
 \end{minipage}\tabularnewline
-\begin{minipage}[t]{0.03\columnwidth}\raggedright
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.04}}\raggedright
 14\strut
-\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.11}}\raggedright
 weibull\strut
-\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.11}}\raggedright
 weibull\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.18}}\raggedright
 NIVOLUMAB\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.18}}\raggedright
 0.375 (0.242, 0.541)\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.18}}\raggedright
 0.427 (0.346, 0.494)\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.18}}\raggedright
 0.326 (0.27, 0.394)\strut
 \end{minipage}\tabularnewline
-\begin{minipage}[t]{0.03\columnwidth}\raggedright
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.04}}\raggedright
 15\strut
-\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.11}}\raggedright
 weibull\strut
-\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.11}}\raggedright
 weibull\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.18}}\raggedright
 NIVOLUMAB+IPILIMUMAB\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.18}}\raggedright
 0.471 (0.328, 0.647)\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.18}}\raggedright
 0.523 (0.461, 0.58)\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 6\tabcolsep) * \real{0.18}}\raggedright
 0.399 (0.35, 0.462)\strut
 \end{minipage}\tabularnewline
 \bottomrule

@@ -41,12 +41,12 @@ surv_input_data$OS_rate <- surv_input_data$OS_rate/12
 
 save_res <- TRUE
 
-trta_idx <- 1
+trta_idx <- 3
 all_tx_names <- c("IPILIMUMAB", "NIVOLUMAB", "NIVOLUMAB+IPILIMUMAB")
 trta <- all_tx_names[trta_idx]
 
-model_os_idx <- 1
-model_pfs_idx <- 1
+model_os_idx <- 3
+model_pfs_idx <- 3
 model_names <- c("exp", "weibull", "gompertz", "loglogistic", "lognormal")#, "gengamma")
 model_os <- model_names[model_os_idx]
 model_pfs <- model_names[model_pfs_idx]

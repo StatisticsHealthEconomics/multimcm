@@ -242,7 +242,7 @@ plot_prior_predictive(out, event_type = "pfs")
 
 gg <- plot_S_joint(stan_list = stan_list, facet = FALSE, annot_cf = FALSE)
 
-s_plot <-
+s_plot2 <-
   gg +
   geom_line(aes(x = time, y = surv),
             data = km_data[km_data$event_type == "pfs", ],
@@ -253,9 +253,9 @@ s_plot <-
             lwd = 1,
             inherit.aes = FALSE) +
   xlim(0, 60)
-s_plot
+s_plot2
 
-ggsave(s_plot,
+ggsave(s_plot2,
        filename = glue::glue(
          "plots/S_plot_{model_os}_{model_pfs}_{cf_model_names[cf_idx]}_{bg_model}_{trta}.png"))
 

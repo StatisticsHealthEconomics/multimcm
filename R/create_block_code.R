@@ -329,12 +329,13 @@ create_code_skeleton <- function() {
       if (bg_model == 1) {
       pbeta_bg = normal_rng(mu_bg[1], sigma_bg[1]);
       } else {
-      // pbeta_bg = log(mean(h_bg_os));
+      //pbeta_bg = log(mean(h_bg_os));
       pbeta_bg = log(0.001);
       }\n\n
       if (bg_model == 1) {
         mean_bg = exp(beta_bg[1]);
       } else {
+        //mean_bg = mean(h_bg_os);
         mean_bg = 0.001;
       }\n")
 

@@ -4,7 +4,7 @@
 #' Default parameters for priors if not supplied.
 #'
 #' @param model exp, loglogistic, weibull, gompertz, lognormal. gengamma
-#' @param params
+#' @param params user-supplied hyperparameters
 #' @return hyper-parameters
 #' @name prep_stan_params
 NULL

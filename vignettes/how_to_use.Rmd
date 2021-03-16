@@ -23,8 +23,12 @@ This is a basic introduction to how to use `rstanbmcm` to fit Bayesian mixture c
 We will use the Checkmate 067 study data set.
 The data have already been arranged in to the correct format and saved within the package so we can load it as follows.
 
-```{r}
+```{r eval=FALSE}
 data("surv_input_data", package = "rstanbmcm")
+```
+
+```{r echo=FALSE}
+load("~/R/rstanbmcm/data/surv_input_data.RData")
 ```
 
 Required fields include event times (`os`, `pfs`) and censoring indicators (`os_event`, `pfs_event`) for both OS and PFS.
@@ -49,7 +53,7 @@ library(rstan)
 library(shinystan)
 library(dplyr)
 library(ggplot2)
-library(rstanbmcm)
+# library(rstanbmcm)
 ```
 
 For demonstration purposes we will select a single treatment and fit Exponential distributions to both OS and PFS.
@@ -68,30 +72,31 @@ options(mc.cores = parallel::detectCores() - 1)
 ```
 
 Now we are ready to do the model fitting.
-There are 2 options to use.
+There are 3 options to use.
 
-* `bmcm_joint_stan_file()`: calls the Stan file directly from R without pre-compiling. This is useful for development.
-* `bmcm_joint_stan()`: uses the pre-compiled Stan code.
+* `bmcm_joint_stan_string`: Constructs the Stan code on-the-fly, meaning it is flexible and can run all distributions combinations. It calls the Stan file directly from R without pre-compiling. This is useful for development.
+* `bmcm_joint_stan_file()`: Same as above but for pre-written code. Only available for same-distribution OS-PFS pairs.
+* `bmcm_joint_stan()`: Uses the pre-compiled Stan code. Quicker to run. Like `bmcm_joint_stan_file()` only for a subset of OS-PFS distribution pairs.
 
-An example call to `bmcm_joint_stan_file` is given below.
+An example call to `bmcm_joint_stan_string` is given below.
+We recommend using this because it is the most widely-applicable.
+The other functions can be used for testing.
 
 ```{r eval=FALSE}
 out <-
-  bmcm_joint_stan_file(
+  bmcm_joint_stan_string(
     input_data = surv_input_data,
     model_os = i,
     model_pfs = k,
     tx_name = j,
-    params_pfs = list(mu_0 = c(-3, 0),
-                      sigma_0 = c(0.5, 0.01)),
-    params_os = list(mu_0 = c(-3, 0),
-                     sigma_0 = c(0.4, 1)),
-    params_cf = list(mu_cf_os = array(-0.8, 1),
-                     mu_cf_pfs = array(-0.8, 1),
-                     sd_cf_os = array(0.5, 1),
-                     sd_cf_pfs = array(0.5, 1)),
-    cf_model = 2,
+    params_cf =
+      list(mu_cf_gl = array(-0.8, 1),
+           sigma_cf_gl = array(2, 1),
+           sd_cf_os = array(0.5, 1),
+           sd_cf_pfs = array(0.5, 1))
+    cf_model = 3,
     joint_model = FALSE,
+    bg_model = 2,
     warmup = 100,
     iter = 1000,
     thin = 10)
@@ -102,13 +107,17 @@ out <-
 * The first thing to note is that we supply the study data as the first argument `input_data`.
 We then define which distributions we want to fit to the OS anf PFS data, followed by the particular treatment subset of data to use from `input_data`.
 
-* The next 3 arguments `params_pfs`, `params_os` and `params_cf` are the prior parameters for the PFS, OS and cure fraction distributions respectively. These must be supplied as a list. The two values for each parameter corresponds to the intercept and age effect in the linear equation component of the rate regression. For the parameters that are optional we have to wrap them with `array(.,1)` because Stan expects an array object even when it is of dimension (1,1). The cure fraction parameters here are optional because there are alternative ways of defining its prior i.e. using a Beta distribution or using the same prior for both OS and PFS. This example is for the separate cure fraction model.
+* The optional arguments `params_pfs`, `params_os`  are the prior parameters for the PFS, OS distributions respectively. If not provided then the function uses default values. These must be supplied as a list when done so. The two values for each parameter corresponds to the intercept and age effect in the linear equation component of the rate regression. For the parameters that are optional we have to wrap them with `array(.,1)` because Stan expects an array object even when it is of dimension (1,1).
+
+* `params_cf` is the prior parameters for the cure fraction. The cure fraction parameters here are optional because there are alternative ways of defining its prior i.e. using a Beta distribution or using the same prior for both OS and PFS. This example is for the hierarchical cure fraction model.
 
 * `cf_model` defines whether this is a pooled (1), separate (2) or hierarchical (3) cure fraction model.
 
 * `joint_model` is a logical argument defining whether we model the OS and PFS event times jointly. If `joint_model = TRUE` then we must also pass the prior parameters using the `params_joint` argument.
 
-* Finally, the remaining arguments are passed directly to the Stan engine.
+* `bg_model` is the background model. The current options are Exponential distribution (1) or empirical point estimates from WHO life-tables (2). If the former then the function uses a default prior.
+
+* Finally, the remaining arguments are passed directly to the Stan engine for the HMC.
 
 
 ## Results
@@ -119,13 +128,13 @@ Below we give some basic output specific to `rstanbmcm`.
 ### Output data
 
 ```{r echo=FALSE}
-stan_exp_exp_IPI_ <- readRDS("~/R/rstanbmcm/data/independent/cf separate/stan_exp_exp_IPILIMUMAB_.Rds")
+stan_exp_exp_IPI <- readRDS("~/R/rstanbmcm/data/independent/cf separate/bg_fixed/stan_exp_exp_IPILIMUMAB.Rds")
 ```
 
 We can view the raw output from running the Stan model using
 
 ```{r}
-res <- extract(stan_exp_exp_IPI_)
+res <- extract(stan_exp_exp_IPI)
 ```
 
 The available posterior samples are
@@ -142,15 +151,21 @@ names(res)
 
 The function `plot_S_joint()` takes a list of multiple Stan runs and creates `ggplot2` grid object of survival curves for cured, uncured and mixed with 95% credible intervals.
 In our example we simply create a list of one element.
-```{r warning=FALSE}
-stan_list <- list("IPILIMUMAB" = stan_exp_exp_IPI_)
-gg <- rstanbmcm:::plot_S_joint(stan_list = stan_list)
+
+```{r echo=FALSE}
+source("../R/plot_S_joint.R")
+source("../R/prep_S_data.R")
+```
+
+```{r warning=FALSE, message=FALSE}
+stan_list <- list("IPILIMUMAB" = stan_exp_exp_IPI)
+gg <- plot_S_joint(stan_list = stan_list)
 ```
 
 In addition, we overlay the Kaplan-Meier curves for the original data using the `survival` package.
 Note that this will always be slightly different since this is for the trial case-mix and the posterior survival curves are for the _average_ patient.
 
-```{r fig.width=7, warning=FALSE}
+```{r fig.width=7, warning=FALSE, message=FALSE}
 library(survival)
 
 trta <- "IPILIMUMAB"
@@ -173,7 +188,7 @@ gg + geom_line(aes(x = time, y = surv),
                data = km_data,
                lwd = 1,
                inherit.aes = FALSE) +
-  xlim(0, 60)
+  xlim(0, 60) + ylim(0, 1)
 ```
 
 

@@ -1,3 +1,4 @@
+# Stan code blocks for create_stancode() ----------------------------------
 
 #' @examples
 #' lapply(create_pfs_code("lognormal"), cat)

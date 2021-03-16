@@ -85,69 +85,6 @@ bg_model_idx <- 2
 bg_model_names <- c("bg_distn", "bg_fixed")
 bg_model <- bg_model_names[bg_model_idx]
 
-params_pfs <-
-  list(exp =
-         list(mu_0 = c(-3, 0),
-              sigma_0 = c(0.5, 0.01)),
-       loglogistic =
-         list(a_shape = 1,
-              b_shape = 1,
-              mu_0 = c(3, 0),
-              sigma_0 = c(0.5, 0.01)),
-       weibull =
-         list(a_shape = 1,
-              b_shape = 1,
-              mu_0 = c(3, 0),
-              sigma_0 = c(0.5, 0.01)),
-       gompertz =
-         list(a_shape = 1,
-              b_shape = 1000,
-              mu_0 = c(-3, 0),
-              sigma_0 = c(0.5, 0.01)),
-       lognormal =
-         list(a_sd = 1,
-              b_sd = 2,
-              mu_0 = c(1.5, 0),
-              sigma_0 = c(0.5, 0.01)),
-       gengamma =
-         list(a_mu = 1,
-              b_mu = 1,
-              a_Q = 2,
-              b_Q = 1,
-              mu_0 = c(-3, 0),
-              sigma_0 = c(0.5, 0.01)))
-
-params_os <-
-  list(exp =
-         list(mu_0 = c(-3, 0),
-              sigma_0 = c(0.4, 1)),
-       loglogistic =
-         list(a_shape = 1,
-              b_shape = 1,
-              mu_0 = c(3, 0),
-              sigma_0 = c(0.4, 1)),
-       weibull =
-         list(a_shape = 1,
-              b_shape = 1,
-              mu_0 = c(3, 0),
-              sigma_0 = c(0.4, 1)),
-       gompertz =
-         list(a_shape = 1,
-              b_shape = 1000,
-              mu_0 = c(-3, 0),
-              sigma_0 = c(0.5, 1)),
-       lognormal =
-         list(a_sd = 2,
-              b_sd = 1,
-              mu_0 = c(2.5, 0),
-              sigma_0 = c(0.5, 0.01)),
-       gengamma =
-         list(a_mu = 1,
-              b_mu = 1,
-              a_Q = 2,
-              b_Q = 1,
-              mu_0 = c(-3, 0),
-              sigma_0 = c(0.5, 0.01)))
 
 #######
 # run #
@@ -160,8 +97,6 @@ out <-
     model_os = model_os,
     model_pfs = model_pfs,
     tx_name = trta,
-    params_pfs = params_pfs[[model_pfs]],
-    params_os = params_os[[model_os]],
     params_cf =
       if (is.null(params_cf[[cf_idx]][[model_pfs]])) {
         params_cf[[cf_idx]]

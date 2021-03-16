@@ -22,6 +22,7 @@
 #' @param bg_model Background model. 1: Exponential distribution; 2: Direct fixed point values from life-table
 #' @param ... Additional arguments
 #'
+#' @importFrom glue glue
 #' @import rstan
 #' @import dplyr
 #' @return stanfit object
@@ -48,7 +49,7 @@ bmcm_joint_stan_string <- function(input_data,
   on.exit(setwd(rtn_wd))
 
   data_os <-
-    c(prep_stan_params(model_os, params_os),
+    c(prep_os_params(model_os, params_os),
       prep_stan_data(input_data,
                      event_type = "OS",
                      tx_name,
@@ -56,7 +57,7 @@ bmcm_joint_stan_string <- function(input_data,
                      bg_model))
 
   data_pfs <-
-    c(prep_stan_params(model_pfs, params_pfs),
+    c(prep_pfs_params(model_pfs, params_pfs),
       prep_stan_data(input_data,
                      event_type = "PFS",
                      tx_name,

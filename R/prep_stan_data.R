@@ -8,6 +8,7 @@
 #' @param tx_name IPILIMUMAB, NIVOLUMAB, NIVOLUMAB+IPILIMUMAB
 #' @param centre_age Logical
 #' @param bg_model Background model. 1: Exponential distribution; 2: fixed point values from life-table
+#' @param bg_hr background all-cause mortality hazard ratio
 #'
 #' @return List;
 #'         sample size,
@@ -22,7 +23,8 @@ prep_stan_data <- function(input_data,
                            event_type,
                            tx_name,
                            centre_age,
-                           bg_model = 1) {
+                           bg_model = 1,
+                           bg_hr = 1) {
 
   event_type <- match.arg(arg = event_type, c("PFS", "OS"))
   tx_name <- match.arg(arg = tx_name,
@@ -53,7 +55,7 @@ prep_stan_data <- function(input_data,
   # background hazard point values
   h_bg <-
     if (bg_model == 2) {
-      tx_dat[[tx_name]][[5]]
+      tx_dat[[tx_name]][[5]]*bg_hr
     } else {
       numeric(0)}
 

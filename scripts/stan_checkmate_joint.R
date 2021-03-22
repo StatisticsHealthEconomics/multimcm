@@ -45,13 +45,13 @@ trta_idx <- 3
 all_tx_names <- c("IPILIMUMAB", "NIVOLUMAB", "NIVOLUMAB+IPILIMUMAB")
 trta <- all_tx_names[trta_idx]
 
-model_os_idx <- 3
-model_pfs_idx <- 3
+model_os_idx <- 5
+model_pfs_idx <- 5
 model_names <- c("exp", "weibull", "gompertz", "loglogistic", "lognormal")#, "gengamma")
 model_os <- model_names[model_os_idx]
 model_pfs <- model_names[model_pfs_idx]
 
-cf_idx <- 2
+cf_idx <- 3
 cf_model_names <- c("cf pooled", "cf separate", "cf hier")
 
 cf_hier <-
@@ -60,7 +60,7 @@ cf_hier <-
        sd_cf_os = array(0.5, 1),
        sd_cf_pfs = array(0.5, 1))
 
-params_cf <-
+params_cf_lup <-
   list("cf pooled" =
          list(mu_cf_gl = array(-0.8, 1),
               sigma_cf_gl = array(2, 1)),
@@ -81,9 +81,18 @@ params_cf <-
                      sd_cf_os = array(0.5, 1),
                      sd_cf_pfs = array(0.5, 1))))
 
+params_cf <-
+  if (is.null(params_cf_lup[[cf_idx]][[model_pfs]])) {
+    params_cf_lup[[cf_idx]]
+  } else {
+    params_cf_lup[[cf_idx]][[model_pfs]]
+  }
+
 bg_model_idx <- 2
 bg_model_names <- c("bg_distn", "bg_fixed")
 bg_model <- bg_model_names[bg_model_idx]
+
+bg_hr <- 1.63
 
 
 #######
@@ -97,14 +106,11 @@ out <-
     model_os = model_os,
     model_pfs = model_pfs,
     tx_name = trta,
-    params_cf =
-      if (is.null(params_cf[[cf_idx]][[model_pfs]])) {
-        params_cf[[cf_idx]]
-      } else {
-        params_cf[[cf_idx]][[model_pfs]]},
-    cf_model = cf_idx,                # 1- shared; 2- separate; 3- hierarchical
+    params_cf = params_cf,
+    cf_model = cf_idx,            # 1- shared 2- separate 3- hierarchical
     joint_model = FALSE,
     bg_model = bg_model_idx,
+    bg_hr = bg_hr,
     warmup = 100,
     iter = 1000,
     thin = 10)
@@ -113,7 +119,7 @@ out <-
 if (save_res) {
   saveRDS(out,
           file = glue::glue(
-            "data/independent/{cf_model_names[cf_idx]}/{bg_model}/stan_{model_os}_{model_pfs}_{trta}.Rds"))}
+            "data/independent/{cf_model_names[cf_idx]}/{bg_model}_hr{bg_hr}/stan_{model_os}_{model_pfs}_{trta}.Rds"))}
 
 stan_list <- list(out) %>% setNames(trta)
 
@@ -159,7 +165,7 @@ s_plot
 
 ggsave(s_plot,
        filename = glue::glue(
-         "plots/S_plots_{model_os}_{model_pfs}_{cf_model_names[cf_idx]}_{bg_model}_{trta}.png"))
+         "plots/S_plots_{model_os}_{model_pfs}_{cf_model_names[cf_idx]}_{bg_model}_hr{bg_hr}_{trta}.png"))
 
 
 plot_prior_predictive(out, event_type = "os")
@@ -192,5 +198,5 @@ s_plot2
 
 ggsave(s_plot2,
        filename = glue::glue(
-         "plots/S_plot_{model_os}_{model_pfs}_{cf_model_names[cf_idx]}_{bg_model}_{trta}.png"))
+         "plots/S_plot_{model_os}_{model_pfs}_{cf_model_names[cf_idx]}_{bg_model}_hr{bg_hr}_{trta}.png"))
 

@@ -20,6 +20,7 @@
 #' @param cf_model Select cure fraction model. 1: shared; 2: separate ;3: hierarchical
 #' @param joint_model Logical. Select joint event time model. TRUE: joint model; FALSE: separate
 #' @param bg_model Background model. 1: Exponential distribution; 2: Direct fixed point values from life-table
+#' @param bg_hr background all-cause mortality hazard ratio
 #' @param ... Additional arguments
 #'
 #' @importFrom glue glue
@@ -43,6 +44,7 @@ bmcm_joint_stan_string <- function(input_data,
                                    cf_model = 3,
                                    joint_model = TRUE,
                                    bg_model = 1,
+                                   bg_hr = 1,
                                    ...) {
   rtn_wd <- getwd()
   setwd("~/R/rstanbmcm/inst/stan")
@@ -54,7 +56,8 @@ bmcm_joint_stan_string <- function(input_data,
                      event_type = "OS",
                      tx_name,
                      centre_age,
-                     bg_model))
+                     bg_model,
+                     bg_hr))
 
   data_pfs <-
     c(prep_pfs_params(model_pfs, params_pfs),
@@ -62,7 +65,8 @@ bmcm_joint_stan_string <- function(input_data,
                      event_type = "PFS",
                      tx_name,
                      centre_age,
-                     bg_model))
+                     bg_model,
+                     bg_hr))
 
   names(data_os) <- paste(names(data_os), "os", sep = "_")
   names(data_pfs) <- paste(names(data_pfs), "pfs", sep = "_")

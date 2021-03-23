@@ -15,20 +15,23 @@ bmcm_joint_stan_fileTx <- function(input_data,
                                    cf_model = 3,
                                    joint_model = TRUE,
                                    bg_model = 1,
+                                   bg_hr = 1,
                                    ...) {
   data_os <-
-    c(prep_stan_params(model_os, params_os),
+    c(prep_os_params(model_os, params_os),
       prep_stan_dataTx(input_data,
                        event_type = "OS",
                        centre_age,
-                       bg_model))
+                       bg_model,
+                       bg_hr))
   
   data_pfs <-
-    c(prep_stan_params(model_pfs, params_pfs),
+    c(prep_pfs_params(model_pfs, params_pfs),
       prep_stan_dataTx(input_data,
                        event_type = "PFS",
                        centre_age,
-                       bg_model))
+                       bg_model,
+                       bg_hr))
   
   names(data_os) <- paste(names(data_os), "os", sep = "_")
   names(data_pfs) <- paste(names(data_pfs), "pfs", sep = "_")
@@ -36,9 +39,9 @@ bmcm_joint_stan_fileTx <- function(input_data,
   data_list <-
     c(data_os,
       data_pfs,
-      prep_shared_params(params_cf,
-                         params_joint,
-                         bg_model),
+      prep_shared_paramsTx(params_cf,
+                           params_joint,
+                           bg_model),
       cf_model = cf_model,
       joint_model = joint_model,
       bg_model = bg_model)
@@ -57,12 +60,6 @@ bmcm_joint_stan_fileTx <- function(input_data,
       thin = thin,
       control = list(adapt_delta = 0.99,
                      max_treedepth = 20),
-      # init = list(
-      #   list(curefrac = 0.4,
-      #        beta_os = c(-3, 0.1),
-      #        beta_pfs = c(-3, 0.1),
-      #        beta_bg = c(-8, 0.1),
-      #        beta_joint = 0.1)),
       chains = chains, ...)
   
   return(res)

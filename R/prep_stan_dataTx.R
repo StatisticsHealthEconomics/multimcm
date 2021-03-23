@@ -61,7 +61,7 @@ prep_stan_dataTx <- function(input_data,
       numeric(0)}
   
   list(
-    n = table(surv_input_data$TRTA),
+    n = c(table(surv_input_data$TRTA)),
     t = cbind.fill(split(tx_dat[[2]], tx_dat$TRTA)),
     d = cbind.fill(split(tx_dat[[3]], tx_dat$TRTA)),
     H = 2,

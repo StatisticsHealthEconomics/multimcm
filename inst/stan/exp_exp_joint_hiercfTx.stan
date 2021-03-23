@@ -3,43 +3,44 @@
 
 
 functions {
-  #include /include/distributions.stan
+#include /include/distributions.stan
 }
 
 data {
   int<lower=1> nTx;
-  int<lower=0> n_os[nTx];         // number of observations
+  int<lower=0> N_os;             // total number of observations
+  int<lower=0> N_pfs;
+  int<lower=0> n_os[nTx];         // group sizes
   int<lower=0> n_pfs[nTx];
-  int<lower=0> H_os;             // number of covariates
+  int<lower=0> H_os;              // number of covariates
   int<lower=0> H_pfs;
 
-  matrix[n_os, nTx] t_os;        // observation times
-  matrix[n_pfs, nTx] t_pfs;
+  real[N_os] t_os;        // observation times
+  real[N_pfs] t_pfs;
 
-  matrix[n_os, nTx] d_os;             // censoring indicator (1 = observed, 0 = censored)
-  matrix[n_pfs, nTx] d_pfs;
+  real[N_os] d_os;        // censoring indicator (1 = observed, 0 = censored)
+  real[N_pfs] d_pfs;
 
-  matrix[n_os, H_os, nTx] X_os;       // matrix of covariates (with n rows and H columns)
-  matrix[n_pfs, H_pfs, nTx] X_pfs;
+  matrix[N_os, H_os] X_os;       // matrix of covariates (with n rows and H columns)
+  matrix[N_pfs, H_pfs] X_pfs;
 
   vector[H_os] mu_0_os;
   vector[H_pfs] mu_0_pfs;
   vector<lower=0> [H_os] sigma_0_os;
   vector<lower=0> [H_pfs] sigma_0_pfs;
 
-  //TODO: what to do when different type/number covariates for os and pfs?
   int<lower=1, upper=2> bg_model;
   vector[bg_model == 1 ? H_os : 0] mu_bg;
   vector<lower=0>[bg_model == 1 ? H_os : 0] sigma_bg;
-  vector[bg_model == 2 ? n_os : 0] h_bg_os;
-  vector[bg_model == 2 ? n_pfs : 0] h_bg_pfs;
+  vector[bg_model == 2 ? N_os : 0] h_bg_os;
+  vector[bg_model == 2 ? N_pfs : 0] h_bg_pfs;
 
   int<lower=0, upper=1> joint_model;
   real mu_joint[joint_model];
   real<lower=0> sigma_joint[joint_model];
 
   int<lower=1, upper=3> cf_model;         // cure fraction
-  real mu_cf_gl[cf_model == 3 ? 1 : 0];   // 1- shared; 2- separate; 3- hierarchical
+  // 1- shared; 2- separate; 3- hierarchical
   real mu_cf_os[cf_model == 2 ? 1 : 0];
   real mu_cf_pfs[cf_model == 2 ? 1 : 0];
   real<lower=0> sigma_cf_gl[cf_model == 3 ? 1 : 0];
@@ -49,7 +50,10 @@ data {
   real b_cf[cf_model == 1 ? 1 : 0];
 
   int<lower=0> t_max;
-  matrix[nTx, nTx] Tx_flag;
+
+  matrix[nTx, nTx] Tx_dmat;         // treatment design matrix
+  vector[nTx] mu_alpha;
+  vector<lower=0>[nTx] sigma_alpha;
 }
 
 parameters {
@@ -58,7 +62,6 @@ parameters {
   vector[bg_model == 1 ? H_os : 0] beta_bg;
   real beta_joint[joint_model];
 
-  real alpha0;
   vector[nTx] alpha;
 
   real<lower=0, upper=1> cf_pooled[cf_model == 1 ? 1 : 0];
@@ -68,26 +71,41 @@ parameters {
 }
 
 transformed parameters {
-  matrix[n_os, nTx] lp_os;
-  matrix[n_pfs, nTx] lp_pfs;
-  matrix[n_os, nTx] lp_os_bg;
-  matrix[n_os, nTx] lp_pfs_bg;
+  vector[N_os] lp_os;
+  vector[N_pfs] lp_pfs;
+  vector[N_os] lp_os_bg;
+  vector[N_pfs] lp_pfs_bg;
 
-  matrix[n_os, nTx] lambda_os;
-  matrix[n_pfs, nTx] lambda_pfs;
-  matrix[n_os, nTx] lambda_os_bg;
-  matrix[n_os, nTx] lambda_pfs_bg;
+  vector[N_os] lambda_os;
+  vector[N_pfs] lambda_pfs;
+  vector[N_os] lambda_os_bg;
+  vector[N_pfs] lambda_pfs_bg;
 
   real<lower=0, upper=1> cf_global[cf_model == 3 ? 1 : 0];
-  real<lower=0, upper=1> cf_os;
-  real<lower=0, upper=1> cf_pfs;
+  real<lower=0, upper=1> cf_os[nTx];
+  real<lower=0, upper=1> cf_pfs[nTx];
 
-  lp_os[Tx] = X_os[,,Tx]*beta_os;
-  lp_pfs[Tx] = X_pfs[,,Tx]*beta_pfs;
+  vector[cf_model == 3 ? nTx : 0] mu_cf_gl;
 
-  if (bg_model == 1) {         // background survival with uncertainty
-  lp_os_bg[Tx] = X_os[,,Tx]*beta_bg;
-  lp_pfs_bg[Tx] = X_pfs[,,Tx]*beta_bg;
+  int pos_os;
+  int pos_pfs;
+
+  for (Tx in 1:nTx) {
+    pos_os = 1;
+    pos_pfs = 1;
+
+    lp_os[1:n_os[Tx], Tx] = block(X_os, pos_os, 1, n_os[Tx], H_os)*beta_os;
+    lp_pfs[1:n_os[Tx], Tx] = block(X_pfs, pos_pfs, 1, n_pfs[Tx], H_pfs)*beta_os;
+  }
+
+  if (bg_model == 1) {          // background survival with uncertainty
+    pos_os = 1;
+    pos_pfs = 1;
+
+    for (Tx in 1:nTx) {
+      lp_os_bg[1:n_os[Tx], Tx] = block(X_os, pos_os, 1, n_os[Tx], H_os)*beta_bg;
+      lp_pfs_bg[1:n_pfs[Tx], Tx] = block(X_pfs, pos_pfs, 1, n_pfs[Tx], H_pfs)*beta_bg;
+    }
   } else {
     lp_os_bg = log(h_bg_os);
     lp_pfs_bg = log(h_bg_pfs);
@@ -101,18 +119,21 @@ transformed parameters {
   lambda_pfs = exp(lp_pfs);
 
   if (cf_model == 3) {
+    mu_cf_gl = Tx_dmat*alpha;
+
     cf_global = inv_logit(lp_cf_global);
   }
   if (cf_model != 1) {
-    cf_os = inv_logit(lp_cf_os[1]);
-    cf_pfs = inv_logit(lp_cf_pfs[1]);
+    cf_os = inv_logit(lp_cf_os);
+    cf_pfs = inv_logit(lp_cf_pfs);
   } else {
-    cf_os = cf_pooled[1];
-    cf_pfs = cf_pooled[1];
+    cf_os = cf_pooled;
+    cf_pfs = cf_pooled;
   }
 }
 
 model {
+  // priors
   beta_os ~ normal(mu_0_os, sigma_0_os);
   beta_pfs ~ normal(mu_0_pfs, sigma_0_pfs);
 
@@ -126,9 +147,10 @@ model {
 
   // cure fraction
   if (cf_model == 3) {
-    mu_cf_gl = alpha0 + alpha*Tx_flag
+    alpha ~ normal(mu_alpha, sigma_alpha);
 
     lp_cf_global ~ normal(mu_cf_gl, sigma_cf_gl);
+
     lp_cf_os ~ normal(lp_cf_global, sd_cf_os);
     lp_cf_pfs ~ normal(lp_cf_global, sd_cf_pfs);
 
@@ -140,17 +162,29 @@ model {
   }
 
   // likelihood
-  for (i in 1:n_os) {
-    target += log_sum_exp(
-      log(cf_os[Tx]) +
-      surv_exp_lpdf(t_os[i, Tx] | d_os[i, Tx], lambda_os_bg[i, Tx]),
-      log1m(cf_os[Tx]) +
-      surv_exp_lpdf(t_os[i, Tx] | d_os[i, Tx], lambda_os_bg[i, Tx] + lambda_os[i, Tx])) +
-      log_sum_exp(
+  pos_os = 1;
+  pos_pfs = 1;
+
+  for (Tx in 1:nTx) {
+
+    for (i in pos_os:n_os[Tx]) {
+      target += log_sum_exp(
+        log(cf_os[Tx]) +
+        surv_exp_lpdf(t_os[i] | d_os[i], lambda_os_bg[i]),
+        log1m(cf_os[Tx]) +
+        surv_exp_lpdf(t_os[i] | d_os[i], lambda_os_bg[i] + lambda_os[i]));
+    }
+
+    for (i in pos_pfs:n_pfs[Tx]) {
+      target += log_sum_exp(
         log(cf_pfs[Tx]) +
-        surv_exp_lpdf(t_pfs[i, Tx] | d_pfs[i, Tx], lambda_pfs_bg[i, Tx]),
+        surv_exp_lpdf(t_pfs[i] | d_pfs[i], lambda_pfs_bg[i]),
         log1m(cf_pfs[Tx]) +
-        surv_exp_lpdf(t_pfs[i, Tx] | d_pfs[i, Tx], lambda_pfs_bg[i, Tx] + lambda_pfs[i, Tx]));
+        surv_exp_lpdf(t_pfs[i] | d_pfs[i], lambda_pfs_bg[i] + lambda_pfs[i]));
+    }
+
+    pos_os = pos_os + n_os[Tx];
+    pos_pfs = pos_pfs + n_pfs[Tx];
   }
 }
 

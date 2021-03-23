@@ -24,7 +24,7 @@ bmcm_joint_stan_fileTx <- function(input_data,
                        centre_age,
                        bg_model,
                        bg_hr))
-  
+
   data_pfs <-
     c(prep_pfs_params(model_pfs, params_pfs),
       prep_stan_dataTx(input_data,
@@ -32,10 +32,10 @@ bmcm_joint_stan_fileTx <- function(input_data,
                        centre_age,
                        bg_model,
                        bg_hr))
-  
+
   names(data_os) <- paste(names(data_os), "os", sep = "_")
   names(data_pfs) <- paste(names(data_pfs), "pfs", sep = "_")
-  
+
   data_list <-
     c(data_os,
       data_pfs,
@@ -45,12 +45,12 @@ bmcm_joint_stan_fileTx <- function(input_data,
       cf_model = cf_model,
       joint_model = joint_model,
       bg_model = bg_model)
-  
+
   stan_file <-
     if (model_os == "exp") {
       if (model_pfs == "exp") here::here("inst", "stan", "exp_exp_joint_hiercfTx.stan")
     }
-  
+
   res <-
     rstan::stan(
       file = stan_file,
@@ -61,7 +61,7 @@ bmcm_joint_stan_fileTx <- function(input_data,
       control = list(adapt_delta = 0.99,
                      max_treedepth = 20),
       chains = chains, ...)
-  
+
   return(res)
 }
 

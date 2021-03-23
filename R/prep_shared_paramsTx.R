@@ -31,7 +31,6 @@ prep_shared_paramsTx <- function(cf_params = NA,
          mu_cf_gl = numeric(0),
          mu_cf_os = numeric(0),
          mu_cf_pfs = numeric(0),
-         sigma_cf_gl = numeric(0),
          sd_cf_os = numeric(0),
          sd_cf_pfs = numeric(0))
 

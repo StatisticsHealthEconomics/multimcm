@@ -52,8 +52,8 @@ cf_model_names <- c("cf pooled", "cf separate", "cf hier")
 cf_hier <-
   list(mu_cf_gl = array(-0.8, 1),
        sigma_cf_gl = array(2, 1),
-       sd_cf_os = array(0.5, 1),
-       sd_cf_pfs = array(0.5, 1))
+       sd_cf_os = c(0.5, 0.5, 0.5),
+       sd_cf_pfs = c(0.5, 0.5, 0.5))
 
 params_cf_lup <-
   list("cf pooled" =
@@ -73,8 +73,8 @@ params_cf_lup <-
               lognormal =
                 list(mu_cf_gl = array(-1.8, 1),
                      sigma_cf_gl = array(1, 1),
-                     sd_cf_os = array(0.5, 1),
-                     sd_cf_pfs = array(0.5, 1))))
+                     sd_cf_os = c(0.5, 0.5, 0.5),
+                     sd_cf_pfs = c(0.5, 0.5, 0.5))))
 
 params_cf <-
   if (is.null(params_cf_lup[[cf_idx]][[model_pfs]])) {
@@ -104,17 +104,9 @@ out <-
     joint_model = FALSE,
     bg_model = bg_model_idx,
     bg_hr = bg_hr,
-    warmup = 100,
-    iter = 1000,
+    warmup = 200,
+    iter = 2000,
     thin = 10)
-
-
-if (save_res) {
-  saveRDS(out,
-          file = glue::glue(
-            "data/independent/{cf_model_names[cf_idx]}/{bg_model}_hr{bg_hr}/stan_{model_os}_{model_pfs}_{trta}.Rds"))}
-
-stan_list <- list(out) %>% setNames(trta)
 
 
 #########
@@ -123,14 +115,13 @@ stan_list <- list(out) %>% setNames(trta)
 
 library(survival)
 
-source("R/plot_S_joint.R")
-source("R/prep_S_data.R")
-source("R/plot_prior_predictions.R")
+source("R/plot_S_jointTx.R")
+source("R/prep_S_dataTx.R")
 
-gg <- plot_S_joint(stan_list = stan_list)
+gg <- plot_S_jointTx(out)
+gg
 
 # overlay Kaplan-Meier
-##TODO: move to function
 
 fit_os <- survfit(Surv(os, os_event) ~ 1,
                   data = filter(surv_input_data, TRTA == trta))
@@ -155,41 +146,4 @@ s_plot <-
             inherit.aes = FALSE) +
   xlim(0, 60)
 s_plot
-
-ggsave(s_plot,
-       filename = glue::glue(
-         "plots/S_plots_{model_os}_{model_pfs}_{cf_model_names[cf_idx]}_{bg_model}_hr{bg_hr}_{trta}.png"))
-
-
-plot_prior_predictive(out, event_type = "os")
-plot_prior_predictive(out, event_type = "pfs")
-
-
-## posterior predictive checks
-##TODO: for all distns
-# fileloc_out <- glue::glue("plots/post_pred_{model_os}_{model_pfs}_{cf_model_names[cf_idx]}_{bg_model}_{trta}.png")
-# plot_post_pred_KM(out, trta, surv_input_data)
-# plot_post_pred_KM(out, trta, surv_input_data, fileloc_out)
-
-
-# overlayed os, pfs plot
-
-gg <- plot_S_joint(stan_list = stan_list, facet = FALSE, annot_cf = FALSE)
-
-s_plot2 <-
-  gg +
-  geom_line(aes(x = time, y = surv),
-            data = km_data[km_data$event_type == "pfs", ],
-            lwd = 1,
-            inherit.aes = FALSE) +
-  geom_line(aes(x = time, y = surv),
-            data = km_data[km_data$event_type == "os", ],
-            lwd = 1,
-            inherit.aes = FALSE) +
-  xlim(0, 60)
-s_plot2
-
-ggsave(s_plot2,
-       filename = glue::glue(
-         "plots/S_plot_{model_os}_{model_pfs}_{cf_model_names[cf_idx]}_{bg_model}_hr{bg_hr}_{trta}.png"))
 

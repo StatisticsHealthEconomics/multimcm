@@ -15,9 +15,11 @@ prep_S_dataTx <- function(stan_extract,
     S_0 <- "S_pfs"
   }
 
+  n_tx <- dim(stan_extract$alpha)[2]
+
   S_stats <- list()
 
-  for (i in 1:3) {
+  for (i in seq_len(n_tx)) {
 
     # rearrange to time as rows
     S_dat <-
@@ -46,7 +48,6 @@ prep_S_dataTx <- function(stan_extract,
                 upper = quantile(value, probs = 0.975))
   }
 
-  S_stats %>% setNames(c("ipi", "nivo", "ipi+nivo"))
+  S_stats
 }
-
 

@@ -19,6 +19,7 @@ source("R/bmcm_joint_stan_fileTx.R")
 source("R/prep_stan_params.R")
 source("R/prep_shared_paramsTx.R")
 source("R/prep_stan_dataTx.R")
+source("R/prep_tx_params.R")
 source("R/plot_post_pred_KM.R")
 
 
@@ -38,10 +39,14 @@ surv_input_data$OS_rate <- surv_input_data$OS_rate/12
 # remove empty treatment rows
 surv_input_data <- surv_input_data[surv_input_data$TRTA != "", ]
 
+# single treatment only
+surv_input_data <- filter(surv_input_data, TRTA == "IPILIMUMAB")
+
+
 save_res <- TRUE
 
-model_os_idx <- 1
-model_pfs_idx <- 1
+model_os_idx <- 3
+model_pfs_idx <- 3
 model_names <- c("exp", "weibull", "gompertz", "loglogistic", "lognormal")
 model_os <- model_names[model_os_idx]
 model_pfs <- model_names[model_pfs_idx]
@@ -49,11 +54,41 @@ model_pfs <- model_names[model_pfs_idx]
 cf_idx <- 3
 cf_model_names <- c("cf pooled", "cf separate", "cf hier")
 
+# # all treatments
+# cf_hier <-
+#   list(mu_cf_gl = array(-0.8, 1),
+#        sigma_cf_gl = array(2, 1),
+#        sd_cf_os = c(0.5, 0.5, 0.5),
+#        sd_cf_pfs = c(0.5, 0.5, 0.5))
+#
+# params_cf_lup <-
+#   list("cf pooled" =
+#          list(mu_cf_gl = array(-0.8, 1),
+#               sigma_cf_gl = array(2, 1)),
+#        "cf separate" =
+#          list(mu_cf_os = array(-0.8, 1),
+#               mu_cf_pfs = array(-0.8, 1),
+#               sd_cf_os = array(0.5, 1),
+#               sd_cf_pfs = array(0.5, 1)),
+#        "cf hier" =
+#          list(exp = cf_hier,
+#               weibull = cf_hier,
+#               gompertz = cf_hier,
+#               loglogistic = cf_hier,
+#               gengamma = cf_hier,
+#               lognormal =
+#                 list(mu_cf_gl = array(-1.8, 1),
+#                      sigma_cf_gl = array(1, 1),
+#                      sd_cf_os = c(0.5, 0.5, 0.5),
+#                      sd_cf_pfs = c(0.5, 0.5, 0.5))))
+
+
+# one treatment only
 cf_hier <-
   list(mu_cf_gl = array(-0.8, 1),
        sigma_cf_gl = array(2, 1),
-       sd_cf_os = c(0.5, 0.5, 0.5),
-       sd_cf_pfs = c(0.5, 0.5, 0.5))
+       sd_cf_os = array(0.5, 1),
+       sd_cf_pfs = array(0.5, 1))
 
 params_cf_lup <-
   list("cf pooled" =
@@ -73,8 +108,8 @@ params_cf_lup <-
               lognormal =
                 list(mu_cf_gl = array(-1.8, 1),
                      sigma_cf_gl = array(1, 1),
-                     sd_cf_os = c(0.5, 0.5, 0.5),
-                     sd_cf_pfs = c(0.5, 0.5, 0.5))))
+                     sd_cf_os = array(0.5, 1),
+                     sd_cf_pfs = array(0.5, 1))))
 
 params_cf <-
   if (is.null(params_cf_lup[[cf_idx]][[model_pfs]])) {
@@ -82,6 +117,12 @@ params_cf <-
   } else {
     params_cf_lup[[cf_idx]][[model_pfs]]
   }
+
+# cf 20%, 35%, 45% on logit scale
+# no intercept model
+params_tx <-
+  list(mu_alpha = c(-1.4, -0.6, -0.2),
+       sigma_alpha = c(1, 1, 1))
 
 bg_model_idx <- 2
 bg_model_names <- c("bg_distn", "bg_fixed")
@@ -100,12 +141,13 @@ out <-
     model_os = model_os,
     model_pfs = model_pfs,
     params_cf = params_cf,
+    # params_tx = params_tx,
     cf_model = cf_idx,            # 1- shared 2- separate 3- hierarchical
     joint_model = FALSE,
     bg_model = bg_model_idx,
     bg_hr = bg_hr,
-    warmup = 200,
-    iter = 2000,
+    warmup = 100,
+    iter = 1000,
     thin = 10)
 
 
@@ -118,29 +160,30 @@ library(survival)
 source("R/plot_S_jointTx.R")
 source("R/prep_S_dataTx.R")
 
-gg <- plot_S_jointTx(out)
+gg <- plot_S_jointTx(out, annot_cf = T)
 gg
 
 # overlay Kaplan-Meier
 
-fit_os <- survfit(Surv(os, os_event) ~ 1,
-                  data = filter(surv_input_data, TRTA == trta))
-fit_pfs <- survfit(Surv(pfs, pfs_event) ~ 1,
-                   data = filter(surv_input_data, TRTA == trta))
+fit_os <- survfit(Surv(os, os_event) ~ TRTA, data = surv_input_data)
+fit_pfs <- survfit(Surv(pfs, pfs_event) ~ TRTA, data = surv_input_data)
+
 km_data <-
   rbind(
-    data.frame(Tx = trta,
+    data.frame(Tx = ifelse (is.null(fit_os$strata),
+                            1, rep(names(fit_os$strata), fit_os$strata)),
                event_type = "os",
                time = fit_os$time,
                surv = fit_os$surv),
-    data.frame(Tx = trta,
+    data.frame(Tx =  ifelse (is.null(fit_pfs$strata),
+                             1, rep(names(fit_pfs$strata), fit_pfs$strata)),
                event_type = "pfs",
                time = fit_pfs$time,
                surv = fit_pfs$surv))
 
 s_plot <-
   gg +
-  geom_line(aes(x = time, y = surv),
+  geom_line(aes(x = time, y = surv, group = Tx),
             data = km_data,
             lwd = 1,
             inherit.aes = FALSE) +

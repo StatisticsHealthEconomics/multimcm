@@ -1,4 +1,4 @@
-// exponential mixture cure model
+// gompertz mixture cure model
 // joint relative survival
 
 
@@ -6,13 +6,14 @@ functions {
 #include /include/distributions.stan
 }
 
+// input data ----
 data {
   int<lower=1> nTx;
   int<lower=0> N_os;             // total number of observations
   int<lower=0> N_pfs;
   int<lower=0> n_os[nTx];         // group sizes
   int<lower=0> n_pfs[nTx];
-  int<lower=0> H_os;              // number of covariates
+  int<lower=0> H_os;             // number of covariates
   int<lower=0> H_pfs;
 
   vector[N_os] t_os;        // observation times
@@ -24,7 +25,12 @@ data {
   matrix[N_os, H_os] X_os;       // matrix of covariates (with n rows and H columns)
   matrix[N_pfs, H_pfs] X_pfs;
 
-  vector[H_os] mu_0_os;
+  real<lower=0> a_shape_pfs;
+  real<lower=0> b_shape_pfs;
+  real<lower=0> a_shape_os;
+  real<lower=0> b_shape_os;
+
+  vector[H_os] mu_0_os;          // os, pfs
   vector[H_pfs] mu_0_pfs;
   vector<lower=0> [H_os] sigma_0_os;
   vector<lower=0> [H_pfs] sigma_0_pfs;
@@ -40,9 +46,10 @@ data {
   real<lower=0> sigma_joint[joint_model];
 
   int<lower=1, upper=3> cf_model;         // cure fraction
-  // 1- shared; 2- separate; 3- hierarchical
+  real mu_cf_gl[cf_model == 3 ? 1 : 0];   // 1- shared; 2- separate; 3- hierarchical
   real mu_cf_os[cf_model == 2 ? 1 : 0];
   real mu_cf_pfs[cf_model == 2 ? 1 : 0];
+  real<lower=0> sigma_cf_gl[cf_model == 3 ? 1 : 0];
   vector<lower=0>[cf_model != 1 ? nTx : 0] sd_cf_os;
   vector<lower=0>[cf_model != 1 ? nTx : 0] sd_cf_pfs;
   real a_cf[cf_model == 1 ? 1 : 0];
@@ -65,6 +72,9 @@ parameters {
   vector[H_pfs] beta_pfs;
   vector[bg_model == 1 ? H_os : 0] beta_bg;
   real beta_joint[joint_model];
+
+  real<lower=0> shape_pfs;
+  real<lower=0> shape_os;
 
   vector[nTx] alpha;
 
@@ -90,17 +100,16 @@ transformed parameters {
 
   vector[cf_model == 3 ? nTx : 0] lp_cf_global;
 
-  lp_os = X_os*beta_os;
+  # correlated event times
+  if (joint_model) {
+    lp_os = X_os*beta_os + beta_joint[1]*(t_pfs - 1/exp(beta_pfs[1]));
+  } else {
+    lp_os = X_os*beta_os;
+  }
+
   lp_pfs = X_pfs*beta_pfs;
 
-  //TODO:
-  // // treatment hazard ratio
-  // loghr_os = dmat_os*tx_hr_os;
-  // loghr_pfs = dmat_pfs*tx_hr_pfs;
-  // lp_os = lp_os + loghr_os;
-  // lp_pfs = lp_pfs + loghr_pfs;
-
-  if (bg_model == 1) {          // background survival with uncertainty
+  if (bg_model == 1) {         // background survival with uncertainty
     lp_os_bg = X_os*beta_bg;
     lp_pfs_bg = X_pfs*beta_bg;
   } else {
@@ -136,6 +145,9 @@ model {
   beta_os ~ normal(mu_0_os, sigma_0_os);
   beta_pfs ~ normal(mu_0_pfs, sigma_0_pfs);
 
+  shape_pfs ~ gamma(a_shape_pfs, b_shape_pfs);
+  shape_os ~ gamma(a_shape_os, b_shape_os);
+
   if (bg_model == 1) {
     beta_bg ~ normal(mu_bg, sigma_bg);
   }
@@ -152,7 +164,6 @@ model {
 
     lp_cf_os ~ normal(lp_cf_global, sd_cf_os);
     lp_cf_pfs ~ normal(lp_cf_global, sd_cf_pfs);
-
   } else if (cf_model == 2) {
     lp_cf_os ~ normal(mu_cf_os, sd_cf_os);
     lp_cf_pfs ~ normal(mu_cf_pfs, sd_cf_pfs);
@@ -164,18 +175,15 @@ model {
   idx_os = 1;
   idx_pfs = 1;
 
-  // cumsum_os = cumulative_sum(append_row(1, n_os));
-
   for (Tx in 1:nTx) {
 
-    // for (i in cumsum_os[Tx]:cumsum_os[Tx + 1]) {
     for (i in idx_os:(idx_os + n_os[Tx] - 1)) {
 
       target += log_sum_exp(
         log(cf_os[Tx]) +
         surv_exp_lpdf(t_os[i] | d_os[i], lambda_os_bg[i]),
         log1m(cf_os[Tx]) +
-        surv_exp_lpdf(t_os[i] | d_os[i], lambda_os_bg[i] + lambda_os[i]));
+        joint_exp_gompertz_lpdf(t_os[i] | d_os[i], shape_os, lambda_os[i], lambda_os_bg[i]));
     }
 
     for (j in idx_pfs:(idx_pfs + n_pfs[Tx] - 1)) {
@@ -184,7 +192,7 @@ model {
         log(cf_pfs[Tx]) +
         surv_exp_lpdf(t_pfs[j] | d_pfs[j], lambda_pfs_bg[j]),
         log1m(cf_pfs[Tx]) +
-        surv_exp_lpdf(t_pfs[j] | d_pfs[j], lambda_pfs_bg[j] + lambda_pfs[j]));
+        joint_exp_gompertz_lpdf(t_pfs[j] | d_pfs[j], shape_pfs, lambda_pfs[j], lambda_pfs_bg[j]));
     }
 
     idx_os = idx_os + n_os[Tx];
@@ -207,27 +215,30 @@ generated quantities {
   int idx_os;
   int idx_pfs;
 
-  // prior pred
+  vector[N_os] log_lik_os;
+  vector[N_pfs] log_lik_pfs;
+  vector[N_os] log_lik;
+
+  // // prior pred
   // real pmean_os;
   // real pmean_pfs;
   // real pmean_bg;
   // real pmean_cf_os;
   // real pmean_cf_pfs;
-
-  // vector[t_max, nTx] pS_bg;
+  //
+  // vector[t_max] pS_bg;
   // vector[t_max] pS_os;
   // vector[t_max] pS_pfs;
   // vector[t_max] S_os_prior;
   // vector[t_max] S_pfs_prior;
 
-  vector[N_os] log_lik_os;
-  vector[N_pfs] log_lik_pfs;
-  vector[N_os] log_lik;
-
   // real pbeta_os = normal_rng(mu_0_os[1], sigma_0_os[1]);
   // real pbeta_pfs = normal_rng(mu_0_pfs[1], sigma_0_pfs[1]);
   //
   // real pbeta_bg;
+  //
+  // real pshape_pfs = gamma_rng(a_shape_pfs, b_shape_pfs);
+  // real pshape_os = gamma_rng(a_shape_os, b_shape_os);
 
   // if (cf_model == 3) {
     // real vpc_os;
@@ -236,30 +247,30 @@ generated quantities {
     // vpc_os = sd_cf_os/(sigma_cf_gl + sd_cf_os);
     // vpc_pfs = sd_cf_pfs/(sigma_cf_gl + sd_cf_pfs);
   // }
-
-  // if (bg_model == 1) {
-  //   pbeta_bg = normal_rng(mu_bg[1], sigma_bg[1]);
-  // } else {
-  //   // pbeta_bg = log(mean(h_bg_os));
-  //   pbeta_bg = log(0.001);
-  // }
 //
-//   // cure fraction prior
-//   if (cf_model == 3) {
-//     real pcurefrac = normal_rng(mu_cf_gl[1], sigma_cf_gl[1]);
-//     pmean_cf_os = inv_logit(pcurefrac);
-//     pmean_cf_pfs = inv_logit(pcurefrac);
-//
-//   } else if (cf_model == 2) {
-//     real pcf_os = normal_rng(mu_cf_os[1], sd_cf_os[1]);
-//     real pcf_pfs = normal_rng(mu_cf_pfs[1], sd_cf_pfs[1]);
-//     pmean_cf_os = inv_logit(pcf_os);
-//     pmean_cf_pfs = inv_logit(pcf_pfs);
+//   if (bg_model == 1) {
+//     pbeta_bg = normal_rng(mu_bg[1], sigma_bg[1]);
 //   } else {
-//     real pcurefrac = beta_rng(a_cf[1], b_cf[1]);
-//     pmean_cf_os = pcurefrac;
-//     pmean_cf_pfs = pcurefrac;
+//     // pbeta_bg = log(mean(h_bg_os));
+//     pbeta_bg = log(0.001);
 //   }
+
+  // cure fraction prior
+  // if (cf_model == 3) {
+  //   //TODO: include extra sd_cf_os, sd_cf_pfs variation?
+  //   real pcurefrac = normal_rng(mu_cf_gl[1], sigma_cf_gl[1]);
+  //   pmean_cf_os = inv_logit(pcurefrac);
+  //   pmean_cf_pfs = inv_logit(pcurefrac);
+  // } else if (cf_model == 2) {
+  //   real pcf_os = normal_rng(mu_cf_os[1], sd_cf_os[1]);
+  //   real pcf_pfs = normal_rng(mu_cf_pfs[1], sd_cf_pfs[1]);
+  //   pmean_cf_os = inv_logit(pcf_os);
+  //   pmean_cf_pfs = inv_logit(pcf_pfs);
+  // } else {
+  //   real pcurefrac = beta_rng(a_cf[1], b_cf[1]);
+  //   pmean_cf_os = pcurefrac;
+  //   pmean_cf_pfs = pcurefrac;
+  // }
 
   // intercepts
   mean_os = exp(beta_os[1]);
@@ -275,27 +286,28 @@ generated quantities {
   for (j in 1:nTx) {
     for (i in 1:t_max) {
       S_bg[i] = exp_Surv(i, mean_bg);
-      S_os[i] = exp_Surv(i, mean_bg + mean_os);
-      S_pfs[i] = exp_Surv(i, mean_bg + mean_pfs);
+      S_os[i] = exp_gompertz_Surv(i, shape_os, mean_os, mean_bg);
+      S_pfs[i] = exp_gompertz_Surv(i, shape_pfs, mean_pfs, mean_bg);
 
       S_os_pred[i, j] = cf_os[j]*S_bg[i] + (1 - cf_os[j])*S_os[i];
       S_pfs_pred[i, j] = cf_pfs[j]*S_bg[i] + (1 - cf_pfs[j])*S_pfs[i];
     }
   }
 
-    // // prior checks
-    // pmean_os = exp(pbeta_os);
-    // pmean_pfs = exp(pbeta_pfs);
-    // pmean_bg = exp(pbeta_bg);
-    //
-    // for (i in 1:t_max) {
-      //   pS_bg[i] = exp_Surv(i, pmean_bg);
-      //   pS_os[i] = exp_Surv(i, pmean_bg + pmean_os);
-      //   pS_pfs[i] = exp_Surv(i, pmean_bg + pmean_pfs);
-      //
-      //   S_os_prior[i] = pmean_cf_os*pS_bg[i] + (1 - pmean_cf_os)*pS_os[i];
-      //   S_pfs_prior[i] = pmean_cf_pfs*pS_bg[i] + (1 - pmean_cf_pfs)*pS_pfs[i];
-      // }
+  // // prior checks
+  // pmean_os = exp(pbeta_os);
+  // pmean_pfs = exp(pbeta_pfs);
+  // pmean_bg = exp(pbeta_bg);
+  //
+  // for (i in 1:t_max) {
+  //   pS_bg[i] = exp_Surv(i, pmean_bg);
+  //   pS_os[i] = exp_gompertz_Surv(i, pshape_os, pmean_os, pmean_bg);
+  //   pS_pfs[i] = exp_gompertz_Surv(i, pshape_pfs, pmean_pfs, pmean_bg);
+  //
+  //   S_os_prior[i] = pmean_cf_os*pS_bg[i] + (1 - pmean_cf_os)*pS_os[i];
+  //   S_pfs_prior[i] = pmean_cf_pfs*pS_bg[i] + (1 - pmean_cf_pfs)*pS_pfs[i];
+  // }
+  //
 
   // log-likelihood for loo
   // http://mc-stan.org/loo/reference/extract_log_lik.html
@@ -311,7 +323,7 @@ generated quantities {
         log(cf_os[Tx]) +
         surv_exp_lpdf(t_os[i] | d_os[i], lambda_os_bg[i]),
         log1m(cf_os[Tx]) +
-        surv_exp_lpdf(t_os[i] | d_os[i], lambda_os_bg[i] + lambda_os[i]));
+        joint_exp_gompertz_lpdf(t_os[i] | d_os[i], shape_os, lambda_os[i], lambda_os_bg[i]));
     }
 
     for (j in idx_pfs:(idx_pfs + n_pfs[Tx] - 1)) {
@@ -320,7 +332,7 @@ generated quantities {
         log(cf_pfs[Tx]) +
         surv_exp_lpdf(t_pfs[j] | d_pfs[j], lambda_pfs_bg[j]),
         log1m(cf_pfs[Tx]) +
-        surv_exp_lpdf(t_pfs[j] | d_pfs[j], lambda_pfs_bg[j] + lambda_pfs[j]));
+        joint_exp_gompertz_lpdf(t_pfs[j] | d_pfs[j], shape_pfs, lambda_pfs[j], lambda_pfs_bg[j]));
     }
 
     idx_os = idx_os + n_os[Tx];

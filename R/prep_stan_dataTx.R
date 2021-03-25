@@ -25,6 +25,7 @@ prep_stan_dataTx <- function(input_data,
                              bg_hr = 1) {
 
   event_type <- match.arg(arg = event_type, c("PFS", "OS"))
+  input_data <- arrange(input_data, TRTA)
 
   if (event_type == "PFS") {
 
@@ -46,12 +47,14 @@ prep_stan_dataTx <- function(input_data,
   # centering
   age_adj <- ifelse(centre_age, mean(tx_dat[[4]]), 0)
 
-  X_Tx <-
+  X_age <-
     as.data.frame(
       matrix(c(rep(1, nrow(tx_dat)),
                tx_dat[[4]] - age_adj),
              byrow = FALSE,
              ncol = 2))
+
+  # X_tx <- model.matrix(~ TRTA, data = tx_dat)
 
   # background hazard point values
   h_bg <-
@@ -60,13 +63,16 @@ prep_stan_dataTx <- function(input_data,
     } else {
       numeric(0)}
 
+  ## hazard ratio
+  # dmat <- model.matrix(~ TRTA, data = tx_dat)[, -1]
+
   list(
     N = nrow(tx_dat),
-    n = c(table(surv_input_data$TRTA)),
+    n = array(table(input_data$TRTA)),
     t = tx_dat[[2]],
     d = tx_dat[[3]],
     H = 2,
-    X = X_Tx,
+    X = X_age,
     h_bg = h_bg)
 }
 

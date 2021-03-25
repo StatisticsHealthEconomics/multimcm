@@ -1,5 +1,5 @@
 
-#
+#'
 bmcm_joint_stan_fileTx <- function(input_data,
                                    model_os = "exp",
                                    model_pfs = "exp",
@@ -10,6 +10,7 @@ bmcm_joint_stan_fileTx <- function(input_data,
                                    params_os = NA,
                                    params_pfs = NA,
                                    params_cf = NA,
+                                   params_tx = NA,
                                    params_joint = list(NA),
                                    centre_age = TRUE,
                                    cf_model = 3,
@@ -24,7 +25,6 @@ bmcm_joint_stan_fileTx <- function(input_data,
                        centre_age,
                        bg_model,
                        bg_hr))
-
   data_pfs <-
     c(prep_pfs_params(model_pfs, params_pfs),
       prep_stan_dataTx(input_data,
@@ -42,6 +42,7 @@ bmcm_joint_stan_fileTx <- function(input_data,
       prep_shared_paramsTx(params_cf,
                            params_joint,
                            bg_model),
+      prep_tx_params(input_data, params_tx),
       cf_model = cf_model,
       joint_model = joint_model,
       bg_model = bg_model)
@@ -49,6 +50,8 @@ bmcm_joint_stan_fileTx <- function(input_data,
   stan_file <-
     if (model_os == "exp") {
       if (model_pfs == "exp") here::here("inst", "stan", "exp_exp_joint_hiercfTx.stan")
+    } else if (model_os == "gompertz") {
+      if (model_pfs == "gompertz") here::here("inst", "stan", "gompertz_gompertzTx.stan")
     }
 
   res <-

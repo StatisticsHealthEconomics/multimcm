@@ -21,8 +21,7 @@
 prep_shared_paramsTx <- function(cf_params = NA,
                                  joint_params = list(NA),
                                  bg_model = 1,
-                                 t_max = 60,
-                                 nTx = 3) {
+                                 t_max = 60) {
 
   # all cure fraction parameters
   empty_params <-
@@ -69,19 +68,9 @@ prep_shared_paramsTx <- function(cf_params = NA,
       list(mu_bg = numeric(0),
            sigma_bg = numeric(0))}
 
-  cf_tx <-
-    list(mu_alpha = c(0, 0, 0),
-         sigma_alpha = c(1, 1, 1))
-
-  Tx_dmat <-
-    model.matrix(~ factor(1:nTx))
-
   c(cf_params,
-    cf_tx,
-    Tx_dmat = list(Tx_dmat),
     joint_params,
     bg_params,
-    nTx = nTx,
     t_max = t_max)
 }
 

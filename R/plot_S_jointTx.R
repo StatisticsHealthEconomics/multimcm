@@ -34,12 +34,12 @@ plot_S_jointTx <- function(stan_out = NA,
     prep_S_dataTx(stan_extract,
                   event_type = "pfs")
 
-  tx_names <- c("ipi", "nivo", "ipi+nivo")
+  n_tx <- dim(stan_extract$alpha)[2]
 
   ann_text <-
     data.frame(
       event_type = c("os", "pfs"),
-      Tx = rep(tx_names, each = 2),
+      Tx = rep(1:n_tx, each = 2),
       label = c(
         apply(X = stan_extract$cf_os, 2,
               FUN = function(x) paste(round(quantile(x, probs = c(0.05,0.5,0.95)), 2),
@@ -53,17 +53,22 @@ plot_S_jointTx <- function(stan_out = NA,
     S_stats %>%
     map(bind_rows, .id = "Tx") %>%
     bind_rows(.id = "event_type") %>%
-    mutate(Tx = factor(Tx, levels = tx_names)) %>%
-    mutate(scenario = paste(event_type, Tx, sep = "_"))
+    mutate(scenario = paste(event_type, Tx, sep = "_"),
+           type_tx = paste(type, Tx, sep = "_"),
+           Tx = ifelse(type == "S_bg", "background",
+                       ifelse(type == "S_os" | type == "S_pfs",
+                              "uncured", Tx)),
+           Tx = factor(Tx))
 
-  add_facet <- function(facet) {list(if (facet) facet_grid(Tx ~ event_type))}
+  add_facet <- function(facet) {list(if (facet) facet_grid( ~ event_type))}
 
   p <-
-    ggplot(plot_dat, aes(month, mean, group = type, colour = type)) +
+    ggplot(plot_dat, aes(month, mean, group = type_tx, colour = Tx)) +
+    # ggplot(plot_dat, aes(month, mean, group = type, colour = type)) +
     geom_line() +
     add_facet(facet) +
     ylab("Survival") +
-    geom_ribbon(aes(x = month, ymin = lower, ymax = upper, fill = type),
+    geom_ribbon(aes(x = month, ymin = lower, ymax = upper, fill = Tx),
                 linetype = 0,
                 alpha = 0.2) +
     ylim(0, 1)

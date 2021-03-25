@@ -1,4 +1,4 @@
-// exponential mixture cure model
+// gompertz mixture cure model
 // joint relative survival
 
 
@@ -6,7 +6,6 @@ functions {
 #include /include/distributions.stan
 }
 
-// input data ----
 data {
   int<lower=0> n_os;             // number of observations
   int<lower=0> n_pfs;

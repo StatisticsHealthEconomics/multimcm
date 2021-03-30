@@ -77,9 +77,10 @@ knitr::kable(
 # forest plot ----
 ##TODO: automate names...
 
-cf_global[[12]] <- cf_global[[1]][1:90, ]
-cf_os[[12]] <- cf_global[[1]][1:90, ]
-cf_pfs[[12]] <- cf_global[[1]][1:90, ]
+## if different sample sizes
+# cf_global[[12]] <- cf_global[[1]][1:90, ]
+# cf_os[[12]] <- cf_global[[1]][1:90, ]
+# cf_pfs[[12]] <- cf_global[[1]][1:90, ]
 
 
 yy <- gsub("exp_exp_", "Exponential ", scenarios_str)
@@ -100,24 +101,33 @@ xx <-
   #            "cf_os_ipi_exp", "cf_os_nivo_exp", "cf_os_both_exp", "cf_os_ipi_llog", "cf_os_nivo_llog", "cf_os_both_llog",
   #            "cf_pfs_ipi_exp", "cf_pfs_nivo_exp", "cf_pfs_both_exp", "cf_pfs_ipi_llog", "cf_pfs_nivo_llog", "cf_pfs_both_llog"))
 
+# remove scenarios
+xx <- dplyr::select(xx,
+                    -'cf pfs weibull_lognormal_NIVOLUMAB+IPILIMUMAB',
+                    -'cf os weibull_lognormal_NIVOLUMAB+IPILIMUMAB',
+                    -'cf global weibull_lognormal_NIVOLUMAB+IPILIMUMAB')
+
 mcmc_intervals(xx) + xlim(0, 0.65)
 
 ggsave(filename = "plots/cf_forest_plot.png")
 
 as.data.frame(cf_global) %>%
   setNames(yy) %>%
+  dplyr::select(-'weibull_lognormal_Combined') %>%
   mcmc_intervals() +
   xlim(0, 0.65)
 ggsave(filename = "plots/cf_global_forest_plot.png")
 
 as.data.frame(cf_os) %>%
   setNames(yy) %>%
+  dplyr::select(-'weibull_lognormal_Combined') %>%
   mcmc_intervals() +
   xlim(0, 0.65)
 ggsave(filename = "plots/cf_os_forest_plot.png")
 
 as.data.frame(cf_pfs) %>%
   setNames(yy) %>%
+  dplyr::select(-'weibull_lognormal_Combined') %>%
   mcmc_intervals() +
   xlim(0, 0.65)
 ggsave(filename = "plots/cf_pfs_forest_plot.png")

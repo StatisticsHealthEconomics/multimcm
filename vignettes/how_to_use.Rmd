@@ -2,7 +2,7 @@
 title: "How to use rstanbmcm"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{how_to_use}
+  %\VignetteIndexEntry{How to use rstanbmcm}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -12,6 +12,7 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+options(rmarkdown.html_vignette.check_title = FALSE)
 ```
 
 ## Introduction

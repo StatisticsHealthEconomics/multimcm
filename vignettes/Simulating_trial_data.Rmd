@@ -2,7 +2,7 @@
 title: "Simulating trial survival analysis data"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Simulating_trial_data}
+  %\VignetteIndexEntry{Simulating trial survival analysis data}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

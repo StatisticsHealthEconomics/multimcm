@@ -257,7 +257,7 @@ set. The underlying hazard curve for 0-100 year olds is shifted left
 depending on the starting age of an individual in the cohort.
 
 ```{r, echo=FALSE, fig.align='center', out.width="60%"}
-knitr::include_graphics("../docs/background_average_rate_plot.png")
+knitr::include_graphics("../draft_docs/background_average_rate_plot.png")
 ```
 
 #### Additional model structure

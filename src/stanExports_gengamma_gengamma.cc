@@ -2,12 +2,12 @@
 
 #include <Rcpp.h>
 using namespace Rcpp ;
-#include "stanExports_exp_exp_joint_mix.h"
+#include "stanExports_gengamma_gengamma.h"
 
-RCPP_MODULE(stan_fit4exp_exp_joint_mix_mod) {
+RCPP_MODULE(stan_fit4gengamma_gengamma_mod) {
 
 
-    class_<rstan::stan_fit<stan_model, boost::random::ecuyer1988> >("model_exp_exp_joint_mix")
+    class_<rstan::stan_fit<stan_model, boost::random::ecuyer1988> >("model_gengamma_gengamma")
 
     .constructor<SEXP,SEXP,SEXP>()
 

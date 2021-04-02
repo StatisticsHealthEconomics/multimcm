@@ -2,12 +2,12 @@
 
 #include <Rcpp.h>
 using namespace Rcpp ;
-#include "stanExports_postpred_exp_exp_gqs.h"
+#include "stanExports_postpred_gqs.h"
 
-RCPP_MODULE(stan_fit4postpred_exp_exp_gqs_mod) {
+RCPP_MODULE(stan_fit4postpred_gqs_mod) {
 
 
-    class_<rstan::stan_fit<stan_model, boost::random::ecuyer1988> >("model_postpred_exp_exp_gqs")
+    class_<rstan::stan_fit<stan_model, boost::random::ecuyer1988> >("model_postpred_gqs")
 
     .constructor<SEXP,SEXP,SEXP>()
 

@@ -9,6 +9,7 @@ library(dplyr)
 library(rstan)
 library(shinystan)
 library(dplyr)
+library(testthat)
 library(ggplot2)
 # library(rstanbmcm)
 # devtools::load_all()
@@ -147,7 +148,14 @@ library(survival)
 
 fit_stan <- extract(res)
 
-mean(fit_stan$curefrac)
+expect_equal(mean(fit_stan$curefrac), cf, tolerance = 0.02)
+
+##TODO:no data => posterior == prior
+
+expect_equal(colMeans(fit_stan$beta_bg), beta_bg, tolerance = 2)
+expect_equal(colMeans(fit_stan$beta0), beta_0, tolerance = 2)
+
+
 quantile(fit_stan$curefrac, c(0.025, 0.5, 0.975))
 
 

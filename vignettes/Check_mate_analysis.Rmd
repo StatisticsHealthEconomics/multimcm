@@ -1,7 +1,7 @@
 ---
 title: "Checkmate 067 study Bayesian mixture cure model analysis"
 author: "Nathan Green, Gianluca Baio, UCL"
-date: "7 January 2021"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
 header_includes: \usepackage{amsmath}
 output:
   pdf_document: 
@@ -33,14 +33,18 @@ for a range of survival distributions.
 Analogous results to those created previously for the frequentist MCM
 approach are produced and we extend the Bayesian MCM to incorporate
 additional structure. This includes modelling the cure fractions separately
-for OS and PFS (as in the frequentist approach), as a pooled, single estimate
+for OS and PFS (as in the frequentist approach)
 and by joining the overall survival (OS) and
 progression-free survival (PFS) models using a hierarchical (multilevel)
 structure on the cure fraction. We show that the Exponential and in particular the
 log-logistic OS and PFS Bayesian MCMs perform reasonably well for the
-Checkmate 067 data. The real benefit of this approach may be with other
-dataset where there is short follow-up or small sample sizes. The
-associated R code for this work, held in a private on-line repository,
+Checkmate 067 data.
+We also perform a sensitivity analysis by increasing the background hazard rate
+via a hazard ratio adjustment, representing a study population with a higher
+mortality rate than the general population.
+The real benefit of this approach, not full explored in this analysis, may be with other
+dataset where there is relatively short follow-up or small sample sizes.
+The associated R code for this work, held in a private on-line repository,
 has been written for re-use and generalisability to other problems.
 
 
@@ -147,7 +151,8 @@ S^* S_u (h^*)^{\delta} + S^* S_u (h_u)^{\delta} = S^* S_u (h^* + h_u)^{\delta}
 ```
 ## Bayesian formulation
 
-In a Bayesian approach to modelling, all quantities that are subject to
+In a Bayesian approach to modelling (@McElreath2018),
+all quantities that are subject to
 uncertainty are modelled using probability distributions. This applies
 to observed data (e.g. time to PFS for a given individual), that are
 subject to sampling variability, as well as to unobservable parameters
@@ -278,7 +283,7 @@ $$
 
 ## Results
 
-We fit the exponential hazard model to the study data and produced the
+We fit the separate and exchangeable cure fraction models to the study data and produced the
 posterior survival curves below.
 
 For each model and treatment we produce the expected survival curves with 95% Credible Intervals (CrI). The
@@ -291,10 +296,160 @@ For each model and treatment we produce the expected survival curves with 95% Cr
     e.g. at average age, and so we would not expect them to perfectly
     match the sample data Kaplan-Meier.
 
-Figures \ref{fig:IPI}, \ref{fig:NIVO}, and \ref{fig:NIVO+IPI} show
-posterior survival curves for the Exponential, log-logistic, Gompertz, Weibull and log-Normal models.
 
-```{r fig.show='hold', fig.align='center', out.width="25cm", out.height="40cm", echo=FALSE, message = FALSE, warning = FALSE, fig.cap="\\label{fig:IPI}Posterior survival curves for the mixture cure model and $ipilimumab$. The red line is cured background, light green and blue are uncured, and dark green and magenta are combined. a) Exponential uncured b) Log-logistic uncured c) Gompertz uncured d) Weibull uncured e) Log-Normal uncured."}
+### Separate survival models for OS and PFS 
+
+Figures \ref{fig:IPI_separate}, \ref{fig:NIVO_separate}, and \ref{fig:NIVO+IPI_separate} show
+posterior survival curves for the Exponential, log-logistic, Gompertz, Weibull and log-Normal models
+when the OS and PFS models are fitted separately.
+
+```{r fig.show='hold', fig.align='center', out.width="25cm", out.height="40cm", echo=FALSE, message = FALSE, warning = FALSE, fig.cap="\\label{fig:IPI_separate}Posterior survival curves for the mixture cure model for separate OS and PFS models and $ipilimumab$. The red line is cured background, light green and blue are uncured, and dark green and magenta are combined. a) Exponential uncured b) Log-logistic uncured c) Gompertz uncured d) Weibull uncured e) Log-Normal uncured."}
+library(magick)
+library(grid)
+
+rl <- list()
+rl[[1]] <-
+  image_read("../plots/S_plots_exp_exp_cf separate_bg_fixed_IPILIMUMAB.png") %>%
+  image_annotate(" a)", size = 70)
+rl[[2]] <-
+  image_read("../plots/S_plots_loglogistic_loglogistic_cf separate_bg_fixed_IPILIMUMAB.png") %>%
+  image_annotate(" b)", size = 70)
+rl[[3]] <-
+  image_read("../plots/S_plots_gompertz_gompertz_cf separate_bg_fixed_IPILIMUMAB.png") %>%
+  image_annotate(" c)", size = 70)
+rl[[4]] <-
+  image_read("../plots/S_plots_weibull_weibull_cf separate_bg_fixed_IPILIMUMAB.png") %>%
+  image_annotate(" d)", size = 70)
+rl[[5]] <-
+  image_read("../plots/S_plots_lognormal_lognormal_cf separate_bg_fixed_IPILIMUMAB.png") %>%
+  image_annotate(" e)", size = 70)
+
+gl <- lapply(rl, grid::rasterGrob)
+gridExtra::marrangeGrob(grobs = gl,
+                        nrow = 3, ncol = 2,
+                        top = "",
+                        # heights = unit(c(4,4,4), "cm"),
+                        widths = c(4,4,4)#,
+                        # vp=grid::viewport(width=0.5, height=1, clip = TRUE)
+                        )
+```
+
+```{r fig.show='hold', fig.align='center', out.width="25cm", out.height="40cm", echo=FALSE, message = FALSE, warning = FALSE, fig.cap="\\label{fig:NIVO_separate}Posterior survival curves for the mixture cure model for separate OS and PFS models and $nivolumab$. The red line is cured background, light green and blue are uncured, and dark green and magenta are combined. a) Exponential uncured b) Log-logistic uncured c) Gompertz uncured d) Weibull uncured e) Log-Normal uncured."}
+library(magick)
+library(grid)
+
+rl <- list()
+rl[[1]] <-
+  image_read("../plots/S_plots_exp_exp_cf separate_bg_fixed_NIVOLUMAB.png") %>%
+  image_annotate(" a)", size = 70)
+rl[[2]] <-
+  image_read("../plots/S_plots_loglogistic_loglogistic_cf separate_bg_fixed_NIVOLUMAB.png") %>%
+  image_annotate(" b)", size = 70)
+rl[[3]] <-
+  image_read("../plots/S_plots_gompertz_gompertz_cf separate_bg_fixed_NIVOLUMAB.png") %>%
+  image_annotate(" c)", size = 70)
+rl[[4]] <-
+  image_read("../plots/S_plots_weibull_weibull_cf separate_bg_fixed_NIVOLUMAB.png") %>%
+  image_annotate(" d)", size = 70)
+rl[[5]] <-
+  image_read("../plots/S_plots_lognormal_lognormal_cf separate_bg_fixed_NIVOLUMAB.png") %>%
+  image_annotate(" e)", size = 70)
+
+gl <- lapply(rl, grid::rasterGrob)
+gridExtra::marrangeGrob(grobs = gl,
+                        nrow = 3, ncol = 2,
+                        top = "",
+                        widths = c(4,4,4))
+```
+
+```{r fig.show='hold', fig.align='center', out.width="25cm", out.height="40cm", echo=FALSE, message = FALSE, warning = FALSE, fig.cap="\\label{fig:NIVO+IPI_separate}Posterior survival curves for the mixture cure model for separate OS and PFS models and $ipilimumab$ and $nivolumab$. The red line is cured background, light green and blue are uncured, and dark green and magenta are combined. a) Exponential uncured b) Log-logistic uncured c) Gompertz uncured d) Weibull uncured e) Log-Normal uncured."}
+library(magick)
+library(grid)
+
+rl <- list()
+rl[[1]] <-
+  image_read("../plots/S_plots_exp_exp_cf separate_bg_fixed_NIVOLUMAB+IPILIMUMAB.png") %>%
+  image_annotate(" a)", size = 70)
+rl[[2]] <-
+  image_read("../plots/S_plots_loglogistic_loglogistic_cf separate_bg_fixed_NIVOLUMAB+IPILIMUMAB.png") %>%
+  image_annotate(" b)", size = 70)
+rl[[3]] <-
+  image_read("../plots/S_plots_gompertz_gompertz_cf separate_bg_fixed_NIVOLUMAB+IPILIMUMAB.png") %>%
+  image_annotate(" c)", size = 70)
+rl[[4]] <-
+  image_read("../plots/S_plots_weibull_weibull_cf separate_bg_fixed_NIVOLUMAB+IPILIMUMAB.png") %>%
+  image_annotate(" d)", size = 70)
+rl[[5]] <-
+  image_read("../plots/S_plots_lognormal_lognormal_cf separate_bg_fixed_NIVOLUMAB+IPILIMUMAB.png") %>%
+  image_annotate(" e)", size = 70)
+
+gl <- lapply(rl, grid::rasterGrob)
+gridExtra::marrangeGrob(grobs = gl,
+                        nrow = 3, ncol = 2,
+                        top = "",
+                        widths = c(4,4,4))
+```
+
+
+Figures \ref{fig:forest_os_separate} and \ref{fig:forest_pfs_separate}
+show the forest plots of cure fraction posterior
+distributions.
+
+```{r fig.show='hold', fig.align='center', out.width="60%", echo=FALSE, fig.cap="\\label{fig:forest_os_separate}Forest plot of OS cure fraction posterior distributions for separate OS and PFS models ."}
+knitr::include_graphics("../plots/cf separate_os_forest_plot.png")
+```
+
+```{r fig.show='hold', fig.align='center', out.width="60%", echo=FALSE, fig.cap="\\label{fig:forest_pfs_separate}Forest plot of PFS cure fraction posterior distributions for separate OS and PFS models ."}
+knitr::include_graphics("../plots/cf separate_pfs_forest_plot.png")
+```
+
+|   | OS Distn   | PFS Distn  | Treatment           | $cf_{OS}$ (CrI)     | $cf_{PFS}$ (CrI)    |
+|:--|:-----------|:-----------|:--------------------|:--------------------|:--------------------|
+|1  |exp         |exp         |IPILIMUMAB           |0.216 (0.16, 0.271)  |0.128 (0.089, 0.173) |
+|2  |exp         |exp         |NIVOLUMAB            |0.417 (0.335, 0.482) |0.32 (0.268, 0.37)   |
+|3  |exp         |exp         |NIVOLUMAB+IPILIMUMAB |0.509 (0.43, 0.573)  |0.387 (0.332, 0.441) |
+|4  |gompertz    |gompertz    |IPILIMUMAB           |0.221 (0.176, 0.282) |0.126 (0.092, 0.156) |
+|5  |gompertz    |gompertz    |NIVOLUMAB            |0.414 (0.352, 0.477) |0.321 (0.274, 0.383) |
+|6  |gompertz    |gompertz    |NIVOLUMAB+IPILIMUMAB |0.51 (0.447, 0.575)  |0.39 (0.323, 0.457)  |
+|7  |loglogistic |loglogistic |IPILIMUMAB           |0.183 (0.11, 0.265)  |0.13 (0.091, 0.168)  |
+|8  |loglogistic |loglogistic |NIVOLUMAB            |0.329 (0.217, 0.423) |0.321 (0.267, 0.381) |
+|9  |loglogistic |loglogistic |NIVOLUMAB+IPILIMUMAB |0.449 (0.349, 0.524) |0.359 (0.308, 0.427) |
+|10 |lognormal   |lognormal   |IPILIMUMAB           |0.304 (0.241, 0.378) |0.175 (0.13, 0.207)  |
+|11 |lognormal   |lognormal   |NIVOLUMAB            |0.477 (0.432, 0.531) |0.424 (0.375, 0.467) |
+|12 |lognormal   |lognormal   |NIVOLUMAB+IPILIMUMAB |0.55 (0.487, 0.611)  |0.411 (0.365, 0.459) |
+|13 |weibull     |weibull     |IPILIMUMAB           |0.238 (0.177, 0.285) |0.146 (0.105, 0.186) |
+|14 |weibull     |weibull     |NIVOLUMAB            |0.425 (0.348, 0.51)  |0.317 (0.261, 0.378) |
+|15 |weibull     |weibull     |NIVOLUMAB+IPILIMUMAB |0.504 (0.423, 0.566) |0.392 (0.339, 0.45)  |
+
+
+The table below gives the leave-one-out cross validation statistics for each model fit using WAIC (@Vehtari2017).
+
+| OS Distn   | PFS Distn  | Treatment           | Statistic  | Estimate|    SE |
+|:-----------|:-----------|:--------------------|:-----------|--------:|------:|
+|exp         |exp         |IPILIMUMAB           |elpd_waic   | -1548.19|  53.04|
+|exp         |exp         |NIVOLUMAB            |elpd_waic.1 | -1548.57|  53.21|
+|exp         |exp         |NIVOLUMAB+IPILIMUMAB |elpd_waic.2 | -1541.23|  52.74|
+|gompertz    |gompertz    |IPILIMUMAB           |elpd_waic.3 | -1487.44|  57.45|
+|gompertz    |gompertz    |NIVOLUMAB            |elpd_waic.4 | -1549.41|  53.59|
+|gompertz    |gompertz    |NIVOLUMAB+IPILIMUMAB |p_waic      |     6.05|   0.61|
+|loglogistic |loglogistic |IPILIMUMAB           |p_waic.1    |     6.59|   0.53|
+|loglogistic |loglogistic |NIVOLUMAB            |p_waic.2    |     7.69|   0.53|
+|loglogistic |loglogistic |NIVOLUMAB+IPILIMUMAB |p_waic.3    |    14.76|   1.22|
+|lognormal   |lognormal   |IPILIMUMAB           |p_waic.4    |     7.92|   0.72|
+|lognormal   |lognormal   |NIVOLUMAB            |waic        |  3096.38| 106.09|
+|lognormal   |lognormal   |NIVOLUMAB+IPILIMUMAB |waic.1      |  3097.14| 106.41|
+|weibull     |weibull     |IPILIMUMAB           |waic.2      |  3082.45| 105.49|
+|weibull     |weibull     |NIVOLUMAB            |waic.3      |  2974.89| 114.90|
+|weibull     |weibull     |NIVOLUMAB+IPILIMUMAB |waic.4      |  3098.82| 107.17|
+
+
+### Exchangeable cure fraction for OS and PFS 
+
+Figures \ref{fig:IPI}, \ref{fig:NIVO}, and \ref{fig:NIVO+IPI} show
+posterior survival curves for the Exponential, log-logistic, Gompertz, Weibull and log-Normal models
+when the OS and PFS models share information with exchangeable cure fractions.
+
+```{r fig.show='hold', fig.align='center', out.width="25cm", out.height="40cm", echo=FALSE, message = FALSE, warning = FALSE, fig.cap="\\label{fig:IPI}Posterior survival curves for the mixture cure model with exchangeable cure fracion and $ipilimumab$. The red line is cured background, light green and blue are uncured, and dark green and magenta are combined. a) Exponential uncured b) Log-logistic uncured c) Gompertz uncured d) Weibull uncured e) Log-Normal uncured."}
 library(magick)
 library(grid)
 
@@ -315,15 +470,17 @@ rl[[5]] <-
   image_read("../plots/S_plots_lognormal_lognormal_cf hier_bg_fixed_IPILIMUMAB.png") %>%
   image_annotate(" e)", size = 70)
 
-gl = lapply(rl, grid::rasterGrob)
-gridExtra::marrangeGrob(grobs = gl, nrow = 3, ncol = 2, top = "",
+gl <- lapply(rl, grid::rasterGrob)
+gridExtra::marrangeGrob(grobs = gl,
+                        nrow = 3, ncol = 2,
+                        top = "",
                         # heights = unit(c(4,4,4), "cm"),
                         widths = c(4,4,4)#,
                         # vp=grid::viewport(width=0.5, height=1, clip = TRUE)
                         )
 ```
 
-```{r fig.show='hold', fig.align='center', out.width="25cm", out.height="40cm", echo=FALSE, message = FALSE, warning = FALSE, fig.cap="\\label{fig:NIVO}Posterior survival curves for the mixture cure model and $nivolumab$. The red line is cured background, light green and blue are uncured, and dark green and magenta are combined. a) Exponential uncured b) Log-logistic uncured c) Gompertz uncured d) Weibull uncured e) Log-Normal uncured."}
+```{r fig.show='hold', fig.align='center', out.width="25cm", out.height="40cm", echo=FALSE, message = FALSE, warning = FALSE, fig.cap="\\label{fig:NIVO}Posterior survival curves for the mixture cure model with exchangeable cure fracion and $nivolumab$. The red line is cured background, light green and blue are uncured, and dark green and magenta are combined. a) Exponential uncured b) Log-logistic uncured c) Gompertz uncured d) Weibull uncured e) Log-Normal uncured."}
 rl <- list()
 rl[[1]] <-
   image_read("../plots/S_plots_exp_exp_cf hier_bg_fixed_NIVOLUMAB.png") %>%
@@ -341,14 +498,14 @@ rl[[5]] <-
   image_read("../plots/S_plots_lognormal_lognormal_cf hier_bg_fixed_NIVOLUMAB.png") %>% 
   image_annotate(" e)", size = 70)
 
-gl = lapply(rl, grid::rasterGrob)
-gridExtra::marrangeGrob(grobs = gl, nrow = 3, ncol = 2, top = "",
-                        widths = c(4,4,4)#,
-                        # vp=grid::viewport(width=1, height=1, clip = TRUE)
-                        )
+gl <- lapply(rl, grid::rasterGrob)
+gridExtra::marrangeGrob(grobs = gl,
+                        nrow = 3, ncol = 2,
+                        top = "",
+                        widths = c(4,4,4))
 ```
 
-```{r fig.show='hold', fig.align='center', out.width="25cm", out.height="40cm", echo=FALSE, message = FALSE, warning = FALSE, fig.cap="\\label{fig:NIVO+IPI}Posterior survival curves for the mixture cure model and dual $ipilimumab$ and $nivolumab$. The red line is cured background, light green and blue are uncured, and dark green and magenta are combined. a) Exponential uncured b) Log-logistic uncured c) Gompertz uncured d) Weibull uncured e) Log-Normal uncured."}
+```{r fig.show='hold', fig.align='center', out.width="25cm", out.height="40cm", echo=FALSE, message = FALSE, warning = FALSE, fig.cap="\\label{fig:NIVO+IPI}Posterior survival curves for the mixture cure model with exchangeable cure fracion and dual $ipilimumab$ and $nivolumab$. The red line is cured background, light green and blue are uncured, and dark green and magenta are combined. a) Exponential uncured b) Log-logistic uncured c) Gompertz uncured d) Weibull uncured e) Log-Normal uncured."}
 rl <- list()
 rl[[1]] <-
   image_read("../plots/S_plots_exp_exp_cf hier_bg_fixed_NIVOLUMAB+IPILIMUMAB.png") %>%
@@ -366,11 +523,11 @@ rl[[5]] <-
   image_read("../plots/S_plots_lognormal_lognormal_cf hier_bg_fixed_NIVOLUMAB+IPILIMUMAB.png") %>%
   image_annotate(" e)", size = 70)
 
-gl = lapply(rl, grid::rasterGrob)
-gridExtra::marrangeGrob(grobs = gl, nrow = 3, ncol = 2, top = "",
-                        widths = c(4,4,4)#,
-                        # vp=grid::viewport(width=1, height=1, clip = TRUE)
-                        )
+gl <- lapply(rl, grid::rasterGrob)
+gridExtra::marrangeGrob(grobs = gl,
+                        nrow = 3, ncol = 2,
+                        top = "",
+                        widths = c(4,4,4))
 ```
 
 Figures \ref{fig:forest_global}, \ref{fig:forest_os} and \ref{fig:forest_pfs}
@@ -491,5 +648,81 @@ between-groups.
 
 It appears the above table that much of the variation is due to between
 PFS and OS indicating distinct cure fractions in each.
+
+
+## Sensitivity analysis for background mortality
+
+As a sensitivity analysis, an adjustment factor was applied to the general population mortality rates
+to allow for an assessment of the impact of background hazards on estimation of the cure fraction.
+A hazard ratio of 1.63 was applied to the background hazard.
+This was obtained from a previous ad-hoc analysis which compared the WHO life tables with the OS data
+for complete responders (CR) from CheckMate 067 (N=120, pooled across all 3 arms).
+
+Figure \ref{fig:NIVO+IPI_163} shows the equivalent posterior survival curves to Figure \ref{fig:NIVO+IPI} for the combined $ipilimumab$ and $nivolumab$ treatment and background hazard ratio adjustment 1.63.
+There is a small increase of approximately 1-2% in the cure fraction estimates.
+
+```{r fig.show='hold', fig.align='center', out.width="25cm", out.height="40cm", echo=FALSE, message = FALSE, warning = FALSE, fig.cap="\\label{fig:NIVO+IPI_163}Posterior survival curves for the mixture cure model with exchangeable cure fracion and dual $ipilimumab$ and $nivolumab$ and background hazard ratio adjustment 1.63. The red line is cured background, light green and blue are uncured, and dark green and magenta are combined. a) Exponential uncured b) Log-logistic uncured c) Gompertz uncured d) Weibull uncured e) Log-Normal uncured."}
+rl <- list()
+rl[[1]] <-
+  image_read("../plots/S_plots_exp_exp_cf hier_bg_fixed_hr1.63_NIVOLUMAB+IPILIMUMAB.png") %>%
+  image_annotate(" a)", size = 70)
+rl[[2]] <-
+  image_read("../plots/S_plots_loglogistic_loglogistic_cf hier_bg_fixed_hr1.63_NIVOLUMAB+IPILIMUMAB.png") %>%
+  image_annotate(" b)", size = 70)
+rl[[3]] <-
+  image_read("../plots/S_plots_gompertz_gompertz_cf hier_bg_fixed_hr1.63_NIVOLUMAB+IPILIMUMAB.png") %>%
+  image_annotate(" c)", size = 70)
+rl[[4]] <-
+  image_read("../plots/S_plots_weibull_weibull_cf hier_bg_fixed_hr1.63_NIVOLUMAB+IPILIMUMAB.png") %>%
+  image_annotate(" d)", size = 70)
+rl[[5]] <-
+  image_read("../plots/S_plots_lognormal_lognormal_cf hier_bg_fixed_hr1.63_NIVOLUMAB+IPILIMUMAB.png") %>%
+  image_annotate(" e)", size = 70)
+
+gl <- lapply(rl, grid::rasterGrob)
+gridExtra::marrangeGrob(grobs = gl,
+                        nrow = 3, ncol = 2,
+                        top = "",
+                        widths = c(4,4,4))
+```
+
+The table below summarises the cure fraction posterior distribution for each scenario.
+
+|   | OS Distn   | PFS Distn  | Treatment           | $cf$ (CrI)          | $cf_{OS}$ (CrI)     | $cf_{PFS}$ (CrI)    |
+|:--|:-----------|:-----------|:--------------------|:--------------------|:--------------------|:--------------------|
+|1  |exp         |exp         |NIVOLUMAB+IPILIMUMAB |0.45 (0.291, 0.646)  |0.538 (0.473, 0.588) |0.402 (0.351, 0.457) |
+|2  |gompertz    |gompertz    |NIVOLUMAB+IPILIMUMAB |0.459 (0.287, 0.616) |0.541 (0.448, 0.6)   |0.409 (0.349, 0.474) |
+|3  |loglogistic |loglogistic |NIVOLUMAB+IPILIMUMAB |0.433 (0.287, 0.601) |0.482 (0.374, 0.567) |0.39 (0.324, 0.444)  |
+|4  |lognormal   |lognormal   |NIVOLUMAB+IPILIMUMAB |0.46 (0.289, 0.648)  |0.583 (0.531, 0.643) |0.434 (0.381, 0.491) |
+|5  |weibull     |weibull     |NIVOLUMAB+IPILIMUMAB |0.469 (0.297, 0.62)  |0.546 (0.496, 0.592) |0.409 (0.354, 0.459) |
+
+
+Figure \ref{fig:forest_global_163} shows the equivalent posterior survival curves to Figures \ref{fig:forest_global}, \ref{fig:forest_os}, \ref{fig:forest_pfs} for the combined $ipilimumab$ and $nivolumab$ treatment and background hazard ratio adjustment 1.63.
+
+```{r fig.show='hold', fig.align='center', out.width="60%", echo=FALSE, fig.cap="\\label{fig:forest_global_163}Forest plot of cure fraction posterior distributions for dual $ipilimumab$ and $nivolumab$ and background hazard ratio adjustment 1.63."}
+knitr::include_graphics("../plots/cf hier_bg_fixed_hr1.63_forest_plot.png")
+```
+
+The table below gives the leave-one-out cross validation statistics for each model fit.
+
+
+| OS Distn   | PFS Distn  | Treatment           | Statistic  | Estimate|    SE |
+|:-----------|:-----------|:--------------------|:-----------|--------:|------:|
+|exp         |exp         |NIVOLUMAB+IPILIMUMAB |elpd_waic   | -1548.19|  53.04|
+|gompertz    |gompertz    |NIVOLUMAB+IPILIMUMAB |elpd_waic.1 | -1548.57|  53.21|
+|loglogistic |loglogistic |NIVOLUMAB+IPILIMUMAB |elpd_waic.2 | -1541.23|  52.74|
+|lognormal   |lognormal   |NIVOLUMAB+IPILIMUMAB |elpd_waic.3 | -1487.44|  57.45|
+|weibull     |weibull     |NIVOLUMAB+IPILIMUMAB |elpd_waic.4 | -1549.41|  53.59|
+|exp         |exp         |NIVOLUMAB+IPILIMUMAB |p_waic      |     6.05|   0.61|
+|gompertz    |gompertz    |NIVOLUMAB+IPILIMUMAB |p_waic.1    |     6.59|   0.53|
+|loglogistic |loglogistic |NIVOLUMAB+IPILIMUMAB |p_waic.2    |     7.69|   0.53|
+|lognormal   |lognormal   |NIVOLUMAB+IPILIMUMAB |p_waic.3    |    14.76|   1.22|
+|weibull     |weibull     |NIVOLUMAB+IPILIMUMAB |p_waic.4    |     7.92|   0.72|
+|exp         |exp         |NIVOLUMAB+IPILIMUMAB |waic        |  3096.38| 106.09|
+|gompertz    |gompertz    |NIVOLUMAB+IPILIMUMAB |waic.1      |  3097.14| 106.41|
+|loglogistic |loglogistic |NIVOLUMAB+IPILIMUMAB |waic.2      |  3082.45| 105.49|
+|lognormal   |lognormal   |NIVOLUMAB+IPILIMUMAB |waic.3      |  2974.89| 114.90|
+|weibull     |weibull     |NIVOLUMAB+IPILIMUMAB |waic.4      |  3098.82| 107.17|
+
 
 ## References

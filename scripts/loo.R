@@ -16,29 +16,29 @@ library(dplyr)
 library(tibble)
 
 
-res_hier_fixed <-
-  dir("data/independent/cf hier/bg_fixed",
-      full.names = TRUE) %>%
+# cf_model <- "cf hier"
+cf_model <- "cf separate"
+
+bg_model <- "bg_fixed"
+# bg_model <- "bg_fixed_hr1.63"
+
+data_dir <- glue("data/independent/{cf_model}/{bg_model}")
+
+res_ls <-
+  dir(data_dir, full.names = TRUE) %>%
   purrr::map(readRDS)
 
-res_sep_distn <-
-  dir("data/independent/cf separate",
-      full.names = TRUE) %>%
-  purrr::map(readRDS)
-
-purrr::map(res_hier_fixed, loo, cores = 2)
-purrr::map(res_sep_distn, loo, cores = 2)
-
+# purrr::map(res_ls, loo, cores = 2)
 # plot(loo_ipi)
 
-# waic table ----
 
-log_lik_hier_fix <-
+## waic table ----
+
+log_lik <-
   purrr::map(res_hier_fixed, extract_log_lik)
-# log_lik_sep_distn <- purrr::map(res_hier_fixed, extract_log_lik)
 
 tab <-
-  purrr::map(log_lik_hier_fix,
+  purrr::map(log_lik,
              ~round(waic(.x)[["estimates"]], 2)) %>%
   do.call(rbind, .) %>%
   as.data.frame %>%
@@ -48,7 +48,7 @@ tab <-
 # purrr::map(log_lik_sep_distn, waic)
 
 scenarios <-
-  dir("data/independent/cf hier/bg_fixed") %>%
+  dir(data_dir) %>%
   gsub("stan_", "", .) %>%
   gsub(".Rds", "", .) %>%
   stringr::str_split("_") %>%

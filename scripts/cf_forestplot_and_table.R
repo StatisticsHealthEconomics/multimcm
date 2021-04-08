@@ -10,7 +10,6 @@ library(rstan)
 library(rstanarm)
 library(bayesplot)
 library(loo)
-library(rethinking)
 library(purrr)
 library(dplyr)
 library(tibble)
@@ -18,20 +17,24 @@ library(glue)
 
 source("R/cf_table.R")
 
-cf_model <- "cf hier"
-# cf_model <- "cf separate"
 
-# bg_model <- "bg_fixed"
-bg_model <- "bg_fixed_hr1.63"
+## select model
+
+# cf_model <- "cf hier"
+cf_model <- "cf separate"
+
+bg_model <- "bg_fixed"
+# bg_model <- "bg_fixed_hr1.63"
 
 data_dir <- glue("data/independent/{cf_model}/{bg_model}")
-
 
 cf_table(data_dir) %>%
   knitr::kable()
 
 
-# forest plot ----
+###############
+# forest plot #
+###############
 ##TODO: automate names...
 
 scenarios_str <-
@@ -41,9 +44,11 @@ scenarios_str <-
 
 res_ls <-
   dir(data_dir, full.names = TRUE) %>%
-  purrr::map(readRDS)
+  purrr::map(readRDS) %>%
+  setNames(scenarios_str)
 
-params_hier_fixed <- purrr::map(res_ls, extract)
+params_hier_fixed <-
+  purrr::map(res_ls, extract)
 
 cf_global <- purrr::map(params_hier_fixed, "cf_global")
 cf_pfs <- purrr::map(params_hier_fixed, "cf_pfs")
@@ -91,6 +96,11 @@ ggsave(filename = glue("plots/{cf_model}_{bg_model}_forest_plot.png"))
 #   xlim(0, 0.65)
 # ggsave(filename = glue("plots/{cf_model}_pfs_forest_plot.png"))
 
+
+## alternative forest plots
+source("R/stan_forest_plot.R")
+out <- stan_forest_plot(res_ls)
+ggsave(out, filename = glue("plots/{cf_model}_{bg_model}_forest_plot.png"))
 
 
 ##REMOVE?

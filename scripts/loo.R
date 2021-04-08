@@ -10,23 +10,33 @@
 library(rstanarm)
 library(bayesplot)
 library(loo)
-library(rethinking)
 library(purrr)
 library(dplyr)
 library(tibble)
 
 
-# cf_model <- "cf hier"
-cf_model <- "cf separate"
+## select model
 
-bg_model <- "bg_fixed"
-# bg_model <- "bg_fixed_hr1.63"
+cf_model <- "cf hier"
+# cf_model <- "cf separate"
 
-data_dir <- glue("data/independent/{cf_model}/{bg_model}")
+# bg_model <- "bg_fixed"
+bg_model <- "bg_fixed_hr1.63"
+
+
+## load data
+
+data_dir <- glue::glue("data/independent/{cf_model}/{bg_model}")
+
+scenarios <-
+  dir(data_dir) %>%
+  gsub("stan_", "", .) %>%
+  gsub(".Rds", "", .)
 
 res_ls <-
   dir(data_dir, full.names = TRUE) %>%
-  purrr::map(readRDS)
+  purrr::map(readRDS) %>%
+  setNames(scenarios)
 
 # purrr::map(res_ls, loo, cores = 2)
 # plot(loo_ipi)
@@ -35,29 +45,21 @@ res_ls <-
 ## waic table ----
 
 log_lik <-
-  purrr::map(res_hier_fixed, extract_log_lik)
+  purrr::map(res_ls, extract_log_lik)
 
 tab <-
   purrr::map(log_lik,
              ~round(waic(.x)[["estimates"]], 2)) %>%
   do.call(rbind, .) %>%
-  as.data.frame %>%
-  rownames_to_column(var = "Statistic") %>%
+  data.frame(Statistic = c("elpd_waic","p_waic","waic"),
+             scenarios = rep(scenarios, each = 3)) %>%
+  tidyr::separate(scenarios, into = c("OS distn", "PFS distn", "Treatment"), sep = "_") %>%
+  relocate(where(is.character)) %>%
+  # rownames_to_column(var = "Statistic") %>%
   arrange(Statistic)
 
-# purrr::map(log_lik_sep_distn, waic)
+knitr::kable(tab, row.names = FALSE)
 
-scenarios <-
-  dir(data_dir) %>%
-  gsub("stan_", "", .) %>%
-  gsub(".Rds", "", .) %>%
-  stringr::str_split("_") %>%
-  do.call(rbind, .)
-
-
-knitr::kable(
-  cbind(scenarios,
-        tab))
 
 # ----
 

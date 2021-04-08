@@ -95,7 +95,7 @@
 
 \title{Checkmate 067 study Bayesian mixture cure model analysis}
 \author{Nathan Green, Gianluca Baio, UCL}
-\date{30 March, 2021}
+\date{08 April, 2021}
 
 \begin{document}
 \maketitle
@@ -429,25 +429,16 @@ the OS and PFS models are fitted separately.
 \caption{\label{fig:NIVO+IPI_separate}Posterior survival curves for the mixture cure model for separate OS and PFS models and $ipilimumab$ and $nivolumab$. The red line is cured background, light green and blue are uncured, and dark green and magenta are combined. a) Exponential uncured b) Log-logistic uncured c) Gompertz uncured d) Weibull uncured e) Log-Normal uncured.}\label{fig:unnamed-chunk-5}
 \end{figure}
 
-Figures \ref{fig:forest_os_separate} and \ref{fig:forest_pfs_separate}
-show the forest plots of cure fraction posterior distributions.
+Figures \ref{fig:forest_separate} shows the forest plots of cure
+fraction posterior distributions.
 
 \begin{figure}
 
-{\centering \includegraphics[width=0.6\linewidth]{../plots/cf separate_os_forest_plot} 
+{\centering \includegraphics[width=0.6\linewidth]{../plots/cf separate_bg_fixed_forest_plot} 
 
 }
 
-\caption{\label{fig:forest_os_separate}Forest plot of OS cure fraction posterior distributions for separate OS and PFS models .}\label{fig:unnamed-chunk-6}
-\end{figure}
-
-\begin{figure}
-
-{\centering \includegraphics[width=0.6\linewidth]{../plots/cf separate_pfs_forest_plot} 
-
-}
-
-\caption{\label{fig:forest_pfs_separate}Forest plot of PFS cure fraction posterior distributions for separate OS and PFS models .}\label{fig:unnamed-chunk-7}
+\caption{\label{fig:forest_separate}Forest plot of cure fraction posterior distributions for separate OS and PFS models .}\label{fig:unnamed-chunk-6}
 \end{figure}
 
 \begin{longtable}[]{@{}llllll@{}}
@@ -670,37 +661,85 @@ each model fit using WAIC (Vehtari, Gelman, and Gabry (2017)).
 
 \begin{longtable}[]{@{}llllrr@{}}
 \toprule
-OS Distn & PFS Distn & Treatment & Statistic & Estimate &
+Statistic & OS distn & PFS distn & Treatment & Estimate &
 SE\tabularnewline
 \midrule
 \endhead
-exp & exp & IPILIMUMAB & elpd\_waic & -1548.19 & 53.04\tabularnewline
-exp & exp & NIVOLUMAB & elpd\_waic.1 & -1548.57 & 53.21\tabularnewline
-exp & exp & NIVOLUMAB+IPILIMUMAB & elpd\_waic.2 & -1541.23 &
-52.74\tabularnewline
-gompertz & gompertz & IPILIMUMAB & elpd\_waic.3 & -1487.44 &
-57.45\tabularnewline
-gompertz & gompertz & NIVOLUMAB & elpd\_waic.4 & -1549.41 &
-53.59\tabularnewline
-gompertz & gompertz & NIVOLUMAB+IPILIMUMAB & p\_waic & 6.05 &
-0.61\tabularnewline
-loglogistic & loglogistic & IPILIMUMAB & p\_waic.1 & 6.59 &
-0.53\tabularnewline
-loglogistic & loglogistic & NIVOLUMAB & p\_waic.2 & 7.69 &
-0.53\tabularnewline
-loglogistic & loglogistic & NIVOLUMAB+IPILIMUMAB & p\_waic.3 & 14.76 &
-1.22\tabularnewline
-lognormal & lognormal & IPILIMUMAB & p\_waic.4 & 7.92 &
-0.72\tabularnewline
-lognormal & lognormal & NIVOLUMAB & waic & 3096.38 &
-106.09\tabularnewline
-lognormal & lognormal & NIVOLUMAB+IPILIMUMAB & waic.1 & 3097.14 &
-106.41\tabularnewline
-weibull & weibull & IPILIMUMAB & waic.2 & 3082.45 &
-105.49\tabularnewline
-weibull & weibull & NIVOLUMAB & waic.3 & 2974.89 & 114.90\tabularnewline
-weibull & weibull & NIVOLUMAB+IPILIMUMAB & waic.4 & 3098.82 &
-107.17\tabularnewline
+elpd\_waic & exp & exp & IPILIMUMAB & -1839.45 & 36.61\tabularnewline
+elpd\_waic & exp & exp & NIVOLUMAB & -1679.68 & 45.72\tabularnewline
+elpd\_waic & exp & exp & NIVOLUMAB+IPILIMUMAB & -1543.36 &
+53.33\tabularnewline
+elpd\_waic & gompertz & gompertz & IPILIMUMAB & -1839.14 &
+36.68\tabularnewline
+elpd\_waic & gompertz & gompertz & NIVOLUMAB & -1680.14 &
+45.78\tabularnewline
+elpd\_waic & gompertz & gompertz & NIVOLUMAB+IPILIMUMAB & -1543.05 &
+53.87\tabularnewline
+elpd\_waic & loglogistic & loglogistic & IPILIMUMAB & -1768.28 &
+39.71\tabularnewline
+elpd\_waic & loglogistic & loglogistic & NIVOLUMAB & -1651.40 &
+45.77\tabularnewline
+elpd\_waic & loglogistic & loglogistic & NIVOLUMAB+IPILIMUMAB & -1534.76
+& 52.63\tabularnewline
+elpd\_waic & lognormal & lognormal & IPILIMUMAB & -1561.55 &
+56.00\tabularnewline
+elpd\_waic & lognormal & lognormal & NIVOLUMAB & -1550.21 &
+59.92\tabularnewline
+elpd\_waic & lognormal & lognormal & NIVOLUMAB+IPILIMUMAB & -1489.45 &
+58.02\tabularnewline
+elpd\_waic & weibull & weibull & IPILIMUMAB & -1821.12 &
+39.94\tabularnewline
+elpd\_waic & weibull & weibull & NIVOLUMAB & -1681.27 &
+45.63\tabularnewline
+elpd\_waic & weibull & weibull & NIVOLUMAB+IPILIMUMAB & -1546.26 &
+53.72\tabularnewline
+p\_waic & exp & exp & IPILIMUMAB & 5.41 & 0.50\tabularnewline
+p\_waic & exp & exp & NIVOLUMAB & 7.50 & 0.60\tabularnewline
+p\_waic & exp & exp & NIVOLUMAB+IPILIMUMAB & 6.43 & 0.60\tabularnewline
+p\_waic & gompertz & gompertz & IPILIMUMAB & 5.14 & 0.48\tabularnewline
+p\_waic & gompertz & gompertz & NIVOLUMAB & 8.31 & 0.74\tabularnewline
+p\_waic & gompertz & gompertz & NIVOLUMAB+IPILIMUMAB & 6.10 &
+0.50\tabularnewline
+p\_waic & loglogistic & loglogistic & IPILIMUMAB & 8.31 &
+0.44\tabularnewline
+p\_waic & loglogistic & loglogistic & NIVOLUMAB & 8.53 &
+0.47\tabularnewline
+p\_waic & loglogistic & loglogistic & NIVOLUMAB+IPILIMUMAB & 6.78 &
+0.52\tabularnewline
+p\_waic & lognormal & lognormal & IPILIMUMAB & 13.88 &
+1.26\tabularnewline
+p\_waic & lognormal & lognormal & NIVOLUMAB & 15.86 &
+1.40\tabularnewline
+p\_waic & lognormal & lognormal & NIVOLUMAB+IPILIMUMAB & 15.33 &
+1.43\tabularnewline
+p\_waic & weibull & weibull & IPILIMUMAB & 11.28 & 1.27\tabularnewline
+p\_waic & weibull & weibull & NIVOLUMAB & 9.85 & 0.96\tabularnewline
+p\_waic & weibull & weibull & NIVOLUMAB+IPILIMUMAB & 10.09 &
+0.95\tabularnewline
+waic & exp & exp & IPILIMUMAB & 3678.90 & 73.23\tabularnewline
+waic & exp & exp & NIVOLUMAB & 3359.36 & 91.45\tabularnewline
+waic & exp & exp & NIVOLUMAB+IPILIMUMAB & 3086.73 &
+106.66\tabularnewline
+waic & gompertz & gompertz & IPILIMUMAB & 3678.27 & 73.36\tabularnewline
+waic & gompertz & gompertz & NIVOLUMAB & 3360.29 & 91.57\tabularnewline
+waic & gompertz & gompertz & NIVOLUMAB+IPILIMUMAB & 3086.10 &
+107.73\tabularnewline
+waic & loglogistic & loglogistic & IPILIMUMAB & 3536.57 &
+79.43\tabularnewline
+waic & loglogistic & loglogistic & NIVOLUMAB & 3302.80 &
+91.54\tabularnewline
+waic & loglogistic & loglogistic & NIVOLUMAB+IPILIMUMAB & 3069.53 &
+105.26\tabularnewline
+waic & lognormal & lognormal & IPILIMUMAB & 3123.10 &
+111.99\tabularnewline
+waic & lognormal & lognormal & NIVOLUMAB & 3100.41 &
+119.84\tabularnewline
+waic & lognormal & lognormal & NIVOLUMAB+IPILIMUMAB & 2978.89 &
+116.03\tabularnewline
+waic & weibull & weibull & IPILIMUMAB & 3642.23 & 79.89\tabularnewline
+waic & weibull & weibull & NIVOLUMAB & 3362.55 & 91.25\tabularnewline
+waic & weibull & weibull & NIVOLUMAB+IPILIMUMAB & 3092.51 &
+107.43\tabularnewline
 \bottomrule
 \end{longtable}
 
@@ -715,11 +754,20 @@ information with exchangeable cure fractions.
 
 \begin{figure}
 
+{\centering \includegraphics[width=25cm,height=40cm]{Check_mate_analysis_files/figure-latex/unnamed-chunk-7-1} 
+
+}
+
+\caption{\label{fig:IPI}Posterior survival curves for the mixture cure model with exchangeable cure fracion and $ipilimumab$. The red line is cured background, light green and blue are uncured, and dark green and magenta are combined. a) Exponential uncured b) Log-logistic uncured c) Gompertz uncured d) Weibull uncured e) Log-Normal uncured.}\label{fig:unnamed-chunk-7}
+\end{figure}
+
+\begin{figure}
+
 {\centering \includegraphics[width=25cm,height=40cm]{Check_mate_analysis_files/figure-latex/unnamed-chunk-8-1} 
 
 }
 
-\caption{\label{fig:IPI}Posterior survival curves for the mixture cure model with exchangeable cure fracion and $ipilimumab$. The red line is cured background, light green and blue are uncured, and dark green and magenta are combined. a) Exponential uncured b) Log-logistic uncured c) Gompertz uncured d) Weibull uncured e) Log-Normal uncured.}\label{fig:unnamed-chunk-8}
+\caption{\label{fig:NIVO}Posterior survival curves for the mixture cure model with exchangeable cure fracion and $nivolumab$. The red line is cured background, light green and blue are uncured, and dark green and magenta are combined. a) Exponential uncured b) Log-logistic uncured c) Gompertz uncured d) Weibull uncured e) Log-Normal uncured.}\label{fig:unnamed-chunk-8}
 \end{figure}
 
 \begin{figure}
@@ -728,50 +776,22 @@ information with exchangeable cure fractions.
 
 }
 
-\caption{\label{fig:NIVO}Posterior survival curves for the mixture cure model with exchangeable cure fracion and $nivolumab$. The red line is cured background, light green and blue are uncured, and dark green and magenta are combined. a) Exponential uncured b) Log-logistic uncured c) Gompertz uncured d) Weibull uncured e) Log-Normal uncured.}\label{fig:unnamed-chunk-9}
+\caption{\label{fig:NIVO+IPI}Posterior survival curves for the mixture cure model with exchangeable cure fracion and dual $ipilimumab$ and $nivolumab$. The red line is cured background, light green and blue are uncured, and dark green and magenta are combined. a) Exponential uncured b) Log-logistic uncured c) Gompertz uncured d) Weibull uncured e) Log-Normal uncured.}\label{fig:unnamed-chunk-9}
 \end{figure}
+
+Figures \ref{fig:forest_hier} shows the forest plots of cure fraction
+posterior distributions. We see that the values are generally similar
+for the Exponential and log-logistic fits. This clearly shows how the
+global cure fraction posterior distribution lies partway between the PFS
+and OS distributions.
 
 \begin{figure}
 
-{\centering \includegraphics[width=25cm,height=40cm]{Check_mate_analysis_files/figure-latex/unnamed-chunk-10-1} 
+{\centering \includegraphics[width=0.6\linewidth]{../plots/cf hier_bg_fixed_forest_plot} 
 
 }
 
-\caption{\label{fig:NIVO+IPI}Posterior survival curves for the mixture cure model with exchangeable cure fracion and dual $ipilimumab$ and $nivolumab$. The red line is cured background, light green and blue are uncured, and dark green and magenta are combined. a) Exponential uncured b) Log-logistic uncured c) Gompertz uncured d) Weibull uncured e) Log-Normal uncured.}\label{fig:unnamed-chunk-10}
-\end{figure}
-
-Figures \ref{fig:forest_global}, \ref{fig:forest_os} and
-\ref{fig:forest_pfs} show the forest plots of cure fraction posterior
-distributions. We see that the values are generally similar for the
-Exponential and log-logistic fits. This clearly shows how the global
-cure fraction posterior distribution lies partway between the PFS and OS
-distributions.
-
-\begin{figure}
-
-{\centering \includegraphics[width=0.6\linewidth]{../plots/cf_global_forest_plot} 
-
-}
-
-\caption{\label{fig:forest_global}Forest plot of global cure fraction posterior distributions.}\label{fig:unnamed-chunk-11}
-\end{figure}
-
-\begin{figure}
-
-{\centering \includegraphics[width=0.6\linewidth]{../plots/cf_os_forest_plot} 
-
-}
-
-\caption{\label{fig:forest_os}Forest plot of OS cure fraction posterior distributions.}\label{fig:unnamed-chunk-12}
-\end{figure}
-
-\begin{figure}
-
-{\centering \includegraphics[width=0.6\linewidth]{../plots/cf_pfs_forest_plot} 
-
-}
-
-\caption{\label{fig:forest_pfs}Forest plot of PFS cure fraction posterior distributions.}\label{fig:unnamed-chunk-13}
+\caption{\label{fig:forest_hier}Forest plot of cure fraction posterior distributions for exchangeable model.}\label{fig:unnamed-chunk-10}
 \end{figure}
 
 The table below summarises the cure fraction posterior distribution for
@@ -1029,85 +1049,91 @@ each model fit.
 
 \begin{longtable}[]{@{}llllrr@{}}
 \toprule
-OS Distn & PFS Distn & Treatment & Statistic & Estimate &
+Statistic & OS distn & PFS distn & Treatment & Estimate &
 SE\tabularnewline
 \midrule
 \endhead
-exp & exp & IPILIMUMAB & elpd\_waic & -1838.83 & 36.07\tabularnewline
-exp & exp & NIVOLUMAB & elpd\_waic & -1679.59 & 45.69\tabularnewline
-exp & exp & NIVOLUMAB+IPILIMUMAB & elpd\_waic & -1549.68 &
-60.15\tabularnewline
-gompertz & gompertz & IPILIMUMAB & elpd\_waic & -1488.81 &
-58.20\tabularnewline
-gompertz & gompertz & NIVOLUMAB & elpd\_waic & -1819.89 &
-39.69\tabularnewline
-gompertz & gompertz & NIVOLUMAB+IPILIMUMAB & elpd\_waic & -1680.25 &
-45.91\tabularnewline
-loglogistic & loglogistic & IPILIMUMAB & elpd\_waic & -1544.04 &
-54.19\tabularnewline
-loglogistic & loglogistic & NIVOLUMAB & elpd\_waic & -1543.49 &
+elpd\_waic & exp & exp & IPILIMUMAB & -1838.83 & 36.07\tabularnewline
+elpd\_waic & exp & exp & NIVOLUMAB & -1679.59 & 45.69\tabularnewline
+elpd\_waic & exp & exp & NIVOLUMAB+IPILIMUMAB & -1543.49 &
 53.87\tabularnewline
-loglogistic & loglogistic & NIVOLUMAB+IPILIMUMAB & elpd\_waic & -1839.34
-& 36.27\tabularnewline
-lognormal & lognormal & IPILIMUMAB & elpd\_waic & -1679.48 &
+elpd\_waic & gompertz & gompertz & IPILIMUMAB & -1839.34 &
+36.27\tabularnewline
+elpd\_waic & gompertz & gompertz & NIVOLUMAB & -1679.48 &
 45.80\tabularnewline
-lognormal & lognormal & NIVOLUMAB & elpd\_waic & -1543.81 &
+elpd\_waic & gompertz & gompertz & NIVOLUMAB+IPILIMUMAB & -1543.81 &
 54.03\tabularnewline
-lognormal & lognormal & NIVOLUMAB+IPILIMUMAB & elpd\_waic & -1768.17 &
+elpd\_waic & loglogistic & loglogistic & IPILIMUMAB & -1768.17 &
 39.20\tabularnewline
-weibull & weibull & IPILIMUMAB & elpd\_waic & -1651.73 &
+elpd\_waic & loglogistic & loglogistic & NIVOLUMAB & -1651.73 &
 46.02\tabularnewline
-weibull & weibull & NIVOLUMAB & elpd\_waic & -1533.95 &
-53.17\tabularnewline
-weibull & weibull & NIVOLUMAB+IPILIMUMAB & elpd\_waic & -1566.33 &
-55.91\tabularnewline
-exp & exp & IPILIMUMAB & p\_waic & 5.37 & 0.48\tabularnewline
-exp & exp & NIVOLUMAB & p\_waic & 7.45 & 0.62\tabularnewline
-exp & exp & NIVOLUMAB+IPILIMUMAB & p\_waic & 15.46 & 1.44\tabularnewline
-gompertz & gompertz & IPILIMUMAB & p\_waic & 14.55 & 1.26\tabularnewline
-gompertz & gompertz & NIVOLUMAB & p\_waic & 9.46 & 0.96\tabularnewline
-gompertz & gompertz & NIVOLUMAB+IPILIMUMAB & p\_waic & 8.70 &
-0.75\tabularnewline
-loglogistic & loglogistic & IPILIMUMAB & p\_waic & 7.70 &
+elpd\_waic & loglogistic & loglogistic & NIVOLUMAB+IPILIMUMAB & -1533.95
+& 53.17\tabularnewline
+elpd\_waic & lognormal & lognormal & IPILIMUMAB & -1561.07 &
+55.77\tabularnewline
+elpd\_waic & lognormal & lognormal & NIVOLUMAB & -1549.68 &
+60.15\tabularnewline
+elpd\_waic & lognormal & lognormal & NIVOLUMAB+IPILIMUMAB & -1488.80 &
+58.13\tabularnewline
+elpd\_waic & weibull & lognormal & NIVOLUMAB+IPILIMUMAB & -1508.24 &
+55.14\tabularnewline
+elpd\_waic & weibull & weibull & IPILIMUMAB & -1819.89 &
+39.69\tabularnewline
+elpd\_waic & weibull & weibull & NIVOLUMAB & -1680.25 &
+45.91\tabularnewline
+elpd\_waic & weibull & weibull & NIVOLUMAB+IPILIMUMAB & -1544.04 &
+54.19\tabularnewline
+p\_waic & exp & exp & IPILIMUMAB & 5.37 & 0.48\tabularnewline
+p\_waic & exp & exp & NIVOLUMAB & 7.45 & 0.62\tabularnewline
+p\_waic & exp & exp & NIVOLUMAB+IPILIMUMAB & 7.15 & 0.60\tabularnewline
+p\_waic & gompertz & gompertz & IPILIMUMAB & 5.91 & 0.52\tabularnewline
+p\_waic & gompertz & gompertz & NIVOLUMAB & 6.96 & 0.56\tabularnewline
+p\_waic & gompertz & gompertz & NIVOLUMAB+IPILIMUMAB & 7.07 &
+0.78\tabularnewline
+p\_waic & loglogistic & loglogistic & IPILIMUMAB & 9.19 &
+0.56\tabularnewline
+p\_waic & loglogistic & loglogistic & NIVOLUMAB & 9.20 &
+0.53\tabularnewline
+p\_waic & loglogistic & loglogistic & NIVOLUMAB+IPILIMUMAB & 6.10 &
+0.50\tabularnewline
+p\_waic & lognormal & lognormal & IPILIMUMAB & 14.04 &
+1.30\tabularnewline
+p\_waic & lognormal & lognormal & NIVOLUMAB & 15.46 &
+1.44\tabularnewline
+p\_waic & lognormal & lognormal & NIVOLUMAB+IPILIMUMAB & 14.30 &
+1.17\tabularnewline
+p\_waic & weibull & lognormal & NIVOLUMAB+IPILIMUMAB & 12.42 &
+1.14\tabularnewline
+p\_waic & weibull & weibull & IPILIMUMAB & 9.46 & 0.96\tabularnewline
+p\_waic & weibull & weibull & NIVOLUMAB & 8.70 & 0.75\tabularnewline
+p\_waic & weibull & weibull & NIVOLUMAB+IPILIMUMAB & 7.70 &
 0.72\tabularnewline
-loglogistic & loglogistic & NIVOLUMAB & p\_waic & 7.15 &
-0.60\tabularnewline
-loglogistic & loglogistic & NIVOLUMAB+IPILIMUMAB & p\_waic & 5.91 &
-0.52\tabularnewline
-lognormal & lognormal & IPILIMUMAB & p\_waic & 6.96 &
-0.56\tabularnewline
-lognormal & lognormal & NIVOLUMAB & p\_waic & 7.07 & 0.78\tabularnewline
-lognormal & lognormal & NIVOLUMAB+IPILIMUMAB & p\_waic & 9.19 &
-0.56\tabularnewline
-weibull & weibull & IPILIMUMAB & p\_waic & 9.20 & 0.53\tabularnewline
-weibull & weibull & NIVOLUMAB & p\_waic & 6.10 & 0.50\tabularnewline
-weibull & weibull & NIVOLUMAB+IPILIMUMAB & p\_waic & 20.04 &
-1.20\tabularnewline
-exp & exp & IPILIMUMAB & waic & 3677.65 & 72.13\tabularnewline
-exp & exp & NIVOLUMAB & waic & 3359.19 & 91.37\tabularnewline
-exp & exp & NIVOLUMAB+IPILIMUMAB & waic & 3099.36 &
-120.30\tabularnewline
-gompertz & gompertz & IPILIMUMAB & waic & 2977.62 &
-116.41\tabularnewline
-gompertz & gompertz & NIVOLUMAB & waic & 3639.77 & 79.38\tabularnewline
-gompertz & gompertz & NIVOLUMAB+IPILIMUMAB & waic & 3360.49 &
-91.83\tabularnewline
-loglogistic & loglogistic & IPILIMUMAB & waic & 3088.08 &
-108.39\tabularnewline
-loglogistic & loglogistic & NIVOLUMAB & waic & 3086.98 &
+waic & exp & exp & IPILIMUMAB & 3677.65 & 72.13\tabularnewline
+waic & exp & exp & NIVOLUMAB & 3359.19 & 91.37\tabularnewline
+waic & exp & exp & NIVOLUMAB+IPILIMUMAB & 3086.98 &
 107.74\tabularnewline
-loglogistic & loglogistic & NIVOLUMAB+IPILIMUMAB & waic & 3678.68 &
-72.53\tabularnewline
-lognormal & lognormal & IPILIMUMAB & waic & 3358.96 &
-91.59\tabularnewline
-lognormal & lognormal & NIVOLUMAB & waic & 3087.62 &
+waic & gompertz & gompertz & IPILIMUMAB & 3678.68 & 72.53\tabularnewline
+waic & gompertz & gompertz & NIVOLUMAB & 3358.96 & 91.59\tabularnewline
+waic & gompertz & gompertz & NIVOLUMAB+IPILIMUMAB & 3087.62 &
 108.05\tabularnewline
-lognormal & lognormal & NIVOLUMAB+IPILIMUMAB & waic & 3536.33 &
+waic & loglogistic & loglogistic & IPILIMUMAB & 3536.33 &
 78.40\tabularnewline
-weibull & weibull & IPILIMUMAB & waic & 3303.47 & 92.04\tabularnewline
-weibull & weibull & NIVOLUMAB & waic & 3067.91 & 106.35\tabularnewline
-weibull & weibull & NIVOLUMAB+IPILIMUMAB & waic & 3132.66 &
-111.82\tabularnewline
+waic & loglogistic & loglogistic & NIVOLUMAB & 3303.47 &
+92.04\tabularnewline
+waic & loglogistic & loglogistic & NIVOLUMAB+IPILIMUMAB & 3067.91 &
+106.35\tabularnewline
+waic & lognormal & lognormal & IPILIMUMAB & 3122.14 &
+111.54\tabularnewline
+waic & lognormal & lognormal & NIVOLUMAB & 3099.36 &
+120.30\tabularnewline
+waic & lognormal & lognormal & NIVOLUMAB+IPILIMUMAB & 2977.61 &
+116.25\tabularnewline
+waic & weibull & lognormal & NIVOLUMAB+IPILIMUMAB & 3016.47 &
+110.29\tabularnewline
+waic & weibull & weibull & IPILIMUMAB & 3639.77 & 79.38\tabularnewline
+waic & weibull & weibull & NIVOLUMAB & 3360.49 & 91.83\tabularnewline
+waic & weibull & weibull & NIVOLUMAB+IPILIMUMAB & 3088.08 &
+108.39\tabularnewline
 \bottomrule
 \end{longtable}
 
@@ -1166,11 +1192,11 @@ estimates.
 
 \begin{figure}
 
-{\centering \includegraphics[width=25cm,height=40cm]{Check_mate_analysis_files/figure-latex/unnamed-chunk-14-1} 
+{\centering \includegraphics[width=25cm,height=40cm]{Check_mate_analysis_files/figure-latex/unnamed-chunk-11-1} 
 
 }
 
-\caption{\label{fig:NIVO+IPI_163}Posterior survival curves for the mixture cure model with exchangeable cure fracion and dual $ipilimumab$ and $nivolumab$ and background hazard ratio adjustment 1.63. The red line is cured background, light green and blue are uncured, and dark green and magenta are combined. a) Exponential uncured b) Log-logistic uncured c) Gompertz uncured d) Weibull uncured e) Log-Normal uncured.}\label{fig:unnamed-chunk-14}
+\caption{\label{fig:NIVO+IPI_163}Posterior survival curves for the mixture cure model with exchangeable cure fracion and dual $ipilimumab$ and $nivolumab$ and background hazard ratio adjustment 1.63. The red line is cured background, light green and blue are uncured, and dark green and magenta are combined. a) Exponential uncured b) Log-logistic uncured c) Gompertz uncured d) Weibull uncured e) Log-Normal uncured.}\label{fig:unnamed-chunk-11}
 \end{figure}
 
 The table below summarises the cure fraction posterior distribution for
@@ -1274,9 +1300,9 @@ NIVOLUMAB+IPILIMUMAB\strut
 \end{longtable}
 
 Figure \ref{fig:forest_global_163} shows the equivalent posterior
-survival curves to Figures \ref{fig:forest_global}, \ref{fig:forest_os},
-\ref{fig:forest_pfs} for the combined \(ipilimumab\) and \(nivolumab\)
-treatment and background hazard ratio adjustment 1.63.
+survival curves to Figures \ref{fig:forest_hier} for the combined
+\(ipilimumab\) and \(nivolumab\) treatment and background hazard ratio
+adjustment 1.63.
 
 \begin{figure}
 
@@ -1284,49 +1310,53 @@ treatment and background hazard ratio adjustment 1.63.
 
 }
 
-\caption{\label{fig:forest_global_163}Forest plot of cure fraction posterior distributions for dual $ipilimumab$ and $nivolumab$ and background hazard ratio adjustment 1.63.}\label{fig:unnamed-chunk-15}
+\caption{\label{fig:forest_global_163}Forest plot of cure fraction posterior distributions for dual $ipilimumab$ and $nivolumab$ and background hazard ratio adjustment 1.63.}\label{fig:unnamed-chunk-12}
 \end{figure}
+
+\newpage
 
 The table below gives the leave-one-out cross validation statistics for
 each model fit.
 
 \begin{longtable}[]{@{}llllrr@{}}
 \toprule
-OS Distn & PFS Distn & Treatment & Statistic & Estimate &
+Statistic & OS distn & PFS distn & Treatment & Estimate &
 SE\tabularnewline
 \midrule
 \endhead
-exp & exp & NIVOLUMAB+IPILIMUMAB & elpd\_waic & -1548.19 &
+elpd\_waic & exp & exp & NIVOLUMAB+IPILIMUMAB & -1548.19 &
 53.04\tabularnewline
-gompertz & gompertz & NIVOLUMAB+IPILIMUMAB & elpd\_waic.1 & -1548.57 &
+elpd\_waic & gompertz & gompertz & NIVOLUMAB+IPILIMUMAB & -1548.57 &
 53.21\tabularnewline
-loglogistic & loglogistic & NIVOLUMAB+IPILIMUMAB & elpd\_waic.2 &
--1541.23 & 52.74\tabularnewline
-lognormal & lognormal & NIVOLUMAB+IPILIMUMAB & elpd\_waic.3 & -1487.44 &
+elpd\_waic & loglogistic & loglogistic & NIVOLUMAB+IPILIMUMAB & -1541.23
+& 52.74\tabularnewline
+elpd\_waic & lognormal & lognormal & NIVOLUMAB+IPILIMUMAB & -1487.44 &
 57.45\tabularnewline
-weibull & weibull & NIVOLUMAB+IPILIMUMAB & elpd\_waic.4 & -1549.41 &
+elpd\_waic & weibull & weibull & NIVOLUMAB+IPILIMUMAB & -1549.41 &
 53.59\tabularnewline
-exp & exp & NIVOLUMAB+IPILIMUMAB & p\_waic & 6.05 & 0.61\tabularnewline
-gompertz & gompertz & NIVOLUMAB+IPILIMUMAB & p\_waic.1 & 6.59 &
+p\_waic & exp & exp & NIVOLUMAB+IPILIMUMAB & 6.05 & 0.61\tabularnewline
+p\_waic & gompertz & gompertz & NIVOLUMAB+IPILIMUMAB & 6.59 &
 0.53\tabularnewline
-loglogistic & loglogistic & NIVOLUMAB+IPILIMUMAB & p\_waic.2 & 7.69 &
+p\_waic & loglogistic & loglogistic & NIVOLUMAB+IPILIMUMAB & 7.69 &
 0.53\tabularnewline
-lognormal & lognormal & NIVOLUMAB+IPILIMUMAB & p\_waic.3 & 14.76 &
+p\_waic & lognormal & lognormal & NIVOLUMAB+IPILIMUMAB & 14.76 &
 1.22\tabularnewline
-weibull & weibull & NIVOLUMAB+IPILIMUMAB & p\_waic.4 & 7.92 &
+p\_waic & weibull & weibull & NIVOLUMAB+IPILIMUMAB & 7.92 &
 0.72\tabularnewline
-exp & exp & NIVOLUMAB+IPILIMUMAB & waic & 3096.38 &
+waic & exp & exp & NIVOLUMAB+IPILIMUMAB & 3096.38 &
 106.09\tabularnewline
-gompertz & gompertz & NIVOLUMAB+IPILIMUMAB & waic.1 & 3097.14 &
+waic & gompertz & gompertz & NIVOLUMAB+IPILIMUMAB & 3097.14 &
 106.41\tabularnewline
-loglogistic & loglogistic & NIVOLUMAB+IPILIMUMAB & waic.2 & 3082.45 &
+waic & loglogistic & loglogistic & NIVOLUMAB+IPILIMUMAB & 3082.45 &
 105.49\tabularnewline
-lognormal & lognormal & NIVOLUMAB+IPILIMUMAB & waic.3 & 2974.89 &
+waic & lognormal & lognormal & NIVOLUMAB+IPILIMUMAB & 2974.89 &
 114.90\tabularnewline
-weibull & weibull & NIVOLUMAB+IPILIMUMAB & waic.4 & 3098.82 &
+waic & weibull & weibull & NIVOLUMAB+IPILIMUMAB & 3098.82 &
 107.17\tabularnewline
 \bottomrule
 \end{longtable}
+
+\newpage
 
 \hypertarget{references}{%
 \subsection*{References}\label{references}}

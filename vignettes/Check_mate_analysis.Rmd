@@ -390,17 +390,11 @@ gridExtra::marrangeGrob(grobs = gl,
                         widths = c(4,4,4))
 ```
 
+Figures \ref{fig:forest_separate}
+shows the forest plots of cure fraction posterior distributions.
 
-Figures \ref{fig:forest_os_separate} and \ref{fig:forest_pfs_separate}
-show the forest plots of cure fraction posterior
-distributions.
-
-```{r fig.show='hold', fig.align='center', out.width="60%", echo=FALSE, fig.cap="\\label{fig:forest_os_separate}Forest plot of OS cure fraction posterior distributions for separate OS and PFS models ."}
-knitr::include_graphics("../plots/cf separate_os_forest_plot.png")
-```
-
-```{r fig.show='hold', fig.align='center', out.width="60%", echo=FALSE, fig.cap="\\label{fig:forest_pfs_separate}Forest plot of PFS cure fraction posterior distributions for separate OS and PFS models ."}
-knitr::include_graphics("../plots/cf separate_pfs_forest_plot.png")
+```{r fig.show='hold', fig.align='center', out.width="60%", echo=FALSE, fig.cap="\\label{fig:forest_separate}Forest plot of cure fraction posterior distributions for separate OS and PFS models ."}
+knitr::include_graphics("../plots/cf separate_bg_fixed_forest_plot.png")
 ```
 
 |   | OS Distn   | PFS Distn  | Treatment           | $cf_{OS}$ (CrI)     | $cf_{PFS}$ (CrI)    |
@@ -424,23 +418,54 @@ knitr::include_graphics("../plots/cf separate_pfs_forest_plot.png")
 
 The table below gives the leave-one-out cross validation statistics for each model fit using WAIC (@Vehtari2017).
 
-| OS Distn   | PFS Distn  | Treatment           | Statistic  | Estimate|    SE |
-|:-----------|:-----------|:--------------------|:-----------|--------:|------:|
-|exp         |exp         |IPILIMUMAB           |elpd_waic   | -1548.19|  53.04|
-|exp         |exp         |NIVOLUMAB            |elpd_waic.1 | -1548.57|  53.21|
-|exp         |exp         |NIVOLUMAB+IPILIMUMAB |elpd_waic.2 | -1541.23|  52.74|
-|gompertz    |gompertz    |IPILIMUMAB           |elpd_waic.3 | -1487.44|  57.45|
-|gompertz    |gompertz    |NIVOLUMAB            |elpd_waic.4 | -1549.41|  53.59|
-|gompertz    |gompertz    |NIVOLUMAB+IPILIMUMAB |p_waic      |     6.05|   0.61|
-|loglogistic |loglogistic |IPILIMUMAB           |p_waic.1    |     6.59|   0.53|
-|loglogistic |loglogistic |NIVOLUMAB            |p_waic.2    |     7.69|   0.53|
-|loglogistic |loglogistic |NIVOLUMAB+IPILIMUMAB |p_waic.3    |    14.76|   1.22|
-|lognormal   |lognormal   |IPILIMUMAB           |p_waic.4    |     7.92|   0.72|
-|lognormal   |lognormal   |NIVOLUMAB            |waic        |  3096.38| 106.09|
-|lognormal   |lognormal   |NIVOLUMAB+IPILIMUMAB |waic.1      |  3097.14| 106.41|
-|weibull     |weibull     |IPILIMUMAB           |waic.2      |  3082.45| 105.49|
-|weibull     |weibull     |NIVOLUMAB            |waic.3      |  2974.89| 114.90|
-|weibull     |weibull     |NIVOLUMAB+IPILIMUMAB |waic.4      |  3098.82| 107.17|
+
+|Statistic |OS distn    |PFS distn   |Treatment            | Estimate|     SE|
+|:---------|:-----------|:-----------|:--------------------|--------:|------:|
+|elpd_waic |exp         |exp         |IPILIMUMAB           | -1839.45|  36.61|
+|elpd_waic |exp         |exp         |NIVOLUMAB            | -1679.68|  45.72|
+|elpd_waic |exp         |exp         |NIVOLUMAB+IPILIMUMAB | -1543.36|  53.33|
+|elpd_waic |gompertz    |gompertz    |IPILIMUMAB           | -1839.14|  36.68|
+|elpd_waic |gompertz    |gompertz    |NIVOLUMAB            | -1680.14|  45.78|
+|elpd_waic |gompertz    |gompertz    |NIVOLUMAB+IPILIMUMAB | -1543.05|  53.87|
+|elpd_waic |loglogistic |loglogistic |IPILIMUMAB           | -1768.28|  39.71|
+|elpd_waic |loglogistic |loglogistic |NIVOLUMAB            | -1651.40|  45.77|
+|elpd_waic |loglogistic |loglogistic |NIVOLUMAB+IPILIMUMAB | -1534.76|  52.63|
+|elpd_waic |lognormal   |lognormal   |IPILIMUMAB           | -1561.55|  56.00|
+|elpd_waic |lognormal   |lognormal   |NIVOLUMAB            | -1550.21|  59.92|
+|elpd_waic |lognormal   |lognormal   |NIVOLUMAB+IPILIMUMAB | -1489.45|  58.02|
+|elpd_waic |weibull     |weibull     |IPILIMUMAB           | -1821.12|  39.94|
+|elpd_waic |weibull     |weibull     |NIVOLUMAB            | -1681.27|  45.63|
+|elpd_waic |weibull     |weibull     |NIVOLUMAB+IPILIMUMAB | -1546.26|  53.72|
+|p_waic    |exp         |exp         |IPILIMUMAB           |     5.41|   0.50|
+|p_waic    |exp         |exp         |NIVOLUMAB            |     7.50|   0.60|
+|p_waic    |exp         |exp         |NIVOLUMAB+IPILIMUMAB |     6.43|   0.60|
+|p_waic    |gompertz    |gompertz    |IPILIMUMAB           |     5.14|   0.48|
+|p_waic    |gompertz    |gompertz    |NIVOLUMAB            |     8.31|   0.74|
+|p_waic    |gompertz    |gompertz    |NIVOLUMAB+IPILIMUMAB |     6.10|   0.50|
+|p_waic    |loglogistic |loglogistic |IPILIMUMAB           |     8.31|   0.44|
+|p_waic    |loglogistic |loglogistic |NIVOLUMAB            |     8.53|   0.47|
+|p_waic    |loglogistic |loglogistic |NIVOLUMAB+IPILIMUMAB |     6.78|   0.52|
+|p_waic    |lognormal   |lognormal   |IPILIMUMAB           |    13.88|   1.26|
+|p_waic    |lognormal   |lognormal   |NIVOLUMAB            |    15.86|   1.40|
+|p_waic    |lognormal   |lognormal   |NIVOLUMAB+IPILIMUMAB |    15.33|   1.43|
+|p_waic    |weibull     |weibull     |IPILIMUMAB           |    11.28|   1.27|
+|p_waic    |weibull     |weibull     |NIVOLUMAB            |     9.85|   0.96|
+|p_waic    |weibull     |weibull     |NIVOLUMAB+IPILIMUMAB |    10.09|   0.95|
+|waic      |exp         |exp         |IPILIMUMAB           |  3678.90|  73.23|
+|waic      |exp         |exp         |NIVOLUMAB            |  3359.36|  91.45|
+|waic      |exp         |exp         |NIVOLUMAB+IPILIMUMAB |  3086.73| 106.66|
+|waic      |gompertz    |gompertz    |IPILIMUMAB           |  3678.27|  73.36|
+|waic      |gompertz    |gompertz    |NIVOLUMAB            |  3360.29|  91.57|
+|waic      |gompertz    |gompertz    |NIVOLUMAB+IPILIMUMAB |  3086.10| 107.73|
+|waic      |loglogistic |loglogistic |IPILIMUMAB           |  3536.57|  79.43|
+|waic      |loglogistic |loglogistic |NIVOLUMAB            |  3302.80|  91.54|
+|waic      |loglogistic |loglogistic |NIVOLUMAB+IPILIMUMAB |  3069.53| 105.26|
+|waic      |lognormal   |lognormal   |IPILIMUMAB           |  3123.10| 111.99|
+|waic      |lognormal   |lognormal   |NIVOLUMAB            |  3100.41| 119.84|
+|waic      |lognormal   |lognormal   |NIVOLUMAB+IPILIMUMAB |  2978.89| 116.03|
+|waic      |weibull     |weibull     |IPILIMUMAB           |  3642.23|  79.89|
+|waic      |weibull     |weibull     |NIVOLUMAB            |  3362.55|  91.25|
+|waic      |weibull     |weibull     |NIVOLUMAB+IPILIMUMAB |  3092.51| 107.43|
 
 
 ### Exchangeable cure fraction for OS and PFS 
@@ -530,24 +555,16 @@ gridExtra::marrangeGrob(grobs = gl,
                         widths = c(4,4,4))
 ```
 
-Figures \ref{fig:forest_global}, \ref{fig:forest_os} and \ref{fig:forest_pfs}
-show the forest plots of cure fraction posterior
+Figures \ref{fig:forest_hier}
+shows the forest plots of cure fraction posterior
 distributions. We see that the values are generally similar for the
 Exponential and log-logistic fits. This clearly shows how the global
 cure fraction posterior distribution lies partway between the PFS and OS
 distributions.
 
-```{r fig.show='hold', fig.align='center', out.width="60%", echo=FALSE, fig.cap="\\label{fig:forest_global}Forest plot of global cure fraction posterior distributions."}
+```{r fig.show='hold', fig.align='center', out.width="60%", echo=FALSE, fig.cap="\\label{fig:forest_hier}Forest plot of cure fraction posterior distributions for exchangeable model."}
 # knitr::include_graphics("../plots/cf_forest_plot.png")
-knitr::include_graphics("../plots/cf_global_forest_plot.png")
-```
-
-```{r fig.show='hold', fig.align='center', out.width="60%", echo=FALSE, fig.cap="\\label{fig:forest_os}Forest plot of OS cure fraction posterior distributions."}
-knitr::include_graphics("../plots/cf_os_forest_plot.png")
-```
-
-```{r fig.show='hold', fig.align='center', out.width="60%", echo=FALSE, fig.cap="\\label{fig:forest_pfs}Forest plot of PFS cure fraction posterior distributions."}
-knitr::include_graphics("../plots/cf_pfs_forest_plot.png")
+knitr::include_graphics("../plots/cf hier_bg_fixed_forest_plot.png")
 ```
 
 The table below summarises the cure fraction posterior distribution for
@@ -574,53 +591,57 @@ each scenario.
 The table below gives the leave-one-out cross validation statistics for
 each model fit.
 
-| OS Distn   | PFS Distn  | Treatment           | Statistic   | Estimate|    SE |
-|:-----------|:-----------|:--------------------|:------------|--------:|------:|
-|exp         |exp         |IPILIMUMAB           |elpd_waic    | -1838.83|  36.07|
-|exp         |exp         |NIVOLUMAB            |elpd_waic    | -1679.59|  45.69|
-|exp         |exp         |NIVOLUMAB+IPILIMUMAB |elpd_waic    | -1549.68|  60.15|
-|gompertz    |gompertz    |IPILIMUMAB           |elpd_waic    | -1488.81|  58.20|
-|gompertz    |gompertz    |NIVOLUMAB            |elpd_waic    | -1819.89|  39.69|
-|gompertz    |gompertz    |NIVOLUMAB+IPILIMUMAB |elpd_waic    | -1680.25|  45.91|
-|loglogistic |loglogistic |IPILIMUMAB           |elpd_waic    | -1544.04|  54.19|
-|loglogistic |loglogistic |NIVOLUMAB            |elpd_waic    | -1543.49|  53.87|
-|loglogistic |loglogistic |NIVOLUMAB+IPILIMUMAB |elpd_waic    | -1839.34|  36.27|
-|lognormal   |lognormal   |IPILIMUMAB           |elpd_waic    | -1679.48|  45.80|
-|lognormal   |lognormal   |NIVOLUMAB            |elpd_waic    | -1543.81|  54.03|
-|lognormal   |lognormal   |NIVOLUMAB+IPILIMUMAB |elpd_waic    | -1768.17|  39.20|
-|weibull     |weibull     |IPILIMUMAB           |elpd_waic    | -1651.73|  46.02|
-|weibull     |weibull     |NIVOLUMAB            |elpd_waic    | -1533.95|  53.17|
-|weibull     |weibull     |NIVOLUMAB+IPILIMUMAB |elpd_waic    | -1566.33|  55.91|
-|exp         |exp         |IPILIMUMAB           |p_waic       |     5.37|   0.48|
-|exp         |exp         |NIVOLUMAB            |p_waic       |     7.45|   0.62|
-|exp         |exp         |NIVOLUMAB+IPILIMUMAB |p_waic       |    15.46|   1.44|
-|gompertz    |gompertz    |IPILIMUMAB           |p_waic       |    14.55|   1.26|
-|gompertz    |gompertz    |NIVOLUMAB            |p_waic       |     9.46|   0.96|
-|gompertz    |gompertz    |NIVOLUMAB+IPILIMUMAB |p_waic       |     8.70|   0.75|
-|loglogistic |loglogistic |IPILIMUMAB           |p_waic       |     7.70|   0.72|
-|loglogistic |loglogistic |NIVOLUMAB            |p_waic       |     7.15|   0.60|
-|loglogistic |loglogistic |NIVOLUMAB+IPILIMUMAB |p_waic       |     5.91|   0.52|
-|lognormal   |lognormal   |IPILIMUMAB           |p_waic       |     6.96|   0.56|
-|lognormal   |lognormal   |NIVOLUMAB            |p_waic       |     7.07|   0.78|
-|lognormal   |lognormal   |NIVOLUMAB+IPILIMUMAB |p_waic       |     9.19|   0.56|
-|weibull     |weibull     |IPILIMUMAB           |p_waic       |     9.20|   0.53|
-|weibull     |weibull     |NIVOLUMAB            |p_waic       |     6.10|   0.50|
-|weibull     |weibull     |NIVOLUMAB+IPILIMUMAB |p_waic       |    20.04|   1.20|
-|exp         |exp         |IPILIMUMAB           |waic         |  3677.65|  72.13|
-|exp         |exp         |NIVOLUMAB            |waic         |  3359.19|  91.37|
-|exp         |exp         |NIVOLUMAB+IPILIMUMAB |waic         |  3099.36| 120.30|
-|gompertz    |gompertz    |IPILIMUMAB           |waic         |  2977.62| 116.41|
-|gompertz    |gompertz    |NIVOLUMAB            |waic         |  3639.77|  79.38|
-|gompertz    |gompertz    |NIVOLUMAB+IPILIMUMAB |waic         |  3360.49|  91.83|
-|loglogistic |loglogistic |IPILIMUMAB           |waic         |  3088.08| 108.39|
-|loglogistic |loglogistic |NIVOLUMAB            |waic         |  3086.98| 107.74|
-|loglogistic |loglogistic |NIVOLUMAB+IPILIMUMAB |waic         |  3678.68|  72.53|
-|lognormal   |lognormal   |IPILIMUMAB           |waic         |  3358.96|  91.59|
-|lognormal   |lognormal   |NIVOLUMAB            |waic         |  3087.62| 108.05|
-|lognormal   |lognormal   |NIVOLUMAB+IPILIMUMAB |waic         |  3536.33|  78.40|
-|weibull     |weibull     |IPILIMUMAB           |waic         |  3303.47|  92.04|
-|weibull     |weibull     |NIVOLUMAB            |waic         |  3067.91| 106.35|
-|weibull     |weibull     |NIVOLUMAB+IPILIMUMAB |waic         |  3132.66| 111.82|
+
+|Statistic |OS distn    |PFS distn   |Treatment            | Estimate|     SE|
+|:---------|:-----------|:-----------|:--------------------|--------:|------:|
+|elpd_waic |exp         |exp         |IPILIMUMAB           | -1838.83|  36.07|
+|elpd_waic |exp         |exp         |NIVOLUMAB            | -1679.59|  45.69|
+|elpd_waic |exp         |exp         |NIVOLUMAB+IPILIMUMAB | -1543.49|  53.87|
+|elpd_waic |gompertz    |gompertz    |IPILIMUMAB           | -1839.34|  36.27|
+|elpd_waic |gompertz    |gompertz    |NIVOLUMAB            | -1679.48|  45.80|
+|elpd_waic |gompertz    |gompertz    |NIVOLUMAB+IPILIMUMAB | -1543.81|  54.03|
+|elpd_waic |loglogistic |loglogistic |IPILIMUMAB           | -1768.17|  39.20|
+|elpd_waic |loglogistic |loglogistic |NIVOLUMAB            | -1651.73|  46.02|
+|elpd_waic |loglogistic |loglogistic |NIVOLUMAB+IPILIMUMAB | -1533.95|  53.17|
+|elpd_waic |lognormal   |lognormal   |IPILIMUMAB           | -1561.07|  55.77|
+|elpd_waic |lognormal   |lognormal   |NIVOLUMAB            | -1549.68|  60.15|
+|elpd_waic |lognormal   |lognormal   |NIVOLUMAB+IPILIMUMAB | -1488.80|  58.13|
+|elpd_waic |weibull     |lognormal   |NIVOLUMAB+IPILIMUMAB | -1508.24|  55.14|
+|elpd_waic |weibull     |weibull     |IPILIMUMAB           | -1819.89|  39.69|
+|elpd_waic |weibull     |weibull     |NIVOLUMAB            | -1680.25|  45.91|
+|elpd_waic |weibull     |weibull     |NIVOLUMAB+IPILIMUMAB | -1544.04|  54.19|
+|p_waic    |exp         |exp         |IPILIMUMAB           |     5.37|   0.48|
+|p_waic    |exp         |exp         |NIVOLUMAB            |     7.45|   0.62|
+|p_waic    |exp         |exp         |NIVOLUMAB+IPILIMUMAB |     7.15|   0.60|
+|p_waic    |gompertz    |gompertz    |IPILIMUMAB           |     5.91|   0.52|
+|p_waic    |gompertz    |gompertz    |NIVOLUMAB            |     6.96|   0.56|
+|p_waic    |gompertz    |gompertz    |NIVOLUMAB+IPILIMUMAB |     7.07|   0.78|
+|p_waic    |loglogistic |loglogistic |IPILIMUMAB           |     9.19|   0.56|
+|p_waic    |loglogistic |loglogistic |NIVOLUMAB            |     9.20|   0.53|
+|p_waic    |loglogistic |loglogistic |NIVOLUMAB+IPILIMUMAB |     6.10|   0.50|
+|p_waic    |lognormal   |lognormal   |IPILIMUMAB           |    14.04|   1.30|
+|p_waic    |lognormal   |lognormal   |NIVOLUMAB            |    15.46|   1.44|
+|p_waic    |lognormal   |lognormal   |NIVOLUMAB+IPILIMUMAB |    14.30|   1.17|
+|p_waic    |weibull     |lognormal   |NIVOLUMAB+IPILIMUMAB |    12.42|   1.14|
+|p_waic    |weibull     |weibull     |IPILIMUMAB           |     9.46|   0.96|
+|p_waic    |weibull     |weibull     |NIVOLUMAB            |     8.70|   0.75|
+|p_waic    |weibull     |weibull     |NIVOLUMAB+IPILIMUMAB |     7.70|   0.72|
+|waic      |exp         |exp         |IPILIMUMAB           |  3677.65|  72.13|
+|waic      |exp         |exp         |NIVOLUMAB            |  3359.19|  91.37|
+|waic      |exp         |exp         |NIVOLUMAB+IPILIMUMAB |  3086.98| 107.74|
+|waic      |gompertz    |gompertz    |IPILIMUMAB           |  3678.68|  72.53|
+|waic      |gompertz    |gompertz    |NIVOLUMAB            |  3358.96|  91.59|
+|waic      |gompertz    |gompertz    |NIVOLUMAB+IPILIMUMAB |  3087.62| 108.05|
+|waic      |loglogistic |loglogistic |IPILIMUMAB           |  3536.33|  78.40|
+|waic      |loglogistic |loglogistic |NIVOLUMAB            |  3303.47|  92.04|
+|waic      |loglogistic |loglogistic |NIVOLUMAB+IPILIMUMAB |  3067.91| 106.35|
+|waic      |lognormal   |lognormal   |IPILIMUMAB           |  3122.14| 111.54|
+|waic      |lognormal   |lognormal   |NIVOLUMAB            |  3099.36| 120.30|
+|waic      |lognormal   |lognormal   |NIVOLUMAB+IPILIMUMAB |  2977.61| 116.25|
+|waic      |weibull     |lognormal   |NIVOLUMAB+IPILIMUMAB |  3016.47| 110.29|
+|waic      |weibull     |weibull     |IPILIMUMAB           |  3639.77|  79.38|
+|waic      |weibull     |weibull     |NIVOLUMAB            |  3360.49|  91.83|
+|waic      |weibull     |weibull     |NIVOLUMAB+IPILIMUMAB |  3088.08| 108.39|
 
 The variance partition coefficient (VPC) is defined as
 $\sigma_{global}^2/ (\sigma_{global}^2 + \sigma_{e}^2)$ where $e = PFS$
@@ -697,32 +718,36 @@ The table below summarises the cure fraction posterior distribution for each sce
 |5  |weibull     |weibull     |NIVOLUMAB+IPILIMUMAB |0.469 (0.297, 0.62)  |0.546 (0.496, 0.592) |0.409 (0.354, 0.459) |
 
 
-Figure \ref{fig:forest_global_163} shows the equivalent posterior survival curves to Figures \ref{fig:forest_global}, \ref{fig:forest_os}, \ref{fig:forest_pfs} for the combined $ipilimumab$ and $nivolumab$ treatment and background hazard ratio adjustment 1.63.
+Figure \ref{fig:forest_global_163} shows the equivalent posterior survival curves to Figures \ref{fig:forest_hier} for the combined $ipilimumab$ and $nivolumab$ treatment and background hazard ratio adjustment 1.63.
 
 ```{r fig.show='hold', fig.align='center', out.width="60%", echo=FALSE, fig.cap="\\label{fig:forest_global_163}Forest plot of cure fraction posterior distributions for dual $ipilimumab$ and $nivolumab$ and background hazard ratio adjustment 1.63."}
 knitr::include_graphics("../plots/cf hier_bg_fixed_hr1.63_forest_plot.png")
 ```
 
+\newpage
+
 The table below gives the leave-one-out cross validation statistics for each model fit.
 
+|Statistic |OS distn    |PFS distn   |Treatment            | Estimate|     SE|
+|:---------|:-----------|:-----------|:--------------------|--------:|------:|
+|elpd_waic |exp         |exp         |NIVOLUMAB+IPILIMUMAB | -1548.19|  53.04|
+|elpd_waic |gompertz    |gompertz    |NIVOLUMAB+IPILIMUMAB | -1548.57|  53.21|
+|elpd_waic |loglogistic |loglogistic |NIVOLUMAB+IPILIMUMAB | -1541.23|  52.74|
+|elpd_waic |lognormal   |lognormal   |NIVOLUMAB+IPILIMUMAB | -1487.44|  57.45|
+|elpd_waic |weibull     |weibull     |NIVOLUMAB+IPILIMUMAB | -1549.41|  53.59|
+|p_waic    |exp         |exp         |NIVOLUMAB+IPILIMUMAB |     6.05|   0.61|
+|p_waic    |gompertz    |gompertz    |NIVOLUMAB+IPILIMUMAB |     6.59|   0.53|
+|p_waic    |loglogistic |loglogistic |NIVOLUMAB+IPILIMUMAB |     7.69|   0.53|
+|p_waic    |lognormal   |lognormal   |NIVOLUMAB+IPILIMUMAB |    14.76|   1.22|
+|p_waic    |weibull     |weibull     |NIVOLUMAB+IPILIMUMAB |     7.92|   0.72|
+|waic      |exp         |exp         |NIVOLUMAB+IPILIMUMAB |  3096.38| 106.09|
+|waic      |gompertz    |gompertz    |NIVOLUMAB+IPILIMUMAB |  3097.14| 106.41|
+|waic      |loglogistic |loglogistic |NIVOLUMAB+IPILIMUMAB |  3082.45| 105.49|
+|waic      |lognormal   |lognormal   |NIVOLUMAB+IPILIMUMAB |  2974.89| 114.90|
+|waic      |weibull     |weibull     |NIVOLUMAB+IPILIMUMAB |  3098.82| 107.17|
 
-| OS Distn   | PFS Distn  | Treatment           | Statistic  | Estimate|    SE |
-|:-----------|:-----------|:--------------------|:-----------|--------:|------:|
-|exp         |exp         |NIVOLUMAB+IPILIMUMAB |elpd_waic   | -1548.19|  53.04|
-|gompertz    |gompertz    |NIVOLUMAB+IPILIMUMAB |elpd_waic.1 | -1548.57|  53.21|
-|loglogistic |loglogistic |NIVOLUMAB+IPILIMUMAB |elpd_waic.2 | -1541.23|  52.74|
-|lognormal   |lognormal   |NIVOLUMAB+IPILIMUMAB |elpd_waic.3 | -1487.44|  57.45|
-|weibull     |weibull     |NIVOLUMAB+IPILIMUMAB |elpd_waic.4 | -1549.41|  53.59|
-|exp         |exp         |NIVOLUMAB+IPILIMUMAB |p_waic      |     6.05|   0.61|
-|gompertz    |gompertz    |NIVOLUMAB+IPILIMUMAB |p_waic.1    |     6.59|   0.53|
-|loglogistic |loglogistic |NIVOLUMAB+IPILIMUMAB |p_waic.2    |     7.69|   0.53|
-|lognormal   |lognormal   |NIVOLUMAB+IPILIMUMAB |p_waic.3    |    14.76|   1.22|
-|weibull     |weibull     |NIVOLUMAB+IPILIMUMAB |p_waic.4    |     7.92|   0.72|
-|exp         |exp         |NIVOLUMAB+IPILIMUMAB |waic        |  3096.38| 106.09|
-|gompertz    |gompertz    |NIVOLUMAB+IPILIMUMAB |waic.1      |  3097.14| 106.41|
-|loglogistic |loglogistic |NIVOLUMAB+IPILIMUMAB |waic.2      |  3082.45| 105.49|
-|lognormal   |lognormal   |NIVOLUMAB+IPILIMUMAB |waic.3      |  2974.89| 114.90|
-|weibull     |weibull     |NIVOLUMAB+IPILIMUMAB |waic.4      |  3098.82| 107.17|
-
+\newpage
 
 ## References
+
+

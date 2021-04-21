@@ -1,5 +1,6 @@
 // exponential mixture cure model
-// joint relative survival
+// hierarchical cure fraction
+// joint cured/uncured survival across treatment
 
 
 functions {

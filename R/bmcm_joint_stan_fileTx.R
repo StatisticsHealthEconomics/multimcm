@@ -1,4 +1,7 @@
 
+#' @rdname bmcm_joint_stan_file
+#'
+#' jointly estimate all treatments
 #'
 bmcm_joint_stan_fileTx <- function(input_data,
                                    model_os = "exp",
@@ -17,6 +20,7 @@ bmcm_joint_stan_fileTx <- function(input_data,
                                    joint_model = TRUE,
                                    bg_model = 1,
                                    bg_hr = 1,
+                                   t_max = 60,
                                    ...) {
   data_os <-
     c(prep_os_params(model_os, params_os),
@@ -41,7 +45,8 @@ bmcm_joint_stan_fileTx <- function(input_data,
       data_pfs,
       prep_shared_paramsTx(params_cf,
                            params_joint,
-                           bg_model),
+                           bg_model,
+                           t_max),
       prep_tx_params(input_data, params_tx),
       cf_model = cf_model,
       joint_model = joint_model,
@@ -52,6 +57,10 @@ bmcm_joint_stan_fileTx <- function(input_data,
       if (model_pfs == "exp") here::here("inst", "stan", "exp_exp_joint_hiercfTx.stan")
     } else if (model_os == "gompertz") {
       if (model_pfs == "gompertz") here::here("inst", "stan", "gompertz_gompertzTx.stan")
+    } else if (model_os == "weibull") {
+      if (model_pfs == "weibull") here::here("inst", "stan", "weibull_weibullTx.stan") ##TODO:
+    } else if (model_os == "loglogistic") {
+      if (model_pfs == "loglogistic") here::here("inst", "stan", "loglogistic_loglogisticTx.stan") ##TODO:
     }
 
   res <-

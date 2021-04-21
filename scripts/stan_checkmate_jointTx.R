@@ -39,14 +39,16 @@ surv_input_data$OS_rate <- surv_input_data$OS_rate/12
 # remove empty treatment rows
 surv_input_data <- surv_input_data[surv_input_data$TRTA != "", ]
 
-# single treatment only
-surv_input_data <- filter(surv_input_data, TRTA == "IPILIMUMAB")
+## single treatment only?
+TRTX <- NA
+# TRTX <- "IPILIMUMAB"
 
+if (!is.na(TRTX)) surv_input_data <- filter(surv_input_data, TRTA == TRTX)
 
 save_res <- TRUE
 
-model_os_idx <- 3
-model_pfs_idx <- 3
+model_os_idx <- 1
+model_pfs_idx <- 1
 model_names <- c("exp", "weibull", "gompertz", "loglogistic", "lognormal")
 model_os <- model_names[model_os_idx]
 model_pfs <- model_names[model_pfs_idx]
@@ -54,63 +56,67 @@ model_pfs <- model_names[model_pfs_idx]
 cf_idx <- 3
 cf_model_names <- c("cf pooled", "cf separate", "cf hier")
 
-# # all treatments
-# cf_hier <-
-#   list(mu_cf_gl = array(-0.8, 1),
-#        sigma_cf_gl = array(2, 1),
-#        sd_cf_os = c(0.5, 0.5, 0.5),
-#        sd_cf_pfs = c(0.5, 0.5, 0.5))
-#
-# params_cf_lup <-
-#   list("cf pooled" =
-#          list(mu_cf_gl = array(-0.8, 1),
-#               sigma_cf_gl = array(2, 1)),
-#        "cf separate" =
-#          list(mu_cf_os = array(-0.8, 1),
-#               mu_cf_pfs = array(-0.8, 1),
-#               sd_cf_os = array(0.5, 1),
-#               sd_cf_pfs = array(0.5, 1)),
-#        "cf hier" =
-#          list(exp = cf_hier,
-#               weibull = cf_hier,
-#               gompertz = cf_hier,
-#               loglogistic = cf_hier,
-#               gengamma = cf_hier,
-#               lognormal =
-#                 list(mu_cf_gl = array(-1.8, 1),
-#                      sigma_cf_gl = array(1, 1),
-#                      sd_cf_os = c(0.5, 0.5, 0.5),
-#                      sd_cf_pfs = c(0.5, 0.5, 0.5))))
+if (is.na(TRTX)) {
+  # all treatments
+  cf_hier <-
+    list(mu_cf_gl = array(-0.8, 1),
+         sigma_cf_gl = array(2, 1),
+         sd_cf_os = c(0.5, 0.5, 0.5),
+         sd_cf_pfs = c(0.5, 0.5, 0.5))
 
+  params_cf_lup <-
+    list("cf pooled" =
+           list(mu_cf_gl = array(-0.8, 1),
+                sigma_cf_gl = array(2, 1)),
+         "cf separate" =
+           list(mu_cf_os = array(-0.8, 1),
+                mu_cf_pfs = array(-0.8, 1),
+                sd_cf_os = array(0.5, 1),
+                sd_cf_pfs = array(0.5, 1)),
+         "cf hier" =
+           list(exp = cf_hier,
+                weibull = cf_hier,
+                gompertz = cf_hier,
+                loglogistic = cf_hier,
+                gengamma = cf_hier,
+                lognormal =
+                  list(mu_cf_gl = array(-1.8, 1),
+                       sigma_cf_gl = array(1, 1),
+                       sd_cf_os = c(0.5, 0.5, 0.5),
+                       sd_cf_pfs = c(0.5, 0.5, 0.5))))
+} else {
+  # one treatment only
+  # use this to test against single
+  # old treatment script
+  cf_hier <-
+    list(mu_cf_gl = array(-0.8, 1),
+         sigma_cf_gl = array(2, 1),
+         sd_cf_os = array(0.5, 1),
+         sd_cf_pfs = array(0.5, 1))
 
-# one treatment only
-cf_hier <-
-  list(mu_cf_gl = array(-0.8, 1),
-       sigma_cf_gl = array(2, 1),
-       sd_cf_os = array(0.5, 1),
-       sd_cf_pfs = array(0.5, 1))
+  params_cf_lup <-
+    list("cf pooled" =
+           list(mu_cf_gl = array(-0.8, 1),
+                sigma_cf_gl = array(2, 1)),
+         "cf separate" =
+           list(mu_cf_os = array(-0.8, 1),
+                mu_cf_pfs = array(-0.8, 1),
+                sd_cf_os = array(0.5, 1),
+                sd_cf_pfs = array(0.5, 1)),
+         "cf hier" =
+           list(exp = cf_hier,
+                weibull = cf_hier,
+                gompertz = cf_hier,
+                loglogistic = cf_hier,
+                gengamma = cf_hier,
+                lognormal =
+                  list(mu_cf_gl = array(-1.8, 1),
+                       sigma_cf_gl = array(1, 1),
+                       sd_cf_os = array(0.5, 1),
+                       sd_cf_pfs = array(0.5, 1))))
+}
 
-params_cf_lup <-
-  list("cf pooled" =
-         list(mu_cf_gl = array(-0.8, 1),
-              sigma_cf_gl = array(2, 1)),
-       "cf separate" =
-         list(mu_cf_os = array(-0.8, 1),
-              mu_cf_pfs = array(-0.8, 1),
-              sd_cf_os = array(0.5, 1),
-              sd_cf_pfs = array(0.5, 1)),
-       "cf hier" =
-         list(exp = cf_hier,
-              weibull = cf_hier,
-              gompertz = cf_hier,
-              loglogistic = cf_hier,
-              gengamma = cf_hier,
-              lognormal =
-                list(mu_cf_gl = array(-1.8, 1),
-                     sigma_cf_gl = array(1, 1),
-                     sd_cf_os = array(0.5, 1),
-                     sd_cf_pfs = array(0.5, 1))))
-
+##TODO: what is this doing?
 params_cf <-
   if (is.null(params_cf_lup[[cf_idx]][[model_pfs]])) {
     params_cf_lup[[cf_idx]]
@@ -131,6 +137,7 @@ bg_model <- bg_model_names[bg_model_idx]
 # bg_hr <- 1.63
 bg_hr <- 1
 
+
 #######
 # run #
 #######
@@ -146,6 +153,7 @@ out <-
     joint_model = FALSE,
     bg_model = bg_model_idx,
     bg_hr = bg_hr,
+    t_max = 60,
     warmup = 100,
     iter = 1000,
     thin = 10)
@@ -160,7 +168,7 @@ library(survival)
 source("R/plot_S_jointTx.R")
 source("R/prep_S_dataTx.R")
 
-gg <- plot_S_jointTx(out, annot_cf = T)
+gg <- plot_S_jointTx(out, annot_cf = TRUE)
 gg
 
 # overlay Kaplan-Meier

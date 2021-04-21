@@ -49,6 +49,7 @@ dat <- rstan::extract(stan_out)
 # sample #
 ##########
 
+
 # explicitly looping over samples
 # using lambda case-mix or means
 res <-
@@ -93,9 +94,9 @@ res <-
 #     algorithm = "Fixed_param")
 
 
-######################
-# Kaplan-Meier plots #
-######################
+################
+# Kaplan-Meier #
+################
 
 load("~/R/rstanbmcm/data/surv_input_data.RData")
 fileloc_out <- glue::glue("plots/post_pred_{joint_model}_{cf_model}_exp_exp_{trta}.png")

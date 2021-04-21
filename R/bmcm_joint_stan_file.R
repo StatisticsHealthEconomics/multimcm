@@ -1,5 +1,6 @@
 
 #' Run Stan mixture cure joint model from Stan file
+#' @name bmcm_joint_stan_file
 #'
 #' Don't use pre-compiled C code.
 #'

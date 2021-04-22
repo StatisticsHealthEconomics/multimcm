@@ -6,13 +6,13 @@
 library(glue)
 
 
-distn <- "exp"
-# distn <- "weibull"
+# distn <- "exp"
+distn <- "weibull"
 # distn <- "loglogistic"
 
-tx <- "IPILIMUMAB"
+# tx <- "IPILIMUMAB"
 # tx <- "NIVOLUMAB"
-# tx <- "NIVOLUMAB+IPILIMUMAB"
+tx <- "NIVOLUMAB+IPILIMUMAB"
 
 
 stan_distn_tx <-
@@ -28,9 +28,54 @@ t_max <- 240
 n_sim <- 90
 
 for (i in 1:n_sim) {
-  S$os[[i]] <- pexp(1:t_max, rate = dat$mean_os[i], lower.tail = FALSE)
-  S$pfs[[i]] <- pexp(1:t_max, rate = dat$mean_pfs[i], lower.tail = FALSE)
-  S$bg[[i]] <- pexp(1:t_max, rate = dat$mean_bg[i], lower.tail = FALSE)
+  if (distn == "exp") {
+    S$os[[i]] <-
+      pexp(1:t_max,
+           rate = dat$mean_os[i],
+           lower.tail = FALSE)
+    S$pfs[[i]] <-
+      pexp(1:t_max,
+           rate = dat$mean_pfs[i],
+           lower.tail = FALSE)
+    S$bg[[i]] <-
+      pexp(1:t_max,
+           rate = dat$mean_bg[i],
+           lower.tail = FALSE)
+  } else if (distn == "weibull") {
+    S$os[[i]] <-
+      pweibull(
+        1:t_max,
+        shape = dat$shape_os[i],
+        scale = dat$mean_os[i],
+        lower.tail = FALSE)
+    S$pfs[[i]] <-
+      pweibull(
+        1:t_max,
+        shape = dat$shape_pfs[i],
+        scale = dat$mean_pfs[i],
+        lower.tail = FALSE)
+    S$bg[[i]] <-
+      pexp(1:t_max,
+           rate = dat$mean_bg[i],
+           lower.tail = FALSE)
+  } else if (distn == "loglogistic") {
+    S$os[[i]] <-
+      actuar::pllogis(
+        1:t_max,
+        shape = dat$shape_os[i],
+        scale = dat$mean_os[i],
+        lower.tail = FALSE)
+    S$pfs[[i]] <-
+      actuar::pllogis(
+        1:t_max,
+        shape = dat$shape_pfs[i],
+        scale = dat$mean_pfs[i],
+        lower.tail = FALSE)
+    S$bg[[i]] <-
+      pexp(1:t_max,
+           rate = dat$mean_bg[i],
+           lower.tail = FALSE)
+  }
 }
 
 out <- list()
@@ -40,8 +85,11 @@ for (i in names(S)) {
     do.call(cbind, S[[i]])
 }
 
-out$pred <-
+out$pred_os <-
   t(t(out$os)*(1 - c(dat$cf_os)) + t(out$bg)*c(dat$cf_os))
+
+out$pred_pfs <-
+  t(t(out$pfs)*(1 - c(dat$cf_pfs)) + t(out$bg)*c(dat$cf_pfs))
 
 res <- list()
 
@@ -58,13 +106,12 @@ for (i in names(out)) {
 
 ## plots
 
-plot(res$pred$mean, type = "l", ylim = c(0,1))
-lines(res$pred$u95, type = "l")
-lines(res$pred$l95, type = "l")
+plot(res$pred_pfs$mean, type = "l", ylim = c(0,1))
+lines(res$pred_pfs$u95, type = "l")
+lines(res$pred_pfs$l95, type = "l")
 
-plot(res$os$mean, type = "l")
-lines(res$os$l95, type = "l")
-lines(res$os$u95, type = "l")
+# check against original
+lines(colMeans(dat$S_pfs_pred), type = "l", col = "red")
 
 
 saveRDS(res, file = glue("data/{distn}_{distn}_{tx}_t240.Rds"))

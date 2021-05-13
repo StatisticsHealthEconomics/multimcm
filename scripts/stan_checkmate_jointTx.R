@@ -33,8 +33,11 @@ data("surv_input_data")
 # model setup #
 ###############
 
-surv_input_data$PFS_rate <- surv_input_data$PFS_rate/12  # months
-surv_input_data$OS_rate <- surv_input_data$OS_rate/12
+# convert to months
+surv_input_data <-
+  surv_input_data %>%
+  mutate(PFS_rate = PFS_rate/12,
+         OS_rate = OS_rate/12)
 
 # remove empty treatment rows
 surv_input_data <- surv_input_data[surv_input_data$TRTA != "", ]
@@ -43,7 +46,8 @@ surv_input_data <- surv_input_data[surv_input_data$TRTA != "", ]
 TRTX <- NA
 # TRTX <- "IPILIMUMAB"
 
-if (!is.na(TRTX)) surv_input_data <- filter(surv_input_data, TRTA == TRTX)
+if (!is.na(TRTX))
+  surv_input_data <- filter(surv_input_data, TRTA == TRTX)
 
 save_res <- TRUE
 
@@ -149,7 +153,7 @@ out <-
     model_pfs = model_pfs,
     params_cf = params_cf,
     # params_tx = params_tx,
-    cf_model = cf_idx,            # 1- shared 2- separate 3- hierarchical
+    cf_model = cf_idx,
     joint_model = FALSE,
     bg_model = bg_model_idx,
     bg_hr = bg_hr,
@@ -157,6 +161,12 @@ out <-
     warmup = 100,
     iter = 1000,
     thin = 10)
+
+if (save_res) {
+  saveRDS(
+    out,
+    file = glue::glue(
+      "data/independent/{cf_model_names[cf_idx]}/{bg_model}_hr{bg_hr}/stan_{model_os}_{model_pfs}.Rds"))}
 
 
 #########
@@ -172,7 +182,6 @@ gg <- plot_S_jointTx(out, annot_cf = TRUE)
 gg
 
 # overlay Kaplan-Meier
-
 fit_os <- survfit(Surv(os, os_event) ~ TRTA, data = surv_input_data)
 fit_pfs <- survfit(Surv(pfs, pfs_event) ~ TRTA, data = surv_input_data)
 
@@ -197,4 +206,9 @@ s_plot <-
             inherit.aes = FALSE) +
   xlim(0, 60)
 s_plot
+
+
+ggsave(s_plot,
+       filename = glue::glue(
+         "plots/S_plots_{model_os}_{model_pfs}_{cf_model_names[cf_idx]}_{bg_model}_hr{bg_hr}.png"))
 

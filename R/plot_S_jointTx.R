@@ -1,12 +1,12 @@
 
-#' plot_S_jointTx
+#' Plot survival curves for joint model and all treatments
 #'
-#' Plot results of running Stan
+#' Use results of running Stan
 #' relative survival joint mixture cure model.
 #'
-#' @param stan_out
-#' @param facet Two separate plots for os and pfs?
-#' @param annot_cf Annotate with cure fractions?
+#' @param stan_out Stan output data frame
+#' @param facet Two separate plots for OS and PFS or overlaid?
+#' @param annot_cf Annotate with cure fractions? Logical
 #'
 #' @return ggplot object
 #'
@@ -21,7 +21,6 @@
 plot_S_jointTx <- function(stan_out = NA,
                            facet = TRUE,
                            annot_cf = FALSE) {
-
   S_stats <- list()
 
   stan_extract <- rstan::extract(stan_out)
@@ -42,12 +41,13 @@ plot_S_jointTx <- function(stan_out = NA,
       Tx = rep(1:n_tx, each = 2),
       label = c(
         apply(X = stan_extract$cf_os, 2,
-              FUN = function(x) paste(round(quantile(x, probs = c(0.05,0.5,0.95)), 2),
-                                      collapse = " ")),
+              FUN = function(x)
+                paste(round(quantile(x, probs = c(0.05,0.5,0.95)), 2),
+                      collapse = " ")),
         apply(X = stan_extract$cf_pfs, 2,
-              FUN = function(x) paste(round(quantile(x, probs = c(0.05,0.5,0.95)), 2),
-                                      collapse = " "))))
-
+              FUN = function(x)
+                paste(round(quantile(x, probs = c(0.05,0.5,0.95)), 2),
+                      collapse = " "))))
   # unnest
   plot_dat <-
     S_stats %>%

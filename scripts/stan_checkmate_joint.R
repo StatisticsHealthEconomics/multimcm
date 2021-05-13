@@ -11,6 +11,8 @@ library(shinystan)
 library(dplyr)
 library(glue)
 library(ggplot2)
+library(reshape2)
+
 
 # library(rstanbmcm)
 # devtools::load_all()
@@ -45,7 +47,7 @@ trta_idx <- 3
 all_tx_names <- c("IPILIMUMAB", "NIVOLUMAB", "NIVOLUMAB+IPILIMUMAB")
 trta <- all_tx_names[trta_idx]
 
-model_os_idx <- 5
+model_os_idx <- 2
 model_pfs_idx <- 5
 model_names <- c("exp", "weibull", "gompertz", "loglogistic", "lognormal")#, "gengamma")
 model_os <- model_names[model_os_idx]
@@ -92,7 +94,8 @@ bg_model_idx <- 2
 bg_model_names <- c("bg_distn", "bg_fixed")
 bg_model <- bg_model_names[bg_model_idx]
 
-bg_hr <- 1.63
+# bg_hr <- 1.63
+bg_hr <- 1
 
 
 #######
@@ -107,7 +110,7 @@ out <-
     model_pfs = model_pfs,
     tx_name = trta,
     params_cf = params_cf,
-    cf_model = cf_idx,            # 1- shared 2- separate 3- hierarchical
+    cf_model = cf_idx,
     joint_model = FALSE,
     bg_model = bg_model_idx,
     bg_hr = bg_hr,
@@ -117,11 +120,10 @@ out <-
 
 
 if (save_res) {
-  saveRDS(out,
-          file = glue::glue(
-            "data/independent/{cf_model_names[cf_idx]}/{bg_model}_hr{bg_hr}/stan_{model_os}_{model_pfs}_{trta}.Rds"))}
-
-stan_list <- list(out) %>% setNames(trta)
+  saveRDS(
+    out,
+    file = glue::glue(
+      "data/independent/{cf_model_names[cf_idx]}/{bg_model}_hr{bg_hr}/stan_{model_os}_{model_pfs}_{trta}.Rds"))}
 
 
 #########
@@ -133,6 +135,11 @@ library(survival)
 source("R/plot_S_joint.R")
 source("R/prep_S_data.R")
 source("R/plot_prior_predictions.R")
+
+if (FALSE)
+  out <- readRDS(file = file.choose())
+
+stan_list <- list(out) %>% setNames(trta)
 
 gg <- plot_S_joint(stan_list = stan_list)
 
@@ -179,9 +186,12 @@ plot_prior_predictive(out, event_type = "pfs")
 # plot_post_pred_KM(out, trta, surv_input_data, fileloc_out)
 
 
-# overlayed os, pfs plot
+## overlaid os, pfs plot
 
-gg <- plot_S_joint(stan_list = stan_list, facet = FALSE, annot_cf = FALSE)
+gg <-
+  plot_S_joint(stan_list = stan_list,
+               facet = FALSE,
+               annot_cf = FALSE)
 
 s_plot2 <-
   gg +

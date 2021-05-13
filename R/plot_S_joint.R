@@ -6,7 +6,7 @@
 #'
 #' @param file_names Nested list of file names for Stan output
 #' @param stan_list List of Stan output
-#' @param facet Two separate plots for os and pfs?
+#' @param facet Two separate plots for os and pfs or overlaid?
 #' @param annot_cf Annotate with cure fractions?
 #'
 #' @return ggplot object

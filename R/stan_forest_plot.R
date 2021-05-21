@@ -23,14 +23,19 @@ stan_forest_plot <- function(stan_list,
 
   cf_labels <-
     if (is_hier) {
-      c("Cure fraction global", "Cure fraction OS", "Cure fraction PFS")
+      c("Cure fraction global",
+        "Cure fraction OS",
+        "Cure fraction PFS")
     } else {
-      c("Cure fraction OS", "Cure fraction PFS")
+      c("Cure fraction OS",
+        "Cure fraction PFS")
     }
 
+  #
   plot_dat <-
     do.call(rbind, dat) %>%
-    data.frame(scenario = rep(names(stan_list), each = length(cf_labels)),
+    data.frame(scenario = rep(names(stan_list),
+                              each = length(cf_labels)),
                event = cf_labels) %>%
     # pretty rename
     mutate(Model =
@@ -48,9 +53,10 @@ stan_forest_plot <- function(stan_list,
                     ifelse(grepl("NIVOLUMAB\\+IPILIMUMAB", scenario),
                            "Combined", "Ipi")))
 
-  out <-
-    plot_dat %>%
-    ggplot(aes(x = mean, y = event, xmin= `X25.`, xmax = `X75.`, colour = Model, shape = Treatment)) +
+  plot_dat %>%
+    ggplot(aes(x = mean, y = event,
+               xmin= `X25.`, xmax = `X75.`,
+               colour = Model, shape = Treatment)) +
     ##TODO: for different OS and PFS distns
     # colour = distn_os, shape = distn_pfs)) +
     geom_pointinterval(position = position_dodge(width = 0.5)) +
@@ -61,7 +67,5 @@ stan_forest_plot <- function(stan_list,
     xlab("Posterior probability") +
     theme(axis.text = element_text(size = 12)) +
     theme_bw()
-
-  out
 }
 

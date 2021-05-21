@@ -1,6 +1,8 @@
 
-#' Plot survival curves on a grid
+#' Plot survival curves on a grid of distributions
 #'
+#' For a single treatment.
+#' Not currently able to take all treatment Stan output.
 #' Overlaid Kaplan-Meier
 #'
 #' @param distn Vector of distribution names;
@@ -9,14 +11,12 @@
 #' @param trt Treatment name; string
 #' @param data Survival input data frame
 #'
-#' @import gridExtra purrr grid survival
+#' @import gridExtra purrr grid survival dplyr
 #'
 plot_S_grid <- function(distns = c("exp", "weibull", "lognormal", "gompertz", "loglogistic"),
                         folder = "data/independent/cf hier/bg_fixed_hr1",
                         trt = "NIVOLUMAB+IPILIMUMAB",
                         data = surv_input_data) {
-
-  source("R/grid_arrange_shared_legend.R")
 
   fit_os <- survfit(Surv(os, os_event) ~ 1,
                     data = filter(data, TRTA == trt))

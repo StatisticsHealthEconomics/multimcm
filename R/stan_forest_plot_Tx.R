@@ -1,9 +1,9 @@
 
 #' Forest plot using Stan output
-#' 
+#'
 #' Both OS and PFS for single treatment.
-#' 
-#' @param folder
+#'
+#' @param folder string
 #' @param trt treatment name string
 #' @param is_hier Is hierarchical model (or separate)?
 #'
@@ -16,26 +16,26 @@
 stan_forest_plot_Tx <- function(folder = "data/independent/cf hier/bg_fixed_hr1/",
                                 trt = "NIVOLUMAB",
                                 is_hier = TRUE) {
-  
+
   stan_summary <- function(stan_obj) {
     summary(stan_obj,
             par = c("cf_global", "cf_os", "cf_pfs"),
             probs = c(0.25, 0.75))$summary}
-  
+
   filenames <-
     list.files(folder,
                pattern = gsub("\\+", "\\\\+", paste0("_", trt, ".Rds$")),
                full.names = TRUE)
-  
+
   stan_list <- map(filenames, readRDS)
   names(stan_list) <-
     list.files(folder,
                pattern = gsub("\\+", "\\\\+", paste0("_", trt, ".Rds$")),
                full.names = FALSE)
-  
+
   dat <- map(stan_list, stan_summary)
   names(dat) <- names(stan_list)
-  
+
   cf_labels <-
     if (is_hier) {
       c("Cure fraction global",
@@ -45,17 +45,17 @@ stan_forest_plot_Tx <- function(folder = "data/independent/cf hier/bg_fixed_hr1/
       c("Cure fraction OS",
         "Cure fraction PFS")
     }
-  
+
   #
   plot_dat <-
     do.call(rbind, dat) %>%
     data.frame(scenario = rep(names(stan_list),
                               each = length(cf_labels)),
                event = cf_labels) %>%
-    tidyr::separate(scenario, c(NA, "OS", "PFS", NA)) %>% 
+    tidyr::separate(scenario, c(NA, "OS", "PFS", NA)) %>%
     mutate(OS = as.factor(OS),
            PFS = as.factor(PFS))
-    
+
   plot_dat %>%
     ggplot(aes(x = mean, y = event,
                xmin= `X25.`, xmax = `X75.`,

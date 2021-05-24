@@ -1,11 +1,18 @@
 
-#' cure fraction summary table for paper
+#' Posterior parameter summary table for paper
 #'
 #' @import purrr dplyr
 #'
 params_table <- function(data_dir,
                          os_distn,
-                         pfs_distn) {
+                         pfs_distn,
+                         param_names = c("beta_os", "beta_pfs", "cf_os"),
+                         coeff_rename =
+                           list("beta_os" = c("beta_os0", "beta_os1"),
+                                "beta_pfs" = c("beta_pfs0", "beta_pfs1")),
+                         tx_names = c("IPILIMUMAB",
+                                      "NIVOLUMAB",
+                                      "NIVOLUMAB+IPILIMUMAB")) {
   # read in data
   stan_dat <-
     grep(pattern = paste(os_distn, pfs_distn, sep = "_"),
@@ -13,58 +20,38 @@ params_table <- function(data_dir,
          value = TRUE) %>%
     sort() %>%
     map(readRDS) %>%
-    set_names("IPILIMUMAB",
-              "NIVOLUMAB",
-              "NIVOLUMAB+IPILIMUMAB")
+    set_names(tx_names)
 
   stan_extract <- map(stan_dat, extract)
 
   # select parameters
-  ##TODO: simplify...
   stats <- list()
 
-  stats$ipi <-
-    stan_extract$IPILIMUMAB %>%
-    keep(names(.) %in% c("beta_os", "beta_pfs")) %>%
-    do.call(what = cbind, args = .) %>%
-    as_tibble() %>%
-    setNames(c("beta_os0", "beta_os1",
-               "beta_pfs0", "beta_pfs1")) %>%
-    melt() %>%
-    group_by(variable) %>%
-    summarise(
-      ipi = paste0(round(mean(value),3),
-                   " (",
-                   round(quantile(value, 0.025),3), ", ",
-                   round(quantile(value, 0.975),3), ")"))
-  stats$nivo <-
-    stan_extract$NIVOLUMAB %>%
-    keep(names(.) %in% c("beta_os", "beta_pfs")) %>%
-    do.call(what = cbind, args = .) %>%
-    as_tibble() %>%
-    setNames(c("beta_os0", "beta_os1",
-               "beta_pfs0", "beta_pfs1")) %>%
-    melt() %>%
-    group_by(variable) %>%
-    summarise(
-      nivo = paste0(round(mean(value),3),
-                    " (",
-                    round(quantile(value, 0.025),3), ", ",
-                    round(quantile(value, 0.975),3), ")"))
-  stats$nivo_ipi <-
-    stan_extract$`NIVOLUMAB+IPILIMUMAB` %>%
-    keep(names(.) %in% c("beta_os", "beta_pfs")) %>%
-    do.call(what = cbind, args = .) %>%
-    as_tibble() %>%
-    setNames(c("beta_os0", "beta_os1",
-               "beta_pfs0", "beta_pfs1")) %>%
-    melt() %>%
-    group_by(variable) %>%
-    summarise(
-      nivo_ipi = paste0(round(mean(value),3),
-                        " (",
-                        round(quantile(value, 0.025),3), ", ",
-                        round(quantile(value, 0.975),3), ")"))
+  for (j in tx_names) {
+
+    stats[[j]] <-
+      stan_extract[[j]] %>%
+      keep(names(.) %in% param_names) %>%
+      map(drop)
+
+    # rename nested parameters
+    for (i in names(coeff_rename)) {
+      colnames(stats[[j]][[i]]) <- coeff_rename[[i]]
+    }
+
+    stats[[j]] <-
+      stats[[j]] %>%
+      do.call(what = cbind, args = .) %>%
+      as_tibble() %>%
+      melt() %>%
+      group_by(variable) %>%
+      summarise(
+        tx_name = paste0(round(mean(value),3),
+                         " (",
+                         round(quantile(value, 0.025),3), ", ",
+                         round(quantile(value, 0.975),3), ")")) %>%
+      rename(!!j := tx_name)
+  }
 
   # include sd
 
@@ -72,4 +59,13 @@ params_table <- function(data_dir,
   plyr::join_all(stats, by = "variable")
 
 }
+
+params_table(data_dir = "data/independent/cf hier/bg_fixed_hr1",
+             os_distn = "exp",
+             pfs_distn = "weibull",
+             param_names = c("beta_os", "beta_pfs", "cf_os", "cf_pfs", "cf_global"), # variances?
+             coeff_rename =
+               list("beta_os" = c("beta_os0", "beta_os1"),
+                    "beta_pfs" = c("beta_pfs0", "beta_pfs1"))) %>%
+  knitr::kable(format = "latex")
 

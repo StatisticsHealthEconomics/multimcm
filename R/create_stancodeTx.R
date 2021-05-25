@@ -11,24 +11,24 @@
 #' @importFrom glue glue
 #'
 #' @examples
-#' create_stancode("exp", "lognormal", 3, FALSE)
+#' create_stancodeTx("exp", "lognormal", 3, FALSE)
 #'
-create_stancode <- function(os_model,
-                            pfs_model,
-                            cf_model,
-                            joint_model) {
+create_stancodeTx <- function(os_model,
+                              pfs_model,
+                              cf_model,
+                              joint_model) {
 
   # validate_data()
   # validate_vars()
 
-  stancode <- create_code_skeleton()
-  pfs_code <- create_pfs_code(pfs_model)
-  os_code <- create_os_code(os_model)
-  cf_code <- create_cf_code(cf_model)
-  loglik_code <- make_loglik(os_model, pfs_model)
-  priorpred_code <- make_priorpred(os_model, pfs_model)
-  postpred_code <- make_postpred(os_model, pfs_model)
-  loo_code <- make_loo(os_model, pfs_model)
+  stancode <- create_code_skeletonTx()
+  pfs_code <- create_pfs_codeTx(pfs_model)
+  os_code <- create_os_codeTx(os_model)
+  cf_code <- create_cf_codeTx(cf_model)
+  loglik_code <- make_loglikTx(os_model, pfs_model)
+  priorpred_code <- make_priorpredTx(os_model, pfs_model)
+  postpred_code <- make_postpredTx(os_model, pfs_model)
+  loo_code <- make_looTx(os_model, pfs_model)
 
   scode <- list()
 
@@ -38,9 +38,10 @@ create_stancode <- function(os_model,
   # generate data block
   scode$data <- paste0(
     "data {\n",
+    stancode$data$def,
     pfs_code$data,
     os_code$data,
-    stancode$data,
+    stancode$data$main,
     cf_code$data,
     "\n}\n\n"
   )
@@ -73,9 +74,9 @@ create_stancode <- function(os_model,
   # combine likelihood with prior part
   scode$model <- paste0(
     "model {\n",
+    stancode$model,
     pfs_code$model,
     os_code$model,
-    stancode$model,
     cf_code$model,
     loglik_code,
     "\n}\n\n"

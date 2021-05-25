@@ -141,18 +141,21 @@ bg_model <- bg_model_names[bg_model_idx]
 # bg_hr <- 1.63
 bg_hr <- 1
 
+params_tx <- NA
+
 
 #######
 # run #
 #######
 
 out <-
-  bmcm_joint_stan_fileTx(
+  # bmcm_joint_stan_fileTx(
+  bmcm_joint_stan_stringTx(
     input_data = surv_input_data,
     model_os = model_os,
     model_pfs = model_pfs,
     params_cf = params_cf,
-    # params_tx = params_tx,
+    params_tx = params_tx,
     cf_model = cf_idx,
     joint_model = FALSE,
     bg_model = bg_model_idx,
@@ -178,37 +181,10 @@ library(survival)
 source("R/plot_S_jointTx.R")
 source("R/prep_S_dataTx.R")
 
-gg <- plot_S_jointTx(out, annot_cf = TRUE)
+gg <- plot_S_jointTx(out, annot_cf = FALSE, data = surv_input_data)
 gg
 
-# overlay Kaplan-Meier
-fit_os <- survfit(Surv(os, os_event) ~ TRTA, data = surv_input_data)
-fit_pfs <- survfit(Surv(pfs, pfs_event) ~ TRTA, data = surv_input_data)
-
-km_data <-
-  rbind(
-    data.frame(Tx = ifelse (is.null(fit_os$strata),
-                            1, rep(names(fit_os$strata), fit_os$strata)),
-               event_type = "os",
-               time = fit_os$time,
-               surv = fit_os$surv),
-    data.frame(Tx =  ifelse (is.null(fit_pfs$strata),
-                             1, rep(names(fit_pfs$strata), fit_pfs$strata)),
-               event_type = "pfs",
-               time = fit_pfs$time,
-               surv = fit_pfs$surv))
-
-s_plot <-
-  gg +
-  geom_line(aes(x = time, y = surv, group = Tx),
-            data = km_data,
-            lwd = 1,
-            inherit.aes = FALSE) +
-  xlim(0, 60)
-s_plot
-
-
-ggsave(s_plot,
+ggsave(gg,
        filename = glue::glue(
          "plots/S_plots_{model_os}_{model_pfs}_{cf_model_names[cf_idx]}_{bg_model}_hr{bg_hr}.png"))
 

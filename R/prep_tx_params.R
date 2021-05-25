@@ -1,5 +1,8 @@
 
-#' @params params_tx fixed effect Normal mus, sigmas
+#' prep_tx_params
+#'
+#' @params params_tx Fixed effect Normal mus, sigmas
+#' @return list
 #'
 prep_tx_params <- function(input_data,
                            params_tx = NA) {
@@ -17,7 +20,7 @@ prep_tx_params <- function(input_data,
     }
 
   Tx_dmat <- diag(n_tx)
-    # model.matrix(~ tx_names + 0)
+  # model.matrix(~ tx_names + 0)
 
   c(Tx_dmat = list(Tx_dmat),
     nTx = n_tx,

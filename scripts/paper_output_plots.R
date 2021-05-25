@@ -37,6 +37,9 @@ trt <- "NIVOLUMAB+IPILIMUMAB"
 # trt <- "IPILIMUMAB"
 # trt <- "NIVOLUMAB"
 
+
+# survival curves
+
 p1 <-
   plot_S_grid(distns = c("exp", "weibull", "lognormal", "gompertz", "loglogistic"),
               folder = "data/independent/cf hier/bg_fixed_hr1",
@@ -47,18 +50,33 @@ ggsave(p1, filename = glue::glue("plots/plot_S_grid_{trt}.png"),
        units = "in", width = 16, height = 13, dpi = 300)
 
 
+# forest plots
+
 p2 <- stan_forest_plot_Tx(trt = trt)
 
 ggsave(p2, filename = glue::glue("plots/forest_plot_{trt}.png"),
        units = "in", width = 9, height = 10, dpi = 300)
 
+
+# all treatments on single plot
+
 g_ipi <- stan_forest_plot_Tx(trt = "IPILIMUMAB")
 g_nivo <- stan_forest_plot_Tx(trt = "NIVOLUMAB")
 g_nivo_ipi <- stan_forest_plot_Tx(trt = "NIVOLUMAB+IPILIMUMAB")
 
-g_ipi <- g_ipi + theme(text = element_text(size=20)) + xlim(0, 0.6) + ggtitle("(i)")
-g_nivo <- g_nivo + theme(text = element_text(size=20)) + xlim(0, 0.6) + ggtitle("(ii)")
-g_nivo_ipi <- g_nivo_ipi + theme(text = element_text(size=20)) + xlim(0, 0.6) + ggtitle("(iii)")
+plot_format <-
+  theme(text = element_text(size = 20)) +
+  xlim(0, 0.6)
 
-do.call("grid_arrange_shared_legend",
-        c(list(g_ipi, g_nivo, g_nivo_ipi), nrow = 1, ncol = 3, position = "top"))
+g_ipi <- g_ipi + plot_format + ggtitle("(i)")
+g_nivo <- g_nivo + plot_format + ggtitle("(ii)")
+g_nivo_ipi <- g_nivo_ipi + plot_format + ggtitle("(iii)")
+
+p3 <-
+  do.call("grid_arrange_shared_legend",
+          c(list(g_ipi, g_nivo, g_nivo_ipi),
+            nrow = 1, ncol = 3, position = "top"))
+
+ggsave(p3, filename = glue::glue("plots/forest_plot_all_tx.png"),
+       units = "in", width = 9, height = 10, dpi = 300)
+

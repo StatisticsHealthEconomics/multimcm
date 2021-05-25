@@ -174,7 +174,6 @@ ggsave(s_plot,
        filename = glue::glue(
          "plots/S_plots_{model_os}_{model_pfs}_{cf_model_names[cf_idx]}_{bg_model}_hr{bg_hr}_{trta}.png"))
 
-
 plot_prior_predictive(out, event_type = "os")
 plot_prior_predictive(out, event_type = "pfs")
 

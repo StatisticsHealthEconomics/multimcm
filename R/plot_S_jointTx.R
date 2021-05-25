@@ -7,9 +7,11 @@
 #' @param stan_out Stan output data frame
 #' @param facet Two separate plots for OS and PFS or overlaid?
 #' @param annot_cf Annotate with cure fractions? Logical
+#' @param data Study individual-level data for Kaplan-Meier
 #'
 #' @return ggplot object
 #'
+#' @import survival
 #' @importFrom purrr map
 #' @importFrom reshape2 melt
 #' @importFrom rstan extract
@@ -20,7 +22,8 @@
 #'
 plot_S_jointTx <- function(stan_out = NA,
                            facet = TRUE,
-                           annot_cf = FALSE) {
+                           annot_cf = FALSE,
+                           data = NA) {
   S_stats <- list()
 
   stan_extract <- rstan::extract(stan_out)
@@ -35,6 +38,8 @@ plot_S_jointTx <- function(stan_out = NA,
 
   n_tx <- dim(stan_extract$alpha)[2]
 
+  CI_probs <- c(0.05, 0.5, 0.95)
+
   ann_text <-
     data.frame(
       event_type = c("os", "pfs"),
@@ -42,11 +47,11 @@ plot_S_jointTx <- function(stan_out = NA,
       label = c(
         apply(X = stan_extract$cf_os, 2,
               FUN = function(x)
-                paste(round(quantile(x, probs = c(0.05,0.5,0.95)), 2),
+                paste(round(quantile(x, probs = CI_probs), 2),
                       collapse = " ")),
         apply(X = stan_extract$cf_pfs, 2,
               FUN = function(x)
-                paste(round(quantile(x, probs = c(0.05,0.5,0.95)), 2),
+                paste(round(quantile(x, probs = CI_probs), 2),
                       collapse = " "))))
   # unnest
   plot_dat <-
@@ -64,7 +69,6 @@ plot_S_jointTx <- function(stan_out = NA,
 
   p <-
     ggplot(plot_dat, aes(month, mean, group = type_tx, colour = Tx)) +
-    # ggplot(plot_dat, aes(month, mean, group = type, colour = type)) +
     geom_line() +
     add_facet(facet) +
     ylab("Survival") +
@@ -78,6 +82,48 @@ plot_S_jointTx <- function(stan_out = NA,
       p + geom_text(data = ann_text,
                     aes(x = 40, y = 1, label = label),
                     inherit.aes = FALSE)}
-  p
+
+  # overlay Kaplan-Meier
+  if (!any(is.na(data))) {
+
+    fit_os <- survfit(Surv(os, os_event) ~ TRTA, data = data)
+    fit_pfs <- survfit(Surv(pfs, pfs_event) ~ TRTA, data = data)
+
+    km_data <-
+      rbind(
+        data.frame(
+          Tx = if (is.null(fit_os$strata)) {1} else {
+            rep(gsub("TRTA=", "", names(fit_os$strata)),
+                times = fit_os$strata)},
+          event_type = "os",
+          time = fit_os$time,
+          surv = fit_os$surv),
+        data.frame(
+          Tx =  if (is.null(fit_pfs$strata)) {1} else {
+            rep(gsub("TRTA=", "", names(fit_pfs$strata)),
+                times = fit_pfs$strata)},
+          event_type = "pfs",
+          time = fit_pfs$time,
+          surv = fit_pfs$surv))
+
+    km_curve <-
+      geom_line(aes(x = time, y = surv, group = Tx),
+                data = km_data,
+                lwd = 1,
+                inherit.aes = FALSE)
+  } else {
+    km_curve <- NULL}
+
+  p +
+    km_curve +
+    xlim(0, 60) +
+    scale_fill_manual(labels = c("Ipilimumab", "Nivolumab", "Nivolumab & Ipilimumab", "Background", "Uncured"),
+                      values = c("turquoise1","blue","cyan4","green","tomato1")) +
+    scale_color_manual(labels = c("Ipilimumab", "Nivolumab", "Nivolumab & Ipilimumab", "Background", "Uncured"),
+                       values = c("turquoise1","blue","cyan4","green","tomato1")) +
+    guides(color = guide_legend(""), fill = guide_legend("")) +
+    theme_bw() +
+    xlab("Month") +
+    theme(text = element_text(size = 20))
 }
 

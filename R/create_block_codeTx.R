@@ -10,7 +10,7 @@ create_pfs_codeTx <- function(pfs_model) {
   scode <- list()
 
   scode$data <-
-    common_code_event_data("pfs")
+    common_code_event_dataTx("pfs")
 
   scode$trans_params <- list(
     def =
@@ -91,7 +91,7 @@ create_os_codeTx <- function(os_model) {
   scode <- list()
 
   scode$data <-
-    common_code_event_data("os")
+    common_code_event_dataTx("os")
 
   scode$trans_params <-
     list(
@@ -176,24 +176,29 @@ create_cf_codeTx <- function(cf_model) {
       real mu_cf_os[cf_model == 2 ? 1 : 0];
       real mu_cf_pfs[cf_model == 2 ? 1 : 0];
       real<lower=0> sigma_cf_gl[cf_model == 3 ? 1 : 0];
-      vector<lower=0>[cf_model != 1 ? nTx : 0] sd_cf_os;
-      vector<lower=0>[cf_model != 1 ? nTx : 0] sd_cf_pfs;
+      vector<lower=0>[cf_model == 2 ? nTx : 0] sd_cf_os;
+      vector<lower=0>[cf_model == 2 ? nTx : 0] sd_cf_pfs;
       real a_cf[cf_model == 1 ? 1 : 0];
-      real b_cf[cf_model == 1 ? 1 : 0];")
+      real b_cf[cf_model == 1 ? 1 : 0];
+      vector[cf_model == 3 ? nTx : 0] mu_sd_cf;
+      vector<lower=0>[cf_model == 3 ? nTx : 0] sigma_sd_cf;")
 
   scode$parameters <-
     c("\tvector<lower=0, upper=1>[cf_model == 1 ? nTx : 0] cf_pooled;
       vector[cf_model != 1 ? nTx : 0] lp_cf_os;
-      vector[cf_model != 1 ? nTx : 0] lp_cf_pfs;\n")
+      vector[cf_model != 1 ? nTx : 0] lp_cf_pfs;
+      vector[cf_model == 3 ? nTx : 0] log_sd_cf;\n")
 
   scode$trans_params <- list(
     def =
       c("\tvector<lower=0, upper=1>[cf_model == 3 ? nTx : 0] cf_global;
         vector<lower=0, upper=1>[nTx] cf_os;
         vector<lower=0, upper=1>[nTx] cf_pfs;
-        vector[cf_model == 3 ? nTx : 0] lp_cf_global;\n"),
+        vector[cf_model == 3 ? nTx : 0] lp_cf_global;
+        vector<lower=0>[cf_model == 3 ? nTx : 0] sd_cf;\n"),
     main =
       c("if (cf_model == 3) {
+        sd_cf = exp(log_sd_cf);
         lp_cf_global = Tx_dmat*alpha;
         cf_global = inv_logit(lp_cf_global);
       }\n
@@ -209,6 +214,7 @@ create_cf_codeTx <- function(cf_model) {
     c("\t// cure fraction
       if (cf_model == 3) {
         alpha ~ normal(mu_alpha, sigma_alpha);
+        log_sd_cf ~ normal(mu_sd_cf, sigma_sd_cf);
         lp_cf_os ~ normal(lp_cf_global, sd_cf_os);
         lp_cf_pfs ~ normal(lp_cf_global, sd_cf_pfs);
       } else if (cf_model == 2) {

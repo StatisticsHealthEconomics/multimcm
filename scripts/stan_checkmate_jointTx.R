@@ -22,6 +22,10 @@ source("R/prep_stan_dataTx.R")
 source("R/prep_tx_params.R")
 source("R/plot_post_pred_KM.R")
 
+source("R/bmcm_joint_stan_stringTx.R")
+source("R/create_stancodeTx.R")
+source("R/create_block_codeTx.R")
+
 
 # rstan_options(auto_write = TRUE)
 options(mc.cores = parallel::detectCores() - 1)
@@ -51,7 +55,7 @@ if (!is.na(TRTX))
 
 save_res <- TRUE
 
-model_os_idx <- 1
+model_os_idx <- 2
 model_pfs_idx <- 1
 model_names <- c("exp", "weibull", "gompertz", "loglogistic", "lognormal")
 model_os <- model_names[model_os_idx]
@@ -60,13 +64,13 @@ model_pfs <- model_names[model_pfs_idx]
 cf_idx <- 3
 cf_model_names <- c("cf pooled", "cf separate", "cf hier")
 
+# all treatments
 if (is.na(TRTX)) {
-  # all treatments
   cf_hier <-
     list(mu_cf_gl = array(-0.8, 1),
          sigma_cf_gl = array(2, 1),
-         sd_cf_os = c(0.5, 0.5, 0.5),
-         sd_cf_pfs = c(0.5, 0.5, 0.5))
+         mu_sd_cf = c(-2, -2, -2),
+         sigma_sd_cf = c(1, 1, 1))
 
   params_cf_lup <-
     list("cf pooled" =
@@ -95,8 +99,8 @@ if (is.na(TRTX)) {
   cf_hier <-
     list(mu_cf_gl = array(-0.8, 1),
          sigma_cf_gl = array(2, 1),
-         sd_cf_os = array(0.5, 1),
-         sd_cf_pfs = array(0.5, 1))
+         mu_sd_cf = array(-2, 1),
+         sigma_sd_cf = array(1, 1))
 
   params_cf_lup <-
     list("cf pooled" =
@@ -128,20 +132,20 @@ params_cf <-
     params_cf_lup[[cf_idx]][[model_pfs]]
   }
 
-# cf 20%, 35%, 45% on logit scale
+# cure fraction: 20%, 35%, 45% on logit scale
 # no intercept model
-params_tx <-
-  list(mu_alpha = c(-1.4, -0.6, -0.2),
-       sigma_alpha = c(1, 1, 1))
+# params_tx <-
+#   list(mu_alpha = c(-1.4, -0.6, -0.2),
+#        sigma_alpha = c(1, 1, 1))
+params_tx <- NA
 
 bg_model_idx <- 2
 bg_model_names <- c("bg_distn", "bg_fixed")
 bg_model <- bg_model_names[bg_model_idx]
 
+# background hazard ratio
 # bg_hr <- 1.63
 bg_hr <- 1
-
-params_tx <- NA
 
 
 #######

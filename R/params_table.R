@@ -1,18 +1,23 @@
 
 #' Posterior parameter summary table for paper
 #'
+#' For single treatment Stan output
+#'
 #' @import purrr dplyr
 #'
-#' params_table(data_dir = "data/independent/cf hier/bg_fixed_hr1",
-#' os_distn = "exp",
-#' pfs_distn = "weibull",
-#' param_names = c("beta_os", "beta_pfs", "cf_os", "cf_pfs", "cf_global"),
-#'   # beta_cf_0, beta_cf_1, sigma_cf_os, sigma_cf_pfs,
-#'   # shape_os, shape_pfs
-#' coeff_rename =
-#'   list("beta_os" = c("beta_os0", "beta_os1"),
-#'        "beta_pfs" = c("beta_pfs0", "beta_pfs1"))) %>%
-#'   knitr::kable(format = "latex")
+#' params_table(
+#'   data_dir = "data/independent/cf hier/bg_fixed_hr1",
+#'   os_distn = "exp",
+#'   pfs_distn = "exp",
+#'   param_names = c("beta_os", "beta_pfs", "cf_os", "cf_pfs", "cf_global", "alpha", "sd_cf")#,
+#'   # shape_os, shape_pfs # if present
+#'   # coeff_rename =
+#'   #   list("beta_os" = c("beta_os0", "beta_os1"),
+#'   #        "beta_pfs" = c("beta_pfs0", "beta_pfs1"),
+#'   #        "alpha" = c("beta_cf_1", "beta_cf_2", "beta_cf_3"),
+#'   #        "sd_cf" = c("sd_cf_1", "sd_cf_2", "sd_cf_3"))
+#'   ) %>%
+#'     knitr::kable(format = "latex")
 #'
 params_table <- function(data_dir,
                          os_distn,

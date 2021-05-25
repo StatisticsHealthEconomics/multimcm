@@ -11,9 +11,9 @@ data {
   int<lower=1> nTx;
   int<lower=0> N_os;             // total number of observations
   int<lower=0> N_pfs;
-  int<lower=0> n_os[nTx];         // group sizes
+  int<lower=0> n_os[nTx];        // group sizes
   int<lower=0> n_pfs[nTx];
-  int<lower=0> H_os;              // number of covariates
+  int<lower=0> H_os;             // number of covariates
   int<lower=0> H_pfs;
 
   vector[N_os] t_os;        // observation times
@@ -44,8 +44,8 @@ data {
   // 1- shared; 2- separate; 3- hierarchical
   real mu_cf_os[cf_model == 2 ? 1 : 0];
   real mu_cf_pfs[cf_model == 2 ? 1 : 0];
-  vector<lower=0>[cf_model != 1 ? nTx : 0] sd_cf_os;
-  vector<lower=0>[cf_model != 1 ? nTx : 0] sd_cf_pfs;
+  vector<lower=0>[cf_model == 2 ? nTx : 0] sd_cf_os;
+  vector<lower=0>[cf_model == 2 ? nTx : 0] sd_cf_pfs;
   real a_cf[cf_model == 1 ? 1 : 0];
   real b_cf[cf_model == 1 ? 1 : 0];
 
@@ -55,6 +55,10 @@ data {
   vector[nTx] mu_alpha;
   vector<lower=0>[nTx] sigma_alpha;
 
+  vector[cf_model == 3 ? nTx : 0] mu_sd_cf;
+  vector<lower=0>[cf_model == 3 ? nTx : 0] sigma_sd_cf;
+
+  //// background hazard ratio adjustment
   // matrix[N_os, nTx] dmat_os;
   // matrix[N_pfs, nTx] dmat_pfs;
   // vector[nTx] mu_hr;
@@ -72,6 +76,8 @@ parameters {
   vector<lower=0, upper=1>[cf_model == 1 ? nTx : 0] cf_pooled;
   vector[cf_model != 1 ? nTx : 0] lp_cf_os;
   vector[cf_model != 1 ? nTx : 0] lp_cf_pfs;
+
+  vector[cf_model == 3 ? nTx : 0] log_sd_cf;
 }
 
 transformed parameters {
@@ -90,6 +96,7 @@ transformed parameters {
   vector<lower=0, upper=1>[nTx] cf_pfs;
 
   vector[cf_model == 3 ? nTx : 0] lp_cf_global;
+  vector<lower=0>[cf_model == 3 ? nTx : 0] sd_cf;
 
   lp_os = X_os*beta_os;
   lp_pfs = X_pfs*beta_pfs;
@@ -117,6 +124,8 @@ transformed parameters {
   lambda_pfs = exp(lp_pfs);
 
   if (cf_model == 3) {
+    sd_cf = exp(log_sd_cf);
+
     lp_cf_global = Tx_dmat*alpha;
     cf_global = inv_logit(lp_cf_global);
   }
@@ -137,6 +146,7 @@ model {
   beta_os ~ normal(mu_0_os, sigma_0_os);
   beta_pfs ~ normal(mu_0_pfs, sigma_0_pfs);
 
+
   if (bg_model == 1) {
     beta_bg ~ normal(mu_bg, sigma_bg);
   }
@@ -151,8 +161,10 @@ model {
     // tx_hr_os ~ normal(mu_hr_os, sigma_hr_os);
     // tx_hr_pfs ~ normal(mu_hr_pfs, sigma_hr_pfs);
 
-    lp_cf_os ~ normal(lp_cf_global, sd_cf_os);
-    lp_cf_pfs ~ normal(lp_cf_global, sd_cf_pfs);
+    log_sd_cf ~ normal(mu_sd_cf, sigma_sd_cf);
+
+    lp_cf_os ~ normal(lp_cf_global, sd_cf);
+    lp_cf_pfs ~ normal(lp_cf_global, sd_cf);
 
   } else if (cf_model == 2) {
     lp_cf_os ~ normal(mu_cf_os, sd_cf_os);

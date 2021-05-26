@@ -134,7 +134,8 @@ batch_runTx <- function(model_idx,
     saveRDS(
       out,
       file = glue::glue(
-        "data/independent/{cf_model_names[cf_idx]}/{bg_model}_hr{bg_hr}/stan_{model_os}_{model_pfs}.Rds"))}
+        "data/stan_{model_os}_{model_pfs}.Rds"))}   # cluster
+        # "data/independent/{cf_model_names[cf_idx]}/{bg_model}_hr{bg_hr}/stan_{model_os}_{model_pfs}.Rds"))}
 
   invisible(out)
 }

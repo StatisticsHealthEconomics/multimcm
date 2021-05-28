@@ -5,6 +5,7 @@
 #'
 batch_runTx <- function(model_idx,
                         data,
+                        cf_idx = 3,
                         save_res = FALSE) {
 
   # options(mc.cores = parallel::detectCores() - 1)
@@ -29,26 +30,17 @@ batch_runTx <- function(model_idx,
   model_os <- model_names[model_idx$os]
   model_pfs <- model_names[model_idx$pfs]
 
-  cf_idx <- 3
   cf_model_names <- c("cf pooled", "cf separate", "cf hier")
 
   # all treatments
   if (is.na(TRTX)) {
     cf_hier <-
-      list(mu_cf_gl = array(-0.8, 1),
-           sigma_cf_gl = array(2, 1),
-           mu_sd_cf = c(-2, -2, -2),
+      list(mu_sd_cf = c(-2, -2, -2),
            sigma_sd_cf = c(1, 1, 1))
 
     params_cf_lup <-
-      list("cf pooled" =
-             list(mu_cf_gl = array(-0.8, 1),
-                  sigma_cf_gl = array(2, 1)),
-           "cf separate" =
-             list(mu_cf_os = array(-0.8, 1),
-                  mu_cf_pfs = array(-0.8, 1),
-                  sd_cf_os = array(0.5, 1),
-                  sd_cf_pfs = array(0.5, 1)),
+      list("cf pooled" = NULL,
+           "cf separate" = NULL,
            "cf hier" =
              list(exp = cf_hier,
                   weibull = cf_hier,
@@ -56,29 +48,19 @@ batch_runTx <- function(model_idx,
                   loglogistic = cf_hier,
                   gengamma = cf_hier,
                   lognormal =
-                    list(mu_cf_gl = array(-1.8, 1),
-                         sigma_cf_gl = array(1, 1),
-                         sd_cf_os = c(0.5, 0.5, 0.5),
-                         sd_cf_pfs = c(0.5, 0.5, 0.5))))
+                    list(mu_sd_cf = c(0.5, 0.5, 0.5),
+                         sigma_sd_cf = c(0.5, 0.5, 0.5))))
   } else {
-    # one treatment only
+    # single treatment
     # use this to test against single
     # old treatment script
     cf_hier <-
-      list(mu_cf_gl = array(-0.8, 1),
-           sigma_cf_gl = array(2, 1),
-           mu_sd_cf = array(-2, 1),
+      list(mu_sd_cf = array(-2, 1),
            sigma_sd_cf = array(1, 1))
 
     params_cf_lup <-
-      list("cf pooled" =
-             list(mu_cf_gl = array(-0.8, 1),
-                  sigma_cf_gl = array(2, 1)),
-           "cf separate" =
-             list(mu_cf_os = array(-0.8, 1),
-                  mu_cf_pfs = array(-0.8, 1),
-                  sd_cf_os = array(0.5, 1),
-                  sd_cf_pfs = array(0.5, 1)),
+      list("cf pooled" = NULL,
+           "cf separate" = NULL,
            "cf hier" =
              list(exp = cf_hier,
                   weibull = cf_hier,
@@ -86,10 +68,8 @@ batch_runTx <- function(model_idx,
                   loglogistic = cf_hier,
                   gengamma = cf_hier,
                   lognormal =
-                    list(mu_cf_gl = array(-1.8, 1),
-                         sigma_cf_gl = array(1, 1),
-                         sd_cf_os = array(0.5, 1),
-                         sd_cf_pfs = array(0.5, 1))))
+                    list(mu_sd_cf = array(0.5, 1),
+                         sigma_sd_cf = array(0.5, 1))))
   }
 
   params_cf <-
@@ -101,10 +81,18 @@ batch_runTx <- function(model_idx,
 
   # cure fraction: 20%, 35%, 45% on logit scale
   # no intercept model
-  # params_tx <-
-  #   list(mu_alpha = c(-1.4, -0.6, -0.2),
-  #        sigma_alpha = c(1, 1, 1))
-  params_tx <- NA
+  params_tx <-
+    if (cf_idx == 3) {
+      list(mu_alpha = c(-1.4, -0.6, -0.2),
+           sigma_alpha = c(1, 1, 1))
+    } else if (cf_idx == 2) {
+      list(mu_alpha_os = c(-1.4, -0.6, -0.2),
+           sigma_alpha_pfs = c(1, 1, 1),
+           mu_alpha_os = c(-1.4, -0.6, -0.2),
+           sigma_alpha_pfs = c(1, 1, 1))
+    } else {
+      NA
+    }
 
   bg_model_idx <- 2
   bg_model_names <- c("bg_distn", "bg_fixed")
@@ -135,7 +123,7 @@ batch_runTx <- function(model_idx,
       out,
       file = glue::glue(
         "data/stan_{model_os}_{model_pfs}.Rds"))}   # cluster
-        # "data/independent/{cf_model_names[cf_idx]}/{bg_model}_hr{bg_hr}/stan_{model_os}_{model_pfs}.Rds"))}
+  # "data/independent/{cf_model_names[cf_idx]}/{bg_model}_hr{bg_hr}/stan_{model_os}_{model_pfs}.Rds"))}
 
   invisible(out)
 }

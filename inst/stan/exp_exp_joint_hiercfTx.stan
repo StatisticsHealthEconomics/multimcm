@@ -16,10 +16,10 @@ data {
   int<lower=0> H_os;             // number of covariates
   int<lower=0> H_pfs;
 
-  vector[N_os] t_os;        // observation times
+  vector[N_os] t_os;             // observation times
   vector[N_pfs] t_pfs;
 
-  vector[N_os] d_os;        // censoring indicator (1 = observed, 0 = censored)
+  vector[N_os] d_os;             // censoring indicator (1 = observed, 0 = censored)
   vector[N_pfs] d_pfs;
 
   matrix[N_os, H_os] X_os;       // matrix of covariates (with n rows and H columns)
@@ -51,9 +51,14 @@ data {
 
   int<lower=0> t_max;
 
-  matrix[nTx, nTx] Tx_dmat;         // treatment design matrix
-  vector[nTx] mu_alpha;
-  vector<lower=0>[nTx] sigma_alpha;
+  matrix[nTx, nTx] Tx_dmat;                             // treatment design matrix
+  vector[cf_model == 3 ? nTx : 0] mu_alpha;             // treatment regression coefficients
+  vector<lower=0>[cf_model == 3 ? nTx : 0] sigma_alpha;
+
+  vector[cf_model == 2 ? nTx : 0] mu_alpha_os;
+  vector<lower=0>[cf_model == 2 ? nTx : 0] sigma_alpha_os;
+  vector[cf_model == 2 ? nTx : 0] mu_alpha_pfs;
+  vector<lower=0>[cf_model == 2 ? nTx : 0] sigma_alpha_pfs;
 
   vector[cf_model == 3 ? nTx : 0] mu_sd_cf;
   vector<lower=0>[cf_model == 3 ? nTx : 0] sigma_sd_cf;
@@ -66,7 +71,7 @@ data {
 }
 
 parameters {
-  vector[H_os] beta_os;       // coefficients in linear predictor (including intercept)
+  vector[H_os] beta_os;       // coefficients in rate linear predictor (including intercept)
   vector[H_pfs] beta_pfs;
   vector[bg_model == 1 ? H_os : 0] beta_bg;
   real beta_joint[joint_model];
@@ -129,6 +134,11 @@ transformed parameters {
     lp_cf_global = Tx_dmat*alpha;
     cf_global = inv_logit(lp_cf_global);
   }
+  if (cf_model == 2) {
+    lp_cf_os = Tx_dmat*alpha_os;
+    lp_cf_pfs = Tx_dmat*alpha_pfs;
+  }
+
   if (cf_model != 1) {
     cf_os = inv_logit(lp_cf_os);
     cf_pfs = inv_logit(lp_cf_pfs);
@@ -167,8 +177,8 @@ model {
     lp_cf_pfs ~ normal(lp_cf_global, sd_cf);
 
   } else if (cf_model == 2) {
-    lp_cf_os ~ normal(mu_cf_os, sd_cf_os);
-    lp_cf_pfs ~ normal(mu_cf_pfs, sd_cf_pfs);
+    alpha_os ~ normal(mu_alpha_os, sigma_alpha_os);
+    alpha_pfs ~ normal(mu_alpha_pfs, sigma_alpha_pfs);
   } else {
     cf_pooled ~ beta(a_cf, b_cf);
   }
@@ -242,14 +252,6 @@ generated quantities {
   //
   // real pbeta_bg;
 
-  // if (cf_model == 3) {
-    // real vpc_os;
-    // real vpc_pfs;
-    //
-    // vpc_os = sd_cf_os/(sigma_cf_gl + sd_cf_os);
-    // vpc_pfs = sd_cf_pfs/(sigma_cf_gl + sd_cf_pfs);
-  // }
-
   // if (bg_model == 1) {
   //   pbeta_bg = normal_rng(mu_bg[1], sigma_bg[1]);
   // } else {
@@ -259,9 +261,9 @@ generated quantities {
 //
 //   // cure fraction prior
 //   if (cf_model == 3) {
-//     real pcurefrac = normal_rng(mu_cf_gl[1], sigma_cf_gl[1]);
-//     pmean_cf_os = inv_logit(pcurefrac);
-//     pmean_cf_pfs = inv_logit(pcurefrac);
+//     real pcurefrac = normal_rng(mu_alpha, sigma_alpha);
+//     pmean_cf_os = inv_logit(Tx_dmat*pcurefrac);
+//     pmean_cf_pfs = inv_logit(Tx_dmat*pcurefrac);
 //
 //   } else if (cf_model == 2) {
 //     real pcf_os = normal_rng(mu_cf_os[1], sd_cf_os[1]);

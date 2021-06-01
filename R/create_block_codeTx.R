@@ -44,7 +44,7 @@ create_pfs_codeTx <- function(pfs_model) {
                vector[N_pfs] lambda_pfs;\n"))
 
     scode$trans_params$main <-
-      c("lambda_pfs = exp(lp_pfs);\n")
+      c("\tlambda_pfs = exp(lp_pfs);\n")
 
     scode$model <-
       c("shape_pfs ~ gamma(a_shape_pfs, b_shape_pfs);\n")
@@ -105,7 +105,7 @@ create_os_codeTx <- function(os_model) {
                vector[N_os] lambda_os;\n"))
 
     scode$trans_params$main <-
-      c("lambda_os = exp(lp_os);\n")
+      c("\tlambda_os = exp(lp_os);\n")
 
     scode$generated_quantities$main <-
       c("\tmean_os = exp(beta_os[1]);\n")
@@ -172,12 +172,6 @@ create_cf_codeTx <- function(cf_model) {
   scode <- list()
   scode$data <-
     c("\tint<lower=1, upper=3> cf_model;         // cure fraction
-      real mu_cf_gl[cf_model == 3 ? 1 : 0];   // 1- shared; 2- separate; 3- hierarchical
-      real mu_cf_os[cf_model == 2 ? 1 : 0];
-      real mu_cf_pfs[cf_model == 2 ? 1 : 0];
-      real<lower=0> sigma_cf_gl[cf_model == 3 ? 1 : 0];
-      vector<lower=0>[cf_model == 2 ? nTx : 0] sd_cf_os;
-      vector<lower=0>[cf_model == 2 ? nTx : 0] sd_cf_pfs;
       real a_cf[cf_model == 1 ? 1 : 0];
       real b_cf[cf_model == 1 ? 1 : 0];
       vector[cf_model == 3 ? nTx : 0] mu_sd_cf;
@@ -185,8 +179,6 @@ create_cf_codeTx <- function(cf_model) {
 
   scode$parameters <-
     c("\tvector<lower=0, upper=1>[cf_model == 1 ? nTx : 0] cf_pooled;
-      vector[cf_model != 1 ? nTx : 0] lp_cf_os;
-      vector[cf_model != 1 ? nTx : 0] lp_cf_pfs;
       vector[cf_model == 3 ? nTx : 0] log_sd_cf;\n")
 
   scode$trans_params <- list(
@@ -195,12 +187,18 @@ create_cf_codeTx <- function(cf_model) {
         vector<lower=0, upper=1>[nTx] cf_os;
         vector<lower=0, upper=1>[nTx] cf_pfs;
         vector[cf_model == 3 ? nTx : 0] lp_cf_global;
+        vector[cf_model != 1 ? nTx : 0] lp_cf_os;
+        vector[cf_model != 1 ? nTx : 0] lp_cf_pfs;
         vector<lower=0>[cf_model == 3 ? nTx : 0] sd_cf;\n"),
     main =
       c("if (cf_model == 3) {
         sd_cf = exp(log_sd_cf);
         lp_cf_global = Tx_dmat*alpha;
         cf_global = inv_logit(lp_cf_global);
+      }\n
+      if (cf_model == 2) {
+        lp_cf_os = Tx_dmat*alpha_os;
+        lp_cf_pfs = Tx_dmat*alpha_pfs;
       }\n
       if (cf_model != 1) {
         cf_os = inv_logit(lp_cf_os);
@@ -218,8 +216,8 @@ create_cf_codeTx <- function(cf_model) {
         lp_cf_os ~ normal(lp_cf_global, sd_cf_os);
         lp_cf_pfs ~ normal(lp_cf_global, sd_cf_pfs);
       } else if (cf_model == 2) {
-        lp_cf_os ~ normal(mu_cf_os, sd_cf_os);
-        lp_cf_pfs ~ normal(mu_cf_pfs, sd_cf_pfs);
+        alpha_os ~ normal(mu_alpha_os, sigma_alpha_os);
+        alpha_pfs ~ normal(mu_alpha_pfs, sigma_alpha_pfs);
       } else {
         cf_pooled ~ beta(a_cf, b_cf);
       }\n")
@@ -248,8 +246,12 @@ create_code_skeletonTx <- function() {
       real mu_joint[joint_model];
       real<lower=0> sigma_joint[joint_model];
       matrix[nTx, nTx] Tx_dmat;         // treatment design matrix
-      vector[nTx] mu_alpha;
-      vector<lower=0>[nTx] sigma_alpha;
+      vector[cf_model == 3 ? nTx : 0] mu_alpha;             // treatment regression coefficients
+      vector<lower=0>[cf_model == 3 ? nTx : 0] sigma_alpha;
+      vector[cf_model == 2 ? nTx : 0] mu_alpha_os;
+      vector[cf_model == 2 ? nTx : 0] mu_alpha_pfs;
+      vector<lower=0>[cf_model == 2 ? nTx : 0] sigma_alpha_os;
+      vector<lower=0>[cf_model == 2 ? nTx : 0] sigma_alpha_pfs;
       int<lower=0> t_max;\n"))
 
   scode$parameters <-
@@ -257,7 +259,9 @@ create_code_skeletonTx <- function() {
       vector[H_pfs] beta_pfs;
       vector[bg_model == 1 ? H_os : 0] beta_bg;
       real beta_joint[joint_model];
-      vector[nTx] alpha;\n")
+      vector[cf_model != 2 ? nTx : 0] alpha;
+      vector[cf_model == 2 ? nTx : 0] alpha_os;
+      vector[cf_model == 2 ? nTx : 0] alpha_pfs;\n")
 
   scode$trans_params <- list(
     def =

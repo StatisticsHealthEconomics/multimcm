@@ -40,12 +40,8 @@ data {
   real mu_joint[joint_model];
   real<lower=0> sigma_joint[joint_model];
 
-  int<lower=1, upper=3> cf_model;         // cure fraction
   // 1- shared; 2- separate; 3- hierarchical
-  real mu_cf_os[cf_model == 2 ? 1 : 0];
-  real mu_cf_pfs[cf_model == 2 ? 1 : 0];
-  vector<lower=0>[cf_model == 2 ? nTx : 0] sd_cf_os;
-  vector<lower=0>[cf_model == 2 ? nTx : 0] sd_cf_pfs;
+  int<lower=1, upper=3> cf_model;         // cure fraction
   real a_cf[cf_model == 1 ? 1 : 0];
   real b_cf[cf_model == 1 ? 1 : 0];
 
@@ -56,8 +52,8 @@ data {
   vector<lower=0>[cf_model == 3 ? nTx : 0] sigma_alpha;
 
   vector[cf_model == 2 ? nTx : 0] mu_alpha_os;
-  vector<lower=0>[cf_model == 2 ? nTx : 0] sigma_alpha_os;
   vector[cf_model == 2 ? nTx : 0] mu_alpha_pfs;
+  vector<lower=0>[cf_model == 2 ? nTx : 0] sigma_alpha_os;
   vector<lower=0>[cf_model == 2 ? nTx : 0] sigma_alpha_pfs;
 
   vector[cf_model == 3 ? nTx : 0] mu_sd_cf;
@@ -76,11 +72,11 @@ parameters {
   vector[bg_model == 1 ? H_os : 0] beta_bg;
   real beta_joint[joint_model];
 
-  vector[nTx] alpha;
+  vector[cf_model != 2 ? nTx : 0] alpha;
+  vector[cf_model == 2 ? nTx : 0] alpha_os;
+  vector[cf_model == 2 ? nTx : 0] alpha_pfs;
 
   vector<lower=0, upper=1>[cf_model == 1 ? nTx : 0] cf_pooled;
-  vector[cf_model != 1 ? nTx : 0] lp_cf_os;
-  vector[cf_model != 1 ? nTx : 0] lp_cf_pfs;
 
   vector[cf_model == 3 ? nTx : 0] log_sd_cf;
 }
@@ -101,6 +97,9 @@ transformed parameters {
   vector<lower=0, upper=1>[nTx] cf_pfs;
 
   vector[cf_model == 3 ? nTx : 0] lp_cf_global;
+  vector[cf_model != 1 ? nTx : 0] lp_cf_os;
+  vector[cf_model != 1 ? nTx : 0] lp_cf_pfs;
+
   vector<lower=0>[cf_model == 3 ? nTx : 0] sd_cf;
 
   lp_os = X_os*beta_os;
@@ -134,6 +133,7 @@ transformed parameters {
     lp_cf_global = Tx_dmat*alpha;
     cf_global = inv_logit(lp_cf_global);
   }
+
   if (cf_model == 2) {
     lp_cf_os = Tx_dmat*alpha_os;
     lp_cf_pfs = Tx_dmat*alpha_pfs;

@@ -55,32 +55,24 @@ if (!is.na(TRTX))
 
 save_res <- TRUE
 
-model_os_idx <- 2
+model_os_idx <- 1
 model_pfs_idx <- 1
 model_names <- c("exp", "weibull", "gompertz", "loglogistic", "lognormal")
 model_os <- model_names[model_os_idx]
 model_pfs <- model_names[model_pfs_idx]
 
-cf_idx <- 3
+cf_idx <- 2
 cf_model_names <- c("cf pooled", "cf separate", "cf hier")
 
 # all treatments
 if (is.na(TRTX)) {
   cf_hier <-
-    list(mu_cf_gl = array(-0.8, 1),
-         sigma_cf_gl = array(2, 1),
-         mu_sd_cf = c(-2, -2, -2),
+    list(mu_sd_cf = c(-2, -2, -2),
          sigma_sd_cf = c(1, 1, 1))
 
   params_cf_lup <-
-    list("cf pooled" =
-           list(mu_cf_gl = array(-0.8, 1),
-                sigma_cf_gl = array(2, 1)),
-         "cf separate" =
-           list(mu_cf_os = array(-0.8, 1),
-                mu_cf_pfs = array(-0.8, 1),
-                sd_cf_os = array(0.5, 1),
-                sd_cf_pfs = array(0.5, 1)),
+    list("cf pooled" = NULL,
+         "cf separate" = NULL,
          "cf hier" =
            list(exp = cf_hier,
                 weibull = cf_hier,
@@ -88,29 +80,19 @@ if (is.na(TRTX)) {
                 loglogistic = cf_hier,
                 gengamma = cf_hier,
                 lognormal =
-                  list(mu_cf_gl = array(-1.8, 1),
-                       sigma_cf_gl = array(1, 1),
-                       sd_cf_os = c(0.5, 0.5, 0.5),
-                       sd_cf_pfs = c(0.5, 0.5, 0.5))))
+                  list(mu_sd_cf = c(0.5, 0.5, 0.5),
+                       sigma_sd_cf = c(0.5, 0.5, 0.5))))
 } else {
-  # one treatment only
+  # single treatment
   # use this to test against single
   # old treatment script
   cf_hier <-
-    list(mu_cf_gl = array(-0.8, 1),
-         sigma_cf_gl = array(2, 1),
-         mu_sd_cf = array(-2, 1),
+    list(mu_sd_cf = array(-2, 1),
          sigma_sd_cf = array(1, 1))
 
   params_cf_lup <-
-    list("cf pooled" =
-           list(mu_cf_gl = array(-0.8, 1),
-                sigma_cf_gl = array(2, 1)),
-         "cf separate" =
-           list(mu_cf_os = array(-0.8, 1),
-                mu_cf_pfs = array(-0.8, 1),
-                sd_cf_os = array(0.5, 1),
-                sd_cf_pfs = array(0.5, 1)),
+    list("cf pooled" = NULL,
+         "cf separate" = NULL,
          "cf hier" =
            list(exp = cf_hier,
                 weibull = cf_hier,
@@ -118,13 +100,10 @@ if (is.na(TRTX)) {
                 loglogistic = cf_hier,
                 gengamma = cf_hier,
                 lognormal =
-                  list(mu_cf_gl = array(-1.8, 1),
-                       sigma_cf_gl = array(1, 1),
-                       sd_cf_os = array(0.5, 1),
-                       sd_cf_pfs = array(0.5, 1))))
+                  list(mu_sd_cf = array(0.5, 1),
+                       sigma_sd_cf = array(0.5, 1))))
 }
 
-##TODO: what is this doing?
 params_cf <-
   if (is.null(params_cf_lup[[cf_idx]][[model_pfs]])) {
     params_cf_lup[[cf_idx]]
@@ -134,10 +113,21 @@ params_cf <-
 
 # cure fraction: 20%, 35%, 45% on logit scale
 # no intercept model
-# params_tx <-
-#   list(mu_alpha = c(-1.4, -0.6, -0.2),
-#        sigma_alpha = c(1, 1, 1))
-params_tx <- NA
+params_tx <-
+  if (cf_idx == 1) {
+    list(mu_alpha = c(-1.4, -0.6, -0.2),
+         sigma_alpha = c(1, 1, 1))
+  } else if (cf_idx == 3) {
+    list(mu_alpha = c(-1.4, -0.6, -0.2),
+         sigma_alpha = c(1, 1, 1))
+  } else if (cf_idx == 2) {
+    list(mu_alpha_os = c(-1.4, -0.6, -0.2),
+         sigma_alpha_os = c(1, 1, 1),
+         mu_alpha_pfs = c(-1.4, -0.6, -0.2),
+         sigma_alpha_pfs = c(1, 1, 1))
+  } else {
+    NA
+  }
 
 bg_model_idx <- 2
 bg_model_names <- c("bg_distn", "bg_fixed")
@@ -153,13 +143,12 @@ bg_hr <- 1
 #######
 
 out <-
-  # bmcm_joint_stan_fileTx(
-  bmcm_joint_stan_stringTx(
+  bmcm_joint_stan_fileTx(
+  # bmcm_joint_stan_stringTx(
     input_data = surv_input_data,
     model_os = model_os,
     model_pfs = model_pfs,
-    params_cf = params_cf,
-    params_tx = params_tx,
+    params_cf = c(params_cf, params_tx),
     cf_model = cf_idx,
     joint_model = FALSE,
     bg_model = bg_model_idx,

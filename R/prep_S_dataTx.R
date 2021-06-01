@@ -15,7 +15,7 @@ prep_S_dataTx <- function(stan_extract,
     S_0 <- "S_pfs"
   }
 
-  n_tx <- dim(stan_extract$alpha)[2]
+  n_tx <- dim(stan_extract$cf_os)[2]
 
   S_stats <- list()
 

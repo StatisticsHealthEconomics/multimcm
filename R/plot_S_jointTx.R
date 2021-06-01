@@ -36,7 +36,7 @@ plot_S_jointTx <- function(stan_out = NA,
     prep_S_dataTx(stan_extract,
                   event_type = "pfs")
 
-  n_tx <- dim(stan_extract$alpha)[2]
+  n_tx <- dim(stan_extract$cf_os)[2]
 
   CI_probs <- c(0.05, 0.5, 0.95)
 

@@ -35,14 +35,24 @@ clusterExport(cl, "surv_input_data")
 model_idx <-
   split(
     expand.grid(1:5, 1:5) %>%
-      setNames(c("os","pfs")), 1:25)
+      setNames(c("os", "pfs")), 1:25)
 
 ll <-
   parLapply(cl,
             X = model_idx[1:2],
             fun = batch_runTx,
             data = surv_input_data,
+            cf_idx = 2,
             save_res = TRUE)
 
 stopCluster(cl)
+
+
+ll <-
+  lapply(cl,
+         X = model_idx[1:2],
+         fun = batch_runTx,
+         data = surv_input_data,
+         cf_idx = 2,
+         save_res = TRUE)
 

@@ -27,11 +27,14 @@ prep_shared_paramsTx <- function(cf_params = NA,
   empty_params <-
     list(a_cf = numeric(0),
          b_cf = numeric(0),
-         mu_cf_gl = numeric(0),
-         mu_cf_os = numeric(0),
-         mu_cf_pfs = numeric(0),
-         sd_cf_os = numeric(0),
-         sd_cf_pfs = numeric(0))
+         mu_alpha = numeric(0),
+         mu_alpha_os = numeric(0),
+         mu_alpha_pfs = numeric(0),
+         sigma_alpha = numeric(0),
+         sigma_alpha_os = numeric(0),
+         sigma_alpha_pfs = numeric(0),
+         mu_sd_cf = numeric(0),
+         sigma_sd_cf = numeric(0))
 
   if (!is.null(cf_params$mean_beta_cf) &&
       !is.null(cf_params$var_beta_cf)) {

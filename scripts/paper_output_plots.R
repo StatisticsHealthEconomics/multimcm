@@ -28,7 +28,7 @@ source("R/plot_S_grid.R")
 source("R/grid_arrange_shared_legend.R")
 source("R/plot_S_joint.R")
 source("R/prep_S_data.R")
-source("R/stan_forest_plot_Tx.R")
+source("R/cf_forest_plot.R")
 
 
 data("surv_input_data")
@@ -37,6 +37,10 @@ trt <- "NIVOLUMAB+IPILIMUMAB"
 # trt <- "IPILIMUMAB"
 # trt <- "NIVOLUMAB"
 
+
+################
+# hierarchical #
+################
 
 # survival curves
 
@@ -52,7 +56,7 @@ ggsave(p1, filename = glue::glue("plots/plot_S_grid_{trt}.png"),
 
 # forest plots
 
-p2 <- stan_forest_plot_Tx(trt = trt)
+p2 <- cf_forest_plot(trt = trt)
 
 ggsave(p2, filename = glue::glue("plots/forest_plot_{trt}.png"),
        units = "in", width = 9, height = 10, dpi = 300)
@@ -60,9 +64,11 @@ ggsave(p2, filename = glue::glue("plots/forest_plot_{trt}.png"),
 
 # all treatments on single plot
 
-g_ipi <- stan_forest_plot_Tx(trt = "IPILIMUMAB")
-g_nivo <- stan_forest_plot_Tx(trt = "NIVOLUMAB")
-g_nivo_ipi <- stan_forest_plot_Tx(trt = "NIVOLUMAB+IPILIMUMAB")
+## combine individual plots
+
+g_ipi <- cf_forest_plot(trt = "IPILIMUMAB")
+g_nivo <- cf_forest_plot(trt = "NIVOLUMAB")
+g_nivo_ipi <- cf_forest_plot(trt = "NIVOLUMAB+IPILIMUMAB")
 
 plot_format <-
   theme(text = element_text(size = 20)) +
@@ -79,4 +85,15 @@ p3 <-
 
 ggsave(p3, filename = glue::glue("plots/forest_plot_all_tx.png"),
        units = "in", width = 9, height = 10, dpi = 300)
+
+## all treatment Stan output
+
+p4 <- cf_forest_plotTx()
+
+
+
+############
+# separate #
+############
+
 

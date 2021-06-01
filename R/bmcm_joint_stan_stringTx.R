@@ -25,7 +25,7 @@ bmcm_joint_stan_stringTx <- function(input_data,
                                      t_max = 60,
                                      ...) {
   rtn_wd <- getwd()
-  setwd("~/R/rstanbmcm/inst/stan")
+  setwd(here::here("inst/stan"))
   on.exit(setwd(rtn_wd))
 
   data_os <-
@@ -53,7 +53,7 @@ bmcm_joint_stan_stringTx <- function(input_data,
                            params_joint,
                            bg_model,
                            t_max),
-      prep_tx_params(input_data, params_tx),
+      prep_tx_params(input_data),
       cf_model = cf_model,
       joint_model = joint_model,
       bg_model = bg_model)

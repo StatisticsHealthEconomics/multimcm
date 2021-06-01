@@ -1,6 +1,9 @@
 
 #' Create Stan code
 #'
+#' check with
+#' writeLines(create_stancodeTx("exp", "exp", 2, FALSE), "temp.stan")
+#'
 #' @param os_model
 #' @param pfs_model
 #' @param cf_model
@@ -39,10 +42,11 @@ create_stancodeTx <- function(os_model,
   scode$data <- paste0(
     "data {\n",
     stancode$data$def,
+    cf_code$data$def,
     pfs_code$data,
     os_code$data,
     stancode$data$main,
-    cf_code$data,
+    cf_code$data$main,
     "\n}\n\n"
   )
 

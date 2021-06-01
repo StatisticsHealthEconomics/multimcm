@@ -1,7 +1,8 @@
 
-#' Forest plot using Stan output
+#' Cure fraction forest plot using Stan output
 #'
 #' Both OS and PFS for single treatment.
+#' Using single treatment Stan model.
 #'
 #' @param folder string
 #' @param trt treatment name string
@@ -13,9 +14,9 @@
 #' @return
 #' @export
 #'
-stan_forest_plot_Tx <- function(folder = "data/independent/cf hier/bg_fixed_hr1/",
-                                trt = "NIVOLUMAB",
-                                is_hier = TRUE) {
+cf_forest_plot <- function(folder = "data/independent/cf hier/bg_fixed_hr1/",
+                           trt = "NIVOLUMAB",
+                           is_hier = TRUE) {
 
   stan_summary <- function(stan_obj) {
     summary(stan_obj,

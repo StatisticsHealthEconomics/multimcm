@@ -170,12 +170,15 @@ create_os_codeTx <- function(os_model) {
 create_cf_codeTx <- function(cf_model) {
 
   scode <- list()
-  scode$data <-
-    c("\tint<lower=1, upper=3> cf_model;         // cure fraction
-      real a_cf[cf_model == 1 ? 1 : 0];
+
+  scode$data <- list(
+    def =
+      c("\tint<lower=1, upper=3> cf_model;         // cure fraction\n"),
+    main =
+      c("real a_cf[cf_model == 1 ? 1 : 0];
       real b_cf[cf_model == 1 ? 1 : 0];
       vector[cf_model == 3 ? nTx : 0] mu_sd_cf;
-      vector<lower=0>[cf_model == 3 ? nTx : 0] sigma_sd_cf;")
+      vector<lower=0>[cf_model == 3 ? nTx : 0] sigma_sd_cf;\n"))
 
   scode$parameters <-
     c("\tvector<lower=0, upper=1>[cf_model == 1 ? nTx : 0] cf_pooled;
@@ -213,8 +216,8 @@ create_cf_codeTx <- function(cf_model) {
       if (cf_model == 3) {
         alpha ~ normal(mu_alpha, sigma_alpha);
         log_sd_cf ~ normal(mu_sd_cf, sigma_sd_cf);
-        lp_cf_os ~ normal(lp_cf_global, sd_cf_os);
-        lp_cf_pfs ~ normal(lp_cf_global, sd_cf_pfs);
+        lp_cf_os ~ normal(lp_cf_global, sd_cf);
+        lp_cf_pfs ~ normal(lp_cf_global, sd_cf);
       } else if (cf_model == 2) {
         alpha_os ~ normal(mu_alpha_os, sigma_alpha_os);
         alpha_pfs ~ normal(mu_alpha_pfs, sigma_alpha_pfs);

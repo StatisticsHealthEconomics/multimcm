@@ -1,6 +1,11 @@
 
 #' Treatment statistics from data
 #'
+#' Design matrix is simply diagonal matrix
+#' at the moment but can include other covariates
+#' in the future
+#' i.e. a column of ones if for all treatments.
+#'
 #' @return list
 #'
 prep_tx_params <- function(input_data) {

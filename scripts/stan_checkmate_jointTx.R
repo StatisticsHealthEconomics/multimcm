@@ -143,8 +143,8 @@ bg_hr <- 1
 #######
 
 out <-
-  bmcm_joint_stan_fileTx(
-  # bmcm_joint_stan_stringTx(
+  # bmcm_joint_stan_fileTx(
+  bmcm_joint_stan_stringTx(
     input_data = surv_input_data,
     model_os = model_os,
     model_pfs = model_pfs,

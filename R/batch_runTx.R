@@ -2,6 +2,7 @@
 #' Batch run
 #'
 #' all treatments model
+#' Stan generating.
 #'
 batch_runTx <- function(model_idx,
                         data,
@@ -87,8 +88,8 @@ batch_runTx <- function(model_idx,
            sigma_alpha = c(1, 1, 1))
     } else if (cf_idx == 2) {
       list(mu_alpha_os = c(-1.4, -0.6, -0.2),
-           sigma_alpha_pfs = c(1, 1, 1),
-           mu_alpha_os = c(-1.4, -0.6, -0.2),
+           sigma_alpha_os = c(1, 1, 1),
+           mu_alpha_pfs = c(-1.4, -0.6, -0.2),
            sigma_alpha_pfs = c(1, 1, 1))
     } else {
       NA
@@ -107,8 +108,7 @@ batch_runTx <- function(model_idx,
       input_data = surv_input_data,
       model_os = model_os,
       model_pfs = model_pfs,
-      params_cf = params_cf,
-      params_tx = params_tx,
+      params_cf = c(params_cf, params_tx),
       cf_model = cf_idx,
       joint_model = FALSE,
       bg_model = bg_model_idx,
@@ -121,9 +121,9 @@ batch_runTx <- function(model_idx,
   if (save_res) {
     saveRDS(
       out,
-      file = glue::glue(
-        "data/stan_{model_os}_{model_pfs}.Rds"))}   # cluster
-  # "data/independent/{cf_model_names[cf_idx]}/{bg_model}_hr{bg_hr}/stan_{model_os}_{model_pfs}.Rds"))}
+      file = here::here(glue::glue(
+        # "data/stan_{model_os}_{model_pfs}.Rds"))}   # cluster
+        "data/independent/{cf_model_names[cf_idx]}/{bg_model}_hr{bg_hr}/stan_{model_os}_{model_pfs}.Rds")))}
 
   invisible(out)
 }

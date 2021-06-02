@@ -90,6 +90,9 @@ ggsave(p3, filename = glue::glue("plots/forest_plot_all_tx.png"),
 
 p4 <- cf_forest_plotTx()
 
+ggsave(p4, filename = glue::glue("plots/forest_plot_joint_all_tx.png"),
+       units = "in", width = 10, height = 8, dpi = 300)
+
 
 
 ############

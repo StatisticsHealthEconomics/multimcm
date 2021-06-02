@@ -9,6 +9,11 @@ source("R/batch_runTx.R")
 
 data("surv_input_data")
 
+model_idx <-
+  split(
+    expand.grid(1:5, 1:5) %>%
+      setNames(c("os", "pfs")), 1:25)
+
 cl <- makeCluster(detectCores() - 1)
 
 clusterEvalQ(cl, {
@@ -32,14 +37,9 @@ clusterEvalQ(cl, {
 
 clusterExport(cl, "surv_input_data")
 
-model_idx <-
-  split(
-    expand.grid(1:5, 1:5) %>%
-      setNames(c("os", "pfs")), 1:25)
-
 ll <-
   parLapply(cl,
-            X = model_idx[1:2],
+            X = model_idx[1],
             fun = batch_runTx,
             data = surv_input_data,
             cf_idx = 2,
@@ -47,12 +47,18 @@ ll <-
 
 stopCluster(cl)
 
+## test
+
+batch_safely <- function(...) {
+  gc()
+  purrr::safely(.f = batch_runTx(...))
+}
 
 ll <-
-  lapply(cl,
-         X = model_idx[1:2],
-         fun = batch_runTx,
+  lapply(model_idx[21:25],
+         FUN = batch_runTx,
+         # FUN = batch_safely,
          data = surv_input_data,
-         cf_idx = 2,
+         cf_idx = 3,
          save_res = TRUE)
-
+u

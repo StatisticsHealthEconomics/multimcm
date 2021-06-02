@@ -54,6 +54,7 @@ bmcm_joint_stan_fileTx <- function(input_data,
   stan_file <-
     if (model_os == "exp") {
       if (model_pfs == "exp") here::here("inst", "stan", "exp_exp_joint_hiercfTx.stan")
+      else if (model_pfs == "lognormal") here::here("inst", "stan", "exp_lognormalTx.stan")
     } else if (model_os == "gompertz") {
       if (model_pfs == "gompertz") here::here("inst", "stan", "gompertz_gompertzTx.stan")
     } else if (model_os == "weibull") {

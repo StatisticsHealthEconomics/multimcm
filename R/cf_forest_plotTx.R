@@ -39,7 +39,6 @@ cf_forest_plotTx <- function(folder = "data/independent/cf hier/bg_fixed_hr1/",
   dat <- map(stan_list, stan_summary, is_hier = is_hier)
   names(dat) <- names(stan_list)
   
-  #
   plot_dat <-
     do.call(rbind, dat) %>%
     mutate(scenario = rownames(.),

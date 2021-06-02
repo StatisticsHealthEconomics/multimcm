@@ -182,6 +182,8 @@ create_cf_codeTx <- function(cf_model) {
 
   scode$parameters <-
     c("\tvector<lower=0, upper=1>[cf_model == 1 ? nTx : 0] cf_pooled;
+      vector[cf_model == 3 ? nTx : 0] lp_cf_os;
+      vector[cf_model == 3 ? nTx : 0] lp_cf_pfs;
       vector[cf_model == 3 ? nTx : 0] log_sd_cf;\n")
 
   scode$trans_params <- list(
@@ -190,23 +192,24 @@ create_cf_codeTx <- function(cf_model) {
         vector<lower=0, upper=1>[nTx] cf_os;
         vector<lower=0, upper=1>[nTx] cf_pfs;
         vector[cf_model == 3 ? nTx : 0] lp_cf_global;
-        vector[cf_model != 1 ? nTx : 0] lp_cf_os;
-        vector[cf_model != 1 ? nTx : 0] lp_cf_pfs;
+        vector[cf_model == 2 ? nTx : 0] tx_cf_os;
+        vector[cf_model == 2 ? nTx : 0] tx_cf_pfs;
         vector<lower=0>[cf_model == 3 ? nTx : 0] sd_cf;\n"),
     main =
       c("if (cf_model == 3) {
         sd_cf = exp(log_sd_cf);
         lp_cf_global = Tx_dmat*alpha;
         cf_global = inv_logit(lp_cf_global);
-      }\n
-      if (cf_model == 2) {
-        lp_cf_os = Tx_dmat*alpha_os;
-        lp_cf_pfs = Tx_dmat*alpha_pfs;
-      }\n
-      if (cf_model != 1) {
         cf_os = inv_logit(lp_cf_os);
         cf_pfs = inv_logit(lp_cf_pfs);
-      } else {
+      }\n
+      if (cf_model == 2) {
+        tx_cf_os = Tx_dmat*alpha_os;
+        tx_cf_pfs = Tx_dmat*alpha_pfs;
+        cf_os = inv_logit(tx_cf_os);
+        cf_pfs = inv_logit(tx_cf_pfs);
+      }\n
+      if (cf_model == 1) {
         cf_os = cf_pooled;
         cf_pfs = cf_pooled;
       }\n"))

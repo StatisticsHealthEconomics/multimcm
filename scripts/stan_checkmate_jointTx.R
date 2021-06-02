@@ -79,9 +79,9 @@ if (is.na(TRTX)) {
                 gompertz = cf_hier,
                 loglogistic = cf_hier,
                 gengamma = cf_hier,
-                lognormal =
-                  list(mu_sd_cf = c(0.5, 0.5, 0.5),
-                       sigma_sd_cf = c(0.5, 0.5, 0.5))))
+                lognormal = cf_hier))
+                  # list(mu_sd_cf = c(0.5, 0.5, 0.5),
+                  #      sigma_sd_cf = c(0.5, 0.5, 0.5))))
 } else {
   # single treatment
   # use this to test against single
@@ -161,8 +161,8 @@ out <-
 if (save_res) {
   saveRDS(
     out,
-    file = glue::glue(
-      "data/independent/{cf_model_names[cf_idx]}/{bg_model}_hr{bg_hr}/stan_{model_os}_{model_pfs}.Rds"))}
+    file = here::here(glue::glue(
+      "data/independent/{cf_model_names[cf_idx]}/{bg_model}_hr{bg_hr}/stan_{model_os}_{model_pfs}.Rds")))}
 
 
 #########
@@ -174,10 +174,12 @@ library(survival)
 source("R/plot_S_jointTx.R")
 source("R/prep_S_dataTx.R")
 
-gg <- plot_S_jointTx(out, annot_cf = FALSE, data = surv_input_data)
+gg <- plot_S_jointTx(out,
+                     annot_cf = FALSE,
+                     data = surv_input_data)
 gg
 
 ggsave(gg,
-       filename = glue::glue(
-         "plots/S_plots_{model_os}_{model_pfs}_{cf_model_names[cf_idx]}_{bg_model}_hr{bg_hr}.png"))
+       filename = here::here(glue::glue(
+         "plots/S_plots_{model_os}_{model_pfs}_{cf_model_names[cf_idx]}_{bg_model}_hr{bg_hr}.png")))
 

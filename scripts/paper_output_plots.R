@@ -50,27 +50,27 @@ trt <- "NIVOLUMAB+IPILIMUMAB"
 stan_exp_exp <-
   readRDS("~/R/rstanbmcm/data/independent/cf hier/bg_fixed_hr1/stan_exp_exp.Rds")
 
-gg <- plot_S_jointTx(stan_out = stan_exp_exp,
-                     annot_cf = FALSE,
-                     data = surv_input_data)
+ghier1 <- plot_S_jointTx(stan_out = stan_exp_exp,
+                         annot_cf = FALSE,
+                         data = surv_input_data)
 
-gg
+ghier1
 
-p1 <-
+ghier2 <-
   plot_S_grid(distns = c("exp", "weibull", "lognormal", "gompertz", "loglogistic"),
               folder = "data/independent/cf hier/bg_fixed_hr1",
               trt = trt,
               data = surv_input_data)
 
-ggsave(p1, filename = glue::glue("plots/plot_S_grid_{trt}.png"),
+ggsave(ghier2, filename = glue::glue("plots/plot_S_grid_{trt}.png"),
        units = "in", width = 16, height = 13, dpi = 300)
 
 
 # forest plots
 
-p2 <- cf_forest_plot(trt = trt)
+ghier3 <- cf_forest_plot(trt = trt)
 
-ggsave(p2, filename = glue::glue("plots/forest_plot_{trt}.png"),
+ggsave(ghier3, filename = glue::glue("plots/forest_plot_{trt}.png"),
        units = "in", width = 9, height = 10, dpi = 300)
 
 
@@ -89,21 +89,20 @@ g_ipi <- g_ipi + plot_format + ggtitle("(i)") + xlim(0, 0.6)
 g_nivo <- g_nivo + plot_format + ggtitle("(ii)") + xlim(0, 0.6)
 g_nivo_ipi <- g_nivo_ipi + plot_format + ggtitle("(iii)") + xlim(0, 0.6)
 
-p3 <-
+ghier4 <-
   do.call("grid_arrange_shared_legend",
           c(list(g_ipi, g_nivo, g_nivo_ipi),
             nrow = 1, ncol = 3, position = "top"))
 
-ggsave(p3, filename = glue::glue("plots/forest_plot_all_tx.png"),
+ggsave(ghier4, filename = glue::glue("plots/forest_plot_all_tx.png"),
        units = "in", width = 9, height = 10, dpi = 300)
 
 ## all treatment Stan output
 
-p4 <- cf_forest_plotTx()
+ghier5 <- cf_forest_plotTx()
 
-ggsave(p4, filename = glue::glue("plots/forest_plot_joint_all_tx.png"),
+ggsave(ghier5, filename = glue::glue("plots/forest_plot_joint_all_tx.png"),
        units = "in", width = 10, height = 8, dpi = 300)
-
 
 
 ############
@@ -115,14 +114,23 @@ ggsave(p4, filename = glue::glue("plots/forest_plot_joint_all_tx.png"),
 stan_exp_exp <-
   readRDS("~/R/rstanbmcm/data/independent/cf separate/bg_fixed_hr1/stan_exp_exp.Rds")
 
-gg <- plot_S_jointTx(stan_out = stan_exp_exp,
-                     annot_cf = FALSE,
-                     data = surv_input_data)
-gg
+gsep1 <- plot_S_jointTx(stan_out = stan_exp_exp,
+                        annot_cf = FALSE,
+                        data = surv_input_data)
+gsep1
+
+gsep2 <-
+  plot_S_gridTx(distns = c("exp", "weibull", "lognormal"),#, "gompertz", "loglogistic"),
+                folder = "data/independent/cf separate/bg_fixed_hr1",
+                data = surv_input_data)
+
+ggsave(gsep2, filename = glue::glue("plots/plot_S_grid_cf_separate.png"),
+       units = "in", width = 16, height = 13, dpi = 300)
+
 
 ## forest plots
 
-p5 <- cf_forest_plotTx(folder = "~/R/rstanbmcm/data/independent/cf separate/bg_fixed_hr1")
+gsep3 <- cf_forest_plotTx(folder = "data/independent/cf separate/bg_fixed_hr1")
 
-ggsave(p5, filename = glue::glue("plots/forest_plot_joint_all_tx_separate.png"),
+ggsave(gsep3, filename = glue::glue("plots/forest_plot_joint_all_tx_separate.png"),
        units = "in", width = 10, height = 8, dpi = 300)

@@ -31,7 +31,7 @@ plot_S_gridTx <- function(distns = c("exp", "weibull", "gompertz", "loglogistic"
         plot_S_jointTx(stan_out = .,
                        facet = TRUE,
                        annot_cf = FALSE,
-                       data = NA) +
+                       data = data) +
         ggtitle(glue::glue("OS: {i}, PFS: {j}"))
     }
   }

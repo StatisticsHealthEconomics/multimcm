@@ -45,9 +45,9 @@ cf_forest_plotTx <- function(folder = "data/independent/cf hier/bg_fixed_hr1/",
            event = ifelse(cf == "cf_global", "Cure fraction global",
                           ifelse(cf == "cf_os", "Cure fraction OS",
                                  "Cure fraction PFS")),
-           treatment = ifelse(tx == "1]", "IPILIMUMAB",
-                              ifelse(tx == "2]", "NIVOLUMAB",
-                              "NIVOLUMAB+IPILIMUMAB"))) %>%
+           treatment = ifelse(tx == "1]", "Ipilimumab",
+                              ifelse(tx == "2]", "Nivolumab",
+                              "Nivolumab + Ipilimumab"))) %>%
              tidyr::separate(scenario, c(NA, "OS", "PFS", NA)) %>%
     mutate(OS = as.factor(OS),
            PFS = as.factor(PFS)) %>%

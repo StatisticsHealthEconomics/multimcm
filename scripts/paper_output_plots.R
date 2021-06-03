@@ -27,8 +27,11 @@ library(grid)
 source("R/plot_S_grid.R")
 source("R/grid_arrange_shared_legend.R")
 source("R/plot_S_joint.R")
+source("R/plot_S_jointTx.R")
 source("R/prep_S_data.R")
+source("R/prep_S_dataTx.R")
 source("R/cf_forest_plot.R")
+source("R/cf_forest_plotTx.R")
 
 
 data("surv_input_data")
@@ -43,6 +46,15 @@ trt <- "NIVOLUMAB+IPILIMUMAB"
 ################
 
 # survival curves
+
+stan_exp_exp <-
+  readRDS("~/R/rstanbmcm/data/independent/cf hier/bg_fixed_hr1/stan_exp_exp.Rds")
+
+gg <- plot_S_jointTx(stan_out = stan_exp_exp,
+                     annot_cf = FALSE,
+                     data = surv_input_data)
+
+gg
 
 p1 <-
   plot_S_grid(distns = c("exp", "weibull", "lognormal", "gompertz", "loglogistic"),
@@ -71,12 +83,11 @@ g_nivo <- cf_forest_plot(trt = "NIVOLUMAB")
 g_nivo_ipi <- cf_forest_plot(trt = "NIVOLUMAB+IPILIMUMAB")
 
 plot_format <-
-  theme(text = element_text(size = 20)) +
-  xlim(0, 0.6)
+  theme(text = element_text(size = 20))
 
-g_ipi <- g_ipi + plot_format + ggtitle("(i)")
-g_nivo <- g_nivo + plot_format + ggtitle("(ii)")
-g_nivo_ipi <- g_nivo_ipi + plot_format + ggtitle("(iii)")
+g_ipi <- g_ipi + plot_format + ggtitle("(i)") + xlim(0, 0.6)
+g_nivo <- g_nivo + plot_format + ggtitle("(ii)") + xlim(0, 0.6)
+g_nivo_ipi <- g_nivo_ipi + plot_format + ggtitle("(iii)") + xlim(0, 0.6)
 
 p3 <-
   do.call("grid_arrange_shared_legend",
@@ -99,4 +110,19 @@ ggsave(p4, filename = glue::glue("plots/forest_plot_joint_all_tx.png"),
 # separate #
 ############
 
+# survival curves
 
+stan_exp_exp <-
+  readRDS("~/R/rstanbmcm/data/independent/cf separate/bg_fixed_hr1/stan_exp_exp.Rds")
+
+gg <- plot_S_jointTx(stan_out = stan_exp_exp,
+                     annot_cf = FALSE,
+                     data = surv_input_data)
+gg
+
+## forest plots
+
+p5 <- cf_forest_plotTx(folder = "~/R/rstanbmcm/data/independent/cf separate/bg_fixed_hr1")
+
+ggsave(p5, filename = glue::glue("plots/forest_plot_joint_all_tx_separate.png"),
+       units = "in", width = 10, height = 8, dpi = 300)

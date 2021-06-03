@@ -19,7 +19,7 @@ cf_forest_plot <- function(folder = "data/independent/cf hier/bg_fixed_hr1/",
                            is_hier = TRUE) {
 
   stan_summary <- function(stan_obj) {
-    summary(stan_obj,
+    rstan::summary(stan_obj,
             par = c("cf_global", "cf_os", "cf_pfs"),
             probs = c(0.25, 0.75))$summary}
 
@@ -34,7 +34,7 @@ cf_forest_plot <- function(folder = "data/independent/cf hier/bg_fixed_hr1/",
                pattern = gsub("\\+", "\\\\+", paste0("_", trt, ".Rds$")),
                full.names = FALSE)
 
-  dat <- map(stan_list, stan_summary)
+  dat <- purrr::map(stan_list, stan_summary)
   names(dat) <- names(stan_list)
 
   cf_labels <-
@@ -61,7 +61,7 @@ cf_forest_plot <- function(folder = "data/independent/cf hier/bg_fixed_hr1/",
     ggplot(aes(x = mean, y = event,
                xmin= `X25.`, xmax = `X75.`,
                colour = OS, shape = PFS)) +
-    geom_pointinterval(position = position_dodge(width = 0.8)) +
+    tidybayes::geom_pointinterval(position = position_dodge(width = 0.8)) +
     geom_point(position = position_dodge(width = 0.8),
                aes(x = mean, y = event,
                    colour = OS, shape = PFS),

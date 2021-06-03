@@ -20,7 +20,7 @@ create_pfs_codeTx <- function(pfs_model) {
     scode$trans_params$def <-
       paste0(scode$trans_params$def,
              c("// rate parameters
-             vector[N_pfs] lambda_pfs;\n"))
+             vector<lower=0>[N_pfs] lambda_pfs;\n"))
 
     scode$trans_params$main <-
       c("lambda_pfs = exp(lp_pfs);\n")
@@ -102,7 +102,7 @@ create_os_codeTx <- function(os_model) {
     scode$trans_params$def <-
       paste0(scode$trans_params$def,
              c("// rate parameters
-               vector[N_os] lambda_os;\n"))
+               vector<lower=0>[N_os] lambda_os;\n"))
 
     scode$trans_params$main <-
       c("\tlambda_os = exp(lp_os);\n")
@@ -175,8 +175,8 @@ create_cf_codeTx <- function(cf_model) {
     def =
       c("\tint<lower=1, upper=3> cf_model;         // cure fraction\n"),
     main =
-      c("real a_cf[cf_model == 1 ? 1 : 0];
-      real b_cf[cf_model == 1 ? 1 : 0];
+      c("real<lower=0> a_cf[cf_model == 1 ? 1 : 0];
+      real<lower=0> b_cf[cf_model == 1 ? 1 : 0];
       vector[cf_model == 3 ? nTx : 0] mu_sd_cf;
       vector<lower=0>[cf_model == 3 ? nTx : 0] sigma_sd_cf;\n"))
 
@@ -184,7 +184,7 @@ create_cf_codeTx <- function(cf_model) {
     c("\tvector<lower=0, upper=1>[cf_model == 1 ? nTx : 0] cf_pooled;
       vector[cf_model == 3 ? nTx : 0] lp_cf_os;
       vector[cf_model == 3 ? nTx : 0] lp_cf_pfs;
-      vector[cf_model == 3 ? nTx : 0] log_sd_cf;\n")
+      vector<lower=0>[cf_model == 3 ? nTx : 0] sd_cf;\n")
 
   scode$trans_params <- list(
     def =
@@ -193,11 +193,9 @@ create_cf_codeTx <- function(cf_model) {
         vector<lower=0, upper=1>[nTx] cf_pfs;
         vector[cf_model == 3 ? nTx : 0] lp_cf_global;
         vector[cf_model == 2 ? nTx : 0] tx_cf_os;
-        vector[cf_model == 2 ? nTx : 0] tx_cf_pfs;
-        vector<lower=0>[cf_model == 3 ? nTx : 0] sd_cf;\n"),
+        vector[cf_model == 2 ? nTx : 0] tx_cf_pfs;\n"),
     main =
       c("if (cf_model == 3) {
-        sd_cf = exp(log_sd_cf);
         lp_cf_global = Tx_dmat*alpha;
         cf_global = inv_logit(lp_cf_global);
         cf_os = inv_logit(lp_cf_os);
@@ -218,7 +216,7 @@ create_cf_codeTx <- function(cf_model) {
     c("\t// cure fraction
       if (cf_model == 3) {
         alpha ~ normal(mu_alpha, sigma_alpha);
-        log_sd_cf ~ normal(mu_sd_cf, sigma_sd_cf);
+        sd_cf ~ normal(mu_sd_cf, sigma_sd_cf);
         lp_cf_os ~ normal(lp_cf_global, sd_cf);
         lp_cf_pfs ~ normal(lp_cf_global, sd_cf);
       } else if (cf_model == 2) {
@@ -246,8 +244,8 @@ create_code_skeletonTx <- function() {
       c("int<lower=1, upper=2> bg_model;
       vector[bg_model == 1 ? H_os : 0] mu_bg;
       vector<lower=0>[bg_model == 1 ? H_os : 0] sigma_bg;
-      vector[bg_model == 2 ? N_os : 0] h_bg_os;
-      vector[bg_model == 2 ? N_pfs : 0] h_bg_pfs;
+      vector<lower=0>[bg_model == 2 ? N_os : 0] h_bg_os;
+      vector<lower=0>[bg_model == 2 ? N_pfs : 0] h_bg_pfs;
       int<lower=0, upper=1> joint_model;
       real mu_joint[joint_model];
       real<lower=0> sigma_joint[joint_model];
@@ -274,8 +272,8 @@ create_code_skeletonTx <- function() {
       c("\tvector[N_os] lp_os_bg;
       vector[N_os] lp_pfs_bg;
 
-      vector[N_os] lambda_os_bg;
-      vector[N_os] lambda_pfs_bg;\n"),
+      vector<lower=0>[N_os] lambda_os_bg;
+      vector<lower=0>[N_os] lambda_pfs_bg;\n"),
     main =
       c("// correlated event times
       if (joint_model) {
@@ -433,8 +431,8 @@ common_code_event_dataTx <- function(e) {
     " int<lower=0> N_{e};\n",
     " int<lower=0> n_{e}[nTx];\n",
     " int<lower=0> H_{e};\n",
-    " vector[N_{e}] t_{e};\n",
-    " vector[N_{e}] d_{e};\n",
+    " vector<lower=0>[N_{e}] t_{e};\n",
+    " vector<lower=0, upper=1>[N_{e}] d_{e};\n",
     " matrix[N_{e}, H_{e}] X_{e};\n",
     " vector[H_{e}] mu_0_{e};\n",
     " vector<lower=0>[H_{e}] sigma_0_{e};\n\n")

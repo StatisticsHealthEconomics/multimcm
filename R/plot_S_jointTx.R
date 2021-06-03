@@ -86,6 +86,9 @@ plot_S_jointTx <- function(stan_out = NA,
   # overlay Kaplan-Meier
   if (!any(is.na(data))) {
 
+    # remove empty treatment rows
+    data <- data[data$TRTA != "", ]
+
     fit_os <- survfit(Surv(os, os_event) ~ TRTA, data = data)
     fit_pfs <- survfit(Surv(pfs, pfs_event) ~ TRTA, data = data)
 

@@ -14,7 +14,7 @@
 #' @importFrom glue glue
 #'
 #' @examples
-#' create_stancodeTx("exp", "lognormal", 3, FALSE)
+#' cat(create_stancodeTx("exp", "exp", 3, FALSE))
 #'
 create_stancodeTx <- function(os_model,
                               pfs_model,

@@ -16,11 +16,11 @@ data {
   int<lower=0> H_os;             // number of covariates
   int<lower=0> H_pfs;
 
-  vector[N_os] t_os;             // observation times
-  vector[N_pfs] t_pfs;
+  vector<lower=0>[N_os] t_os;    // observation times
+  vector<lower=0>[N_pfs] t_pfs;
 
-  vector[N_os] d_os;             // censoring indicator (1 = observed, 0 = censored)
-  vector[N_pfs] d_pfs;
+  vector<lower=0, upper=1>[N_os] d_os;     // censoring indicator (1 = observed, 0 = censored)
+  vector<lower=0, upper=1>[N_pfs] d_pfs;
 
   matrix[N_os, H_os] X_os;       // matrix of covariates (with n rows and H columns)
   matrix[N_pfs, H_pfs] X_pfs;
@@ -33,17 +33,17 @@ data {
   int<lower=1, upper=2> bg_model;
   vector[bg_model == 1 ? H_os : 0] mu_bg;
   vector<lower=0>[bg_model == 1 ? H_os : 0] sigma_bg;
-  vector[bg_model == 2 ? N_os : 0] h_bg_os;
-  vector[bg_model == 2 ? N_pfs : 0] h_bg_pfs;
+  vector<lower=0>[bg_model == 2 ? N_os : 0] h_bg_os;
+  vector<lower=0>[bg_model == 2 ? N_pfs : 0] h_bg_pfs;
 
   int<lower=0, upper=1> joint_model;
   real mu_joint[joint_model];
   real<lower=0> sigma_joint[joint_model];
 
   // 1- shared; 2- separate; 3- hierarchical
-  int<lower=1, upper=3> cf_model;         // cure fraction
-  real a_cf[cf_model == 1 ? 1 : 0];
-  real b_cf[cf_model == 1 ? 1 : 0];
+  int<lower=1, upper=3> cf_model;                       // cure fraction
+  real<lower=0> a_cf[cf_model == 1 ? 1 : 0];
+  real<lower=0> b_cf[cf_model == 1 ? 1 : 0];
 
   int<lower=0> t_max;
 
@@ -82,7 +82,7 @@ parameters {
   vector[cf_model == 3 ? nTx : 0] lp_cf_os;
   vector[cf_model == 3 ? nTx : 0] lp_cf_pfs;
 
-  vector[cf_model == 3 ? nTx : 0] log_sd_cf;
+  vector<lower=0>[cf_model == 3 ? nTx : 0] sd_cf;
 }
 
 transformed parameters {
@@ -91,10 +91,10 @@ transformed parameters {
   vector[N_os] lp_os_bg;
   vector[N_pfs] lp_pfs_bg;
 
-  vector[N_os] lambda_os;
-  vector[N_pfs] lambda_pfs;
-  vector[N_os] lambda_os_bg;
-  vector[N_pfs] lambda_pfs_bg;
+  vector<lower=0>[N_os] lambda_os;
+  vector<lower=0>[N_pfs] lambda_pfs;
+  vector<lower=0>[N_os] lambda_os_bg;
+  vector<lower=0>[N_pfs] lambda_pfs_bg;
 
   vector<lower=0, upper=1>[cf_model == 3 ? nTx : 0] cf_global;
   vector<lower=0, upper=1>[nTx] cf_os;
@@ -104,8 +104,6 @@ transformed parameters {
 
   vector[cf_model == 2 ? nTx : 0] tx_cf_os;
   vector[cf_model == 2 ? nTx : 0] tx_cf_pfs;
-
-  vector<lower=0>[cf_model == 3 ? nTx : 0] sd_cf;
 
   lp_os = X_os*beta_os;
   lp_pfs = X_pfs*beta_pfs;
@@ -133,7 +131,6 @@ transformed parameters {
   lambda_pfs = exp(lp_pfs);
 
   if (cf_model == 3) {
-    sd_cf = exp(log_sd_cf);
 
     lp_cf_global = Tx_dmat*alpha;
     cf_global = inv_logit(lp_cf_global);
@@ -179,7 +176,7 @@ model {
     // tx_hr_os ~ normal(mu_hr_os, sigma_hr_os);
     // tx_hr_pfs ~ normal(mu_hr_pfs, sigma_hr_pfs);
 
-    log_sd_cf ~ normal(mu_sd_cf, sigma_sd_cf);
+    sd_cf ~ normal(mu_sd_cf, sigma_sd_cf);
 
     lp_cf_os ~ normal(lp_cf_global, sd_cf);
     lp_cf_pfs ~ normal(lp_cf_global, sd_cf);

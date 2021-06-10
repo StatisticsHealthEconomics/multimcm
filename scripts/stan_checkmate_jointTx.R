@@ -141,6 +141,7 @@ out <-
     bg_model = bg_model_idx,
     bg_hr = bg_hr,
     t_max = 60,
+    chains = 1,
     warmup = 100,
     iter = 1000,
     thin = 10)

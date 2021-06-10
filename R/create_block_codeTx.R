@@ -501,7 +501,7 @@ make_priorpredTx <- function(os_model, pfs_model) {
 }
 
 
-##TODO: duplication with make_loglik()
+##TODO: remove duplication with make_loglik()
 make_looTx <- function(os_model, pfs_model) {
 
   distn_params <-
@@ -542,7 +542,7 @@ make_looTx <- function(os_model, pfs_model) {
       for (Tx in 1:nTx) {{
 
       for (i in idx_os:(idx_os + n_os[Tx] - 1)) {{
-         log_lik[i] = log_sum_exp(
+         log_lik_os[i] = log_sum_exp(
           log(cf_os[Tx]) +
           surv_exp_lpdf(t_os[i] | d_os[i], lambda_os_bg[i]),
           log1m(cf_os[Tx]) +
@@ -550,7 +550,7 @@ make_looTx <- function(os_model, pfs_model) {
         }
 
       for (j in idx_pfs:(idx_pfs + n_pfs[Tx] - 1)) {{
-        log_lik[j] = log_sum_exp(
+        log_lik_pfs[j] = log_sum_exp(
           log(cf_pfs[Tx]) +
             surv_exp_lpdf(t_pfs[j] | d_pfs[j], lambda_pfs_bg[j]),
           log1m(cf_pfs[Tx]) +

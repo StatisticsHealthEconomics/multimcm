@@ -1,7 +1,7 @@
 
 #' Posterior parameter summary table for paper
 #'
-#' For single treatment Stan output
+#' For all treatment Stan output
 #'
 #' @import purrr dplyr
 #'

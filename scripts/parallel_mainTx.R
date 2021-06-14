@@ -2,6 +2,7 @@
 # run Stan mixture cure joint model
 # CheckMate 067 data set
 
+
 library(parallel)
 
 source("R/batch_runTx.R")
@@ -9,10 +10,19 @@ source("R/batch_runTx.R")
 
 data("surv_input_data")
 
+##TODO:
+# batch_safely <- function(...) {
+#   gc()
+#   purrr::safely(.f = batch_runTx, ...)
+# }
+
 model_idx <-
   split(
     expand.grid(1:5, 1:5) %>%
       setNames(c("os", "pfs")), 1:25)
+
+###############
+# parallel
 
 cl <- makeCluster(detectCores() - 1)
 
@@ -39,7 +49,7 @@ clusterExport(cl, "surv_input_data")
 
 ll <-
   parLapply(cl,
-            X = model_idx[1],
+            X = model_idx,
             fun = batch_runTx,
             data = surv_input_data,
             cf_idx = 2,
@@ -47,18 +57,15 @@ ll <-
 
 stopCluster(cl)
 
-## test
 
-batch_safely <- function(...) {
-  gc()
-  purrr::safely(.f = batch_runTx(...))
-}
+#############
+# serial
 
 ll <-
-  lapply(model_idx[21:25],
+  lapply(model_idx[9:25],
          FUN = batch_runTx,
          # FUN = batch_safely,
          data = surv_input_data,
          cf_idx = 3,
          save_res = TRUE)
-u
+

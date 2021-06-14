@@ -23,9 +23,9 @@ plot_S_gridTx <- function(distns = c("exp", "weibull", "gompertz", "loglogistic"
 
   for (i in distns) {
     for (j in distns) {
-      ##TODO: which missing?...
       print(i)
       print(j)
+
       dat[[i]][[j]] <-
         readRDS(glue::glue("{folder}/stan_{i}_{j}.Rds")) %>%
         plot_S_jointTx(stan_out = .,

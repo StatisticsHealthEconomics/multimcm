@@ -55,6 +55,7 @@ params_tableTx <- function(data_dir,
       "95\\% CrI" = paste0(
         " (",
         round(quantile(value, 0.025),3), ", ",
-        round(quantile(value, 0.975),3), ")"))
+        round(quantile(value, 0.975),3), ")")) %>%
+    tibble::add_column(` ` = "")
 }
 

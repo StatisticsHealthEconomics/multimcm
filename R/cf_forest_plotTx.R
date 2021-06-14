@@ -4,7 +4,6 @@
 #' Using all treatment Stan model.
 #'
 #' @param folder string
-#' @param trt treatment name string
 #' @param is_hier Is hierarchical model (or separate)?
 #'
 #' @importFrom epicontacts, adegenet

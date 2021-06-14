@@ -127,6 +127,6 @@ plot_S_jointTx <- function(stan_out = NA,
     guides(color = guide_legend(""), fill = guide_legend("")) +
     theme_bw() +
     xlab("Month") +
-    theme(text = element_text(size = 20))
+    theme(text = element_text(size = 10))
 }
 

@@ -25,6 +25,7 @@ library(gridExtra)
 library(grid)
 
 source("R/plot_S_grid.R")
+source("R/plot_S_gridTx.R")
 source("R/grid_arrange_shared_legend.R")
 source("R/plot_S_joint.R")
 source("R/plot_S_jointTx.R")
@@ -45,6 +46,7 @@ trt <- "NIVOLUMAB+IPILIMUMAB"
 # hierarchical #
 ################
 
+###################
 # survival curves
 
 stan_exp_exp <-
@@ -57,15 +59,15 @@ ghier1 <- plot_S_jointTx(stan_out = stan_exp_exp,
 ghier1
 
 ghier2 <-
-  plot_S_grid(distns = c("exp", "weibull", "lognormal", "gompertz", "loglogistic"),
-              folder = "data/independent/cf hier/bg_fixed_hr1",
-              trt = trt,
-              data = surv_input_data)
+  plot_S_gridTx(distns = c("exp", "weibull", "lognormal", "gompertz", "loglogistic"),
+                folder = "data/independent/cf hier/bg_fixed_hr1",
+                data = surv_input_data)
 
-ggsave(ghier2, filename = glue::glue("plots/plot_S_grid_{trt}.png"),
+ggsave(ghier2, filename = glue::glue("plots/plot_S_grid_cf_hier.png"),
        units = "in", width = 16, height = 13, dpi = 300)
 
 
+#################
 # forest plots
 
 ghier3 <- cf_forest_plot(trt = trt)
@@ -100,8 +102,9 @@ ggsave(ghier4, filename = glue::glue("plots/forest_plot_all_tx.png"),
 ## all treatment Stan output
 
 ghier5 <- cf_forest_plotTx()
+ghier5
 
-ggsave(ghier5, filename = glue::glue("plots/forest_plot_joint_all_tx.png"),
+ggsave(ghier5, filename = glue::glue("plots/forest_plot_joint_cf_hier.png"),
        units = "in", width = 10, height = 8, dpi = 300)
 
 
@@ -109,6 +112,7 @@ ggsave(ghier5, filename = glue::glue("plots/forest_plot_joint_all_tx.png"),
 # separate #
 ############
 
+###################
 # survival curves
 
 stan_exp_exp <-
@@ -128,9 +132,11 @@ ggsave(gsep2, filename = glue::glue("plots/plot_S_grid_cf_separate.png"),
        units = "in", width = 16, height = 13, dpi = 300)
 
 
-## forest plots
+################
+# forest plots
 
 gsep3 <- cf_forest_plotTx(folder = "data/independent/cf separate/bg_fixed_hr1")
 
 ggsave(gsep3, filename = glue::glue("plots/forest_plot_joint_all_tx_separate.png"),
        units = "in", width = 10, height = 8, dpi = 300)
+

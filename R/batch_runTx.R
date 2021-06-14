@@ -35,42 +35,24 @@ batch_runTx <- function(model_idx,
 
   # all treatments
   if (is.na(TRTX)) {
-    cf_hier <-
-      list(mu_sd_cf = c(-2, -2, -2),
-           sigma_sd_cf = c(1, 1, 1))
 
     params_cf_lup <-
       list("cf pooled" = NULL,
            "cf separate" = NULL,
            "cf hier" =
-             list(exp = cf_hier,
-                  weibull = cf_hier,
-                  gompertz = cf_hier,
-                  loglogistic = cf_hier,
-                  gengamma = cf_hier,
-                  lognormal =
-                    list(mu_sd_cf = c(0.5, 0.5, 0.5),
-                         sigma_sd_cf = c(0.5, 0.5, 0.5))))
+             list(mu_sd_cf = c(0, 0, 0),
+                  sigma_sd_cf = c(2.5, 2.5, 2.5)))
   } else {
     # single treatment
     # use this to test against single
     # old treatment script
-    cf_hier <-
-      list(mu_sd_cf = array(-2, 1),
-           sigma_sd_cf = array(1, 1))
 
     params_cf_lup <-
       list("cf pooled" = NULL,
            "cf separate" = NULL,
            "cf hier" =
-             list(exp = cf_hier,
-                  weibull = cf_hier,
-                  gompertz = cf_hier,
-                  loglogistic = cf_hier,
-                  gengamma = cf_hier,
-                  lognormal =
-                    list(mu_sd_cf = array(0.5, 1),
-                         sigma_sd_cf = array(0.5, 1))))
+             list(mu_sd_cf = array(0, 1),
+                  sigma_sd_cf = array(2.5, 1)))
   }
 
   params_cf <-
@@ -80,17 +62,21 @@ batch_runTx <- function(model_idx,
       params_cf_lup[[cf_idx]][[model_pfs]]
     }
 
-  # cure fraction: 20%, 35%, 45% on logit scale
-  # no intercept model
+  mu_alpha <- c(-0.1, -0.1, -0.1)
+  sigma_alpha <- c(0.4, 0.4, 0.4)
+
   params_tx <-
-    if (cf_idx == 3) {
-      list(mu_alpha = c(-1.4, -0.6, -0.2),
-           sigma_alpha = c(1, 1, 1))
+    if (cf_idx == 1) {
+      list(mu_alpha = mu_alpha,
+           sigma_alpha = sigma_alpha)
     } else if (cf_idx == 2) {
-      list(mu_alpha_os = c(-1.4, -0.6, -0.2),
-           sigma_alpha_os = c(1, 1, 1),
-           mu_alpha_pfs = c(-1.4, -0.6, -0.2),
-           sigma_alpha_pfs = c(1, 1, 1))
+      list(mu_alpha_os = mu_alpha,
+           sigma_alpha_os = sigma_alpha,
+           mu_alpha_pfs = mu_alpha,
+           sigma_alpha_pfs = sigma_alpha)
+    } else if (cf_idx == 3) {
+      list(mu_alpha = mu_alpha,
+           sigma_alpha = sigma_alpha)
     } else {
       NA
     }
@@ -113,6 +99,7 @@ batch_runTx <- function(model_idx,
       joint_model = FALSE,
       bg_model = bg_model_idx,
       bg_hr = bg_hr,
+      chains = 4,
       t_max = 60,
       warmup = 100,
       iter = 1000,

@@ -37,7 +37,7 @@ source("R/cf_forest_plotTx.R")
 
 data("surv_input_data")
 
-trt <- "NIVOLUMAB+IPILIMUMAB"
+# trt <- "NIVOLUMAB+IPILIMUMAB"
 # trt <- "IPILIMUMAB"
 # trt <- "NIVOLUMAB"
 
@@ -55,7 +55,6 @@ stan_exp_exp <-
 ghier1 <- plot_S_jointTx(stan_out = stan_exp_exp,
                          annot_cf = FALSE,
                          data = surv_input_data)
-
 ghier1
 
 ghier2 <-
@@ -124,7 +123,7 @@ gsep1 <- plot_S_jointTx(stan_out = stan_exp_exp,
 gsep1
 
 gsep2 <-
-  plot_S_gridTx(distns = c("exp", "weibull", "lognormal"),#, "gompertz", "loglogistic"),
+  plot_S_gridTx(distns = c("exp", "weibull", "lognormal", "gompertz", "loglogistic"),
                 folder = "data/independent/cf separate/bg_fixed_hr1",
                 data = surv_input_data)
 
@@ -136,6 +135,7 @@ ggsave(gsep2, filename = glue::glue("plots/plot_S_grid_cf_separate.png"),
 # forest plots
 
 gsep3 <- cf_forest_plotTx(folder = "data/independent/cf separate/bg_fixed_hr1")
+gsep3
 
 ggsave(gsep3, filename = glue::glue("plots/forest_plot_joint_all_tx_separate.png"),
        units = "in", width = 10, height = 8, dpi = 300)

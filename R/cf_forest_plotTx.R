@@ -20,7 +20,8 @@ cf_forest_plotTx <- function(folder = "data/independent/cf hier/bg_fixed_hr1/",
                    par = if (is_hier) {
                      c("cf_global", "cf_os", "cf_pfs")
                    } else{c("cf_os", "cf_pfs")},
-                   probs = c(0.25, 0.75))$summary %>%
+                   probs = c(0.025, 0.975))$summary %>%  # 95%
+                   # probs = c(0.25, 0.75))$summary %>%  # 50%
       as.data.frame() %>%
       mutate(parameter = rownames(.)) %>%
       `rownames<-`(NULL) %>%
@@ -54,7 +55,8 @@ cf_forest_plotTx <- function(folder = "data/independent/cf hier/bg_fixed_hr1/",
 
   plot_dat %>%
     ggplot(aes(x = mean, y = event,
-               xmin= `25%`, xmax = `75%`,
+               xmin = `2.5%`, xmax = `97.5%`,
+               # xmin = `25%`, xmax = `75%`,
                colour = OS, shape = PFS)) +
     tidybayes::geom_pointinterval(position = position_dodge(width = 0.8)) +
     geom_point(position = position_dodge(width = 0.8),

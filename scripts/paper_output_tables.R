@@ -74,7 +74,7 @@ coeff_latex <-
 
 tab <- list()
 os_distns <- c("exp", "weibull", "gompertz", "loglogistic", "lognormal")
-pfs_distn <- "exp"
+pfs_distn <- "lognormal"
 
 for (i in os_distns) {
 
@@ -88,5 +88,6 @@ for (i in os_distns) {
 }
 
 plyr::join_all(tab, by = "variable") %>%
-  knitr::kable(format = "latex", escape = FALSE)
+  knitr::kable(format = "latex", escape = FALSE) %>%
+  gsub("\\hline", "", ., fixed = TRUE)
 

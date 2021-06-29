@@ -4,6 +4,7 @@
 
 # Session Data files
 .RData
+.Rds
 
 # Example code in package build process
 *-Ex.R
@@ -38,3 +39,5 @@ src/*.o
 src/stan_files/*.hpp
 src/stan_files/*.o
 inst/doc
+
+data/

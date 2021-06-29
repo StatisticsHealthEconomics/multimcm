@@ -94,11 +94,12 @@ params_cf <-
   }
 
 # no intercept model
-# sum(boot::inv.logit(rnorm(1000, -.1, 0.4)) > 0.6)/1000
-# hist(boot::inv.logit(rnorm(1000, -0.1, 0.4)), breaks = 20, xlim = c(0,1))
+# sum(boot::inv.logit(rnorm(1000, -0.6, 0.8)) > 0.6)/1000
+# hist(boot::inv.logit(rnorm(1000, -0.6, 0.8)), breaks = 20, xlim = c(0,1))
 
-mu_alpha <- c(-0.1, -0.1, -0.1)
-sigma_alpha <- c(0.4, 0.4, 0.4)
+# same for all tx
+mu_alpha <- c(-0.6, -0.6, -0.6)
+sigma_alpha <- c(0.8, 0.8, 0.8)
 
 params_tx <-
   if (cf_idx == 1) {
@@ -130,8 +131,8 @@ bg_hr <- 1
 #######
 
 out <-
-  # bmcm_joint_stan_fileTx(
-  bmcm_joint_stan_stringTx(
+  bmcm_joint_stan_fileTx(
+  # bmcm_joint_stan_stringTx(
     input_data = surv_input_data,
     model_os = model_os,
     model_pfs = model_pfs,
@@ -143,8 +144,8 @@ out <-
     t_max = 60,
     chains = 1,
     warmup = 100,
-    iter = 1000,
-    thin = 10)
+    iter = 500,
+    thin = 1)
 
 if (save_res) {
   saveRDS(

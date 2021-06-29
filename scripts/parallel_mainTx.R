@@ -62,7 +62,7 @@ stopCluster(cl)
 # serial
 
 ll <-
-  lapply(model_idx[9:25],
+  lapply(model_idx,
          FUN = batch_runTx,
          # FUN = batch_safely,
          data = surv_input_data,

@@ -6,7 +6,7 @@
 #'
 batch_runTx <- function(model_idx,
                         data,
-                        cf_idx = 3,
+                        cf_idx = 2,
                         save_res = FALSE) {
 
   # options(mc.cores = parallel::detectCores() - 1)
@@ -62,8 +62,8 @@ batch_runTx <- function(model_idx,
       params_cf_lup[[cf_idx]][[model_pfs]]
     }
 
-  mu_alpha <- c(-0.1, -0.1, -0.1)
-  sigma_alpha <- c(0.4, 0.4, 0.4)
+  mu_alpha <- c(-0.6, -0.6, -0.6)
+  sigma_alpha <- c(0.8, 0.8, 0.8)
 
   params_tx <-
     if (cf_idx == 1) {

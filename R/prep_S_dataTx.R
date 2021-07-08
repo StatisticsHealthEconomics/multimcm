@@ -2,7 +2,8 @@
 #' prep_S_dataTx
 #'
 prep_S_dataTx <- function(stan_extract,
-                          event_type = NA) {
+                          event_type = NA,
+                          CI_probs = c(0.025, 0.5, 0.975)) {
 
   if (is.na(event_type)) {
     S_pred <- "S_pred"
@@ -26,15 +27,18 @@ prep_S_dataTx <- function(stan_extract,
       list(
         t(stan_extract[[S_pred]][,,i]) %>%
           as_tibble() %>%
-          mutate(month = 1:n(),
+          rbind(1, .) %>%
+          mutate(month = 0:(n() - 1),
                  type = S_pred),
         t(stan_extract[[S_0]]) %>%
           as_tibble() %>%
-          mutate(month = 1:n(),
+          rbind(1, .) %>%
+          mutate(month = 0:(n() - 1),
                  type = S_0),
         t(stan_extract$S_bg) %>%
           as_tibble() %>%
-          mutate(month = 1:n(),
+          rbind(1, .) %>%
+          mutate(month = 0:(n() - 1),
                  type = "S_bg"))
 
     # means and credible intervals
@@ -44,8 +48,8 @@ prep_S_dataTx <- function(stan_extract,
       melt(id.vars = c("month", "type")) %>%
       group_by(month, type) %>%
       summarise(mean = mean(value),
-                lower = quantile(value, probs = 0.025),
-                upper = quantile(value, probs = 0.975))
+                lower = quantile(value, probs = CI_probs[1]),
+                upper = quantile(value, probs = CI_probs[3]))
   }
 
   S_stats

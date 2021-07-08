@@ -1,31 +1,43 @@
 
-#' Batch run
+#' Batch run multiple models
 #'
 #' all treatments model
 #' Stan generating.
 #'
+#' @param model_idx named list of os, pfs distribution indexes
+#' @param data survival data with time to events and censoring
+#' @param cf_idx cure fraction model index; pooled, separate, hierarchical
+#' @param save_name text to append to output file name
+#' @param chains,t_max,warmup,iter,thin MCMC parameters
+#'
+#' @return Stan output
+#'
 batch_runTx <- function(model_idx,
                         data,
                         cf_idx = 2,
-                        save_res = FALSE) {
-
-  # options(mc.cores = parallel::detectCores() - 1)
+                        save_res = FALSE,
+                        save_name = "",
+                        chains = 4,
+                        t_max = 60,
+                        warmup = 100,
+                        iter = 1000,
+                        thin = 10) {
 
   # convert to months
-  surv_input_data <-
-    surv_input_data %>%
+  surv_data <-
+    data %>%
     mutate(PFS_rate = PFS_rate/12,
            OS_rate = OS_rate/12)
 
   # remove empty treatment rows
-  surv_input_data <- surv_input_data[surv_input_data$TRTA != "", ]
+  surv_data <- surv_data[surv_data$TRTA != "", ]
 
   ## single treatment only?
   TRTX <- NA
   # TRTX <- "IPILIMUMAB"
 
   if (!is.na(TRTX))
-    surv_input_data <- filter(surv_input_data, TRTA == TRTX)
+    surv_data <- filter(surv_data, TRTA == TRTX)
 
   model_names <- c("exp", "weibull", "gompertz", "loglogistic", "lognormal")
   model_os <- model_names[model_idx$os]
@@ -91,7 +103,7 @@ batch_runTx <- function(model_idx,
 
   out <-
     bmcm_joint_stan_stringTx(
-      input_data = surv_input_data,
+      input_data = surv_data,
       model_os = model_os,
       model_pfs = model_pfs,
       params_cf = c(params_cf, params_tx),
@@ -99,18 +111,18 @@ batch_runTx <- function(model_idx,
       joint_model = FALSE,
       bg_model = bg_model_idx,
       bg_hr = bg_hr,
-      chains = 4,
-      t_max = 60,
-      warmup = 100,
-      iter = 1000,
-      thin = 10)
+      chains = chains,
+      t_max = t_max,
+      warmup = warmup,
+      iter = iter,
+      thin = thin)
 
   if (save_res) {
     saveRDS(
       out,
       file = here::here(glue::glue(
         # "data/stan_{model_os}_{model_pfs}.Rds"))}   # cluster
-        "data/independent/{cf_model_names[cf_idx]}/{bg_model}_hr{bg_hr}/stan_{model_os}_{model_pfs}.Rds")))}
+        "data/independent/{cf_model_names[cf_idx]}/{bg_model}_hr{bg_hr}/stan_{model_os}_{model_pfs}{save_name}.Rds")))}
 
   invisible(out)
 }

@@ -104,7 +104,9 @@ for (i in names(out)) {
 }
 
 
-## plots
+#########
+# plots #
+#########
 
 plot(res$pred_pfs$mean, type = "l", ylim = c(0,1))
 lines(res$pred_pfs$u95, type = "l")

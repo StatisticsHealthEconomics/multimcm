@@ -28,6 +28,8 @@ plot_S_jointTx <- function(stan_out = NA,
 
   stan_extract <- rstan::extract(stan_out)
 
+  CI_probs <- c(0.025, 0.5, 0.975)
+
   S_stats$os <-
     prep_S_dataTx(stan_extract,
                   event_type = "os")
@@ -37,8 +39,6 @@ plot_S_jointTx <- function(stan_out = NA,
                   event_type = "pfs")
 
   n_tx <- dim(stan_extract$cf_os)[2]
-
-  CI_probs <- c(0.05, 0.5, 0.95)
 
   ann_text <-
     data.frame(
@@ -68,7 +68,7 @@ plot_S_jointTx <- function(stan_out = NA,
   add_facet <- function(facet) {list(if (facet) facet_grid( ~ event_type))}
 
   p <-
-    ggplot(plot_dat, aes(month, mean, group = type_tx, colour = Tx)) +
+    ggplot(plot_dat, aes(x = month, y = mean, group = type_tx, colour = Tx)) +
     geom_line() +
     add_facet(facet) +
     ylab("Survival") +
@@ -83,47 +83,21 @@ plot_S_jointTx <- function(stan_out = NA,
                     aes(x = 40, y = 1, label = label),
                     inherit.aes = FALSE)}
 
-  # overlay Kaplan-Meier
   if (!any(is.na(data))) {
-
-    # remove empty treatment rows
-    data <- data[data$TRTA != "", ]
-
-    fit_os <- survfit(Surv(os, os_event) ~ TRTA, data = data)
-    fit_pfs <- survfit(Surv(pfs, pfs_event) ~ TRTA, data = data)
-
-    km_data <-
-      rbind(
-        data.frame(
-          Tx = if (is.null(fit_os$strata)) {1} else {
-            rep(gsub("TRTA=", "", names(fit_os$strata)),
-                times = fit_os$strata)},
-          event_type = "os",
-          time = fit_os$time,
-          surv = fit_os$surv),
-        data.frame(
-          Tx =  if (is.null(fit_pfs$strata)) {1} else {
-            rep(gsub("TRTA=", "", names(fit_pfs$strata)),
-                times = fit_pfs$strata)},
-          event_type = "pfs",
-          time = fit_pfs$time,
-          surv = fit_pfs$surv))
-
-    km_curve <-
-      geom_line(aes(x = time, y = surv, group = Tx),
-                data = km_data,
-                lwd = 1,
-                inherit.aes = FALSE)
+    km_curve <- geom_kaplan_meier(data = data)
   } else {
     km_curve <- NULL}
+
+  curve_cols <- c("turquoise1", "blue", "cyan4", "green", "tomato1")
+  curve_labs <- c("Ipilimumab", "Nivolumab", "Nivolumab & Ipilimumab", "Background", "Uncured")
 
   p +
     km_curve +
     xlim(0, 60) +
-    scale_fill_manual(labels = c("Ipilimumab", "Nivolumab", "Nivolumab & Ipilimumab", "Background", "Uncured"),
-                      values = c("turquoise1","blue","cyan4","green","tomato1")) +
-    scale_color_manual(labels = c("Ipilimumab", "Nivolumab", "Nivolumab & Ipilimumab", "Background", "Uncured"),
-                       values = c("turquoise1","blue","cyan4","green","tomato1")) +
+    scale_fill_manual(labels = curve_labs,
+                      values = curve_cols) +
+    scale_color_manual(labels = curve_labs,
+                       values = curve_cols) +
     guides(color = guide_legend(""), fill = guide_legend("")) +
     theme_bw() +
     xlab("Month") +

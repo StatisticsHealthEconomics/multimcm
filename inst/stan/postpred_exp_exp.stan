@@ -59,7 +59,7 @@ data {
   // using means
   real beta_os[n_samples, 2];
   real beta_pfs[n_samples, 2];
-  real beta_bg[n_samples, 2];
+  real beta_bg[n_samples];
 }
 
 parameters {
@@ -69,16 +69,19 @@ generated quantities {
 
   // explicitly loop over samples
   matrix[n_samples, n] lambda_os_tilde;
-  real<lower=0> t_os_tilde[n_samples, n];
   matrix[n_samples, n] lambda_pfs_tilde;
+
+  real<lower=0> t_os_tilde[n_samples, n];
   real<lower=0> t_pfs_tilde[n_samples, n];
 
   real lambda_os_mean[n_samples];
   real lambda_pfs_mean[n_samples];
   real lambda_bg[n_samples];
+
   matrix[n_samples, n] lambda_os_bar;
-  real<lower=0> t_os_bar[n_samples, n];
   matrix[n_samples, n] lambda_pfs_bar;
+
+  real<lower=0> t_os_bar[n_samples, n];
   real<lower=0> t_pfs_bar[n_samples, n];
 
   for (i in 1:n_samples) {
@@ -86,7 +89,7 @@ generated quantities {
     // using means
     lambda_os_mean[i] = exp(beta_os[i, 1]);
     lambda_pfs_mean[i] = exp(beta_pfs[i, 1]);
-    lambda_bg[i] = exp(beta_bg[i, 1]);
+    lambda_bg[i] = exp(beta_bg[i]);
 
     lambda_os_bar[i, 1:n] = rate_mean_rng(cf_os[i], lambda_os_mean[i], lambda_bg[i], n);
     t_os_bar[i, ] = exponential_rng(lambda_os_bar[i, ]);
@@ -94,12 +97,12 @@ generated quantities {
     lambda_pfs_bar[i, 1:n] = rate_mean_rng(cf_pfs[i], lambda_pfs_mean[i], lambda_bg[i], n);
     t_pfs_bar[i, ] = exponential_rng(lambda_pfs_bar[i, ]);
 
-    // case-mix
-    lambda_os_tilde[i, ] = rate_casemix_rng(cf_os[i], lambda_os[i, ], lambda_os_bg[i, ], n);
-    t_os_tilde[i, ] = exponential_rng(lambda_os_tilde[i, ]);
-
-    lambda_pfs_tilde[i, ] = rate_casemix_rng(cf_pfs[i], lambda_pfs[i, ], lambda_pfs_bg[i, ], n);
-    t_pfs_tilde[i, ] = exponential_rng(lambda_pfs_tilde[i, ]);
+  //   // case-mix
+  //   lambda_os_tilde[i, ] = rate_casemix_rng(cf_os[i], lambda_os[i, ], lambda_os_bg[i, ], n);
+  //   t_os_tilde[i, ] = exponential_rng(lambda_os_tilde[i, ]);
+  //
+  //   lambda_pfs_tilde[i, ] = rate_casemix_rng(cf_pfs[i], lambda_pfs[i, ], lambda_pfs_bg[i, ], n);
+  //   t_pfs_tilde[i, ] = exponential_rng(lambda_pfs_tilde[i, ]);
   }
 
 }

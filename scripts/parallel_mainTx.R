@@ -4,6 +4,7 @@
 
 
 library(parallel)
+library(dplyr)
 
 source("R/batch_runTx.R")
 

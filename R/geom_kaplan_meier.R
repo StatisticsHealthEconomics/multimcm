@@ -10,7 +10,7 @@ geom_kaplan_meier <- function(data,
   # remove empty treatment rows
   data <- data[data$TRTA != "", ]
 
-  if ("os" %in% event_type) {
+  if (any(grepl("os", event_type))) {
     fit_os <- survfit(Surv(os, os_event) ~ TRTA, data = data)
 
     os_dat <-
@@ -18,14 +18,14 @@ geom_kaplan_meier <- function(data,
         Tx = if (is.null(fit_os$strata)) {1} else {
           rep(gsub("TRTA=", "", names(fit_os$strata)),
               times = fit_os$strata)},
-        event_type = "os",
+        event_type = event_type[grepl("os", event_type)],
         time = fit_os$time,
         surv = fit_os$surv)
   } else {
     os_dat <- NULL
   }
 
-  if ("pfs" %in% event_type) {
+  if (any(grepl("pfs", event_type))) {
     fit_pfs <- survfit(Surv(pfs, pfs_event) ~ TRTA, data = data)
 
     pfs_dat <-
@@ -33,7 +33,7 @@ geom_kaplan_meier <- function(data,
         Tx =  if (is.null(fit_pfs$strata)) {1} else {
           rep(gsub("TRTA=", "", names(fit_pfs$strata)),
               times = fit_pfs$strata)},
-        event_type = "pfs",
+        event_type = event_type[grepl("pfs", event_type)],
         time = fit_pfs$time,
         surv = fit_pfs$surv)
   } else {

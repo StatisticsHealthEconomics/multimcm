@@ -1,9 +1,12 @@
 
 # cure fraction output plots and tables
 #
+# using separate treatment Stan fits
+# rather than a combined all treatments
+#
 # at the moment print kable() and then paste
 # into Check_mate_analysis.Rmd
-# TODO: read in table directly to RMarkdown
+##TODO: read in table directly to RMarkdown
 
 
 library(rstan)
@@ -15,7 +18,7 @@ library(dplyr)
 library(tibble)
 library(glue)
 
-source("R/cf_table.R")
+source(here::here("R", "cf_table.R"))
 
 
 ################
@@ -39,15 +42,19 @@ cf_table(data_dir) %>%
 ###############
 ##TODO: automate names...
 
+keep_file_names <-
+  grepl("(NIVOLUMAB)|(IPILIMUMAB)",
+        dir(data_dir, full.names = TRUE))
+
 # distn_distn_tx
 scenarios_str <-
-  dir(data_dir) %>%
+  dir(data_dir)[keep_file_names] %>%
   gsub("stan_", "", .) %>%
   gsub(".Rds", "", .)
 
 # read Stan outputs
 res_ls <-
-  dir(data_dir, full.names = TRUE) %>%
+  dir(data_dir, full.names = TRUE)[keep_file_names] %>%
   purrr::map(readRDS) %>%
   setNames(scenarios_str)
 
@@ -65,7 +72,8 @@ cf_os <- purrr::map(params_hier_fixed, "cf_os")
 # cf_os[[12]] <- cf_global[[1]][1:90, ]
 # cf_pfs[[12]] <- cf_global[[1]][1:90, ]
 
-# clean names
+## clean names
+# same-pairs
 distn_tx <- gsub("exp_exp_", "Exponential ", scenarios_str)
 distn_tx <- gsub("gompertz_gompertz_", "Gompertz ", distn_tx)
 distn_tx <- gsub("weibull_weibull_", "Weibull ", distn_tx)
@@ -94,7 +102,7 @@ mcmc_intervals(xx) #+ xlim(0, 0.65)
 ## final forest plots
 library(tidybayes)
 
-source("R/stan_forest_plot.R")
+source(here::here("R", "stan_forest_plot.R"))
 
 out <- stan_forest_plot(res_ls)
 

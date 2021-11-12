@@ -7,11 +7,10 @@
 #' @import grid
 #' @import gridExtra
 #'
-grid_arrange_shared_legend <-
-  function(...,
-           ncol = length(list(...)),
-           nrow = 1,
-           position = c("bottom", "right", "top")) {
+grid_arrange_shared_legend <- function(...,
+                                       ncol = length(list(...)),
+                                       nrow = 1,
+                                       position = c("bottom", "right", "top")) {
 
   plots <- list(...)
   position <- match.arg(position)

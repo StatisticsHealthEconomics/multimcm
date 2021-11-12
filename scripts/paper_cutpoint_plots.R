@@ -36,7 +36,7 @@ data("surv_data_cut")
 ghier30 <-
   plot_S_gridTx(distns = list(c("exp", "exp"),
                               c("lognormal", "lognormal")),
-                folder = "data/independent/cf hier/bg_fixed_hr1",
+                folder = here::here("data", "independent", "cf hier", "bg_fixed_hr1"),
                 data = surv_data_cut$`30`,
                 save_name = "_cpt_30m",
                 n_dim = c(1,2))

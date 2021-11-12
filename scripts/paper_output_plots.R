@@ -33,6 +33,7 @@ source("R/prep_S_data.R")
 source("R/prep_S_dataTx.R")
 source("R/cf_forest_plot.R")
 source("R/cf_forest_plotTx.R")
+source("R/geom_kaplan_meier.R")
 
 
 data("surv_input_data")
@@ -50,19 +51,29 @@ data("surv_input_data")
 # survival curves
 
 stan_exp_exp <-
-  readRDS("~/R/rstanbmcm/data/independent/cf hier/bg_fixed_hr1/stan_exp_exp.Rds")
+  readRDS(here::here("data", "independent", "cf hier", "bg_fixed_hr1", "stan_exp_exp.Rds"))
 
+# single distribution pair
 ghier1 <- plot_S_jointTx(stan_out = stan_exp_exp,
                          annot_cf = FALSE,
                          data = surv_input_data)
 ghier1
 
+# subset of all distributions
+ghier_ls <-
+  plot_S_gridTx(distns = list(c("exp", "exp"),
+                              c("lognormal", "lognormal")),
+                folder = here::here("data", "independent", "cf hier", "bg_fixed_hr1"),
+                data = surv_input_data,
+                n_dim = c(2,1))
+
+# all distributions
 ghier2 <-
   plot_S_gridTx(distns = c("exp", "weibull", "lognormal", "gompertz", "loglogistic"),
-                folder = "data/independent/cf hier/bg_fixed_hr1",
+                folder = here::here("data", "independent", "cf hier", "bg_fixed_hr1"),
                 data = surv_input_data)
 
-ggsave(ghier2, filename = glue::glue("plots/plot_S_grid_cf_hier.png"),
+ggsave(ghier2, filename = here::here("plots", "plot_S_grid_cf_hier.png"),
        units = "in", width = 16, height = 13, dpi = 300)
 
 

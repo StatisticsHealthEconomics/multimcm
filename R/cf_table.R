@@ -1,10 +1,18 @@
 
 #' cure fraction summary table
 #'
+#' using separate treatment Stan fits
+#' rather than a combined all treatments
+#'
 cf_table <- function(data_dir) {
 
+  keep_file_names <-
+    grepl("(NIVOLUMAB)|(IPILIMUMAB)",
+          dir(data_dir, full.names = TRUE))
+
+  # read in Stan output
   res_hier_fixed <-
-    dir(data_dir, full.names = TRUE) %>%
+    dir(data_dir, full.names = TRUE)[keep_file_names] %>%
     purrr::map(readRDS)
 
   params_hier_fixed <- purrr::map(res_hier_fixed, extract)
@@ -40,8 +48,9 @@ cf_table <- function(data_dir) {
                         round(quantile(x, 0.975),3), ")")}) %>%
     do.call(rbind, .)
 
+  # scenario full names
   scenarios_str <-
-    dir(data_dir) %>%
+    dir(data_dir)[keep_file_names] %>%
     gsub("stan_", "", .) %>%
     gsub(".Rds", "", .)
 

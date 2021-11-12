@@ -40,9 +40,12 @@ plot_S_jointTx <- function(stan_out = NA,
 
   n_tx <- dim(stan_extract$cf_os)[2]
 
+  model_names <- gsub("_", " ", strsplit(stan_out@model_name, " ")[[1]])
+
   ann_text <-
     data.frame(
-      event_type = c("os", "pfs"),
+      # event_type = c("os", "pfs"),
+      event_type = model_names,
       Tx = rep(1:n_tx, each = 2),
       label = c(
         apply(X = stan_extract$cf_os, 2,
@@ -63,7 +66,9 @@ plot_S_jointTx <- function(stan_out = NA,
            Tx = ifelse(type == "S_bg", "background",
                        ifelse(type == "S_os" | type == "S_pfs",
                               "uncured", Tx)),
-           Tx = factor(Tx))
+           Tx = factor(Tx),
+           event_type = ifelse(event_type == "os",
+                               model_names[1], model_names[2]))
 
   add_facet <- function(facet) {list(if (facet) facet_grid( ~ event_type))}
 
@@ -83,8 +88,10 @@ plot_S_jointTx <- function(stan_out = NA,
                     aes(x = 40, y = 1, label = label),
                     inherit.aes = FALSE)}
 
+
   if (!any(is.na(data))) {
-    km_curve <- geom_kaplan_meier(data = data)
+    km_curve <- geom_kaplan_meier(data = data,
+                                  event_type = model_names)
   } else {
     km_curve <- NULL}
 

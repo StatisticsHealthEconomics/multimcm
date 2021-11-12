@@ -24,51 +24,8 @@ plot_S_jointTx <- function(stan_out = NA,
                            facet = TRUE,
                            annot_cf = FALSE,
                            data = NA) {
-  S_stats <- list()
 
-  stan_extract <- rstan::extract(stan_out)
-
-  CI_probs <- c(0.025, 0.5, 0.975)
-
-  S_stats$os <-
-    prep_S_dataTx(stan_extract,
-                  event_type = "os")
-
-  S_stats$pfs <-
-    prep_S_dataTx(stan_extract,
-                  event_type = "pfs")
-
-  n_tx <- dim(stan_extract$cf_os)[2]
-
-  model_names <- gsub("_", " ", strsplit(stan_out@model_name, " ")[[1]])
-
-  ann_text <-
-    data.frame(
-      # event_type = c("os", "pfs"),
-      event_type = model_names,
-      Tx = rep(1:n_tx, each = 2),
-      label = c(
-        apply(X = stan_extract$cf_os, 2,
-              FUN = function(x)
-                paste(round(quantile(x, probs = CI_probs), 2),
-                      collapse = " ")),
-        apply(X = stan_extract$cf_pfs, 2,
-              FUN = function(x)
-                paste(round(quantile(x, probs = CI_probs), 2),
-                      collapse = " "))))
-  # unnest
-  plot_dat <-
-    S_stats %>%
-    map(bind_rows, .id = "Tx") %>%
-    bind_rows(.id = "event_type") %>%
-    mutate(scenario = paste(event_type, Tx, sep = "_"),
-           type_tx = paste(type, Tx, sep = "_"),
-           Tx = ifelse(type == "S_bg", "background",
-                       ifelse(type == "S_os" | type == "S_pfs",
-                              "uncured", Tx)),
-           Tx = factor(Tx),
-           event_type = ifelse(event_type == "os",
-                               model_names[1], model_names[2]))
+  plot_dat <- prep_S_jointTx_data(stan_out)
 
   add_facet <- function(facet) {list(if (facet) facet_grid( ~ event_type))}
 
@@ -110,4 +67,3 @@ plot_S_jointTx <- function(stan_out = NA,
     xlab("Month") +
     theme(text = element_text(size = 10))
 }
-

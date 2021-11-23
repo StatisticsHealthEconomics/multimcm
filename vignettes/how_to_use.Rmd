@@ -68,7 +68,7 @@ j <- "IPILIMUMAB"
 To use the Stan engine we set some options to use all-but-one of the available cores and not to over-write pre-complied code.
 
 ````{r}
-rstan_options(auto_write = TRUE)
+rstan::rstan_options(auto_write = TRUE)
 options(mc.cores = parallel::detectCores() - 1)
 ```
 

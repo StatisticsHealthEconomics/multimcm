@@ -21,7 +21,8 @@ source("R/prep_S_data.R")
 source("R/prep_S_dataTx.R")
 source("R/cf_forest_plot.R")
 source("R/cf_forest_plotTx.R")
-
+source("R/prep_S_jointTx_data.R")
+source("R/geom_kaplan_meier.R")
 
 data("surv_data_cut")
 
@@ -39,22 +40,22 @@ ghier30 <-
                 folder = here::here("data", "independent", "cf hier", "bg_fixed_hr1"),
                 data = surv_data_cut$`30`,
                 save_name = "_cpt_30m",
-                n_dim = c(1,2))
+                n_dim = c(2,1))
 
 ggsave(ghier30, filename = glue::glue("plots/plot_S_grid_cf_hier_cpt_30m.png"),
-       units = "in", width = 16, height = 13, dpi = 300)
+       units = "in", width = 6, height = 6, dpi = 300)
 
 
 ghier12 <-
   plot_S_gridTx(distns = list(c("exp", "exp"),
                               c("lognormal", "lognormal")),
-                folder = "data/independent/cf hier/bg_fixed_hr1",
+                folder = here::here("data", "independent", "cf hier", "bg_fixed_hr1"),
                 data = surv_data_cut$`12`,
                 save_name = "_cpt_12m",
-                n_dim = c(1,2))
+                n_dim = c(2,1))
 
 ggsave(ghier12, filename = glue::glue("plots/plot_S_grid_cf_hier_cpt_12m.png"),
-       units = "in", width = 16, height = 13, dpi = 300)
+       units = "in", width = 6, height = 6, dpi = 300)
 
 
 #################
@@ -77,25 +78,25 @@ ggsave(ghier5, filename = glue::glue("plots/forest_plot_joint_cf_hier.png"),
 gsep30 <-
   plot_S_gridTx(distns = list(c("exp", "exp"),
                               c("lognormal", "lognormal")),
-                folder = "data/independent/cf separate/bg_fixed_hr1",
+                folder = here::here("data", "independent", "cf separate", "bg_fixed_hr1"),
                 data = surv_data_cut$`30`,
                 save_name = "_cpt_30m",
-                n_dim = c(1,2))
+                n_dim = c(2,1))
 
 ggsave(gsep30, filename = glue::glue("plots/plot_S_grid_cf_sep_cpt_30m.png"),
-       units = "in", width = 16, height = 13, dpi = 300)
+       units = "in", width = 6, height = 6, dpi = 300)
 
 
 gsep12 <-
   plot_S_gridTx(distns = list(c("exp", "exp"),
                               c("lognormal", "lognormal")),
-                folder = "data/independent/cf separate/bg_fixed_hr1",
+                folder = here::here("data", "independent", "cf separate", "bg_fixed_hr1"),
                 data = surv_data_cut$`12`,
                 save_name = "_cpt_12m",
-                n_dim = c(1,2))
+                n_dim = c(2,1))
 
 ggsave(gsep12, filename = glue::glue("plots/plot_S_grid_cf_sep_cpt_12m.png"),
-       units = "in", width = 16, height = 13, dpi = 300)
+       units = "in", width = 6, height = 6, dpi = 300)
 
 
 ################

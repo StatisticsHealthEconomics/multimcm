@@ -27,6 +27,10 @@ plot_S_jointTx <- function(stan_out = NA,
 
   plot_dat <- prep_S_jointTx_data(stan_out)
 
+  # get names direct from Stan fit
+  model_names <-
+    gsub("_", " ", strsplit(stan_out@model_name, " ")[[1]])
+
   add_facet <- function(facet) {list(if (facet) facet_grid( ~ event_type))}
 
   p <-
@@ -44,7 +48,6 @@ plot_S_jointTx <- function(stan_out = NA,
       p + geom_text(data = ann_text,
                     aes(x = 40, y = 1, label = label),
                     inherit.aes = FALSE)}
-
 
   if (!any(is.na(data))) {
     km_curve <- geom_kaplan_meier(data = data,

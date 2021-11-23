@@ -18,6 +18,19 @@ stan_exp_exp <-
 stan_lnorm_lnorm <-
   readRDS(here::here("data", "independent", "cf hier", "bg_fixed_hr1", "stan_lognormal_lognormal.Rds"))
 
+## 12 month cut-point
+# hierarchical
+# stan_exp_exp <-
+#   readRDS(here::here("data", "independent", "cf hier", "bg_fixed_hr1", "stan_exp_exp_cpt_12m.Rds"))
+# stan_lnorm_lnorm <-
+#   readRDS(here::here("data", "independent", "cf hier", "bg_fixed_hr1", "stan_lognormal_lognormal_cpt_12m.Rds"))
+# # separate
+# stan_exp_exp <-
+#   readRDS(here::here("data", "independent", "cf separate", "bg_fixed_hr1", "stan_exp_exp_cpt_12m.Rds"))
+# stan_lnorm_lnorm <-
+#   readRDS(here::here("data", "independent", "cf separate", "bg_fixed_hr1", "stan_lognormal_lognormal_cpt_12m.Rds"))
+
+
 # plot_dat <- prep_S_jointTx_data(stan_exp_exp)
 plot_dat <- prep_S_jointTx_data(stan_lnorm_lnorm)
 
@@ -32,6 +45,8 @@ rmst <-
             rmst_low = sum(lower),
             rmst_upp = sum(upper))
 
+rmst
+
 medians <-
   plot_dat %>%
   group_by(event_type, Tx, month) %>%
@@ -41,3 +56,6 @@ medians <-
   filter(mean < 0.5) %>%
   arrange(month) %>%
   filter(row_number() == 1)
+
+medians
+Expodd

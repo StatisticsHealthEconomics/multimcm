@@ -34,6 +34,7 @@ source("R/prep_S_dataTx.R")
 source("R/cf_forest_plot.R")
 source("R/cf_forest_plotTx.R")
 source("R/geom_kaplan_meier.R")
+source("R/prep_S_jointTx_data.R")
 
 
 data("surv_input_data")
@@ -66,6 +67,9 @@ ghier_ls <-
                 folder = here::here("data", "independent", "cf hier", "bg_fixed_hr1"),
                 data = surv_input_data,
                 n_dim = c(2,1))
+
+ggsave(ghier_ls, filename = here::here("plots", "plot_S_exp_lognormal_grid_cf_hier.png"),
+       units = "in", width = 6, height = 6, dpi = 300)
 
 # all distributions
 ghier2 <-

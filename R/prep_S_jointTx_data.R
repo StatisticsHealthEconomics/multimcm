@@ -3,6 +3,8 @@
 prep_S_jointTx_data <- function(stan_out) {
 
   S_stats <- list()
+  model_names <-
+    gsub("_", " ", strsplit(stan_out@model_name, " ")[[1]])
 
   stan_extract <- rstan::extract(stan_out)
 
@@ -20,7 +22,8 @@ prep_S_jointTx_data <- function(stan_out) {
 
   ann_text <-
     data.frame(
-      event_type = c("os", "pfs"),
+      event_type = model_names,
+      # event_type = c("os", "pfs"),
       Tx = rep(1:n_tx, each = 2),
       label = c(
         apply(X = stan_extract$cf_os, 2,
@@ -41,7 +44,9 @@ prep_S_jointTx_data <- function(stan_out) {
            Tx = ifelse(type == "S_bg", "background",
                        ifelse(type == "S_os" | type == "S_pfs",
                               "uncured", Tx)),
-           Tx = factor(Tx))
+           Tx = factor(Tx),
+           event_type = ifelse(event_type == "os",
+                               model_names[1], model_names[2]))
 
   plot_dat
 }

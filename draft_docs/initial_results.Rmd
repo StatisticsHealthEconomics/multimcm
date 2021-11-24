@@ -238,8 +238,8 @@ the parameters is needed. We ran the Stan engine for over 70,000
 iterations so a brute force approach of simply increasing the number of
 iterations may not be appropriate in this case.
 
-![Exponential hazard posterior
-survival](../plots/exp_posterior_S_all.png)
+<!-- ![Exponential hazard posterior -->
+<!-- survival](../plots/exp_posterior_S_all.png) -->
 
 <!-- ![Frequentist approach progression-free -->
 

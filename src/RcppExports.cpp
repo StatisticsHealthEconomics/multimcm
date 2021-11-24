@@ -12,50 +12,36 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 
-RcppExport SEXP _rcpp_module_boot_stan_fit4exp_cf_fixed_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4exp_exp_joint_hiercf_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4exp_exp_joint_hiercfTx_mod();
-RcppExport SEXP _rcpp_module_boot_stan_fit4exp_gompertz_joint_mix_mod();
-RcppExport SEXP _rcpp_module_boot_stan_fit4exp_relative_mix_mod();
-RcppExport SEXP _rcpp_module_boot_stan_fit4exp_weibull_joint_mix_mod();
+RcppExport SEXP _rcpp_module_boot_stan_fit4exp_lognormalTx_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4gengamma_gengamma_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4gompertz_gompertz_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4gompertz_gompertzTx_mod();
-RcppExport SEXP _rcpp_module_boot_stan_fit4gompertz_gompertz_joint_mix_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4lifetable_adjust_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4loglogistic_loglogistic_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4lognormal_lognormal_mod();
-RcppExport SEXP _rcpp_module_boot_stan_fit4lognormal_relative_mix_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4postpred_exp_exp_mod();
+RcppExport SEXP _rcpp_module_boot_stan_fit4postpred_exp_expTx_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4postpred_gqs_mod();
-RcppExport SEXP _rcpp_module_boot_stan_fit4surv_joint_mix_mod();
-RcppExport SEXP _rcpp_module_boot_stan_fit4weibull_cf_fixed_mod();
-RcppExport SEXP _rcpp_module_boot_stan_fit4weibull_relative_mix_mod();
+RcppExport SEXP _rcpp_module_boot_stan_fit4postpred_weibull_weibullTx_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4weibull_weibull_mod();
-RcppExport SEXP _rcpp_module_boot_stan_fit4weibull_weibull_joint_mix_mod();
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_rcpp_module_boot_stan_fit4exp_cf_fixed_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4exp_cf_fixed_mod, 0},
     {"_rcpp_module_boot_stan_fit4exp_exp_joint_hiercf_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4exp_exp_joint_hiercf_mod, 0},
     {"_rcpp_module_boot_stan_fit4exp_exp_joint_hiercfTx_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4exp_exp_joint_hiercfTx_mod, 0},
-    {"_rcpp_module_boot_stan_fit4exp_gompertz_joint_mix_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4exp_gompertz_joint_mix_mod, 0},
-    {"_rcpp_module_boot_stan_fit4exp_relative_mix_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4exp_relative_mix_mod, 0},
-    {"_rcpp_module_boot_stan_fit4exp_weibull_joint_mix_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4exp_weibull_joint_mix_mod, 0},
+    {"_rcpp_module_boot_stan_fit4exp_lognormalTx_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4exp_lognormalTx_mod, 0},
     {"_rcpp_module_boot_stan_fit4gengamma_gengamma_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4gengamma_gengamma_mod, 0},
     {"_rcpp_module_boot_stan_fit4gompertz_gompertz_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4gompertz_gompertz_mod, 0},
     {"_rcpp_module_boot_stan_fit4gompertz_gompertzTx_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4gompertz_gompertzTx_mod, 0},
-    {"_rcpp_module_boot_stan_fit4gompertz_gompertz_joint_mix_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4gompertz_gompertz_joint_mix_mod, 0},
     {"_rcpp_module_boot_stan_fit4lifetable_adjust_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4lifetable_adjust_mod, 0},
     {"_rcpp_module_boot_stan_fit4loglogistic_loglogistic_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4loglogistic_loglogistic_mod, 0},
     {"_rcpp_module_boot_stan_fit4lognormal_lognormal_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4lognormal_lognormal_mod, 0},
-    {"_rcpp_module_boot_stan_fit4lognormal_relative_mix_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4lognormal_relative_mix_mod, 0},
     {"_rcpp_module_boot_stan_fit4postpred_exp_exp_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4postpred_exp_exp_mod, 0},
+    {"_rcpp_module_boot_stan_fit4postpred_exp_expTx_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4postpred_exp_expTx_mod, 0},
     {"_rcpp_module_boot_stan_fit4postpred_gqs_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4postpred_gqs_mod, 0},
-    {"_rcpp_module_boot_stan_fit4surv_joint_mix_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4surv_joint_mix_mod, 0},
-    {"_rcpp_module_boot_stan_fit4weibull_cf_fixed_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4weibull_cf_fixed_mod, 0},
-    {"_rcpp_module_boot_stan_fit4weibull_relative_mix_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4weibull_relative_mix_mod, 0},
+    {"_rcpp_module_boot_stan_fit4postpred_weibull_weibullTx_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4postpred_weibull_weibullTx_mod, 0},
     {"_rcpp_module_boot_stan_fit4weibull_weibull_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4weibull_weibull_mod, 0},
-    {"_rcpp_module_boot_stan_fit4weibull_weibull_joint_mix_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4weibull_weibull_joint_mix_mod, 0},
     {NULL, NULL, 0}
 };
 

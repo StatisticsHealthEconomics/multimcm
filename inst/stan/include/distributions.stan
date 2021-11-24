@@ -147,19 +147,19 @@ real surv_gompertz_lpdf (real t, real d, real shape, real scale) {
   return log_lik;
 }
 
-// random number generator
-real gompertz_rng (real shape, real scale) {
-  real res;
-  res = inv_cdf_gompertz(p = uniform_rng(0, 1), shape = shape, scale = scale);
-  return res;
-}
-
 // quantile
 real inv_cdf_gompertz (real p, real shape, real scale) {
   real res;
   res = 1/shape * log(1 + (-shape/scale * log(1 - p)));
   return res;
 }
+
+// // random number generator
+// real gompertz_rng (real shape, real scale) {
+//   real res;
+//   res = inv_cdf_gompertz(p = uniform_rng(0, 1), shape = shape, scale = scale);
+//   return res;
+// }
 
 
 /**

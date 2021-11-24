@@ -33,7 +33,7 @@ static int current_statement_begin__;
 stan::io::program_reader prog_reader__() {
     stan::io::program_reader reader;
     reader.add_event(0, 0, "start", "model_postpred_exp_exp");
-    reader.add_event(107, 105, "end", "model_postpred_exp_exp");
+    reader.add_event(110, 108, "end", "model_postpred_exp_exp");
     return reader;
 }
 template <typename T0__, typename T1__, typename T2__, class RNG>
@@ -184,7 +184,7 @@ private:
         matrix_d lambda_pfs_bg;
         std::vector<std::vector<double> > beta_os;
         std::vector<std::vector<double> > beta_pfs;
-        std::vector<std::vector<double> > beta_bg;
+        std::vector<double> beta_bg;
 public:
     model_postpred_exp_exp(stan::io::var_context& context__,
         std::ostream* pstream__ = 0)
@@ -359,17 +359,13 @@ public:
             }
             current_statement_begin__ = 62;
             validate_non_negative_index("beta_bg", "n_samples", n_samples);
-            validate_non_negative_index("beta_bg", "2", 2);
-            context__.validate_dims("data initialization", "beta_bg", "double", context__.to_vec(n_samples,2));
-            beta_bg = std::vector<std::vector<double> >(n_samples, std::vector<double>(2, double(0)));
+            context__.validate_dims("data initialization", "beta_bg", "double", context__.to_vec(n_samples));
+            beta_bg = std::vector<double>(n_samples, double(0));
             vals_r__ = context__.vals_r("beta_bg");
             pos__ = 0;
             size_t beta_bg_k_0_max__ = n_samples;
-            size_t beta_bg_k_1_max__ = 2;
-            for (size_t k_1__ = 0; k_1__ < beta_bg_k_1_max__; ++k_1__) {
-                for (size_t k_0__ = 0; k_0__ < beta_bg_k_0_max__; ++k_0__) {
-                    beta_bg[k_0__][k_1__] = vals_r__[pos__++];
-                }
+            for (size_t k_0__ = 0; k_0__ < beta_bg_k_0_max__; ++k_0__) {
+                beta_bg[k_0__] = vals_r__[pos__++];
             }
             // initialize transformed data variables
             // execute transformed data statements
@@ -441,15 +437,15 @@ public:
     void get_param_names(std::vector<std::string>& names__) const {
         names__.resize(0);
         names__.push_back("lambda_os_tilde");
-        names__.push_back("t_os_tilde");
         names__.push_back("lambda_pfs_tilde");
+        names__.push_back("t_os_tilde");
         names__.push_back("t_pfs_tilde");
         names__.push_back("lambda_os_mean");
         names__.push_back("lambda_pfs_mean");
         names__.push_back("lambda_bg");
         names__.push_back("lambda_os_bar");
-        names__.push_back("t_os_bar");
         names__.push_back("lambda_pfs_bar");
+        names__.push_back("t_os_bar");
         names__.push_back("t_pfs_bar");
     }
     void get_dims(std::vector<std::vector<size_t> >& dimss__) const {
@@ -528,120 +524,100 @@ public:
             stan::math::initialize(lambda_os_tilde, DUMMY_VAR__);
             stan::math::fill(lambda_os_tilde, DUMMY_VAR__);
             current_statement_begin__ = 72;
-            validate_non_negative_index("t_os_tilde", "n_samples", n_samples);
-            validate_non_negative_index("t_os_tilde", "n", n);
-            std::vector<std::vector<double> > t_os_tilde(n_samples, std::vector<double>(n, double(0)));
-            stan::math::initialize(t_os_tilde, DUMMY_VAR__);
-            stan::math::fill(t_os_tilde, DUMMY_VAR__);
-            current_statement_begin__ = 73;
             validate_non_negative_index("lambda_pfs_tilde", "n_samples", n_samples);
             validate_non_negative_index("lambda_pfs_tilde", "n", n);
             Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> lambda_pfs_tilde(n_samples, n);
             stan::math::initialize(lambda_pfs_tilde, DUMMY_VAR__);
             stan::math::fill(lambda_pfs_tilde, DUMMY_VAR__);
             current_statement_begin__ = 74;
+            validate_non_negative_index("t_os_tilde", "n_samples", n_samples);
+            validate_non_negative_index("t_os_tilde", "n", n);
+            std::vector<std::vector<double> > t_os_tilde(n_samples, std::vector<double>(n, double(0)));
+            stan::math::initialize(t_os_tilde, DUMMY_VAR__);
+            stan::math::fill(t_os_tilde, DUMMY_VAR__);
+            current_statement_begin__ = 75;
             validate_non_negative_index("t_pfs_tilde", "n_samples", n_samples);
             validate_non_negative_index("t_pfs_tilde", "n", n);
             std::vector<std::vector<double> > t_pfs_tilde(n_samples, std::vector<double>(n, double(0)));
             stan::math::initialize(t_pfs_tilde, DUMMY_VAR__);
             stan::math::fill(t_pfs_tilde, DUMMY_VAR__);
-            current_statement_begin__ = 76;
+            current_statement_begin__ = 77;
             validate_non_negative_index("lambda_os_mean", "n_samples", n_samples);
             std::vector<double> lambda_os_mean(n_samples, double(0));
             stan::math::initialize(lambda_os_mean, DUMMY_VAR__);
             stan::math::fill(lambda_os_mean, DUMMY_VAR__);
-            current_statement_begin__ = 77;
+            current_statement_begin__ = 78;
             validate_non_negative_index("lambda_pfs_mean", "n_samples", n_samples);
             std::vector<double> lambda_pfs_mean(n_samples, double(0));
             stan::math::initialize(lambda_pfs_mean, DUMMY_VAR__);
             stan::math::fill(lambda_pfs_mean, DUMMY_VAR__);
-            current_statement_begin__ = 78;
+            current_statement_begin__ = 79;
             validate_non_negative_index("lambda_bg", "n_samples", n_samples);
             std::vector<double> lambda_bg(n_samples, double(0));
             stan::math::initialize(lambda_bg, DUMMY_VAR__);
             stan::math::fill(lambda_bg, DUMMY_VAR__);
-            current_statement_begin__ = 79;
+            current_statement_begin__ = 81;
             validate_non_negative_index("lambda_os_bar", "n_samples", n_samples);
             validate_non_negative_index("lambda_os_bar", "n", n);
             Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> lambda_os_bar(n_samples, n);
             stan::math::initialize(lambda_os_bar, DUMMY_VAR__);
             stan::math::fill(lambda_os_bar, DUMMY_VAR__);
-            current_statement_begin__ = 80;
-            validate_non_negative_index("t_os_bar", "n_samples", n_samples);
-            validate_non_negative_index("t_os_bar", "n", n);
-            std::vector<std::vector<double> > t_os_bar(n_samples, std::vector<double>(n, double(0)));
-            stan::math::initialize(t_os_bar, DUMMY_VAR__);
-            stan::math::fill(t_os_bar, DUMMY_VAR__);
-            current_statement_begin__ = 81;
+            current_statement_begin__ = 82;
             validate_non_negative_index("lambda_pfs_bar", "n_samples", n_samples);
             validate_non_negative_index("lambda_pfs_bar", "n", n);
             Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> lambda_pfs_bar(n_samples, n);
             stan::math::initialize(lambda_pfs_bar, DUMMY_VAR__);
             stan::math::fill(lambda_pfs_bar, DUMMY_VAR__);
-            current_statement_begin__ = 82;
+            current_statement_begin__ = 84;
+            validate_non_negative_index("t_os_bar", "n_samples", n_samples);
+            validate_non_negative_index("t_os_bar", "n", n);
+            std::vector<std::vector<double> > t_os_bar(n_samples, std::vector<double>(n, double(0)));
+            stan::math::initialize(t_os_bar, DUMMY_VAR__);
+            stan::math::fill(t_os_bar, DUMMY_VAR__);
+            current_statement_begin__ = 85;
             validate_non_negative_index("t_pfs_bar", "n_samples", n_samples);
             validate_non_negative_index("t_pfs_bar", "n", n);
             std::vector<std::vector<double> > t_pfs_bar(n_samples, std::vector<double>(n, double(0)));
             stan::math::initialize(t_pfs_bar, DUMMY_VAR__);
             stan::math::fill(t_pfs_bar, DUMMY_VAR__);
             // generated quantities statements
-            current_statement_begin__ = 84;
+            current_statement_begin__ = 87;
             for (int i = 1; i <= n_samples; ++i) {
-                current_statement_begin__ = 87;
+                current_statement_begin__ = 90;
                 stan::model::assign(lambda_os_mean, 
                             stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
                             stan::math::exp(get_base1(get_base1(beta_os, i, "beta_os", 1), 1, "beta_os", 2)), 
                             "assigning variable lambda_os_mean");
-                current_statement_begin__ = 88;
+                current_statement_begin__ = 91;
                 stan::model::assign(lambda_pfs_mean, 
                             stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
                             stan::math::exp(get_base1(get_base1(beta_pfs, i, "beta_pfs", 1), 1, "beta_pfs", 2)), 
                             "assigning variable lambda_pfs_mean");
-                current_statement_begin__ = 89;
+                current_statement_begin__ = 92;
                 stan::model::assign(lambda_bg, 
                             stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
-                            stan::math::exp(get_base1(get_base1(beta_bg, i, "beta_bg", 1), 1, "beta_bg", 2)), 
+                            stan::math::exp(get_base1(beta_bg, i, "beta_bg", 1)), 
                             "assigning variable lambda_bg");
-                current_statement_begin__ = 91;
+                current_statement_begin__ = 94;
                 stan::model::assign(lambda_os_bar, 
                             stan::model::cons_list(stan::model::index_uni(i), stan::model::cons_list(stan::model::index_min_max(1, n), stan::model::nil_index_list())), 
                             rate_mean_rng(get_base1(cf_os, i, "cf_os", 1), get_base1(lambda_os_mean, i, "lambda_os_mean", 1), get_base1(lambda_bg, i, "lambda_bg", 1), n, base_rng__, pstream__), 
                             "assigning variable lambda_os_bar");
-                current_statement_begin__ = 92;
+                current_statement_begin__ = 95;
                 stan::model::assign(t_os_bar, 
                             stan::model::cons_list(stan::model::index_uni(i), stan::model::cons_list(stan::model::index_omni(), stan::model::nil_index_list())), 
                             exponential_rng(stan::model::rvalue(lambda_os_bar, stan::model::cons_list(stan::model::index_uni(i), stan::model::cons_list(stan::model::index_omni(), stan::model::nil_index_list())), "lambda_os_bar"), base_rng__), 
                             "assigning variable t_os_bar");
-                current_statement_begin__ = 94;
+                current_statement_begin__ = 97;
                 stan::model::assign(lambda_pfs_bar, 
                             stan::model::cons_list(stan::model::index_uni(i), stan::model::cons_list(stan::model::index_min_max(1, n), stan::model::nil_index_list())), 
                             rate_mean_rng(get_base1(cf_pfs, i, "cf_pfs", 1), get_base1(lambda_pfs_mean, i, "lambda_pfs_mean", 1), get_base1(lambda_bg, i, "lambda_bg", 1), n, base_rng__, pstream__), 
                             "assigning variable lambda_pfs_bar");
-                current_statement_begin__ = 95;
+                current_statement_begin__ = 98;
                 stan::model::assign(t_pfs_bar, 
                             stan::model::cons_list(stan::model::index_uni(i), stan::model::cons_list(stan::model::index_omni(), stan::model::nil_index_list())), 
                             exponential_rng(stan::model::rvalue(lambda_pfs_bar, stan::model::cons_list(stan::model::index_uni(i), stan::model::cons_list(stan::model::index_omni(), stan::model::nil_index_list())), "lambda_pfs_bar"), base_rng__), 
                             "assigning variable t_pfs_bar");
-                current_statement_begin__ = 98;
-                stan::model::assign(lambda_os_tilde, 
-                            stan::model::cons_list(stan::model::index_uni(i), stan::model::cons_list(stan::model::index_omni(), stan::model::nil_index_list())), 
-                            rate_casemix_rng(get_base1(cf_os, i, "cf_os", 1), stan::model::rvalue(lambda_os, stan::model::cons_list(stan::model::index_uni(i), stan::model::cons_list(stan::model::index_omni(), stan::model::nil_index_list())), "lambda_os"), stan::model::rvalue(lambda_os_bg, stan::model::cons_list(stan::model::index_uni(i), stan::model::cons_list(stan::model::index_omni(), stan::model::nil_index_list())), "lambda_os_bg"), n, base_rng__, pstream__), 
-                            "assigning variable lambda_os_tilde");
-                current_statement_begin__ = 99;
-                stan::model::assign(t_os_tilde, 
-                            stan::model::cons_list(stan::model::index_uni(i), stan::model::cons_list(stan::model::index_omni(), stan::model::nil_index_list())), 
-                            exponential_rng(stan::model::rvalue(lambda_os_tilde, stan::model::cons_list(stan::model::index_uni(i), stan::model::cons_list(stan::model::index_omni(), stan::model::nil_index_list())), "lambda_os_tilde"), base_rng__), 
-                            "assigning variable t_os_tilde");
-                current_statement_begin__ = 101;
-                stan::model::assign(lambda_pfs_tilde, 
-                            stan::model::cons_list(stan::model::index_uni(i), stan::model::cons_list(stan::model::index_omni(), stan::model::nil_index_list())), 
-                            rate_casemix_rng(get_base1(cf_pfs, i, "cf_pfs", 1), stan::model::rvalue(lambda_pfs, stan::model::cons_list(stan::model::index_uni(i), stan::model::cons_list(stan::model::index_omni(), stan::model::nil_index_list())), "lambda_pfs"), stan::model::rvalue(lambda_pfs_bg, stan::model::cons_list(stan::model::index_uni(i), stan::model::cons_list(stan::model::index_omni(), stan::model::nil_index_list())), "lambda_pfs_bg"), n, base_rng__, pstream__), 
-                            "assigning variable lambda_pfs_tilde");
-                current_statement_begin__ = 102;
-                stan::model::assign(t_pfs_tilde, 
-                            stan::model::cons_list(stan::model::index_uni(i), stan::model::cons_list(stan::model::index_omni(), stan::model::nil_index_list())), 
-                            exponential_rng(stan::model::rvalue(lambda_pfs_tilde, stan::model::cons_list(stan::model::index_uni(i), stan::model::cons_list(stan::model::index_omni(), stan::model::nil_index_list())), "lambda_pfs_tilde"), base_rng__), 
-                            "assigning variable t_pfs_tilde");
             }
             // validate, write generated quantities
             current_statement_begin__ = 71;
@@ -653,6 +629,14 @@ public:
                 }
             }
             current_statement_begin__ = 72;
+            size_t lambda_pfs_tilde_j_2_max__ = n;
+            size_t lambda_pfs_tilde_j_1_max__ = n_samples;
+            for (size_t j_2__ = 0; j_2__ < lambda_pfs_tilde_j_2_max__; ++j_2__) {
+                for (size_t j_1__ = 0; j_1__ < lambda_pfs_tilde_j_1_max__; ++j_1__) {
+                    vars__.push_back(lambda_pfs_tilde(j_1__, j_2__));
+                }
+            }
+            current_statement_begin__ = 74;
             size_t t_os_tilde_i_0_max__ = n_samples;
             size_t t_os_tilde_i_1_max__ = n;
             for (size_t i_0__ = 0; i_0__ < t_os_tilde_i_0_max__; ++i_0__) {
@@ -667,15 +651,7 @@ public:
                     vars__.push_back(t_os_tilde[k_0__][k_1__]);
                 }
             }
-            current_statement_begin__ = 73;
-            size_t lambda_pfs_tilde_j_2_max__ = n;
-            size_t lambda_pfs_tilde_j_1_max__ = n_samples;
-            for (size_t j_2__ = 0; j_2__ < lambda_pfs_tilde_j_2_max__; ++j_2__) {
-                for (size_t j_1__ = 0; j_1__ < lambda_pfs_tilde_j_1_max__; ++j_1__) {
-                    vars__.push_back(lambda_pfs_tilde(j_1__, j_2__));
-                }
-            }
-            current_statement_begin__ = 74;
+            current_statement_begin__ = 75;
             size_t t_pfs_tilde_i_0_max__ = n_samples;
             size_t t_pfs_tilde_i_1_max__ = n;
             for (size_t i_0__ = 0; i_0__ < t_pfs_tilde_i_0_max__; ++i_0__) {
@@ -690,22 +666,22 @@ public:
                     vars__.push_back(t_pfs_tilde[k_0__][k_1__]);
                 }
             }
-            current_statement_begin__ = 76;
+            current_statement_begin__ = 77;
             size_t lambda_os_mean_k_0_max__ = n_samples;
             for (size_t k_0__ = 0; k_0__ < lambda_os_mean_k_0_max__; ++k_0__) {
                 vars__.push_back(lambda_os_mean[k_0__]);
             }
-            current_statement_begin__ = 77;
+            current_statement_begin__ = 78;
             size_t lambda_pfs_mean_k_0_max__ = n_samples;
             for (size_t k_0__ = 0; k_0__ < lambda_pfs_mean_k_0_max__; ++k_0__) {
                 vars__.push_back(lambda_pfs_mean[k_0__]);
             }
-            current_statement_begin__ = 78;
+            current_statement_begin__ = 79;
             size_t lambda_bg_k_0_max__ = n_samples;
             for (size_t k_0__ = 0; k_0__ < lambda_bg_k_0_max__; ++k_0__) {
                 vars__.push_back(lambda_bg[k_0__]);
             }
-            current_statement_begin__ = 79;
+            current_statement_begin__ = 81;
             size_t lambda_os_bar_j_2_max__ = n;
             size_t lambda_os_bar_j_1_max__ = n_samples;
             for (size_t j_2__ = 0; j_2__ < lambda_os_bar_j_2_max__; ++j_2__) {
@@ -713,7 +689,15 @@ public:
                     vars__.push_back(lambda_os_bar(j_1__, j_2__));
                 }
             }
-            current_statement_begin__ = 80;
+            current_statement_begin__ = 82;
+            size_t lambda_pfs_bar_j_2_max__ = n;
+            size_t lambda_pfs_bar_j_1_max__ = n_samples;
+            for (size_t j_2__ = 0; j_2__ < lambda_pfs_bar_j_2_max__; ++j_2__) {
+                for (size_t j_1__ = 0; j_1__ < lambda_pfs_bar_j_1_max__; ++j_1__) {
+                    vars__.push_back(lambda_pfs_bar(j_1__, j_2__));
+                }
+            }
+            current_statement_begin__ = 84;
             size_t t_os_bar_i_0_max__ = n_samples;
             size_t t_os_bar_i_1_max__ = n;
             for (size_t i_0__ = 0; i_0__ < t_os_bar_i_0_max__; ++i_0__) {
@@ -728,15 +712,7 @@ public:
                     vars__.push_back(t_os_bar[k_0__][k_1__]);
                 }
             }
-            current_statement_begin__ = 81;
-            size_t lambda_pfs_bar_j_2_max__ = n;
-            size_t lambda_pfs_bar_j_1_max__ = n_samples;
-            for (size_t j_2__ = 0; j_2__ < lambda_pfs_bar_j_2_max__; ++j_2__) {
-                for (size_t j_1__ = 0; j_1__ < lambda_pfs_bar_j_1_max__; ++j_1__) {
-                    vars__.push_back(lambda_pfs_bar(j_1__, j_2__));
-                }
-            }
-            current_statement_begin__ = 82;
+            current_statement_begin__ = 85;
             size_t t_pfs_bar_i_0_max__ = n_samples;
             size_t t_pfs_bar_i_1_max__ = n;
             for (size_t i_0__ = 0; i_0__ < t_pfs_bar_i_0_max__; ++i_0__) {
@@ -794,21 +770,21 @@ public:
                 param_names__.push_back(param_name_stream__.str());
             }
         }
-        size_t t_os_tilde_k_0_max__ = n_samples;
-        size_t t_os_tilde_k_1_max__ = n;
-        for (size_t k_1__ = 0; k_1__ < t_os_tilde_k_1_max__; ++k_1__) {
-            for (size_t k_0__ = 0; k_0__ < t_os_tilde_k_0_max__; ++k_0__) {
-                param_name_stream__.str(std::string());
-                param_name_stream__ << "t_os_tilde" << '.' << k_0__ + 1 << '.' << k_1__ + 1;
-                param_names__.push_back(param_name_stream__.str());
-            }
-        }
         size_t lambda_pfs_tilde_j_2_max__ = n;
         size_t lambda_pfs_tilde_j_1_max__ = n_samples;
         for (size_t j_2__ = 0; j_2__ < lambda_pfs_tilde_j_2_max__; ++j_2__) {
             for (size_t j_1__ = 0; j_1__ < lambda_pfs_tilde_j_1_max__; ++j_1__) {
                 param_name_stream__.str(std::string());
                 param_name_stream__ << "lambda_pfs_tilde" << '.' << j_1__ + 1 << '.' << j_2__ + 1;
+                param_names__.push_back(param_name_stream__.str());
+            }
+        }
+        size_t t_os_tilde_k_0_max__ = n_samples;
+        size_t t_os_tilde_k_1_max__ = n;
+        for (size_t k_1__ = 0; k_1__ < t_os_tilde_k_1_max__; ++k_1__) {
+            for (size_t k_0__ = 0; k_0__ < t_os_tilde_k_0_max__; ++k_0__) {
+                param_name_stream__.str(std::string());
+                param_name_stream__ << "t_os_tilde" << '.' << k_0__ + 1 << '.' << k_1__ + 1;
                 param_names__.push_back(param_name_stream__.str());
             }
         }
@@ -848,21 +824,21 @@ public:
                 param_names__.push_back(param_name_stream__.str());
             }
         }
-        size_t t_os_bar_k_0_max__ = n_samples;
-        size_t t_os_bar_k_1_max__ = n;
-        for (size_t k_1__ = 0; k_1__ < t_os_bar_k_1_max__; ++k_1__) {
-            for (size_t k_0__ = 0; k_0__ < t_os_bar_k_0_max__; ++k_0__) {
-                param_name_stream__.str(std::string());
-                param_name_stream__ << "t_os_bar" << '.' << k_0__ + 1 << '.' << k_1__ + 1;
-                param_names__.push_back(param_name_stream__.str());
-            }
-        }
         size_t lambda_pfs_bar_j_2_max__ = n;
         size_t lambda_pfs_bar_j_1_max__ = n_samples;
         for (size_t j_2__ = 0; j_2__ < lambda_pfs_bar_j_2_max__; ++j_2__) {
             for (size_t j_1__ = 0; j_1__ < lambda_pfs_bar_j_1_max__; ++j_1__) {
                 param_name_stream__.str(std::string());
                 param_name_stream__ << "lambda_pfs_bar" << '.' << j_1__ + 1 << '.' << j_2__ + 1;
+                param_names__.push_back(param_name_stream__.str());
+            }
+        }
+        size_t t_os_bar_k_0_max__ = n_samples;
+        size_t t_os_bar_k_1_max__ = n;
+        for (size_t k_1__ = 0; k_1__ < t_os_bar_k_1_max__; ++k_1__) {
+            for (size_t k_0__ = 0; k_0__ < t_os_bar_k_0_max__; ++k_0__) {
+                param_name_stream__.str(std::string());
+                param_name_stream__ << "t_os_bar" << '.' << k_0__ + 1 << '.' << k_1__ + 1;
                 param_names__.push_back(param_name_stream__.str());
             }
         }
@@ -893,21 +869,21 @@ public:
                 param_names__.push_back(param_name_stream__.str());
             }
         }
-        size_t t_os_tilde_k_0_max__ = n_samples;
-        size_t t_os_tilde_k_1_max__ = n;
-        for (size_t k_1__ = 0; k_1__ < t_os_tilde_k_1_max__; ++k_1__) {
-            for (size_t k_0__ = 0; k_0__ < t_os_tilde_k_0_max__; ++k_0__) {
-                param_name_stream__.str(std::string());
-                param_name_stream__ << "t_os_tilde" << '.' << k_0__ + 1 << '.' << k_1__ + 1;
-                param_names__.push_back(param_name_stream__.str());
-            }
-        }
         size_t lambda_pfs_tilde_j_2_max__ = n;
         size_t lambda_pfs_tilde_j_1_max__ = n_samples;
         for (size_t j_2__ = 0; j_2__ < lambda_pfs_tilde_j_2_max__; ++j_2__) {
             for (size_t j_1__ = 0; j_1__ < lambda_pfs_tilde_j_1_max__; ++j_1__) {
                 param_name_stream__.str(std::string());
                 param_name_stream__ << "lambda_pfs_tilde" << '.' << j_1__ + 1 << '.' << j_2__ + 1;
+                param_names__.push_back(param_name_stream__.str());
+            }
+        }
+        size_t t_os_tilde_k_0_max__ = n_samples;
+        size_t t_os_tilde_k_1_max__ = n;
+        for (size_t k_1__ = 0; k_1__ < t_os_tilde_k_1_max__; ++k_1__) {
+            for (size_t k_0__ = 0; k_0__ < t_os_tilde_k_0_max__; ++k_0__) {
+                param_name_stream__.str(std::string());
+                param_name_stream__ << "t_os_tilde" << '.' << k_0__ + 1 << '.' << k_1__ + 1;
                 param_names__.push_back(param_name_stream__.str());
             }
         }
@@ -947,21 +923,21 @@ public:
                 param_names__.push_back(param_name_stream__.str());
             }
         }
-        size_t t_os_bar_k_0_max__ = n_samples;
-        size_t t_os_bar_k_1_max__ = n;
-        for (size_t k_1__ = 0; k_1__ < t_os_bar_k_1_max__; ++k_1__) {
-            for (size_t k_0__ = 0; k_0__ < t_os_bar_k_0_max__; ++k_0__) {
-                param_name_stream__.str(std::string());
-                param_name_stream__ << "t_os_bar" << '.' << k_0__ + 1 << '.' << k_1__ + 1;
-                param_names__.push_back(param_name_stream__.str());
-            }
-        }
         size_t lambda_pfs_bar_j_2_max__ = n;
         size_t lambda_pfs_bar_j_1_max__ = n_samples;
         for (size_t j_2__ = 0; j_2__ < lambda_pfs_bar_j_2_max__; ++j_2__) {
             for (size_t j_1__ = 0; j_1__ < lambda_pfs_bar_j_1_max__; ++j_1__) {
                 param_name_stream__.str(std::string());
                 param_name_stream__ << "lambda_pfs_bar" << '.' << j_1__ + 1 << '.' << j_2__ + 1;
+                param_names__.push_back(param_name_stream__.str());
+            }
+        }
+        size_t t_os_bar_k_0_max__ = n_samples;
+        size_t t_os_bar_k_1_max__ = n;
+        for (size_t k_1__ = 0; k_1__ < t_os_bar_k_1_max__; ++k_1__) {
+            for (size_t k_0__ = 0; k_0__ < t_os_bar_k_0_max__; ++k_0__) {
+                param_name_stream__.str(std::string());
+                param_name_stream__ << "t_os_bar" << '.' << k_0__ + 1 << '.' << k_1__ + 1;
                 param_names__.push_back(param_name_stream__.str());
             }
         }

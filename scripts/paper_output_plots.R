@@ -60,7 +60,7 @@ ghier1 <- plot_S_jointTx(stan_out = stan_exp_exp,
                          data = surv_input_data)
 ghier1
 
-# subset of all distributions
+# subset of all distributions for main text
 ghier_ls <-
   plot_S_gridTx(distns = list(c("exp", "exp"),
                               c("lognormal", "lognormal")),
@@ -70,6 +70,20 @@ ghier_ls <-
 
 ggsave(ghier_ls, filename = here::here("plots", "plot_S_exp_lognormal_grid_cf_hier.png"),
        units = "in", width = 6, height = 6, dpi = 300)
+
+# all same-pair distributions
+ghier_pairs <-
+  plot_S_gridTx(distns = list(c("exp", "exp"),
+                              c("loglogistic", "loglogistic"),
+                              c("gompertz", "gompertz"),
+                              c("weibull", "weibull"),
+                              c("lognormal", "lognormal")),
+                folder = here::here("data", "independent", "cf hier", "bg_fixed_hr1"),
+                data = surv_input_data,
+                n_dim = c(3,2))
+
+ggsave(ghier_pairs, filename = here::here("plots", "plot_S_samepair_grid_cf_hier.png"),
+       units = "in", width = 10, height = 10, dpi = 300)
 
 # all distributions
 ghier2 <-
@@ -137,6 +151,21 @@ gsep1 <- plot_S_jointTx(stan_out = stan_exp_exp,
                         data = surv_input_data)
 gsep1
 
+# all same-pair distributions
+ghier_pairs <-
+  plot_S_gridTx(distns = list(c("exp", "exp"),
+                              c("loglogistic", "loglogistic"),
+                              c("gompertz", "gompertz"),
+                              c("weibull", "weibull"),
+                              c("lognormal", "lognormal")),
+                folder = here::here("data", "independent", "cf separate", "bg_fixed_hr1"),
+                data = surv_input_data,
+                n_dim = c(3,2))
+
+ggsave(ghier_pairs, filename = here::here("plots", "plot_S_samepair_grid_cf_separate.png"),
+       units = "in", width = 10, height = 10, dpi = 300)
+
+# all distributions
 gsep2 <-
   plot_S_gridTx(distns = c("exp", "weibull", "lognormal", "gompertz", "loglogistic"),
                 folder = "data/independent/cf separate/bg_fixed_hr1",

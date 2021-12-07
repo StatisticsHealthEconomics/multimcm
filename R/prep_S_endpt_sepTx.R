@@ -1,9 +1,8 @@
 
-#' prep_S_dataTx
 #'
-prep_S_dataTx <- function(stan_extract,
-                          event_type = NA,
-                          CI_probs = c(0.025, 0.5, 0.975)) {
+prep_S_endpt_sepTx <- function(stan_extract,
+                               event_type = NA,
+                               CI_probs = c(0.025, 0.5, 0.975)) {
 
   #
   if (is.na(event_type)) {
@@ -17,9 +16,9 @@ prep_S_dataTx <- function(stan_extract,
     S_0 <- "S_pfs"
   }
 
-  n_tx <- dim(stan_extract$cf_os)[2]
-
-  S_stats <- list()
+  ##TODO; remove hardcoding
+  n_tx <- 3
+  S_stats <- vector("list", 3)
 
   for (i in seq_len(n_tx)) {
 
@@ -31,12 +30,12 @@ prep_S_dataTx <- function(stan_extract,
           rbind(1, .) %>%
           mutate(month = 0:(n() - 1),
                  type = S_pred),
-        t(stan_extract[[S_0]]) %>%
+        t(stan_extract[[S_0]][,,i]) %>%
           as_tibble() %>%
           rbind(1, .) %>%
           mutate(month = 0:(n() - 1),
                  type = S_0),
-        t(stan_extract$S_bg) %>%
+        t(stan_extract$S_bg[,,i]) %>%
           as_tibble() %>%
           rbind(1, .) %>%
           mutate(month = 0:(n() - 1),

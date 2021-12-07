@@ -1,5 +1,5 @@
 ---
-title: "Checkmate 067 study Bayesian mixture cure model analysis"
+title: "A Bayesian hierarchical mixture cure modelling (MCM) framework for the joint utilization of progression free survival (PFS) and overall survival (OS) in estimating long-term survivorship (LTS) rates in previously untreated metastatic melanoma: A case study from CheckMate-067 trial"
 author: "Nathan Green, Gianluca Baio, UCL"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 header_includes: \usepackage{amsmath}
@@ -52,7 +52,13 @@ Immuno-oncologic (IO) studies for melanoma therapies, such as
 *ipilimumab* (`ipi`), *nivolumab* (`nivo`), and the *nivolumab* with
 *ipilimumab* (`nivo + ipi`) combination, have indicated that survival
 curves "plateau" (a considerable proportion of patients are "long-term
-survivors"). Cure models are a special type of survival analysis where
+survivors (LTS)").
+Emergent survival plateaus in a survival model may be represented within a mixture cure model (MCM).
+Usually event times, e.g. for PFS and OS, are modelled separately but this may lead to a clinically unintuitive dichotomy between proportions of long-term survivors.
+It is not always possible to model PFS and OS jointly because we often have to rely on synthetic data from digitized curves, which make it impossible to retrieve the underlying correlation between the two outcomes.
+But if we have access to trial data, like in the Checkmate 067 trail case, we should make the most of it.
+
+Cure models are a special type of survival analysis where
 this "cure fraction" (the underlying proportion of responders to
 treatment/long-term survivors) is accounted for. Cure models estimate
 the cure fraction, in addition to a parametric survival function for
@@ -61,7 +67,6 @@ informed by a background mortality rate. The population that is not
 cured is subject both to background mortality and to additional
 mortality from their cancer, estimated using a parametric survival
 model.
-
 A mixture cure model (MCM) (@Amico2018) is a type of cure model where
 survival is modelled as a mixture of two groups of patients: those who
 are cured and those who are not (and who therefore remain at risk). The
@@ -122,7 +127,8 @@ $$
 L = \prod_i S(t_i | \boldsymbol{x}_i) h(t_i | \boldsymbol{x}_i)^{\delta_i}
 $$
 
-Log-likelihood is therefore $$
+Log-likelihood is therefore
+$$
 \mathcal{l} = \sum_i \log(S(t_i | \boldsymbol{x}_i)) + \delta_i \log(h(t_i | \boldsymbol{x}_i))
 $$
 
@@ -147,6 +153,7 @@ dropping the $S$ dependencies for brevity
 S^* S_u (h^*)^{\delta} + S^* S_u (h_u)^{\delta} = S^* S_u (h^* + h_u)^{\delta}
 \end{equation}
 ```
+
 ## Bayesian formulation
 
 In a Bayesian approach to modelling (@McElreath2018), all quantities
@@ -278,6 +285,17 @@ L(\pi | \boldsymbol{\delta}, \boldsymbol{x}, \hat{S}, \hat{h}) =
 \sum_i \hat{S}_i \hat{h}_i^{\delta_i} \left[ \pi(x) + (1 - \pi(x)) S_{u, i} h_{u , i}^{\delta_i} \right]
 $$
 
+## Model goodness-of-fit
+Model fit was determined using the leave-one-out (LOO) cross validation statistics using WAIC (@Vehtari2017). A small statistic is preferable.
+
+## Variance partition coefficient (VPC)
+The variance partition coefficient (VPC) is defined as
+$\sigma_{global}^2/ (\sigma_{global}^2 + \sigma_{e}^2)$ where $e = PFS$
+or $OS$.
+This indicates what proportion of the total variance is
+attributable to variation within-groups, or how much is found between-groups.
+
+
 ## Results
 
 We fit the separate and exchangeable cure fraction models to the study
@@ -298,137 +316,42 @@ would not expect them to perfectly match the sample data Kaplan-Meier.
 Figure \ref{fig:S_separate} shows posterior survival curves for the
 Exponential, log-logistic, Gompertz, Weibull and log-Normal models when
 the OS and PFS models are fitted separately.
-
 ```{r fig.show='hold', fig.align='center', out.width="15cm", out.height="40cm", echo=FALSE, message = FALSE, warning = FALSE, fig.cap="\\label{fig:S_separate}Posterior survival curves for the mixture cure model for separate OS and PFS models and $ipilimumab$, $nivolumab$ and a combination treatment arm. The green line is cured background. Uncured distributions are I) Exponential  II) Log-logistic III) Gompertz IV) Weibull V) Log-Normal."}
 knitr::include_graphics("../plots/plot_S_samepair_grid_cf_separate.png")
 ```
 
-
-Figure \ref{fig:forest_separate} shows the forest plots of cure
-fraction posterior distributions.
-
+Figure \ref{fig:forest_separate} shows the forest plots of cure fraction posterior distributions.
 ```{r fig.show='hold', fig.align='center', out.width="60%", echo=FALSE, fig.cap="\\label{fig:forest_separate}Forest plot of cure fraction posterior distributions for separate OS and PFS models ."}
 knitr::include_graphics("../plots/cf separate_bg_fixed_forest_plot.png")
 ```
 
-+----------+----------+----------+----------+----------+----------+
-|          | OS Distn | PFS      | T        | $        | $c       |
-|          |          | Distn    | reatment | cf_{OS}$ | f_{PFS}$ |
-|          |          |          |          | (CrI)    | (CrI)    |
-+:=========+:=========+:=========+:=========+:=========+:=========+
-| 1        | exp      | exp      | IP       | 0.216    | 0.128    |
-|          |          |          | ILIMUMAB | (0.16,   | (0.089,  |
-|          |          |          |          | 0.271)   | 0.173)   |
-+----------+----------+----------+----------+----------+----------+
-| 2        | exp      | exp      | N        | 0.417    | 0.32     |
-|          |          |          | IVOLUMAB | (0.335,  | (0.268,  |
-|          |          |          |          | 0.482)   | 0.37)    |
-+----------+----------+----------+----------+----------+----------+
-| 3        | exp      | exp      | NIVO     | 0.509    | 0.387    |
-|          |          |          | LUMAB+IP | (0.43,   | (0.332,  |
-|          |          |          | ILIMUMAB | 0.573)   | 0.441)   |
-+----------+----------+----------+----------+----------+----------+
-| 4        | gompertz | gompertz | IP       | 0.221    | 0.126    |
-|          |          |          | ILIMUMAB | (0.176,  | (0.092,  |
-|          |          |          |          | 0.282)   | 0.156)   |
-+----------+----------+----------+----------+----------+----------+
-| 5        | gompertz | gompertz | N        | 0.414    | 0.321    |
-|          |          |          | IVOLUMAB | (0.352,  | (0.274,  |
-|          |          |          |          | 0.477)   | 0.383)   |
-+----------+----------+----------+----------+----------+----------+
-| 6        | gompertz | gompertz | NIVO     | 0.51     | 0.39     |
-|          |          |          | LUMAB+IP | (0.447,  | (0.323,  |
-|          |          |          | ILIMUMAB | 0.575)   | 0.457)   |
-+----------+----------+----------+----------+----------+----------+
-| 7        | log      | log      | IP       | 0.183    | 0.13     |
-|          | logistic | logistic | ILIMUMAB | (0.11,   | (0.091,  |
-|          |          |          |          | 0.265)   | 0.168)   |
-+----------+----------+----------+----------+----------+----------+
-| 8        | log      | log      | N        | 0.329    | 0.321    |
-|          | logistic | logistic | IVOLUMAB | (0.217,  | (0.267,  |
-|          |          |          |          | 0.423)   | 0.381)   |
-+----------+----------+----------+----------+----------+----------+
-| 9        | log      | log      | NIVO     | 0.449    | 0.359    |
-|          | logistic | logistic | LUMAB+IP | (0.349,  | (0.308,  |
-|          |          |          | ILIMUMAB | 0.524)   | 0.427)   |
-+----------+----------+----------+----------+----------+----------+
-| 10       | l        | l        | IP       | 0.304    | 0.175    |
-|          | ognormal | ognormal | ILIMUMAB | (0.241,  | (0.13,   |
-|          |          |          |          | 0.378)   | 0.207)   |
-+----------+----------+----------+----------+----------+----------+
-| 11       | l        | l        | N        | 0.477    | 0.424    |
-|          | ognormal | ognormal | IVOLUMAB | (0.432,  | (0.375,  |
-|          |          |          |          | 0.531)   | 0.467)   |
-+----------+----------+----------+----------+----------+----------+
-| 12       | l        | l        | NIVO     | 0.55     | 0.411    |
-|          | ognormal | ognormal | LUMAB+IP | (0.487,  | (0.365,  |
-|          |          |          | ILIMUMAB | 0.611)   | 0.459)   |
-+----------+----------+----------+----------+----------+----------+
-| 13       | weibull  | weibull  | IP       | 0.238    | 0.146    |
-|          |          |          | ILIMUMAB | (0.177,  | (0.105,  |
-|          |          |          |          | 0.285)   | 0.186)   |
-+----------+----------+----------+----------+----------+----------+
-| 14       | weibull  | weibull  | N        | 0.425    | 0.317    |
-|          |          |          | IVOLUMAB | (0.348,  | (0.261,  |
-|          |          |          |          | 0.51)    | 0.378)   |
-+----------+----------+----------+----------+----------+----------+
-| 15       | weibull  | weibull  | NIVO     | 0.504    | 0.392    |
-|          |          |          | LUMAB+IP | (0.423,  | (0.339,  |
-|          |          |          | ILIMUMAB | 0.566)   | 0.45)    |
-+----------+----------+----------+----------+----------+----------+
-Table: Posterior cure fractions.
+Table 1 gives values for these posterior cure fractions.
+```{r echo=FALSE, message=FALSE}
+load("checkmate_report_data/tab_cf separate.RData")
+names(tab_dat)[names(tab_dat) == "1"] <- "OS distn"
+names(tab_dat)[names(tab_dat) == "2"] <- "PFS distn"
+names(tab_dat)[names(tab_dat) == "3"] <- "Treatment"
+tab_dat$Treatment <- stringr::str_to_sentence(tab_dat$Treatment)
+tab_dat$ID <- 1:nrow(tab_dat)
+knitr::kable(tab_dat, caption = "Posterior cure fractions for separate model.")
+```
 
-The table below gives the leave-one-out cross validation statistics for
-each model fit using WAIC (@Vehtari2017).
+Table 2 gives the leave-one-out cross validation statistics for
+each model fit using WAIC.
+```{r echo=FALSE, message=FALSE}
+load("checkmate_report_data/tab_loo_cf separate.RData")
+tab_loo$Treatment <- stringr::str_to_sentence(tab_loo$Treatment)
+rownames(tab_loo) <- NULL
+tab_loo <- dplyr::filter(tab_loo,grepl("^waic", Statistic))
+tab_loo <- tab_loo[, -1]
+knitr::kable(tab_loo, caption = "Leave-one-out cross validation statistics for each model fit using WAIC for separate model.")
+```
+From Table 2 we see that from the WAIC point estimates
+the best fits are the nivolumab+ipilimumab followed by the nivolumab separate models.
+The log-normal models have the best fits for all treatments, followed by either the loglogistic (nivolumab+ipilimumab, nivolumab) or exponential (ipilimumab).
 
-| Statistic | OS distn    | PFS distn   | Treatment            | Estimate |     SE |
-|:----------|:------------|:------------|:---------------------|---------:|-------:|
-| elpd_waic | exp         | exp         | IPILIMUMAB           | -1839.45 |  36.61 |
-| elpd_waic | exp         | exp         | NIVOLUMAB            | -1679.68 |  45.72 |
-| elpd_waic | exp         | exp         | NIVOLUMAB+IPILIMUMAB | -1543.36 |  53.33 |
-| elpd_waic | gompertz    | gompertz    | IPILIMUMAB           | -1839.14 |  36.68 |
-| elpd_waic | gompertz    | gompertz    | NIVOLUMAB            | -1680.14 |  45.78 |
-| elpd_waic | gompertz    | gompertz    | NIVOLUMAB+IPILIMUMAB | -1543.05 |  53.87 |
-| elpd_waic | loglogistic | loglogistic | IPILIMUMAB           | -1768.28 |  39.71 |
-| elpd_waic | loglogistic | loglogistic | NIVOLUMAB            | -1651.40 |  45.77 |
-| elpd_waic | loglogistic | loglogistic | NIVOLUMAB+IPILIMUMAB | -1534.76 |  52.63 |
-| elpd_waic | lognormal   | lognormal   | IPILIMUMAB           | -1561.55 |  56.00 |
-| elpd_waic | lognormal   | lognormal   | NIVOLUMAB            | -1550.21 |  59.92 |
-| elpd_waic | lognormal   | lognormal   | NIVOLUMAB+IPILIMUMAB | -1489.45 |  58.02 |
-| elpd_waic | weibull     | weibull     | IPILIMUMAB           | -1821.12 |  39.94 |
-| elpd_waic | weibull     | weibull     | NIVOLUMAB            | -1681.27 |  45.63 |
-| elpd_waic | weibull     | weibull     | NIVOLUMAB+IPILIMUMAB | -1546.26 |  53.72 |
-| p_waic    | exp         | exp         | IPILIMUMAB           |     5.41 |   0.50 |
-| p_waic    | exp         | exp         | NIVOLUMAB            |     7.50 |   0.60 |
-| p_waic    | exp         | exp         | NIVOLUMAB+IPILIMUMAB |     6.43 |   0.60 |
-| p_waic    | gompertz    | gompertz    | IPILIMUMAB           |     5.14 |   0.48 |
-| p_waic    | gompertz    | gompertz    | NIVOLUMAB            |     8.31 |   0.74 |
-| p_waic    | gompertz    | gompertz    | NIVOLUMAB+IPILIMUMAB |     6.10 |   0.50 |
-| p_waic    | loglogistic | loglogistic | IPILIMUMAB           |     8.31 |   0.44 |
-| p_waic    | loglogistic | loglogistic | NIVOLUMAB            |     8.53 |   0.47 |
-| p_waic    | loglogistic | loglogistic | NIVOLUMAB+IPILIMUMAB |     6.78 |   0.52 |
-| p_waic    | lognormal   | lognormal   | IPILIMUMAB           |    13.88 |   1.26 |
-| p_waic    | lognormal   | lognormal   | NIVOLUMAB            |    15.86 |   1.40 |
-| p_waic    | lognormal   | lognormal   | NIVOLUMAB+IPILIMUMAB |    15.33 |   1.43 |
-| p_waic    | weibull     | weibull     | IPILIMUMAB           |    11.28 |   1.27 |
-| p_waic    | weibull     | weibull     | NIVOLUMAB            |     9.85 |   0.96 |
-| p_waic    | weibull     | weibull     | NIVOLUMAB+IPILIMUMAB |    10.09 |   0.95 |
-| waic      | exp         | exp         | IPILIMUMAB           |  3678.90 |  73.23 |
-| waic      | exp         | exp         | NIVOLUMAB            |  3359.36 |  91.45 |
-| waic      | exp         | exp         | NIVOLUMAB+IPILIMUMAB |  3086.73 | 106.66 |
-| waic      | gompertz    | gompertz    | IPILIMUMAB           |  3678.27 |  73.36 |
-| waic      | gompertz    | gompertz    | NIVOLUMAB            |  3360.29 |  91.57 |
-| waic      | gompertz    | gompertz    | NIVOLUMAB+IPILIMUMAB |  3086.10 | 107.73 |
-| waic      | loglogistic | loglogistic | IPILIMUMAB           |  3536.57 |  79.43 |
-| waic      | loglogistic | loglogistic | NIVOLUMAB            |  3302.80 |  91.54 |
-| waic      | loglogistic | loglogistic | NIVOLUMAB+IPILIMUMAB |  3069.53 | 105.26 |
-| waic      | lognormal   | lognormal   | IPILIMUMAB           |  3123.10 | 111.99 |
-| waic      | lognormal   | lognormal   | NIVOLUMAB            |  3100.41 | 119.84 |
-| waic      | lognormal   | lognormal   | NIVOLUMAB+IPILIMUMAB |  2978.89 | 116.03 |
-| waic      | weibull     | weibull     | IPILIMUMAB           |  3642.23 |  79.89 |
-| waic      | weibull     | weibull     | NIVOLUMAB            |  3362.55 |  91.25 |
-| waic      | weibull     | weibull     | NIVOLUMAB+IPILIMUMAB |  3092.51 | 107.43 |
-Table: leave-one-out cross validation statistics for each model fit using WAIC.
+
+
 
 
 ### Hierarchical model with exchangeable cure fraction for OS and PFS
@@ -453,159 +376,48 @@ and OS distributions.
 knitr::include_graphics("../plots/cf hier_bg_fixed_forest_plot.png")
 ```
 
+Table 3 summarises the cure fraction posterior distribution for each scenario.
 
-The table below summarises the cure fraction posterior distribution for
-each scenario.
+```{r cf_hier, echo=FALSE, message=FALSE}
+load("checkmate_report_data/tab_cf hier.RData")
+names(tab_dat)[names(tab_dat) == "1"] <- "OS distn"
+names(tab_dat)[names(tab_dat) == "2"] <- "PFS distn"
+names(tab_dat)[names(tab_dat) == "3"] <- "Treatment"
+tab_dat$Treatment <- stringr::str_to_sentence(tab_dat$Treatment)
+knitr::kable(tab_dat, caption = "Cure fraction posterior distribution for hierarchical model.")
+```
 
-+---------+---------+---------+---------+---------+---------+---------+
-|         | OS      | PFS     | Tr      | $cf$    | $c      | $cf     |
-|         | Distn   | Distn   | eatment | (CrI)   | f_{OS}$ | _{PFS}$ |
-|         |         |         |         |         | (CrI)   | (CrI)   |
-+:========+:========+:========+:========+:========+:========+:========+
-| 1       | exp     | exp     | IPI     | 0.151   | 0.196   | 0.112   |
-|         |         |         | LIMUMAB | (0.068, | (0.136, | (0.079, |
-|         |         |         |         | 0.26)   | 0.255)  | 0.155)  |
-+---------+---------+---------+---------+---------+---------+---------+
-| 2       | exp     | exp     | NI      | 0.378   | 0.412   | 0.321   |
-|         |         |         | VOLUMAB | (0.216, | (0.35,  | (0.262, |
-|         |         |         |         | 0.557)  | 0.479)  | 0.379)  |
-+---------+---------+---------+---------+---------+---------+---------+
-| 3       | exp     | exp     | NIVOLU  | 0.463   | 0.526   | 0.392   |
-|         |         |         | MAB+IPI | (0.328, | (0.452, | (0.334, |
-|         |         |         | LIMUMAB | 0.626)  | 0.597)  | 0.448)  |
-+---------+---------+---------+---------+---------+---------+---------+
-| 4       | g       | g       | IPI     | 0.164   | 0.207   | 0.114   |
-|         | ompertz | ompertz | LIMUMAB | (0.088, | (0.13,  | (0.079, |
-|         |         |         |         | 0.275)  | 0.266)  | 0.148)  |
-+---------+---------+---------+---------+---------+---------+---------+
-| 5       | g       | g       | NI      | 0.368   | 0.423   | 0.321   |
-|         | ompertz | ompertz | VOLUMAB | (0.247, | (0.358, | (0.261, |
-|         |         |         |         | 0.517)  | 0.494)  | 0.369)  |
-+---------+---------+---------+---------+---------+---------+---------+
-| 6       | g       | g       | NIVOLU  | 0.458   | 0.529   | 0.395   |
-|         | ompertz | ompertz | MAB+IPI | (0.318, | (0.477, | (0.346, |
-|         |         |         | LIMUMAB | 0.612)  | 0.594)  | 0.446)  |
-+---------+---------+---------+---------+---------+---------+---------+
-| 7       | logl    | logl    | IPI     | 0.133   | 0.133   | 0.113   |
-|         | ogistic | ogistic | LIMUMAB | (0.061, | (0.054, | (0.075, |
-|         |         |         |         | 0.278)  | 0.206)  | 0.152)  |
-+---------+---------+---------+---------+---------+---------+---------+
-| 8       | logl    | logl    | NI      | 0.348   | 0.345   | 0.325   |
-|         | ogistic | ogistic | VOLUMAB | (0.191, | (0.231, | (0.264, |
-|         |         |         |         | 0.526)  | 0.456)  | 0.382)  |
-+---------+---------+---------+---------+---------+---------+---------+
-| 9       | logl    | logl    | NIVOLU  | 0.421   | 0.459   | 0.375   |
-|         | ogistic | ogistic | MAB+IPI | (0.266, | (0.37,  | (0.327, |
-|         |         |         | LIMUMAB | 0.599)  | 0.535)  | 0.421)  |
-+---------+---------+---------+---------+---------+---------+---------+
-| 10      | lo      | lo      | IPI     | 0.236   | 0.285   | 0.177   |
-|         | gnormal | gnormal | LIMUMAB | (0.127, | (0.198, | (0.136, |
-|         |         |         |         | 0.303)  | 0.468)  | 0.293)  |
-+---------+---------+---------+---------+---------+---------+---------+
-| 11      | lo      | lo      | NI      | 0.425   | 0.486   | 0.437   |
-|         | gnormal | gnormal | VOLUMAB | (0.286, | (0.431, | (0.39,  |
-|         |         |         |         | 0.588)  | 0.546)  | 0.48)   |
-+---------+---------+---------+---------+---------+---------+---------+
-| 12      | lo      | lo      | NIVOLU  | 0.431   | 0.556   | 0.42    |
-|         | gnormal | gnormal | MAB+IPI | (0.301, | (0.494, | (0.37,  |
-|         |         |         | LIMUMAB | 0.581)  | 0.619)  | 0.481)  |
-+---------+---------+---------+---------+---------+---------+---------+
-| 13      | weibull | weibull | IPI     | 0.184   | 0.229   | 0.141   |
-|         |         |         | LIMUMAB | (0.095, | (0.157, | (0.107, |
-|         |         |         |         | 0.29)   | 0.295)  | 0.177)  |
-+---------+---------+---------+---------+---------+---------+---------+
-| 14      | weibull | weibull | NI      | 0.375   | 0.427   | 0.326   |
-|         |         |         | VOLUMAB | (0.242, | (0.346, | (0.27,  |
-|         |         |         |         | 0.541)  | 0.494)  | 0.394)  |
-+---------+---------+---------+---------+---------+---------+---------+
-| 15      | weibull | weibull | NIVOLU  | 0.471   | 0.523   | 0.399   |
-|         |         |         | MAB+IPI | (0.328, | (0.461, | (0.35,  |
-|         |         |         | LIMUMAB | 0.647)  | 0.58)   | 0.462)  |
-+---------+---------+---------+---------+---------+---------+---------+
-Table: cure fraction posterior distribution for each scenario.
+Table 4 gives the leave-one-out cross validation WAIC statistics for each model fit.
 
-The table below gives the leave-one-out cross validation statistics for
-each model fit.
+```{r echo=FALSE, message=FALSE}
+load("checkmate_report_data/tab_loo_cf hier.RData")
+tab_loo$Treatment <- stringr::str_to_sentence(tab_loo$Treatment)
+rownames(tab_loo) <- NULL
+tab_loo <- dplyr::filter(tab_loo,grepl("^waic", Statistic))
+tab_loo <- tab_loo[, -1]
+knitr::kable(tab_loo, caption = "Leave-one-out WAIC cross validation statistics for hierarchical model.")
+```
+We see that, corresponding to the separate model results,
+the best fitting models are for the nivolumab+ipilimumab followed by nivolumab hierarchical models.
+Again, the best fitting distributions are lognormal followed by loglogistic.
 
-| Statistic | OS distn    | PFS distn   | Treatment            | Estimate |     SE |
-|:----------|:------------|:------------|:---------------------|---------:|-------:|
-| elpd_waic | exp         | exp         | IPILIMUMAB           | -1838.83 |  36.07 |
-| elpd_waic | exp         | exp         | NIVOLUMAB            | -1679.59 |  45.69 |
-| elpd_waic | exp         | exp         | NIVOLUMAB+IPILIMUMAB | -1543.49 |  53.87 |
-| elpd_waic | gompertz    | gompertz    | IPILIMUMAB           | -1839.34 |  36.27 |
-| elpd_waic | gompertz    | gompertz    | NIVOLUMAB            | -1679.48 |  45.80 |
-| elpd_waic | gompertz    | gompertz    | NIVOLUMAB+IPILIMUMAB | -1543.81 |  54.03 |
-| elpd_waic | loglogistic | loglogistic | IPILIMUMAB           | -1768.17 |  39.20 |
-| elpd_waic | loglogistic | loglogistic | NIVOLUMAB            | -1651.73 |  46.02 |
-| elpd_waic | loglogistic | loglogistic | NIVOLUMAB+IPILIMUMAB | -1533.95 |  53.17 |
-| elpd_waic | lognormal   | lognormal   | IPILIMUMAB           | -1561.07 |  55.77 |
-| elpd_waic | lognormal   | lognormal   | NIVOLUMAB            | -1549.68 |  60.15 |
-| elpd_waic | lognormal   | lognormal   | NIVOLUMAB+IPILIMUMAB | -1488.80 |  58.13 |
-| elpd_waic | weibull     | lognormal   | NIVOLUMAB+IPILIMUMAB | -1508.24 |  55.14 |
-| elpd_waic | weibull     | weibull     | IPILIMUMAB           | -1819.89 |  39.69 |
-| elpd_waic | weibull     | weibull     | NIVOLUMAB            | -1680.25 |  45.91 |
-| elpd_waic | weibull     | weibull     | NIVOLUMAB+IPILIMUMAB | -1544.04 |  54.19 |
-| p_waic    | exp         | exp         | IPILIMUMAB           |     5.37 |   0.48 |
-| p_waic    | exp         | exp         | NIVOLUMAB            |     7.45 |   0.62 |
-| p_waic    | exp         | exp         | NIVOLUMAB+IPILIMUMAB |     7.15 |   0.60 |
-| p_waic    | gompertz    | gompertz    | IPILIMUMAB           |     5.91 |   0.52 |
-| p_waic    | gompertz    | gompertz    | NIVOLUMAB            |     6.96 |   0.56 |
-| p_waic    | gompertz    | gompertz    | NIVOLUMAB+IPILIMUMAB |     7.07 |   0.78 |
-| p_waic    | loglogistic | loglogistic | IPILIMUMAB           |     9.19 |   0.56 |
-| p_waic    | loglogistic | loglogistic | NIVOLUMAB            |     9.20 |   0.53 |
-| p_waic    | loglogistic | loglogistic | NIVOLUMAB+IPILIMUMAB |     6.10 |   0.50 |
-| p_waic    | lognormal   | lognormal   | IPILIMUMAB           |    14.04 |   1.30 |
-| p_waic    | lognormal   | lognormal   | NIVOLUMAB            |    15.46 |   1.44 |
-| p_waic    | lognormal   | lognormal   | NIVOLUMAB+IPILIMUMAB |    14.30 |   1.17 |
-| p_waic    | weibull     | lognormal   | NIVOLUMAB+IPILIMUMAB |    12.42 |   1.14 |
-| p_waic    | weibull     | weibull     | IPILIMUMAB           |     9.46 |   0.96 |
-| p_waic    | weibull     | weibull     | NIVOLUMAB            |     8.70 |   0.75 |
-| p_waic    | weibull     | weibull     | NIVOLUMAB+IPILIMUMAB |     7.70 |   0.72 |
-| waic      | exp         | exp         | IPILIMUMAB           |  3677.65 |  72.13 |
-| waic      | exp         | exp         | NIVOLUMAB            |  3359.19 |  91.37 |
-| waic      | exp         | exp         | NIVOLUMAB+IPILIMUMAB |  3086.98 | 107.74 |
-| waic      | gompertz    | gompertz    | IPILIMUMAB           |  3678.68 |  72.53 |
-| waic      | gompertz    | gompertz    | NIVOLUMAB            |  3358.96 |  91.59 |
-| waic      | gompertz    | gompertz    | NIVOLUMAB+IPILIMUMAB |  3087.62 | 108.05 |
-| waic      | loglogistic | loglogistic | IPILIMUMAB           |  3536.33 |  78.40 |
-| waic      | loglogistic | loglogistic | NIVOLUMAB            |  3303.47 |  92.04 |
-| waic      | loglogistic | loglogistic | NIVOLUMAB+IPILIMUMAB |  3067.91 | 106.35 |
-| waic      | lognormal   | lognormal   | IPILIMUMAB           |  3122.14 | 111.54 |
-| waic      | lognormal   | lognormal   | NIVOLUMAB            |  3099.36 | 120.30 |
-| waic      | lognormal   | lognormal   | NIVOLUMAB+IPILIMUMAB |  2977.61 | 116.25 |
-| waic      | weibull     | lognormal   | NIVOLUMAB+IPILIMUMAB |  3016.47 | 110.29 |
-| waic      | weibull     | weibull     | IPILIMUMAB           |  3639.77 |  79.38 |
-| waic      | weibull     | weibull     | NIVOLUMAB            |  3360.49 |  91.83 |
-| waic      | weibull     | weibull     | NIVOLUMAB+IPILIMUMAB |  3088.08 | 108.39 |
-Table: leave-one-out cross validation statistics for each model fit.
+In comparison with the separate model fits, the WAIC for the hierarchical models are mostly better and when the separate model has smaller estimate it is by a small margin of error.
 
-The variance partition coefficient (VPC) is defined as
-$\sigma_{global}^2/ (\sigma_{global}^2 + \sigma_{e}^2)$ where $e = PFS$
-or $OS$. This indicates want proportion of the total variance is
-attributable to variation within-groups, or how much is found
-between-groups.
 
-| OS Distn    | PFS Distn   | Treatment            |   PFS |    OS |
-|:------------|:------------|:---------------------|------:|------:|
-| exp         | exp         | IPILIMUMAB           | 0.813 | 0.784 |
-| exp         | exp         | NIVOLUMAB            | 0.876 | 0.877 |
-| exp         | exp         | NIVOLUMAB+IPILIMUMAB | 0.865 | 0.860 |
-| gompertz    | gompertz    | IPILIMUMAB           | 0.781 | 0.743 |
-| gompertz    | gompertz    | NIVOLUMAB            | 0.858 | 0.808 |
-| gompertz    | gompertz    | NIVOLUMAB+IPILIMUMAB | 0.899 | 0.888 |
-| loglogistic | loglogistic | IPILIMUMAB           | 0.812 | 0.604 |
-| loglogistic | loglogistic | NIVOLUMAB            | 0.890 | 0.672 |
-| loglogistic | loglogistic | NIVOLUMAB+IPILIMUMAB | 0.915 | 0.786 |
-| lognormal   | lognormal   | IPILIMUMAB           | 0.607 | 0.513 |
-| lognormal   | lognormal   | NIVOLUMAB            | 0.928 | 0.881 |
-| lognormal   | lognormal   | NIVOLUMAB+IPILIMUMAB | 0.868 | 0.862 |
-| weibull     | weibull     | IPILIMUMAB           | 0.841 | 0.726 |
-| weibull     | weibull     | NIVOLUMAB            | 0.865 | 0.822 |
-| weibull     | weibull     | NIVOLUMAB+IPILIMUMAB | 0.891 | 0.863 |
-Table: variance partition coefficient (VPC).
+Table 5 shows the variance partition coefficient (VPC).
+```{r echo=FALSE, message=FALSE}
+load("checkmate_report_data/tab_vpc.RData")
+tab_vpc <- 
+  tidyr::separate(tab_vpc, scenarios, into = c("OS", "PFS", "Treatment"), sep = "_")
+tab_vpc$Treatment <- stringr::str_to_sentence(tab_vpc$Treatment)
+  
+knitr::kable(tab_vpc, caption = "Variance partition coefficient (VPC) for hierachical model.")
+```
 
 It appears the above table that much of the variation is due to between
 PFS and OS indicating distinct cure fractions in each.
+This is to be expected since there are only two points informing the global cure fraction distributions.
+
 
 ## Sensitivity analysis for background mortality
 
@@ -617,66 +429,18 @@ obtained from a previous ad-hoc analysis which compared the WHO life
 tables with the OS data for complete responders (CR) from CheckMate 067
 (N=120, pooled across all 3 arms).
 
-Figure \ref{fig:NIVO+IPI_163} shows the equivalent posterior survival
-curves to Figure \ref{fig:NIVO+IPI} for the combined $ipilimumab$ and
-$nivolumab$ treatment and background hazard ratio adjustment 1.63. There
-is a small increase of approximately 1-2% in the cure fraction
-estimates.
 
-```{r fig.show='hold', fig.align='center', out.width="25cm", out.height="40cm", echo=FALSE, message = FALSE, warning = FALSE, fig.cap="\\label{fig:NIVO+IPI_163}Posterior survival curves for the mixture cure model with exchangeable cure fracion and dual $ipilimumab$ and $nivolumab$ and background hazard ratio adjustment 1.63. The red line is cured background, light green and blue are uncured, and dark green and magenta are combined. a) Exponential uncured b) Log-logistic uncured c) Gompertz uncured d) Weibull uncured e) Log-Normal uncured."}
-# rl <- list()
-# rl[[1]] <-
-#   image_read("../plots/S_plots_exp_exp_cf hier_bg_fixed_hr1.63_NIVOLUMAB+IPILIMUMAB.png") %>%
-#   image_annotate(" a)", size = 70)
-# rl[[2]] <-
-#   image_read("../plots/S_plots_loglogistic_loglogistic_cf hier_bg_fixed_hr1.63_NIVOLUMAB+IPILIMUMAB.png") %>%
-#   image_annotate(" b)", size = 70)
-# rl[[3]] <-
-#   image_read("../plots/S_plots_gompertz_gompertz_cf hier_bg_fixed_hr1.63_NIVOLUMAB+IPILIMUMAB.png") %>%
-#   image_annotate(" c)", size = 70)
-# rl[[4]] <-
-#   image_read("../plots/S_plots_weibull_weibull_cf hier_bg_fixed_hr1.63_NIVOLUMAB+IPILIMUMAB.png") %>%
-#   image_annotate(" d)", size = 70)
-# rl[[5]] <-
-#   image_read("../plots/S_plots_lognormal_lognormal_cf hier_bg_fixed_hr1.63_NIVOLUMAB+IPILIMUMAB.png") %>%
-#   image_annotate(" e)", size = 70)
-# 
-# gl <- lapply(rl, grid::rasterGrob)
-# gridExtra::marrangeGrob(grobs = gl,
-#                         nrow = 3, ncol = 2,
-#                         top = "",
-#                         widths = c(4,4,4))
+Table 6 summarises the cure fraction posterior distribution for each scenario.
+
+```{r echo=FALSE, message=FALSE}
+load("checkmate_report_data/tab_cf hier_bg_fixed_hr1.63.RData")
+names(tab_dat)[names(tab_dat) == "1"] <- "OS distn"
+names(tab_dat)[names(tab_dat) == "2"] <- "PFS distn"
+names(tab_dat)[names(tab_dat) == "3"] <- "Treatment"
+tab_dat$Treatment <- stringr::str_to_sentence(tab_dat$Treatment)
+knitr::kable(tab_dat, caption = "Cure fraction posterior distribution for background adjusted model.")
 ```
 
-The table below summarises the cure fraction posterior distribution for
-each scenario.
-
-+---------+---------+---------+---------+---------+---------+---------+
-|         | OS      | PFS     | Tr      | $cf$    | $c      | $cf     |
-|         | Distn   | Distn   | eatment | (CrI)   | f_{OS}$ | _{PFS}$ |
-|         |         |         |         |         | (CrI)   | (CrI)   |
-+:========+:========+:========+:========+:========+:========+:========+
-| 1       | exp     | exp     | NIVOLU  | 0.45    | 0.538   | 0.402   |
-|         |         |         | MAB+IPI | (0.291, | (0.473, | (0.351, |
-|         |         |         | LIMUMAB | 0.646)  | 0.588)  | 0.457)  |
-+---------+---------+---------+---------+---------+---------+---------+
-| 2       | g       | g       | NIVOLU  | 0.459   | 0.541   | 0.409   |
-|         | ompertz | ompertz | MAB+IPI | (0.287, | (0.448, | (0.349, |
-|         |         |         | LIMUMAB | 0.616)  | 0.6)    | 0.474)  |
-+---------+---------+---------+---------+---------+---------+---------+
-| 3       | logl    | logl    | NIVOLU  | 0.433   | 0.482   | 0.39    |
-|         | ogistic | ogistic | MAB+IPI | (0.287, | (0.374, | (0.324, |
-|         |         |         | LIMUMAB | 0.601)  | 0.567)  | 0.444)  |
-+---------+---------+---------+---------+---------+---------+---------+
-| 4       | lo      | lo      | NIVOLU  | 0.46    | 0.583   | 0.434   |
-|         | gnormal | gnormal | MAB+IPI | (0.289, | (0.531, | (0.381, |
-|         |         |         | LIMUMAB | 0.648)  | 0.643)  | 0.491)  |
-+---------+---------+---------+---------+---------+---------+---------+
-| 5       | weibull | weibull | NIVOLU  | 0.469   | 0.546   | 0.409   |
-|         |         |         | MAB+IPI | (0.297, | (0.496, | (0.354, |
-|         |         |         | LIMUMAB | 0.62)   | 0.592)  | 0.459)  |
-+---------+---------+---------+---------+---------+---------+---------+
-Table: cure fraction posterior distribution for each scenario.
 
 Figure \ref{fig:forest_global_163} shows the equivalent posterior
 survival curves to Figures \ref{fig:forest_hier} for the combined
@@ -689,27 +453,33 @@ knitr::include_graphics("../plots/cf hier_bg_fixed_hr1.63_forest_plot.png")
 
 \newpage
 
-The table below gives the leave-one-out cross validation statistics for
-each model fit.
+Table 7 gives the leave-one-out cross validation statistics for each model fit.
 
-| Statistic | OS distn    | PFS distn   | Treatment            | Estimate |     SE |
-|:----------|:------------|:------------|:---------------------|---------:|-------:|
-| elpd_waic | exp         | exp         | NIVOLUMAB+IPILIMUMAB | -1548.19 |  53.04 |
-| elpd_waic | gompertz    | gompertz    | NIVOLUMAB+IPILIMUMAB | -1548.57 |  53.21 |
-| elpd_waic | loglogistic | loglogistic | NIVOLUMAB+IPILIMUMAB | -1541.23 |  52.74 |
-| elpd_waic | lognormal   | lognormal   | NIVOLUMAB+IPILIMUMAB | -1487.44 |  57.45 |
-| elpd_waic | weibull     | weibull     | NIVOLUMAB+IPILIMUMAB | -1549.41 |  53.59 |
-| p_waic    | exp         | exp         | NIVOLUMAB+IPILIMUMAB |     6.05 |   0.61 |
-| p_waic    | gompertz    | gompertz    | NIVOLUMAB+IPILIMUMAB |     6.59 |   0.53 |
-| p_waic    | loglogistic | loglogistic | NIVOLUMAB+IPILIMUMAB |     7.69 |   0.53 |
-| p_waic    | lognormal   | lognormal   | NIVOLUMAB+IPILIMUMAB |    14.76 |   1.22 |
-| p_waic    | weibull     | weibull     | NIVOLUMAB+IPILIMUMAB |     7.92 |   0.72 |
-| waic      | exp         | exp         | NIVOLUMAB+IPILIMUMAB |  3096.38 | 106.09 |
-| waic      | gompertz    | gompertz    | NIVOLUMAB+IPILIMUMAB |  3097.14 | 106.41 |
-| waic      | loglogistic | loglogistic | NIVOLUMAB+IPILIMUMAB |  3082.45 | 105.49 |
-| waic      | lognormal   | lognormal   | NIVOLUMAB+IPILIMUMAB |  2974.89 | 114.90 |
-| waic      | weibull     | weibull     | NIVOLUMAB+IPILIMUMAB |  3098.82 | 107.17 |
-Table: leave-one-out cross validation statistics for each model fit.
+```{r echo=FALSE, message=FALSE}
+load("checkmate_report_data/tab_loo_cf hier_bg_fixed_hr1.63.RData")
+tab_loo$Treatment <- stringr::str_to_sentence(tab_loo$Treatment)
+rownames(tab_loo) <- NULL
+tab_loo <- dplyr::filter(tab_loo,grepl("^waic", Statistic))
+tab_loo <- tab_loo[, -1]
+knitr::kable(tab_loo, caption = "Leave-one-out WAIC cross validation statistics for background adjusted model.")
+```
+## Conclusions
+
+We have presented a Bayesian hierarchical MCM framework which can alleviate the disparity between individually estimated OS- and PFS-based LTS rates. It also provides a single shared cure fraction makes sense both from a HTA perspective, enabling ‘borrowing of strength’ from PFS for OS and more robust by leveraging all data in the presence of varying rates of censoring, and from clinical perspective, where we would expect equivalent LTS proportion across OS and PFS.
+Further, the parametric Bayesian models enable extrapolation to lifetime with uncertainty which are crucial for HTA and QALY estimation.
+
+This work has some current limitations.
+The presented analysis was restricted to same distribution combinations for OS and PFS but there is no reason why any combination could be considered.
+We also only used vague uninformative prior distributions in the Bayesian model.
+
+Future planned extensions include the examination of all combinations of distributions for OS and PFS.
+We will also incorporate prior clinical input into analysis and model selection.
+<!-- statements around the certainty of the outcome -->
+Because our proposed Bayesian model produces posterior distributions this can be used as part of a wider probabilistic decision-theoretic approach. A given model could be used to evaluate optimal courses of action e.g. in deciding between preferable drug treatments.
+Probabilistic statement can be made not just about which course of action to take but also the confidence in taking that action.
+Commonly, clinical decisions are posed in terms of a cost-effectiveness analysis.
+Finally, the development of these methods and dissemination of easy-to-use, scalable, open-source R package for external users will be done.
+
 
 \newpage
 

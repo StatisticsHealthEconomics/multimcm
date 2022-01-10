@@ -21,15 +21,19 @@ source("R/prep_S_data.R")
 source("R/prep_S_dataTx.R")
 source("R/cf_forest_plot.R")
 source("R/cf_forest_plotTx.R")
+source("R/cf_forest_cutpoint.R")
 source("R/prep_S_jointTx_data.R")
 source("R/geom_kaplan_meier.R")
 
-data("surv_data_cut")
+data("surv_data_cut", package = "rstanbmcm")
 
 
 ################
 # hierarchical #
 ################
+
+fig_height <- 10
+fig_width <- 10
 
 ###################
 # survival curves
@@ -43,7 +47,7 @@ ghier30 <-
                 n_dim = c(2,1))
 
 ggsave(ghier30, filename = glue::glue("plots/plot_S_grid_cf_hier_cpt_30m.png"),
-       units = "in", width = 6, height = 6, dpi = 300)
+       units = "in", width = fig_width, height = fig_height, dpi = 300)
 
 
 ghier12 <-
@@ -55,17 +59,19 @@ ghier12 <-
                 n_dim = c(2,1))
 
 ggsave(ghier12, filename = glue::glue("plots/plot_S_grid_cf_hier_cpt_12m.png"),
-       units = "in", width = 6, height = 6, dpi = 300)
+       units = "in", width = fig_width, height = fig_height, dpi = 300)
 
 
 #################
 # forest plots
 
-ghier5 <- cf_forest_cutpoint()
-ghier5
+forest_hier <-
+  cf_forest_cutpoint(folder = "data/independent/cf hier/bg_fixed_hr1",
+                     is_hier = TRUE)
+forest_hier
 
-ggsave(ghier5, filename = glue::glue("plots/forest_plot_joint_cf_hier.png"),
-       units = "in", width = 10, height = 8, dpi = 300)
+ggsave(forest_hier, filename = glue::glue("plots/forest_plot_cf_hier_cpt.png"),
+       units = "in", width = 16, height = 14, dpi = 300)
 
 
 ############
@@ -84,7 +90,7 @@ gsep30 <-
                 n_dim = c(2,1))
 
 ggsave(gsep30, filename = glue::glue("plots/plot_S_grid_cf_sep_cpt_30m.png"),
-       units = "in", width = 6, height = 6, dpi = 300)
+       units = "in", width = fig_width, height = fig_height, dpi = 300)
 
 
 gsep12 <-
@@ -96,12 +102,17 @@ gsep12 <-
                 n_dim = c(2,1))
 
 ggsave(gsep12, filename = glue::glue("plots/plot_S_grid_cf_sep_cpt_12m.png"),
-       units = "in", width = 6, height = 6, dpi = 300)
+       units = "in", width = fig_width, height = fig_height, dpi = 300)
 
 
 ################
 # forest plots
 
-ghier5 <- cf_forest_cutpoint()
+forest_sep <-
+  cf_forest_cutpoint(folder = "data/independent/cf separate/bg_fixed_hr1",
+                     is_hier = FALSE)
+forest_sep
 
+ggsave(forest_sep, filename = glue::glue("plots/forest_plot_cf_sep_cpt.png"),
+       units = "in", width = 16, height = 14, dpi = 300)
 

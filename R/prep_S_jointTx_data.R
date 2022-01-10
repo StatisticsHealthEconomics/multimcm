@@ -45,8 +45,10 @@ prep_S_jointTx_data <- function(stan_out) {
                        ifelse(type == "S_os" | type == "S_pfs",
                               "uncured", Tx)),
            Tx = factor(Tx),
+           endpoint = factor(toupper(event_type), c("PFS", "OS")),
            event_type = ifelse(event_type == "os",
-                               model_names[1], model_names[2]))
+                               model_names[1], model_names[2])) %>%
+    arrange(endpoint)
 
   plot_dat
 }

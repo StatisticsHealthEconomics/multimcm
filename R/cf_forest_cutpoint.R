@@ -18,21 +18,21 @@ cf_forest_cutpoint <- function(distns = list(c("exp", "exp"),
                                save_name = c("_cpt_12m", "_cpt_30m", ""),
                                is_hier = TRUE) {
   summary_tabs <- list()
-  
+
   for (cpt in save_name) {
     for (d in distns) {
       i <- d[1]; print(i)
       j <- d[2]; print(j)
-      
+
       dist_names <- paste(i,j)
-      
+
       summary_tabs[[dist_names]][[cpt]] <-
-        readRDS(glue::glue("{folder}/stan_{i}_{j}{cpt}.Rds")) %>% 
-        stan_summary(is_hier) %>% 
+        readRDS(glue::glue("{folder}/stan_{i}_{j}{cpt}.Rds")) %>%
+        stan_summary(is_hier) %>%
         cbind(distns = dist_names, cpt = cpt)
     }
   }
-  
+
   plot_dat <-
     flatten_dfr(summary_tabs) %>%
     mutate(scenario = rownames(.),
@@ -42,25 +42,38 @@ cf_forest_cutpoint <- function(distns = list(c("exp", "exp"),
            treatment = ifelse(tx == "1]", "Ipilimumab",
                               ifelse(tx == "2]", "Nivolumab",
                                      "Nivolumab + Ipilimumab"))) %>%
-    mutate(cpt = ifelse(cpt == "", "Complete", cpt),
-           distns = as.factor(distns),
+    mutate(distns = as.factor(distns),
+           cpt = ifelse(cpt == "_cpt_12m", "12 months",
+                        ifelse(cpt == "_cpt_30m", "30 months",
+                               "Complete")),
            cpt = as.factor(cpt)) %>%
-    select(-cf, -tx)
-  
+    select(-cf, -tx) %>%
+    rename(`Cut-point` = cpt,
+           `Distribution` = distns)
+
   plot_dat %>%
     ggplot(aes(x = mean, y = event,
                xmin = `2.5%`, xmax = `97.5%`,
-               colour = distns, shape = cpt)) +
+               colour = `Distribution`,
+               shape = `Cut-point`,
+               size = 2)) +
     tidybayes::geom_pointinterval(position = position_dodge(width = 0.8)) +
     geom_point(position = position_dodge(width = 0.8),
                aes(x = mean, y = event,
-                   colour = distns, shape = cpt),
-               size = 3, inherit.aes = FALSE) +
+                   colour = `Distribution`, shape = `Cut-point`),
+               size = 5, inherit.aes = FALSE) +
     facet_grid(. ~ treatment) +
     scale_shape_manual(values = c(3, 4, 15, 17, 19)) +
     ylab("") +
     xlab("Posterior probability") +
-    theme(axis.text = element_text(size = 12)) +
-    theme_bw()
+    xlim(0, 0.8) +
+    theme_bw() +
+    theme(axis.text = element_text(size = 20),
+          strip.text.x = element_text(size = 20),
+          legend.text = element_text(size = 20),
+          legend.title = element_text(size = 20),
+          axis.title.x = element_text(size = 20),
+          axis.text.x = element_text(size = 20),
+          panel.spacing = unit(2, "lines"))
 }
 

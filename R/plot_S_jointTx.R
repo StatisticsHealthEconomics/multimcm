@@ -26,12 +26,12 @@ plot_S_jointTx <- function(stan_out = NA,
                            data = NA) {
 
   plot_dat <- prep_S_jointTx_data(stan_out)
-
   # get names direct from Stan fit
   model_names <-
     gsub("_", " ", strsplit(stan_out@model_name, " ")[[1]])
 
-  add_facet <- function(facet) {list(if (facet) facet_grid( ~ event_type))}
+  # add_facet <- function(facet) {list(if (facet) facet_grid( ~ event_type))}  # with distn name
+  add_facet <- function(facet) {list(if (facet) facet_grid( ~ endpoint))}
 
   p <-
     ggplot(plot_dat, aes(x = month, y = mean, group = type_tx, colour = Tx)) +
@@ -51,7 +51,8 @@ plot_S_jointTx <- function(stan_out = NA,
 
   if (!any(is.na(data))) {
     km_curve <- geom_kaplan_meier(data = data,
-                                  event_type = model_names)
+                                  event_type = c("PFS", "OS"))  # pfs LHS and os RHS plots
+                                  # event_type = model_names)
   } else {
     km_curve <- NULL}
 
@@ -68,5 +69,5 @@ plot_S_jointTx <- function(stan_out = NA,
     guides(color = guide_legend(""), fill = guide_legend("")) +
     theme_bw() +
     xlab("Month") +
-    theme(text = element_text(size = 10))
+    theme(text = element_text(size = 20))
 }

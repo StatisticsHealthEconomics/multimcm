@@ -13,7 +13,7 @@
 #' @import gridExtra purrr grid survival dplyr
 #'
 plot_S_grid_sepTx <- function(distns = c("exp", "weibull", "gompertz", "loglogistic", "lognormal"),
-                              folder = "C:/Users/n8tha/Documents/R/rstanbmcm/vignettes/checkmate_report_data/bg_fixed",
+                              folder = "C:/Users/n8tha/Documents/R/rstanbmcm/vignettes/checkmate_report_data/separate",
                               data,
                               save_name = "",
                               n_dim = NA) {

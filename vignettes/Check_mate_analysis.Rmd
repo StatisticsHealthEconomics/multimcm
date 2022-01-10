@@ -317,7 +317,7 @@ Figure \ref{fig:S_separate} shows posterior survival curves for the
 Exponential, log-logistic, Gompertz, Weibull and log-Normal models when
 the OS and PFS models are fitted separately.
 ```{r fig.show='hold', fig.align='center', out.width="15cm", out.height="40cm", echo=FALSE, message = FALSE, warning = FALSE, fig.cap="\\label{fig:S_separate}Posterior survival curves for the mixture cure model for separate OS and PFS models and $ipilimumab$, $nivolumab$ and a combination treatment arm. The green line is cured background. Uncured distributions are I) Exponential  II) Log-logistic III) Gompertz IV) Weibull V) Log-Normal."}
-knitr::include_graphics("../plots/plot_S_samepair_grid_cf_separate.png")
+knitr::include_graphics("../plots/plot_S_samepair_grid_cf_separate_diffuncured.png")
 ```
 
 Figure \ref{fig:forest_separate} shows the forest plots of cure fraction posterior distributions.
@@ -362,7 +362,7 @@ Weibull and log-Normal models when the OS and PFS models share
 information with exchangeable cure fractions.
 
 ```{r fig.show='hold', fig.align='center', out.width="15cm", out.height="40cm", echo=FALSE, message = FALSE, warning = FALSE, fig.cap="\\label{fig:S_hier}Posterior survival curves for the mixture cure model for hierarchical OS and PFS models and $ipilimumab$, $nivolumab$ and a combination treatment arm. The green line is cured background. Uncured distributions are I) Exponential  II) Log-logistic III) Gompertz IV) Weibull V) Log-Normal."}
-knitr::include_graphics("../plots/plot_S_samepair_grid_cf_hier.png")
+knitr::include_graphics("../plots/plot_S_samepair_grid_cf_hier_diffuncured.png")
 ```
 
 Figure \ref{fig:forest_hier} shows the forest plots of cure fraction

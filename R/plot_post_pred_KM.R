@@ -1,12 +1,12 @@
-# posterior predictive value survival curve functions ---------------------
+# posterior predictive value survival curve functions
 
-
-#' Plot posterior predictive Kaplan-Meier
+#' Plot posterior predictive Kaplan-Meier.
+#' Stan data from separate treatment models (old version).
 #'
 #' Base R used.
 #' stand-alone generated values as input.
 #'
-#' @param res Stan output including predicted timess
+#' @param res Stan output including predicted times
 #' @param tx_name "IPILIMUMAB", "NIVOLUMAB", "NIVOLUMAB+IPILIMUMAB"
 #' @param orig_data Original study data
 #' @param fileloc_out File address for output plot with extension
@@ -22,7 +22,8 @@
 #' tx_name <- "IPILIMUMAB"
 #' orig_data <- load("~/R/rstanbmcm/data/surv_input_data.RData")
 #' fileloc_out <- paste0("plots/post_pred_cfsep_exp_exp_", tx_name, ".png")
-#' plot_post_pred_KM(tx_name, orig_data, fileloc_out)
+#' ##TODO: res <- readRDS("data/")  # where is this data?
+#' plot_post_pred_KM(res, tx_name, orig_data, fileloc_out)
 #'
 plot_post_pred_KM <- function(res,
                               tx_name,
@@ -109,7 +110,7 @@ plot_post_pred_KM <- function(res,
 }
 
 
-#
+# ##TODO:
 # plot_postpred_ggplot <- function(res,
 #                                  tx_name,
 #                                  orig_data,
@@ -171,15 +172,23 @@ plot_post_pred_KM <- function(res,
 #   geom_lines(fit, lwd = 2.5, conf.int = FALSE)
 #   ggtitle(tx_name, line = -1, outer = TRUE)
 # }
-#
 
 
-#' plot_post_pred_Tx
+#' Plot Kaplan-Meier Posterior Predictions
 #'
 #' ggplot posterior predictions survival plots
 #' for all treatments
+#' Stan data from simultaneous treatment models (new version).
 #'
 #' @import reshape2 ggplot2 survival
+#'
+#' @examples
+#'
+#' tx_name <- "IPILIMUMAB"
+#' orig_data <- load("~/R/rstanbmcm/data/surv_input_data.RData")
+#' fileloc_out <- paste0("plots/post_pred_cfsep_exp_exp_", tx_name, ".png")
+#' ##TODO: res <- readRDS("data/")  # where is this data?
+#' plot_post_pred_KM(res, tx_name, orig_data, fileloc_out)
 #'
 plot_post_pred_Tx <- function(res,
                               orig_data,

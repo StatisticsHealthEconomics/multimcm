@@ -3,6 +3,7 @@
 # all treatment model
 # Kaplan-Meier plots
 
+
 library(rstan)
 
 rstan_options(auto_write = TRUE)
@@ -24,7 +25,7 @@ inp <-
     joint_model = "independent",
     cf_idx = 3,
     bg_model_idx = 2,
-    model_os_idx = 1,
+    model_os_idx = 2,
     model_pfs_idx = 1)
 
 stan_out <-
@@ -75,6 +76,9 @@ res <-
     iter = 1,
     algorithm = "Fixed_param")
 
+stan_extract <-
+  rstan::extract(res) %>%
+  lapply(drop)
 
 ################
 # Kaplan-Meier #
@@ -87,5 +91,8 @@ library(reshape2)
 source("R/plot_post_pred_KM.R")
 source("R/geom_kaplan_meier.R")
 
-plot_post_pred_Tx(res, surv_input_data, casemix = TRUE, event_type = "pfs") + xlim(0,20)
+plot_post_pred_Tx(res, surv_input_data,
+                  casemix = TRUE,
+                  event_type = "pfs") #+
+  # xlim(0,20)
 

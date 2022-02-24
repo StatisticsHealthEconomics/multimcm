@@ -1,11 +1,12 @@
 
-#
+#' helper function
+#'
 define_setup <- function(trta,
                          joint_model,
                          cf_idx,
                          bg_model_idx,
                          model_os_idx,
-                         model_pfs_idx){
+                         model_pfs_idx) {
 
   cf_model_names <- c("cf pooled", "cf separate", "cf hier")
   cf_model <- cf_model_names[cf_idx]

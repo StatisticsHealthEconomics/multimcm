@@ -1,4 +1,6 @@
 
+#' Plot Survival Curve Prior Predictions
+#'
 #' @examples
 #'
 #' stan_out <- out

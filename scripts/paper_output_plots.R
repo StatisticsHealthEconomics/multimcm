@@ -37,7 +37,7 @@ source("R/geom_kaplan_meier.R")
 source("R/prep_S_jointTx_data.R")
 
 
-data("surv_input_data")
+data("surv_input_data")#, package = "rstanbmcm")
 
 # trt <- "NIVOLUMAB+IPILIMUMAB"
 # trt <- "IPILIMUMAB"
@@ -60,7 +60,7 @@ ghier1 <- plot_S_jointTx(stan_out = stan_exp_exp,
                          data = surv_input_data)
 ghier1
 
-# subset of all distributions for main text
+# subset of distributions for main text
 ghier_ls <-
   plot_S_gridTx(distns = list(c("exp", "exp"),
                               c("lognormal", "lognormal")),
@@ -69,7 +69,7 @@ ghier_ls <-
                 n_dim = c(2,1))
 
 ggsave(ghier_ls, filename = here::here("plots", "plot_S_exp_lognormal_grid_cf_hier.png"),
-       units = "in", width = 6, height = 6, dpi = 300)
+       units = "in", width = 10, height = 10, dpi = 300)
 
 # all same-pair distributions
 ghier_pairs <-
@@ -129,10 +129,10 @@ ggsave(ghier4, filename = glue::glue("plots/forest_plot_all_tx.png"),
 
 ## all treatment Stan output
 
-ghier5 <- cf_forest_plotTx()
-ghier5
+ghier_forest <- cf_forest_plotTx()
+ghier_forest
 
-ggsave(ghier5, filename = glue::glue("plots/forest_plot_joint_cf_hier.png"),
+ggsave(ghier_forest, filename = glue::glue("plots/forest_plot_joint_cf_hier.png"),
        units = "in", width = 10, height = 8, dpi = 300)
 
 
@@ -151,8 +151,19 @@ gsep1 <- plot_S_jointTx(stan_out = stan_exp_exp,
                         data = surv_input_data)
 gsep1
 
+# subset of distributions for main text
+gsep_ls <-
+  plot_S_gridTx(distns = list(c("exp", "exp"),
+                              c("lognormal", "lognormal")),
+                folder = here::here("data", "independent", "cf separate", "bg_fixed_hr1"),
+                data = surv_input_data,
+                n_dim = c(2,1))
+
+ggsave(gsep_ls, filename = here::here("plots", "plot_S_exp_lognormal_grid_cf_separate.png"),
+       units = "in", width = 10, height = 10, dpi = 300)
+
 # all same-pair distributions
-ghier_pairs <-
+gsep_pairs <-
   plot_S_gridTx(distns = list(c("exp", "exp"),
                               c("loglogistic", "loglogistic"),
                               c("gompertz", "gompertz"),
@@ -162,7 +173,7 @@ ghier_pairs <-
                 data = surv_input_data,
                 n_dim = c(3,2))
 
-ggsave(ghier_pairs, filename = here::here("plots", "plot_S_samepair_grid_cf_separate.png"),
+ggsave(gsep_pairs, filename = here::here("plots", "plot_S_samepair_grid_cf_separate.png"),
        units = "in", width = 10, height = 10, dpi = 300)
 
 # all distributions
@@ -178,9 +189,9 @@ ggsave(gsep2, filename = glue::glue("plots/plot_S_grid_cf_separate.png"),
 ################
 # forest plots
 
-gsep3 <- cf_forest_plotTx(folder = "data/independent/cf separate/bg_fixed_hr1")
-gsep3
+gsep_forest <- cf_forest_plotTx(folder = "data/independent/cf separate/bg_fixed_hr1")
+gsep_forest
 
-ggsave(gsep3, filename = glue::glue("plots/forest_plot_joint_all_tx_separate.png"),
+ggsave(gsep_forest, filename = glue::glue("plots/forest_plot_joint_all_tx_separate.png"),
        units = "in", width = 10, height = 8, dpi = 300)
 

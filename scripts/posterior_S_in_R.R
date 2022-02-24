@@ -1,6 +1,7 @@
 
 # generate survival curves from
 # Stan output
+# for single treatment model
 
 
 library(glue)
@@ -16,9 +17,10 @@ tx <- "NIVOLUMAB+IPILIMUMAB"
 
 
 stan_distn_tx <-
-  readRDS(glue("data/independent/cf hier/bg_fixed/stan_{distn}_{distn}_{tx}.Rds"))
+  readRDS(here::here(
+    glue("data/independent/cf hier/bg_fixed_hr1/stan_{distn}_{distn}_{tx}.Rds")))
 
-dat <- extract(stan_distn_tx)
+dat <- rstan::extract(stan_distn_tx)
 
 S <- list(os = list(),
           pfs = list(),

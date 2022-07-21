@@ -1,5 +1,5 @@
 
-#' Create Stan code
+#' Create Stan code from component parts
 #'
 #' @param os_model
 #' @param pfs_model

@@ -11,7 +11,7 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 <!-- badges: end -->
 
 The goal of multimcm is to jointly model two event time distributions
-(e.g. time to disease progression (PFS) and time to death(OS)) within a
+(e.g. time to disease progression (PFS) and time to death (OS)) within a
 Bayesian relative survival mixture cure model framework, using the Stan
 engine called from R.
 

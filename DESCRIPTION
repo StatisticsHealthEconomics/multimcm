@@ -1,13 +1,13 @@
-Package: rstanbmcm
+Package: multimcm
 Title: Bayesian Relative Mixture Cure Modelling
-Version: 0.0.0.9000
+Version: 0.0.1
 Authors@R: 
     person(given = "Nathan",
            family = "Green",
            role = c("aut", "cre"),
            email = "n.green@ucl.ac.uk",
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: Bayesian relative mixture cure modelling.
+           comment = c(ORCID = "0000-0003-2745-1736"))
+Description: Bayesian relative mixture cure modelling using Stan.
 License: `use_mit_license()`
 Encoding: UTF-8
 LazyData: true
@@ -35,3 +35,4 @@ Suggests:
     knitr,
     rmarkdown
 VignetteBuilder: knitr
+BugReports: https://github.com/n8thangreen/multimcm/issues/

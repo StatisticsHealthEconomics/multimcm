@@ -7,12 +7,13 @@
 
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
+[![R-CMD-check](https://github.com/StatisticsHealthEconomics/rstanbmcm/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/StatisticsHealthEconomics/rstanbmcm/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-The goal of rstanbmcm is to jointly model two event time distributions
-(e.g. time to disease progression and time to death) within a Bayesian
-relative survival mixture cure model framework, using the Stan engine
-called from R.
+The goal of multimcm is to jointly model two event time distributions
+(e.g. time to disease progression (PFS) and time to death(OS)) within a
+Bayesian relative survival mixture cure model framework, using the Stan
+engine called from R.
 
 ## Installation
 
@@ -20,8 +21,8 @@ You can install the development version from
 [GitHub](https://github.com/) with:
 
 ``` r
-# install.packages("devtools")
-devtools::install_github("StatisticsHealthEconomics/rstanbmcm")
+# install.packages("remotes")
+remotes::install_github("StatisticsHealthEconomics/multimcm")
 ```
 
 ## Motivation
@@ -33,26 +34,6 @@ knowledge such as via expert elicitation or previous trials. By
 extending current methods to account for the dependence between event
 times we leverage additional information to make better inferences and
 decisions.
-
-## Data
-
--   `data/surv_input_data.RData`: Individual-level patient data. This is
-    cleaned data from the previous frequentist
-    `n8thangreen/mixture_cure_model` package. The fields are:
-    -   `OSage`: age at OS event
-    -   `PFSage`: age at PFS event
-    -   `os`: time of OS
-    -   `os_event`: censoring indicator
-    -   `pfs`: time of PFS
-    -   `pfs_event`: censoring indicator
-    -   `TRTA`: treatment name
-    -   `SEX`: male or female
-    -   `COUNTRY`: abbreviated
-    -   `ACOUNTRY`: full name
-    -   `PFS_rate`: background mortality at time of PFS event from life
-        tables
-    -   `OS_rate`: background mortality at time of OS event from life
-        tables
 
 ## Workflow
 

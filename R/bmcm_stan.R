@@ -8,7 +8,7 @@
 #'
 bmcm_stan <- function(input_data,
                       formula,
-                      distns = exponential(),
+                      distns = "exp",
                       iter = 2000,
                       warmup = 1000,
                       thin = 10,
@@ -28,30 +28,26 @@ bmcm_stan <- function(input_data,
   setwd(here::here("inst/stan"))
   on.exit(setwd(rtn_wd))
 
-
   ####################
   # pre-processing
 
   cf_model <- match.arg(cf_model)
 
-  formula <- parse_formula(formula, input_data)
+  formula_dat <- parse_formula(formula, input_data)
 
-  #----- random effects predictor matrices
-
-  has_bars <- as.logical(length(formula$bars))
-
+  # random effects predictor matrices
   # use 'stan_glmer' approach
-  if (has_bars) {
-    group_unpadded <- lme4::mkReTrms(formula$bars, mf_cpts)
-    group <- pad_reTrms(Ztlist = group_unpadded$Ztlist,
-                        cnms   = group_unpadded$cnms,
-                        flist  = group_unpadded$flist)
-    z_cpts <- group$Z
-  } else {
-    group  <- NULL
-    z_cpts <- matrix(0,length(cpts),0)
+  group_unpad <- lme4::mkReTrms(formula_dat$bars, mf_cpts)
+  group <- pad_reTrms(Ztlist = group_unpad$Ztlist,
+                      cnms   = group_unpad$cnms,
+                      flist  = group_unpad$flist)
+  z_cpts <- group$Z
 
-  }
+  n_groups <- length(group_unpad)
+
+  if (length(distns) == 1) distns <- rep(distns, n_groups)
+  if (length(params_groups) == 1)
+    params_groups <- rep(params_groups, n_groups)
 
   ####################
   # construct data
@@ -59,10 +55,10 @@ bmcm_stan <- function(input_data,
   for (i in seq_len(n_groups)) {
 
     data[[i]] <-
-      c(prep_params(distns[i], params_groups[i]),
+      c(prep_distn_params(distns[i], params_groups[i]),
         prep_stan_data(input_data,
                        event_type = i,
-                       centre_age,
+                       centre_age,  # generalise to other covariates
                        bg_model,
                        bg_hr))
 

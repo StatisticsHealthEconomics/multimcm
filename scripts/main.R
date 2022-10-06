@@ -25,6 +25,7 @@ source("R/prep_tx_params.R")
 source("R/bmcm_stan.R")
 source("R/create_stancode.R")
 source("R/create_block_code.R")
+source("R/parse_formula.R")
 
 
 # rstan_options(auto_write = TRUE)
@@ -63,17 +64,7 @@ model_os <- model_names[model_os_idx]
 model_pfs <- model_names[model_pfs_idx]
 bg_model <- bg_model_names[bg_model_idx]
 
-# convert to months
-surv_input_data <-
-  surv_input_data |>
-  mutate(PFS_rate = PFS_rate/12,
-         OS_rate = OS_rate/12)
-
-# remove empty treatment rows
-surv_input_data <- surv_input_data[surv_input_data$TRTA != "", ]
-
-if (!is.na(TRTX))
-  surv_input_data <- filter(surv_input_data, TRTA == TRTX)
+##TODO: do we need rates?
 
 
 # rearrange data in to long format so can have
@@ -102,26 +93,12 @@ long_input_data <-
 ## prior hyper-parameters
 
 # all treatments
-if (is.na(TRTX)) {
-
-  params_cf_lup <-
-    list("cf pooled" = NULL,
-         "cf separate" = NULL,
-         "cf hier" =
-           list(mu_sd_cf = c(0, 0, 0),
-                sigma_sd_cf = c(2.5, 2.5, 2.5)))
-} else {
-  # single treatment
-  # use this to test against single
-  # old treatment script
-
-  params_cf_lup <-
-    list("cf pooled" = NULL,
-         "cf separate" = NULL,
-         "cf hier" =
-           list(mu_sd_cf = array(0, 1),
-                sigma_sd_cf = array(2.5, 1)))
-}
+params_cf_lup <-
+  list("cf pooled" = NULL,
+       "cf separate" = NULL,
+       "cf hier" =
+         list(mu_sd_cf = c(0, 0, 0),
+              sigma_sd_cf = c(2.5, 2.5, 2.5)))
 
 params_cf <-
   if (is.null(params_cf_lup[[cf_idx]][[model_pfs]])) {
@@ -158,7 +135,7 @@ out <-
   bmcm_stan(
     input_data = long_input_data,
     formula = "Surv(months, status) ~ 1 + (1|event) + TRTA",
-    distns = exponential(),
+    distns = "exp",
     params_cf = c(params_cf, params_tx),
     cf_model = "cf hier",
     joint_model = FALSE,
@@ -170,11 +147,7 @@ out <-
     iter = 500,
     thin = 1)
 
-if (save_res) {
-  saveRDS(
-    out,
-    file = here::here(glue::glue(
-      "data/independent/{cf_model_names[cf_idx]}/{bg_model}_hr{bg_hr}/stan_{model_os}_{model_pfs}.Rds")))}
+# if (save_res) {saveRDS(out, file)}
 
 
 ##########
@@ -192,7 +165,5 @@ gg <- plot_S_jointTx(out,
                      data = surv_input_data)
 gg
 
-ggsave(gg,
-       filename = here::here(glue::glue(
-         "plots/S_plots_{model_os}_{model_pfs}_{cf_model_names[cf_idx]}_{bg_model}_hr{bg_hr}.png")))
+# ggsave(gg, filename)
 

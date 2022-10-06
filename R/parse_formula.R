@@ -1,11 +1,12 @@
 
 #' parse formula
 #' @importFrom lme4 nobars findbars
+#' @importFrom rstan nlist
 #'
 parse_formula <- function(formula, data) {
 
   if (!inherits(formula, "formula")) {
-    stop2("'formula' must be a formula.")
+    stop("'formula' must be a formula.")
   }
 
   formula <- as.formula(formula)
@@ -28,7 +29,7 @@ parse_formula <- function(formula, data) {
   # just random-effect part of formula
   bars      <- lme4::findbars(tf_form)
   re_parts  <- lapply(bars, split_at_bars)
-  re_forms  <- pluck(re_parts, "re_form")
+  re_forms  <- pluck(re_parts, "re_form")  # ?
 
   nlist(formula,
         data,

@@ -1,12 +1,13 @@
 
-#' prep_stan_dataTx
+#' Prepare Stan data
 #'
 #' Data specific to OS or PFS for Stan input.
 #'
-#' @param input_data surv_input_data
-#' @param event_type PFS, OS
+#' @param input_data Survival individual level data
+#' @param event_type cluster/group
 #' @param centre_age Logical
-#' @param bg_model Background model. 1: Exponential distribution; 2: fixed point values from life-table
+#' @param bg_model Background model.
+#'    1: Exponential distribution; 2: fixed point values from life-table
 #' @param bg_hr background all-cause mortality hazard ratio
 #'
 #' @return List;
@@ -24,25 +25,13 @@ prep_stan_data <- function(input_data,
                            bg_model = 1,
                            bg_hr = 1) {
 
-  event_type <- match.arg(arg = event_type, c("PFS", "OS"))
   input_data <- arrange(input_data, TRTA)
 
-  if (event_type == "PFS") {
-
-    tx_dat <-
-      input_data %>%
-      select(TRTA, pfs, pfs_event, PFSage, PFS_rate) %>%
-      mutate(PFS_rate =
-               ifelse(PFS_rate == 0, 0.00001, PFS_rate)) # replace so >0
-
-  } else if (event_type == "OS") {
-
-    tx_dat <-
-      input_data %>%
-      select(TRTA, os, os_event, OSage, OS_rate) %>%
-      mutate(OS_rate =
-               ifelse(OS_rate == 0, 0.00001, OS_rate))
-  }
+  tx_dat <-
+    input_data |>
+    filter(event == event_type)
+    select(TRTA, status, month, age_event, rate) |>
+    mutate(rate = ifelse(rate == 0, 0.00001, rate)) # replace so >0
 
   # centering
   age_adj <- ifelse(centre_age, mean(tx_dat[[4]]), 0)

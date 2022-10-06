@@ -11,8 +11,8 @@ NULL
 
 
 #' @rdname prep_stan_params
-prep_pfs_params <- function(model,
-                            params = NA) {
+prep_distn_params <- function(model,
+                              params = NA) {
 
   if (!any(is.na(params))) return(params)
 
@@ -51,43 +51,4 @@ prep_pfs_params <- function(model,
 }
 
 
-#' @rdname prep_stan_params
-prep_os_params <- function(model,
-                           params = NA) {
-
-  if (!any(is.na(params))) return(params)
-
-  switch(model,
-         exp =
-           list(mu_0 = c(-3, 0),
-                sigma_0 = c(0.4, 1)),
-         loglogistic =
-           list(a_shape = 1,
-                b_shape = 1,
-                mu_0 = c(3, 0),
-                sigma_0 = c(0.4, 1)),
-         weibull =
-           list(a_shape = 1,
-                b_shape = 1,
-                mu_0 = c(3, 0),
-                sigma_0 = c(0.4, 1)),
-         gompertz =
-           list(a_shape = 1,
-                b_shape = 1000,
-                mu_0 = c(-3, 0),
-                sigma_0 = c(0.5, 1)),
-         lognormal =
-           list(a_sd = 2,
-                b_sd = 1,
-                mu_0 = c(2.5, 0),
-                sigma_0 = c(0.5, 0.01)),
-         gengamma =
-           list(a_mu = 1,
-                b_mu = 1,
-                a_Q = 2,
-                b_Q = 1,
-                mu_0 = c(-3, 0),
-                sigma_0 = c(0.5, 0.01)),
-         stop("distribution not found."))
-}
 

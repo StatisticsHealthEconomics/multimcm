@@ -52,7 +52,7 @@ plot_S_jointTx <- function(stan_out = NA,
   if (!any(is.na(data))) {
     km_curve <- geom_kaplan_meier(data = data,
                                   event_type = c("PFS", "OS"))  # pfs LHS and os RHS plots
-                                  # event_type = model_names)
+    # event_type = model_names)
   } else {
     km_curve <- NULL}
 

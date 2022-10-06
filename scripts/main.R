@@ -15,16 +15,16 @@ library(abind)
 
 # library(rstanbmcm)
 # devtools::load_all()
-source("R/bmcm_joint_stan_fileTx.R")
-source("R/prep_stan_params.R")
-source("R/prep_shared_paramsTx.R")
-source("R/prep_stan_dataTx.R")
-source("R/prep_tx_params.R")
-source("R/plot_post_pred_KM.R")
 
-source("R/bmcm_joint_stan_stringTx.R")
-source("R/create_stancodeTx.R")
-source("R/create_block_codeTx.R")
+## reading these in for now since building the package
+## takes time to compile the Stan code
+source("R/prep_stan_params.R")
+source("R/prep_shared_params.R")
+source("R/prep_stan_data.R")
+source("R/prep_tx_params.R")
+source("R/bmcm_stan.R")
+source("R/create_stancode.R")
+source("R/create_block_code.R")
 
 
 # rstan_options(auto_write = TRUE)
@@ -33,36 +33,73 @@ options(mc.cores = parallel::detectCores() - 1)
 data("surv_input_data")
 
 
-###############
-# model setup #
-###############
+#################
+# model set-up
+
+## how many treatments?
+TRTX <- NA  # all treatments
+# TRTX <- "IPILIMUMAB"  # single treatment only
+
+save_res <- TRUE
+
+model_names <- c("exp", "weibull", "gompertz", "loglogistic", "lognormal")
+model_os_idx <- 1
+model_pfs_idx <- 1
+
+cf_model_names <- c("cf pooled", "cf separate", "cf hier")
+cf_idx <- 3
+
+bg_model_names <- c("bg_distn", "bg_fixed")
+bg_model_idx <- 2
+
+# background hazard ratio
+bg_hr <- 1
+
+
+##############
+# prep data
+
+model_os <- model_names[model_os_idx]
+model_pfs <- model_names[model_pfs_idx]
+bg_model <- bg_model_names[bg_model_idx]
 
 # convert to months
 surv_input_data <-
-  surv_input_data %>%
+  surv_input_data |>
   mutate(PFS_rate = PFS_rate/12,
          OS_rate = OS_rate/12)
 
 # remove empty treatment rows
 surv_input_data <- surv_input_data[surv_input_data$TRTA != "", ]
 
-## single treatment only?
-TRTX <- NA
-# TRTX <- "IPILIMUMAB"
-
 if (!is.na(TRTX))
   surv_input_data <- filter(surv_input_data, TRTA == TRTX)
 
-save_res <- TRUE
 
-model_os_idx <- 1
-model_pfs_idx <- 1
-model_names <- c("exp", "weibull", "gompertz", "loglogistic", "lognormal")
-model_os <- model_names[model_os_idx]
-model_pfs <- model_names[model_pfs_idx]
+# rearrange data in to long format so can have
+# arbitrary number of end types (not just os, pfs)
 
-cf_idx <- 3
-cf_model_names <- c("cf pooled", "cf separate", "cf hier")
+long_event_time_dat <-
+  surv_input_data |>
+  select(AAGE, os, pfs, TRTA, SEX, ACOUNTRY) |>
+  mutate(id = 1:n()) |>
+  melt(measure.vars = c("os", "pfs"),
+       value.name = "month", variable.name = "event") |>
+  mutate(year = floor(month/12),
+         age_event = AAGE + year)
+
+long_input_data <-
+  surv_input_data |>
+  select(os_event, pfs_event) |>
+  rename(os = os_event, pfs = pfs_event) |>
+  mutate(id = 1:n()) |>
+  melt(measure.vars = c("os", "pfs"),
+       value.name = "status", variable.name = "event") |>
+  merge(long_event_time_dat) |>
+  filter(if (!is.na(TRTX)) TRTA == TRTX else TRTA != "")
+
+
+## prior hyper-parameters
 
 # all treatments
 if (is.na(TRTX)) {
@@ -93,10 +130,6 @@ params_cf <-
     params_cf_lup[[cf_idx]][[model_pfs]]
   }
 
-# no intercept model
-# sum(boot::inv.logit(rnorm(1000, -0.6, 0.8)) > 0.6)/1000
-# hist(boot::inv.logit(rnorm(1000, -0.6, 0.8)), breaks = 20, xlim = c(0,1))
-
 # same for all tx
 mu_alpha <- c(-0.6, -0.6, -0.6)
 sigma_alpha <- c(0.8, 0.8, 0.8)
@@ -117,27 +150,17 @@ params_tx <-
     NA
   }
 
-bg_model_idx <- 2
-bg_model_names <- c("bg_distn", "bg_fixed")
-bg_model <- bg_model_names[bg_model_idx]
 
-# background hazard ratio
-# bg_hr <- 1.63
-bg_hr <- 1
-
-
-#######
-# run #
-#######
+##############
+# run model
 
 out <-
-  bmcm_joint_stan_fileTx(
-  # bmcm_joint_stan_stringTx(
-    input_data = surv_input_data,
-    model_os = model_os,
-    model_pfs = model_pfs,
+  bmcm_stan(
+    input_data = long_input_data,
+    formula = "Surv(months, status) ~ 1 + (1|event) + TRTA",
+    distns = exponential(),
     params_cf = c(params_cf, params_tx),
-    cf_model = cf_idx,
+    cf_model = "cf hier",
     joint_model = FALSE,
     bg_model = bg_model_idx,
     bg_hr = bg_hr,
@@ -154,14 +177,15 @@ if (save_res) {
       "data/independent/{cf_model_names[cf_idx]}/{bg_model}_hr{bg_hr}/stan_{model_os}_{model_pfs}.Rds")))}
 
 
-#########
-# plots #
-#########
+##########
+# plots
 
 library(survival)
 
 source("R/plot_S_jointTx.R")
-source("R/prep_S_dataTx.R")
+source("R/prep_S_data.R")
+source("R/prep_S_jointTx_data.R")
+source("R/geom_kaplan_meier.R")
 
 gg <- plot_S_jointTx(out,
                      annot_cf = FALSE,

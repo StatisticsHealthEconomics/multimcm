@@ -1,5 +1,8 @@
 
-#' Create Stan code from component parts
+#' Create Stan code
+#'
+#' check with
+#' writeLines(create_stancodeTx("exp", "exp", 2, FALSE), "temp.stan")
 #'
 #' @param os_model
 #' @param pfs_model
@@ -11,7 +14,7 @@
 #' @importFrom glue glue
 #'
 #' @examples
-#' create_stancode("exp", "lognormal", 3, FALSE)
+#' cat(create_stancodeTx("exp", "exp", 3, FALSE))
 #'
 create_stancode <- function(os_model,
                             pfs_model,
@@ -21,14 +24,14 @@ create_stancode <- function(os_model,
   # validate_data()
   # validate_vars()
 
-  stancode <- create_code_skeleton()
-  pfs_code <- create_pfs_code(pfs_model)
-  os_code <- create_os_code(os_model)
-  cf_code <- create_cf_code(cf_model)
-  loglik_code <- make_loglik(os_model, pfs_model)
-  priorpred_code <- make_priorpred(os_model, pfs_model)
-  postpred_code <- make_postpred(os_model, pfs_model)
-  loo_code <- make_loo(os_model, pfs_model)
+  stancode <- create_code_skeletonTx()
+  pfs_code <- create_pfs_codeTx(pfs_model)
+  os_code <- create_os_codeTx(os_model)
+  cf_code <- create_cf_codeTx(cf_model)
+  loglik_code <- make_loglikTx(os_model, pfs_model)
+  priorpred_code <- make_priorpredTx(os_model, pfs_model)
+  postpred_code <- make_postpredTx(os_model, pfs_model)
+  loo_code <- make_looTx(os_model, pfs_model)
 
   scode <- list()
 
@@ -38,10 +41,12 @@ create_stancode <- function(os_model,
   # generate data block
   scode$data <- paste0(
     "data {\n",
+    stancode$data$def,
+    cf_code$data$def,
     pfs_code$data,
     os_code$data,
-    stancode$data,
-    cf_code$data,
+    stancode$data$main,
+    cf_code$data$main,
     "\n}\n\n"
   )
 
@@ -73,9 +78,9 @@ create_stancode <- function(os_model,
   # combine likelihood with prior part
   scode$model <- paste0(
     "model {\n",
+    stancode$model,
     pfs_code$model,
     os_code$model,
-    stancode$model,
     cf_code$model,
     loglik_code,
     "\n}\n\n"
@@ -105,6 +110,6 @@ create_stancode <- function(os_model,
     scode$trans_params,
     scode$model,
     scode$generated_quantities
-    )
-  }
+  )
+}
 

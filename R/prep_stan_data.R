@@ -1,11 +1,10 @@
 
-#' prep_stan_data
+#' prep_stan_dataTx
 #'
 #' Data specific to OS or PFS for Stan input.
 #'
 #' @param input_data surv_input_data
 #' @param event_type PFS, OS
-#' @param tx_name IPILIMUMAB, NIVOLUMAB, NIVOLUMAB+IPILIMUMAB
 #' @param centre_age Logical
 #' @param bg_model Background model. 1: Exponential distribution; 2: fixed point values from life-table
 #' @param bg_hr background all-cause mortality hazard ratio
@@ -21,14 +20,12 @@
 #'
 prep_stan_data <- function(input_data,
                            event_type,
-                           tx_name,
                            centre_age,
                            bg_model = 1,
                            bg_hr = 1) {
 
   event_type <- match.arg(arg = event_type, c("PFS", "OS"))
-  tx_name <- match.arg(arg = tx_name,
-                       c("IPILIMUMAB", "NIVOLUMAB", "NIVOLUMAB+IPILIMUMAB"))
+  input_data <- arrange(input_data, TRTA)
 
   if (event_type == "PFS") {
 
@@ -36,8 +33,7 @@ prep_stan_data <- function(input_data,
       input_data %>%
       select(TRTA, pfs, pfs_event, PFSage, PFS_rate) %>%
       mutate(PFS_rate =
-               ifelse(PFS_rate == 0, 0.00001, PFS_rate)) %>% # replace so >0
-      split(input_data$TRTA)
+               ifelse(PFS_rate == 0, 0.00001, PFS_rate)) # replace so >0
 
   } else if (event_type == "OS") {
 
@@ -45,29 +41,38 @@ prep_stan_data <- function(input_data,
       input_data %>%
       select(TRTA, os, os_event, OSage, OS_rate) %>%
       mutate(OS_rate =
-               ifelse(OS_rate == 0, 0.00001, OS_rate)) %>%
-      split(input_data$TRTA)
+               ifelse(OS_rate == 0, 0.00001, OS_rate))
   }
 
   # centering
-  age_adj <- ifelse(centre_age, mean(tx_dat[[tx_name]][[4]]), 0)
+  age_adj <- ifelse(centre_age, mean(tx_dat[[4]]), 0)
+
+  X_age <-
+    as.data.frame(
+      matrix(c(rep(1, nrow(tx_dat)),
+               tx_dat[[4]] - age_adj),
+             byrow = FALSE,
+             ncol = 2))
+
+  # X_tx <- model.matrix(~ TRTA, data = tx_dat)
 
   # background hazard point values
   h_bg <-
     if (bg_model == 2) {
-      tx_dat[[tx_name]][[5]]*bg_hr
+      tx_dat[[5]]*bg_hr
     } else {
       numeric(0)}
 
+  ## hazard ratio
+  # dmat <- model.matrix(~ TRTA, data = tx_dat)[, -1]
+
   list(
-    n = nrow(tx_dat[[tx_name]]),
-    t = tx_dat[[tx_name]][[2]],
-    d = tx_dat[[tx_name]][[3]],
+    N = nrow(tx_dat),
+    n = array(table(input_data$TRTA)),
+    t = tx_dat[[2]],
+    d = tx_dat[[3]],
     H = 2,
-    X = matrix(c(rep(1, nrow(tx_dat[[tx_name]])),
-                 tx_dat[[tx_name]][[4]] - age_adj),
-               byrow = FALSE,
-               ncol = 2),
+    X = X_age,
     h_bg = h_bg)
 }
 

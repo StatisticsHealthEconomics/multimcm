@@ -5,9 +5,9 @@
 #'
 parse_formula <- function(formula, data) {
 
-  if (!inherits(formula, "formula")) {
-    stop("'formula' must be a formula.")
-  }
+  # if (!inherits(formula, "formula")) {
+  #   stop("'formula' must be a formula.")
+  # }
 
   formula <- as.formula(formula)
 
@@ -24,25 +24,26 @@ parse_formula <- function(formula, data) {
   rhs_form  <- reformulate_rhs(rhs) # RHS as formula
 
   # just fixed-effect part of formula
-  fe_form   <- lme4::nobars(tf_form)
+  fe_form   <- lme4::nobars(formula)
 
   # just random-effect part of formula
-  bars      <- lme4::findbars(tf_form)
-  re_parts  <- lapply(bars, split_at_bars)
-  re_forms  <- pluck(re_parts, "re_form")  # ?
+  bars      <- lme4::findbars(formula)[[1]]
+  re_parts  <- split_at_bars(bars)
 
-  nlist(formula,
-        data,
-        allvars,
-        allvars_form,
-        lhs,
-        lhs_form,
-        rhs,
-        rhs_form,
-        fe_form,
-        bars,
-        re_parts,
-        re_forms)
+  mf <- model.frame(subbars(formula), data = data)
+
+  c(nlist(
+    formula,
+    mf,
+    allvars,
+    allvars_form,
+    lhs,
+    lhs_form,
+    rhs,
+    rhs_form,
+    fe_form,
+    bars),
+    re_parts)
 }
 
 
@@ -91,5 +92,23 @@ reformulate_lhs <- function(x) {
 # @return A formula.
 reformulate_rhs <- function(x) {
   formula(substitute(~ RHS, list(RHS = x)))
+}
+
+# Split the random effects part of a model formula into
+#   - the formula part (ie. the formula on the LHS of "|"), and
+#   - the name of the grouping factor (ie. the variable on the RHS of "|")
+#
+# @param x Random effects part of a model formula, as returned by lme4::findbars
+# @return A named list with the following elements:
+#   re_form: a formula specifying the random effects structure
+#   group_var: the name of the grouping factor
+split_at_bars <- function(x) {
+
+  terms <- strsplit(deparse(x, 500), "\\s\\|\\s")[[1L]]
+  if (!length(terms) == 2L)
+    stop("Could not parse the random effects formula.")
+  re_form <- formula(paste("~", terms[[1L]]))
+  group_var <- terms[[2L]]
+  nlist(re_form, group_var)
 }
 

@@ -64,7 +64,9 @@ model_os <- model_names[model_os_idx]
 model_pfs <- model_names[model_pfs_idx]
 bg_model <- bg_model_names[bg_model_idx]
 
+
 ##TODO: do we need rates?
+# mutate(rate = ifelse(rate == 0, 0.00001, rate)) # replace so >0
 
 
 # rearrange data in to long format so can have
@@ -75,7 +77,7 @@ long_event_time_dat <-
   select(AAGE, os, pfs, TRTA, SEX, ACOUNTRY) |>
   mutate(id = 1:n()) |>
   melt(measure.vars = c("os", "pfs"),
-       value.name = "month", variable.name = "event") |>
+       value.name = "month", variable.name = "event_name") |>
   mutate(year = floor(month/12),
          age_event = AAGE + year)
 
@@ -85,9 +87,10 @@ long_input_data <-
   rename(os = os_event, pfs = pfs_event) |>
   mutate(id = 1:n()) |>
   melt(measure.vars = c("os", "pfs"),
-       value.name = "status", variable.name = "event") |>
+       value.name = "status", variable.name = "event_name") |>
   merge(long_event_time_dat) |>
-  filter(if (!is.na(TRTX)) TRTA == TRTX else TRTA != "")
+  filter(if (!is.na(TRTX)) TRTA == TRTX else TRTA != "") |>
+  mutate(event_idx = ifelse(event_name == "os", 1, 2))
 
 
 ## prior hyper-parameters
@@ -134,7 +137,7 @@ params_tx <-
 out <-
   bmcm_stan(
     input_data = long_input_data,
-    formula = "Surv(months, status) ~ 1 + (1|event) + TRTA",
+    formula = "Surv(time=month, event=status) ~ 1 + (1|event_idx) + TRTA + age_event",
     distns = "exp",
     params_cf = c(params_cf, params_tx),
     cf_model = "cf hier",

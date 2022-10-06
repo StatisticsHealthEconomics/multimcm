@@ -28,6 +28,7 @@ bmcm_stan <- function(input_data,
   setwd(here::here("inst/stan"))
   on.exit(setwd(rtn_wd))
 
+
   ####################
   # pre-processing
 
@@ -35,28 +36,24 @@ bmcm_stan <- function(input_data,
 
   formula_dat <- parse_formula(formula, input_data)
 
-  # random effects predictor matrices
-  # use 'stan_glmer' approach
-  group_unpad <- lme4::mkReTrms(formula_dat$bars, mf_cpts)
-  group <- pad_reTrms(Ztlist = group_unpad$Ztlist,
-                      cnms   = group_unpad$cnms,
-                      flist  = group_unpad$flist)
-  z_cpts <- group$Z
+  n_groups <- length(unique(formula_dat$mf[[formula_dat$group_var]]))
 
-  n_groups <- length(group_unpad)
-
+  # all groups the same distribution
   if (length(distns) == 1) distns <- rep(distns, n_groups)
+
+  # all groups the same parameters
   if (length(params_groups) == 1)
     params_groups <- rep(params_groups, n_groups)
-
   ####################
   # construct data
+
+  data <- list()
 
   for (i in seq_len(n_groups)) {
 
     data[[i]] <-
       c(prep_distn_params(distns[i], params_groups[i]),
-        prep_stan_data(input_data,
+        prep_stan_data(formula_dat,
                        event_type = i,
                        centre_age,  # generalise to other covariates
                        bg_model,
@@ -80,6 +77,8 @@ bmcm_stan <- function(input_data,
   ###############################
   # priors and hyperparameters
 
+
+  browser()
 
   ##############
   # fit model

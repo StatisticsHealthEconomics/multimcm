@@ -30,7 +30,10 @@ parse_formula <- function(formula, data) {
   bars      <- lme4::findbars(formula)[[1]]
   re_parts  <- split_at_bars(bars)
 
-  mf <- model.frame(subbars(formula), data = data)
+  mf <- model.frame(lme4::subbars(formula), data = data)
+
+  # names of variable without event type
+  fe_vars <- attr(terms(fe_form), "term.labels")
 
   c(nlist(
     formula,
@@ -42,6 +45,7 @@ parse_formula <- function(formula, data) {
     rhs,
     rhs_form,
     fe_form,
+    fe_vars,
     bars),
     re_parts)
 }

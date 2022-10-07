@@ -12,6 +12,7 @@ library(dplyr)
 library(glue)
 library(ggplot2)
 library(abind)
+library(survival)
 
 # library(rstanbmcm)
 # devtools::load_all()

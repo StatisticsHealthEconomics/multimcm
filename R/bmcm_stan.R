@@ -44,6 +44,11 @@ bmcm_stan <- function(input_data,
   # all groups the same parameters
   if (length(params_groups) == 1)
     params_groups <- rep(params_groups, n_groups)
+
+  formula_dat$mf[[formula_dat$group_var]] <-
+    as.factor(formula_dat$mf[[formula_dat$group_var]])
+
+
   ####################
   # construct data
 

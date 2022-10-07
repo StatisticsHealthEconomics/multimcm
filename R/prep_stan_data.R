@@ -3,7 +3,7 @@
 #'
 #' Data specific to end type for Stan input.
 #'
-#' @param dat
+#' @param formula_dat
 #' @param event_type cluster/group
 #' @param centre_vars Logical
 #' @param bg_model Background model.
@@ -19,37 +19,42 @@
 #' @import dplyr
 #' @export
 #'
-prep_stan_data <- function(dat,
+prep_stan_data <- function(formula_dat,
                            event_type,
                            centre_vars = FALSE,
                            bg_model = 1,
                            bg_hr = 1) {
-  tx_dat <-
-    dat$mf |>
-    filter(!!sym(dat$group_var) == event_type)
+  # one group only
+  dat <-
+    formula_dat$mf |>
+    filter(!!sym(formula_dat$group_var) == event_type)
 
-  # centre
-  tx_dat <-
+  # centre variables
+  dat <-
     if (centre_vars) {
-      tx_dat |> mutate(
-        across(c(where(is.numeric), -(1:2)), ~ round(.x - mean(.x))))
+      dat |> mutate(
+        across(where(~ is.numeric(.x) & !is.Surv(.x)),
+               ~ round(.x - mean(.x))))
     }
+
+  # drop treatment names
+  fe_vars <- formula_dat$fe_vars[formula_dat$fe_vars != "TRTA"]
 
   X_mat <-
     as.data.frame(
-      cbind(intercept = rep(1, nrow(tx_dat)),
-            tx_dat[, -(1:3), drop = FALSE]))
+      cbind(intercept = rep(1, nrow(dat)),
+            dat[, fe_vars, drop = FALSE]))
 
-  # X_tx <- model.matrix(~ TRTA, data = tx_dat)
+  # X_mat <- model.matrix(~ TRTA, data = dat)
 
   # background hazard point values
   h_bg <- numeric(0)
 
   list(
-    N = nrow(tx_dat),
-    n = array(table(tx_dat$TRTA)),
-    t = tx_dat[[1]][, "time"],
-    d = tx_dat[[1]][, "status"],
+    N = nrow(dat),              # total size
+    n = array(table(dat$TRTA)), # group size by treatment
+    t = dat[[1]][, "time"],
+    d = dat[[1]][, "status"],   # censoring indicator
     H = ncol(X_mat),
     X = X_mat,
     h_bg = h_bg)

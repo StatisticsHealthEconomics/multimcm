@@ -9,18 +9,13 @@
 bmcm_stan <- function(input_data,
                       formula,
                       distns = "exp",
-                      iter = 2000,
-                      warmup = 1000,
-                      thin = 10,
-                      chains = 1,
                       params_groups = NA,
-                      params_cf = NA,
-                      params_tx = NA,
                       params_joint = list(NA),
                       centre_age = TRUE,
-                      cf_model = c("cf pooled", "cf separate", "cf hier"),
+                      cf_model = c("cf pooled", "cf separate", "cf hier"),  ##TODO: I think we can just remove this since it comes out of the formula
+                                                                            ##      i.e. <missing>, + event_idx, (1 | event_idx)
                       joint_model = TRUE,
-                      bg_model = 1,
+                      bg_model = c("bg_distn", "bg_fixed"),
                       bg_hr = 1,
                       t_max = 60,
                       ...) {
@@ -28,11 +23,16 @@ bmcm_stan <- function(input_data,
   setwd(here::here("inst/stan"))
   on.exit(setwd(rtn_wd))
 
-
   ####################
   # pre-processing
 
+  distns <- tolower(distns)
+
   cf_model <- match.arg(cf_model)
+  cf_model_idx <- which(cf_model == c("cf pooled", "cf separate", "cf hier"))
+
+  bg_model <- match.arg(bg_model)
+  bg_model_idx <- which(bg_model == c("bg_distn", "bg_fixed"))
 
   formula_dat <- parse_formula(formula, input_data)
 
@@ -49,8 +49,12 @@ bmcm_stan <- function(input_data,
     as.factor(formula_dat$mf[[formula_dat$group_var]])
 
 
-  ####################
+  ###############################
   # construct data
+  # priors and hyper-parameters
+
+  params_tx <- set_params_tx(cf_idx)
+  params_cf <- set_params_cf(cf_idx, distns)  ##TODO: can't pass distns
 
   data <- list()
 
@@ -60,7 +64,7 @@ bmcm_stan <- function(input_data,
       c(prep_distn_params(distns[i], params_groups[i]),
         prep_stan_data(formula_dat,
                        event_type = i,
-                       centre_age,  # generalise to other covariates
+                       centre_age,     # generalize to other covariates
                        bg_model,
                        bg_hr))
 
@@ -69,7 +73,8 @@ bmcm_stan <- function(input_data,
 
   data_list <-
     c(data,
-      prep_shared_params(params_cf,
+      prep_shared_params(c(params_cf,
+                           params_tx),
                          params_joint,
                          bg_model,
                          t_max),
@@ -79,14 +84,10 @@ bmcm_stan <- function(input_data,
       bg_model = bg_model)
 
 
-  ###############################
-  # priors and hyperparameters
-
-
-  browser()
-
   ##############
   # fit model
+
+  browser()
 
   stancode <-
     create_stancode(distns, cf_model, joint_model)

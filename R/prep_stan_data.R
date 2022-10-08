@@ -40,6 +40,7 @@ prep_stan_data <- function(formula_dat,
   # drop treatment names
   fe_vars <- formula_dat$fe_vars[formula_dat$fe_vars != "TRTA"]
 
+  # design matrix
   X_mat <-
     as.data.frame(
       cbind(intercept = rep(1, nrow(dat)),

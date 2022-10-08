@@ -45,8 +45,11 @@ save_res <- TRUE
 
 model_names <- c("exp", "weibull", "gompertz", "loglogistic", "lognormal")
 
-cf_model_names <- c("cf pooled", "cf separate", "cf hier")
-cf_idx <- 3
+# latent_formula = "Surv(time=month, event=status) ~ 1 + age_event",
+# cure_formula = "~ TRTA + event_idx",                                     # separate
+#
+# latent_formula = "Surv(time=month, event=status) ~ 1 + age_event + event_idx",
+# cure_formula = "~ TRTA",                                                 # pooled
 
 bg_model_names <- c("bg_distn", "bg_fixed")
 bg_model_idx <- 2
@@ -92,9 +95,9 @@ long_input_data <-
 out <-
   bmcm_stan(
     input_data = long_input_data,
-    formula = "Surv(time=month, event=status) ~ 1 + (1|event_idx) + TRTA + age_event",
+    formula = "Surv(time=month, event=status) ~ 1 + age_event",  # hierarchical
+    cureformula = "~ TRTA + (1 | event_idx)",
     distns = "exp",
-    cf_model = "cf hier",
     joint_model = FALSE,
     bg_model = "bg_fixed",
     bg_hr = bg_hr,

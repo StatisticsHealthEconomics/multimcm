@@ -8,12 +8,11 @@
 #'
 bmcm_stan <- function(input_data,
                       formula,
+                      cureformula = ~ 1,
                       distns = "exp",
                       params_groups = NA,
                       params_joint = list(NA),
                       centre_age = TRUE,
-                      cf_model = c("cf pooled", "cf separate", "cf hier"),  ##TODO: I think we can just remove this since it comes out of the formula
-                                                                            ##      i.e. <missing>, + event_idx, (1 | event_idx)
                       joint_model = TRUE,
                       bg_model = c("bg_distn", "bg_fixed"),
                       bg_hr = 1,

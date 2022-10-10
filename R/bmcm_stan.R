@@ -106,7 +106,7 @@ bmcm_stan <- function(input_data,
 
   browser()
 
-  model_code <-
+  stan_inputs$model_code <-
     create_stancode(distns, cf_model, joint_model)
 
   res <-

@@ -17,7 +17,7 @@ prep_distn_params <- function(model,
   if (!any(is.na(params))) return(params)
 
   switch(model,
-         exp =
+         exponential =
            list(mu_0 = c(-3, 0),
                 sigma_0 = c(0.5, 0.01)),
          loglogistic =

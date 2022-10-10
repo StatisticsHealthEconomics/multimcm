@@ -9,18 +9,23 @@
 bmcm_stan <- function(input_data,
                       formula,
                       cureformula = ~ 1,
-                      distns = "exp",
-                      params_groups = NA,
-                      params_joint = list(NA),
-                      centre_age = TRUE,
-                      joint_model = TRUE,
+                      distns = "exponential",
+                      prior = default_prior_latent(distns),
+                      prior_cure =  default_prior_cure(),
+                      centre_coefs = TRUE,
                       bg_model = c("bg_distn", "bg_fixed"),
                       bg_hr = 1,
                       t_max = 60,
                       ...) {
+  call <- match.call()
+
   rtn_wd <- getwd()
   setwd(here::here("inst/stan"))
   on.exit(setwd(rtn_wd))
+
+  dots <- list(...)
+
+  # validate_distns()
 
   ####################
   # pre-processing
@@ -33,7 +38,8 @@ bmcm_stan <- function(input_data,
   bg_model <- match.arg(bg_model)
   bg_model_idx <- which(bg_model == c("bg_distn", "bg_fixed"))
 
-  formula_dat <- parse_formula(formula, input_data)
+  formula_latent <- parse_formula(formula, input_data)
+  formula_cure <- parse_formula(cureformula, input_data)
 
   n_groups <- length(unique(formula_dat$mf[[formula_dat$group_var]]))
 
@@ -47,12 +53,19 @@ bmcm_stan <- function(input_data,
   formula_dat$mf[[formula_dat$group_var]] <-
     as.factor(formula_dat$mf[[formula_dat$group_var]])
 
+  # nvars?
+
+  if (formula_cure$type == "pooled") cf_idx <- 1L
+  else if (formula_cure$type == "separate") cf_idx <- 2L
+  else if (formula_cure$type == "hierarchical") cf_idx <- 3L
 
   ###############################
   # construct data
   # priors and hyper-parameters
 
-  params_tx <- set_params_tx(cf_idx)
+  # handle_priors()
+
+  params_tx <- set_params_tx(cf_idx, nTx)
   params_cf <- set_params_cf(cf_idx, distns)  ##TODO: can't pass distns
 
   data <- list()
@@ -70,17 +83,22 @@ bmcm_stan <- function(input_data,
     names(data[[i]]) <- paste(names(data[[i]]), i, sep = "_")
   }
 
-  data_list <-
+  stan_inputs$data <-
     c(data,
-      prep_shared_params(c(params_cf,
-                           params_tx),
+      prep_shared_params(c(params_cf, params_tx),
                          params_joint,
-                         bg_model,
-                         t_max),
+                         bg_model, t_max),
       prep_tx_params(input_data),
       cf_model = cf_model,
       joint_model = joint_model,
       bg_model = bg_model)
+
+  stan_inputs$warmup <- warmup
+  stan_inputs$iter <- iter
+  stan_inputs$thin <- thin
+  stan_inputs$control <- list(adapt_delta = 0.99,
+                              max_treedepth = 20)
+  stan_inputs$chains <- chains
 
 
   ##############
@@ -88,20 +106,12 @@ bmcm_stan <- function(input_data,
 
   browser()
 
-  stancode <-
+  model_code <-
     create_stancode(distns, cf_model, joint_model)
 
   res <-
-    rstan::stan(
-      # model_name = ,
-      model_code = stancode,
-      data = data_list,
-      warmup = warmup,
-      iter = iter,
-      thin = thin,
-      control = list(adapt_delta = 0.99,
-                     max_treedepth = 20),
-      chains = chains, ...)
+    do.call(rstan::stan, stan_inputs)
+
 
   return(res)
 }

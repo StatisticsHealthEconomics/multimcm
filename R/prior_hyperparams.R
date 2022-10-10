@@ -11,6 +11,7 @@ set_params_cf <- function(cf_idx, dist) {
            list(mu_sd_cf = c(0, 0, 0),
                 sigma_sd_cf = c(2.5, 2.5, 2.5)))
 
+  ##TODO: refactor
   params_cf <-
     if (is.null(params_cf_lup[[cf_idx]][[model_pfs]])) {
       params_cf_lup[[cf_idx]]
@@ -23,22 +24,20 @@ set_params_cf <- function(cf_idx, dist) {
 
 
 #'
-set_params_tx <- function(cf_idx) {
+set_params_tx <- function(cf_idx, nTx) {
 
-  # same for all tx
-  mu_alpha <- c(-0.6, -0.6, -0.6)
-  sigma_alpha <- c(0.8, 0.8, 0.8)
+  # same for all treatments
+  mu_alpha <- rep(-0.6, nTx)
+  sigma_alpha <- rep(0.8, nTx)
 
   params_tx <-
-    if (cf_idx == 1) {
+    if (cf_idx == 1) {         # pooled
       list(mu_alpha = mu_alpha,
            sigma_alpha = sigma_alpha)
-    } else if (cf_idx == 2) {
-      list(mu_alpha_os = mu_alpha,
-           sigma_alpha_os = sigma_alpha,
-           mu_alpha_pfs = mu_alpha,
-           sigma_alpha_pfs = sigma_alpha)
-    } else if (cf_idx == 3) {
+    } else if (cf_idx == 2) {  # separate
+      list(mu_alpha = matrix(rep(mu_alpha,2), ncol = nTx, byrow = TRUE),
+           sigma_alpha = matrix(rep(sigma_alpha,2), ncol = nTx, byrow = TRUE))
+    } else if (cf_idx == 3) {  # hierarchical
       list(mu_alpha = mu_alpha,
            sigma_alpha = sigma_alpha)
     } else {

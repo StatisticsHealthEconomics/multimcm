@@ -13,6 +13,7 @@ library(glue)
 library(ggplot2)
 library(abind)
 library(survival)
+# library(rstanarm)
 
 # devtools::load_all()
 
@@ -43,7 +44,7 @@ TRTX <- NA  # all treatments
 
 save_res <- TRUE
 
-model_names <- c("exp", "weibull", "gompertz", "loglogistic", "lognormal")
+model_names <- c("exponential", "weibull", "gompertz", "loglogistic", "lognormal")
 
 # latent_formula = "Surv(time=month, event=status) ~ 1 + age_event",
 # cure_formula = "~ TRTA + event_idx",                                     # separate
@@ -97,7 +98,7 @@ out <-
     input_data = long_input_data,
     formula = "Surv(time=month, event=status) ~ 1 + age_event",  # hierarchical
     cureformula = "~ TRTA + (1 | event_idx)",
-    distns = "exp",
+    distns = "exponential",
     joint_model = FALSE,
     bg_model = "bg_fixed",
     bg_hr = bg_hr,

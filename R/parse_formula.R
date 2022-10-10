@@ -3,7 +3,7 @@
 #' @importFrom lme4 nobars findbars
 #' @importFrom rstan nlist
 #'
-parse_formula <- function(formula, data) {
+parse_formula <- function(formula, data, family = NA) {
 
   # if (!inherits(formula, "formula")) {
   #   stop("'formula' must be a formula.")
@@ -14,6 +14,8 @@ parse_formula <- function(formula, data) {
   # all variables of entire formula
   allvars <- all.vars(formula)
   allvars_form <- reformulate(allvars)
+
+  nvars <- length(allvars)
 
   # LHS of entire formula
   lhs       <- lhs(formula)         # LHS as expression
@@ -34,22 +36,26 @@ parse_formula <- function(formula, data) {
 
   # names of variable without event type
   fe_vars <- attr(terms(fe_form), "term.labels")
+  fe_nvars <- length(fe_vars)
 
-  n_groups <- length(unique(mf[[group_var]]))
+  n_groups <- length(unique(mf[, re_parts$group_var]))
 
-  mf[[group_var]] <- as.factor(mf[[group_var]])
+  mf[, re_parts$group_var] <- as.factor(mf[, re_parts$group_var])
 
   c(nlist(
     formula,
     mf,
+    family,
     allvars,
     allvars_form,
+    nvars,
     lhs,
     lhs_form,
     rhs,
     rhs_form,
     fe_form,
     fe_vars,
+    fe_nvars,
     n_groups,
     bars),
     re_parts)
@@ -114,8 +120,10 @@ reformulate_rhs <- function(x) {
 split_at_bars <- function(x) {
 
   terms <- strsplit(deparse(x, 500), "\\s\\|\\s")[[1L]]
+
   if (!length(terms) == 2L)
-    stop("Could not parse the random effects formula.")
+    return(NULL)
+
   re_form <- formula(paste("~", terms[[1L]]))
   group_var <- terms[[2L]]
   nlist(re_form, group_var)

@@ -23,11 +23,11 @@ source("R/default_prior_cure.R")
 source("R/default_prior_latent.R")
 source("R/prep_shared_params.R")
 source("R/prep_stan_data.R")
-source("R/prep_tx_params.R")
 source("R/bmcm_stan.R")
 source("R/create_stancode.R")
 source("R/create_block_code.R")
 source("R/parse_formula.R")
+source("R/validate_distns.R")
 
 
 # rstan_options(auto_write = TRUE)
@@ -40,19 +40,12 @@ data("surv_input_data")
 # model set-up
 
 save_res <- TRUE
-
-model_names <- c("exponential", "weibull", "gompertz", "loglogistic", "lognormal")
+TRTX <- NA
 
 # latent_formula = "Surv(time=month, event=status) ~ 1 + age_event",
-# cure_formula = "~ TRTA + event_idx",                                     # separate
 #
-# latent_formula = "Surv(time=month, event=status) ~ 1 + age_event + event_idx",
+# cure_formula = "~ TRTA + event_idx",                                     # separate
 # cure_formula = "~ TRTA",                                                 # pooled
-
-bg_model_names <- c("bg_distn", "bg_fixed")
-
-# background hazard ratio
-bg_hr <- 1
 
 
 ##############
@@ -93,12 +86,12 @@ out <-
     input_data = long_input_data,
     formula = "Surv(time=month, event=status) ~ 1 + age_event",
     cureformula = "~ TRTA + (1 | event_idx)",    # hierarchical
-    distns = "exponential",
+    family_latent = "exponential",
     prior_latent = NA,
     prior_cure = NA,
     centre_coefs = TRUE,
     bg_model = "bg_fixed",
-    bg_hr = bg_hr,
+    bg_hr = 1,
     t_max = 60,
     chains = 1,
     warmup = 100,

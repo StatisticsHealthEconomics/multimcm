@@ -1,20 +1,18 @@
 
-#' Prep Stan parameters
+#' default_prior_latent
 #'
 #' Default parameters for priors if not supplied.
 #'
-#' @param model exponential, loglogistic, weibull, gompertz, lognormal. gengamma
-#' @param params user-supplied hyperparameters
 #' @return hyper-parameters
 #' @name prep_stan_params
 NULL
 
 
 #' @rdname prep_stan_params
-default_prior_latent <- function(model,
-                                 params = NA) {
+default_prior_latent <- function(formula_latent) {
 
-  if (!any(is.na(params))) return(params)
+  model <- formula_latent$family
+  n_group <- formula_latent$n_group
 
   switch(model,
          exponential =
@@ -48,7 +46,6 @@ default_prior_latent <- function(model,
                 mu_0 = c(-3, 0),
                 sigma_0 = c(0.5, 0.01)),
          stop("distribution not found."))
-
 
   # same parameters for each cluster
   for (i in seq_len(n_groups)) {

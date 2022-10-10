@@ -9,7 +9,8 @@
 bmcm_stan <- function(input_data,
                       formula,
                       cureformula = ~ 1,
-                      distns = "exponential",
+                      family_latent = "exponential",
+                      # family_cure = "logit",
                       prior_latent = NA,
                       prior_cure = NA,
                       centre_coefs = TRUE,
@@ -25,13 +26,13 @@ bmcm_stan <- function(input_data,
 
   dots <- list(...)
 
-  # validate_distns()
-
   ####################
   # pre-processing
 
-  distns <- tolower(distns)
+  family_latent <- tolower(family_latent)
   bg_model <- tolower(bg_model)
+
+  distns <- validate_distns(family_latent)
 
   bg_model <- match.arg(bg_model)
   bg_model_idx <- which(bg_model == c("bg_distn", "bg_fixed"))
@@ -39,24 +40,20 @@ bmcm_stan <- function(input_data,
   formula_latent <- parse_formula(formula, input_data)
   formula_cure <- parse_formula(cureformula, input_data)
 
-  # all groups the same distribution
-  if (length(distns) == 1) distns <- rep(distns, n_groups)
-
-  # all groups the same parameters
-  if (length(params_groups) == 1)
-    params_groups <- rep(params_groups, n_groups)
-
-  if (formula_cure$type == "pooled") formula_cure$cf_idx <- 1L
-  else if (formula_cure$type == "separate") formula_cure$cf_idx <- 2L
-  else if (formula_cure$type == "hierarchical") formula_cure$cf_idx <- 3L
-
-  if (is.na(prior_cure)) prior_cure <- default_prior_cure(formula_cure)
-
-  if (is.na(prior_latent)) prior_latent <- default_prior_latent(distns, formula_latent)
+  if (formula_cure$fe_nvars == 2) formula_cure$cf_idx <- 2L        # separate
+  else if (formula_cure$nvars == 1) formula_cure$cf_idx <- 1L      # pooled
+  else if (!is.null(formula_cure$bars)) formula_cure$cf_idx <- 3L  # hierarchical
 
   ###############################
   # construct data
   # priors and hyper-parameters
+
+  if (is.na(prior_cure)) prior_cure <- default_prior_cure(formula_cure)
+
+  browser()
+
+  if (is.na(prior_latent))
+    prior_latent <- default_prior_latent(formula_latent)
 
   tx_names <- unique(input_data$TRTA)
   n_tx <- length(tx_names)
@@ -71,7 +68,7 @@ bmcm_stan <- function(input_data,
     data[[i]] <-
       prep_stan_data(formula_dat,
                      event_type = i,
-                     centre_coefs,     # generalize to other covariates
+                     centre_coefs,     ##TODO: generalize to other covariates
                      bg_model,
                      bg_hr)
 
@@ -81,32 +78,27 @@ bmcm_stan <- function(input_data,
   stan_inputs$data <-
     c(data,
       prior_latent,
-      prep_shared_params(prior_cure,
-                         params_joint,
-                         bg_model, t_max),
+      prior_cure,
       tx_params,
       cf_model = cf_model,
-      joint_model = joint_model,
-      bg_model = bg_model)
+      bg_model = bg_model,)
 
   # sampler parameters
-  stan_inputs$warmup <- warmup
-  stan_inputs$iter <- iter
-  stan_inputs$thin <- thin
+  stan_inputs$warmup  <- warmup
+  stan_inputs$iter    <- iter
+  stan_inputs$thin    <- thin
+  stan_inputs$chains  <- chains
   stan_inputs$control <- list(adapt_delta = 0.99,
                               max_treedepth = 20)
-  stan_inputs$chains <- chains
 
+  stan_inputs$tmax  <- tmax
 
   ##############
   # fit model
 
-  browser()
+  stan_inputs$model_code <- create_stancode(distns, cf_model)
 
-  stan_inputs$model_code <-
-    create_stancode(distns, cf_model, joint_model)
-
-  res <- do.call(rstan::stan, stan_inputs)
+  res <- do.call(rstan::stan, c(stan_inputs, dots))
 
   return(res)
 }

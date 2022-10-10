@@ -61,10 +61,10 @@ bmcm_stan <- function(input_data,
 
   stan_data <- list()
 
-  for (i in seq_len(n_groups)) {
+  for (i in seq_len(formula_cure$n_groups)) {
 
     stan_data[[i]] <-
-      prep_stan_data(formula_dat,
+      prep_stan_data(formula_cure, formula_latent,
                      event_type = i,
                      centre_coefs,     ##TODO: generalize to other covariates
                      bg_model, 

@@ -75,13 +75,15 @@ bmcm_stan <- function(input_data,
     names(data[[i]]) <- paste(names(data[[i]]), i, sep = "_")
   }
 
+  stan_inputs <- list()
+  
   stan_inputs$data <-
     c(data,
       prior_latent,
       prior_cure,
       tx_params,
-      cf_model = cf_model,
-      bg_model = bg_model,)
+      bg_model = bg_model,
+      tmax = tmax)
 
   # sampler parameters
   stan_inputs$warmup  <- warmup
@@ -91,12 +93,10 @@ bmcm_stan <- function(input_data,
   stan_inputs$control <- list(adapt_delta = 0.99,
                               max_treedepth = 20)
 
-  stan_inputs$tmax  <- tmax
-
   ##############
   # fit model
 
-  stan_inputs$model_code <- create_stancode(distns, cf_model)
+  stan_inputs$model_code <- create_stancode(distns)
 
   res <- do.call(rstan::stan, c(stan_inputs, dots))
 

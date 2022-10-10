@@ -3,7 +3,7 @@
 #'
 #' Default parameters for priors if not supplied.
 #'
-#' @param model exp, loglogistic, weibull, gompertz, lognormal. gengamma
+#' @param model exponential, loglogistic, weibull, gompertz, lognormal. gengamma
 #' @param params user-supplied hyperparameters
 #' @return hyper-parameters
 #' @name prep_stan_params
@@ -11,8 +11,8 @@ NULL
 
 
 #' @rdname prep_stan_params
-prep_distn_params <- function(model,
-                              params = NA) {
+default_prior_latent <- function(model,
+                                 params = NA) {
 
   if (!any(is.na(params))) return(params)
 
@@ -48,6 +48,14 @@ prep_distn_params <- function(model,
                 mu_0 = c(-3, 0),
                 sigma_0 = c(0.5, 0.01)),
          stop("distribution not found."))
+
+
+  # same parameters for each cluster
+  for (i in seq_len(n_groups)) {
+    res[[i]] <- model
+  }
+
+  res
 }
 
 

@@ -10,8 +10,8 @@ bmcm_stan <- function(input_data,
                       formula,
                       cureformula = ~ 1,
                       distns = "exponential",
-                      prior = default_prior_latent(distns),
-                      prior_cure =  default_prior_cure(),
+                      prior_latent = NA,
+                      prior_cure = NA,
                       centre_coefs = TRUE,
                       bg_model = c("bg_distn", "bg_fixed"),
                       bg_hr = 1,
@@ -31,17 +31,13 @@ bmcm_stan <- function(input_data,
   # pre-processing
 
   distns <- tolower(distns)
-
-  cf_model <- match.arg(cf_model)
-  cf_model_idx <- which(cf_model == c("cf pooled", "cf separate", "cf hier"))
+  bg_model <- tolower(bg_model)
 
   bg_model <- match.arg(bg_model)
   bg_model_idx <- which(bg_model == c("bg_distn", "bg_fixed"))
 
   formula_latent <- parse_formula(formula, input_data)
   formula_cure <- parse_formula(cureformula, input_data)
-
-  n_groups <- length(unique(formula_dat$mf[[formula_dat$group_var]]))
 
   # all groups the same distribution
   if (length(distns) == 1) distns <- rep(distns, n_groups)
@@ -50,49 +46,50 @@ bmcm_stan <- function(input_data,
   if (length(params_groups) == 1)
     params_groups <- rep(params_groups, n_groups)
 
-  formula_dat$mf[[formula_dat$group_var]] <-
-    as.factor(formula_dat$mf[[formula_dat$group_var]])
+  if (formula_cure$type == "pooled") formula_cure$cf_idx <- 1L
+  else if (formula_cure$type == "separate") formula_cure$cf_idx <- 2L
+  else if (formula_cure$type == "hierarchical") formula_cure$cf_idx <- 3L
 
-  # nvars?
+  if (is.na(prior_cure)) prior_cure <- default_prior_cure(formula_cure)
 
-  if (formula_cure$type == "pooled") cf_idx <- 1L
-  else if (formula_cure$type == "separate") cf_idx <- 2L
-  else if (formula_cure$type == "hierarchical") cf_idx <- 3L
+  if (is.na(prior_latent)) prior_latent <- default_prior_latent(distns, formula_latent)
 
   ###############################
   # construct data
   # priors and hyper-parameters
 
-  # handle_priors()
-
-  params_tx <- set_params_tx(cf_idx, nTx)
-  params_cf <- set_params_cf(cf_idx, distns)  ##TODO: can't pass distns
+  tx_names <- unique(input_data$TRTA)
+  n_tx <- length(tx_names)
+  tx_names <- factor(tx_names, levels = tx_names)
+  Tx_dmat <- diag(n_tx)
+  tx_params <- c(Tx_dmat = list(Tx_dmat), nTx = n_tx)
 
   data <- list()
 
   for (i in seq_len(n_groups)) {
 
     data[[i]] <-
-      c(prep_distn_params(distns[i], params_groups[i]),
-        prep_stan_data(formula_dat,
-                       event_type = i,
-                       centre_age,     # generalize to other covariates
-                       bg_model,
-                       bg_hr))
+      prep_stan_data(formula_dat,
+                     event_type = i,
+                     centre_coefs,     # generalize to other covariates
+                     bg_model,
+                     bg_hr)
 
     names(data[[i]]) <- paste(names(data[[i]]), i, sep = "_")
   }
 
   stan_inputs$data <-
     c(data,
-      prep_shared_params(c(params_cf, params_tx),
+      prior_latent,
+      prep_shared_params(prior_cure,
                          params_joint,
                          bg_model, t_max),
-      prep_tx_params(input_data),
+      tx_params,
       cf_model = cf_model,
       joint_model = joint_model,
       bg_model = bg_model)
 
+  # sampler parameters
   stan_inputs$warmup <- warmup
   stan_inputs$iter <- iter
   stan_inputs$thin <- thin
@@ -109,9 +106,7 @@ bmcm_stan <- function(input_data,
   stan_inputs$model_code <-
     create_stancode(distns, cf_model, joint_model)
 
-  res <-
-    do.call(rstan::stan, stan_inputs)
-
+  res <- do.call(rstan::stan, stan_inputs)
 
   return(res)
 }

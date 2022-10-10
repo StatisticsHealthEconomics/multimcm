@@ -1,5 +1,5 @@
 
-#' prep_shared_paramsTx
+#' prep shared parameters
 #'
 #' Model parameters not specific to OS or PFS:
 #' cure fraction, background and generated.
@@ -28,11 +28,9 @@ prep_shared_params <- function(cf_params = NA,
     list(a_cf = numeric(0),
          b_cf = numeric(0),
          mu_alpha = numeric(0),
-         mu_alpha_os = numeric(0),
-         mu_alpha_pfs = numeric(0),
+         mu_alpha_grp = numeric(0),
          sigma_alpha = numeric(0),
-         sigma_alpha_os = numeric(0),
-         sigma_alpha_pfs = numeric(0),
+         sigma_alpha_grp = numeric(0),
          mu_sd_cf = numeric(0),
          sigma_sd_cf = numeric(0))
 

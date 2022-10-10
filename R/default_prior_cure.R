@@ -1,5 +1,16 @@
-# prior hyper-parameters
 
+#' assume logistic
+#'
+default_prior_cure <- function(formula_cure) {
+
+  params_tx <- set_params_tx(formula_cure)
+  params_cf <- set_params_cf(formula_cure)
+
+  c(params_cf, params_tx)
+}
+
+
+## prior hyper-parameters
 
 #'
 set_params_cf <- function(cf_idx, dist) {
@@ -46,4 +57,3 @@ set_params_tx <- function(cf_idx, nTx) {
 
   params_tx
 }
-

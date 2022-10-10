@@ -35,6 +35,10 @@ parse_formula <- function(formula, data) {
   # names of variable without event type
   fe_vars <- attr(terms(fe_form), "term.labels")
 
+  n_groups <- length(unique(mf[[group_var]]))
+
+  mf[[group_var]] <- as.factor(mf[[group_var]])
+
   c(nlist(
     formula,
     mf,
@@ -46,6 +50,7 @@ parse_formula <- function(formula, data) {
     rhs_form,
     fe_form,
     fe_vars,
+    n_groups,
     bars),
     re_parts)
 }

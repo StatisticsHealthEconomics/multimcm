@@ -19,7 +19,8 @@ library(survival)
 
 ## reading these in for now since building the package
 ## takes time to compile the Stan code
-source("R/prep_stan_params.R")
+source("R/default_prior_cure.R")
+source("R/default_prior_latent.R")
 source("R/prep_shared_params.R")
 source("R/prep_stan_data.R")
 source("R/prep_tx_params.R")
@@ -38,10 +39,6 @@ data("surv_input_data")
 #################
 # model set-up
 
-## how many treatments?
-TRTX <- NA  # all treatments
-# TRTX <- "IPILIMUMAB"  # single treatment only
-
 save_res <- TRUE
 
 model_names <- c("exponential", "weibull", "gompertz", "loglogistic", "lognormal")
@@ -53,7 +50,6 @@ model_names <- c("exponential", "weibull", "gompertz", "loglogistic", "lognormal
 # cure_formula = "~ TRTA",                                                 # pooled
 
 bg_model_names <- c("bg_distn", "bg_fixed")
-bg_model_idx <- 2
 
 # background hazard ratio
 bg_hr <- 1
@@ -61,10 +57,6 @@ bg_hr <- 1
 
 ##############
 # prep data
-
-##TODO: do we need rates?
-# mutate(rate = ifelse(rate == 0, 0.00001, rate)) # replace so >0
-
 
 # rearrange data in to long format so can have
 # arbitrary number of end types (not just os, pfs)
@@ -89,6 +81,9 @@ long_input_data <-
   filter(if (!is.na(TRTX)) TRTA == TRTX else TRTA != "") |>
   mutate(event_idx = ifelse(event_name == "os", 1, 2))
 
+##TODO: do we need rates?
+# mutate(rate = ifelse(rate == 0, 0.00001, rate)) # replace so >0
+
 
 ##############
 # run model
@@ -96,10 +91,12 @@ long_input_data <-
 out <-
   bmcm_stan(
     input_data = long_input_data,
-    formula = "Surv(time=month, event=status) ~ 1 + age_event",  # hierarchical
-    cureformula = "~ TRTA + (1 | event_idx)",
+    formula = "Surv(time=month, event=status) ~ 1 + age_event",
+    cureformula = "~ TRTA + (1 | event_idx)",    # hierarchical
     distns = "exponential",
-    joint_model = FALSE,
+    prior_latent = NA,
+    prior_cure = NA,
+    centre_coefs = TRUE,
     bg_model = "bg_fixed",
     bg_hr = bg_hr,
     t_max = 60,

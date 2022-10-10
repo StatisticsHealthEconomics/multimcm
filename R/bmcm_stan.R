@@ -48,12 +48,10 @@ bmcm_stan <- function(input_data,
   # construct data
   # priors and hyper-parameters
 
-  if (is.na(prior_cure)) prior_cure <- default_prior_cure(formula_cure)
-
   browser()
-
-  if (is.na(prior_latent))
-    prior_latent <- default_prior_latent(formula_latent)
+  
+  if (is.na(prior_cure)) prior_cure <- default_prior_cure(formula_cure)
+  if (is.na(prior_latent)) prior_latent <- default_prior_latent(formula_latent)
 
   tx_names <- unique(input_data$TRTA)
   n_tx <- length(tx_names)
@@ -61,24 +59,24 @@ bmcm_stan <- function(input_data,
   Tx_dmat <- diag(n_tx)
   tx_params <- c(Tx_dmat = list(Tx_dmat), nTx = n_tx)
 
-  data <- list()
+  stan_data <- list()
 
   for (i in seq_len(n_groups)) {
 
-    data[[i]] <-
+    stan_data[[i]] <-
       prep_stan_data(formula_dat,
                      event_type = i,
                      centre_coefs,     ##TODO: generalize to other covariates
-                     bg_model,
+                     bg_model, 
                      bg_hr)
 
-    names(data[[i]]) <- paste(names(data[[i]]), i, sep = "_")
+    names(stan_data[[i]]) <- paste(names(stan_data[[i]]), i, sep = "_")
   }
 
   stan_inputs <- list()
   
   stan_inputs$data <-
-    c(data,
+    c(stan_data,
       prior_latent,
       prior_cure,
       tx_params,
@@ -98,8 +96,12 @@ bmcm_stan <- function(input_data,
 
   stan_inputs$model_code <- create_stancode(distns)
 
-  res <- do.call(rstan::stan, c(stan_inputs, dots))
-
+  res <- list()
+  
+  res$stan_output <- do.call(rstan::stan, c(stan_inputs, dots))
+  res$call <- call
+  class(res) <- "bmcm"
+  
   return(res)
 }
 

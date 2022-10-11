@@ -48,9 +48,9 @@ default_prior_cure <- function(formula_cure,
   # latent submodel on coefficients
   params_beta <-
     list(mu_0 = matrix(rep(0, nvars*n_groups),
-                       row = n_groups),
+                       nrow = n_groups),
          sigma_0 = matrix(rep(1, nvars*n_groups),
-                          row = n_groups))
+                          nrow = n_groups))
 
   c(params_cf,
     params_bg,

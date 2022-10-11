@@ -21,7 +21,6 @@ library(survival)
 ## takes time to compile the Stan code
 source("R/default_prior_cure.R")
 source("R/default_prior_latent.R")
-source("R/prep_shared_params.R")
 source("R/prep_stan_data.R")
 source("R/bmcm_stan.R")
 source("R/create_stancode.R")
@@ -92,11 +91,7 @@ out <-
     centre_coefs = TRUE,
     bg_model = "bg_fixed",
     bg_hr = 1,
-    t_max = 60,
-    chains = 1,
-    warmup = 100,
-    iter = 500,
-    thin = 1)
+    t_max = 60)
 
 # if (save_res) {saveRDS(out, file)}
 

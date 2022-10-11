@@ -15,13 +15,14 @@
 #'
 create_stancode <- function(models) {
 
-  # validate_data()
-  # validate_vars()
+  browser()
 
   stancode <- create_code_skeleton()
 
+  latent_model_code <- list()
+
   for (i in seq_along(models)) {
-    latent_model_code <- create_latent_model_code(models[i])
+    latent_model_code[[i]] <- create_latent_model_code(models[i], i)
   }
 
   cf_code <- create_cf_code(cf_model)

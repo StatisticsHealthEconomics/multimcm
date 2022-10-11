@@ -3,9 +3,10 @@
 #'
 #' Data specific to end type for Stan input.
 #'
-#' @param formula_dat
+#' @param formula_cure
+#' @param formula_latent
 #' @param event_type cluster/group
-#' @param centre_vars Logical
+#' @param centre_coefs Logical
 #' @param bg_model Background model.
 #'    1: Exponential distribution; 2: fixed point values from life-table
 #' @param bg_hr background all-cause mortality hazard ratio
@@ -19,26 +20,29 @@
 #' @import dplyr
 #' @export
 #'
-prep_stan_data <- function(formula_dat,
+prep_stan_data <- function(formula_cure,
+                           formula_latent,
                            event_type,
-                           centre_vars = FALSE,
+                           centre_ceofs = FALSE,
                            bg_model = 1,
                            bg_hr = 1) {
   # one group only
   dat <-
-    formula_dat$mf |>
-    filter(!!sym(formula_dat$group_var) == event_type)
+    ##TODO: merge so don't repeat covariates in both
+    ##      are they in the same order? use ids
+    cbind(formula_latent$mf, formula_cure$mf) |>
+    filter(!!sym(formula_cure$group_var) == event_type)
 
   # centre variables
   dat <-
-    if (centre_vars) {
+    if (centre_ceofs) {
       dat |> mutate(
         across(where(~ is.numeric(.x) & !is.Surv(.x)),
                ~ round(.x - mean(.x))))
     }
 
   # drop treatment names
-  fe_vars <- formula_dat$fe_vars[formula_dat$fe_vars != "TRTA"]
+  fe_vars <- formula_latent$fe_vars
 
   # design matrix
   X_mat <-

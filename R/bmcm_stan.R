@@ -5,6 +5,7 @@
 #' generate Stan code
 #' @import rstanarm
 #' @importFrom lme4 mkReTrms
+#' @export
 #'
 bmcm_stan <- function(input_data,
                       formula,
@@ -37,21 +38,22 @@ bmcm_stan <- function(input_data,
   bg_model <- match.arg(bg_model)
   bg_model_idx <- which(bg_model == c("bg_distn", "bg_fixed"))
 
-  formula_latent <- parse_formula(formula, input_data)
+  formula_latent <- parse_formula(formula, input_data, family = family_latent)
   formula_cure <- parse_formula(cureformula, input_data)
 
   if (formula_cure$fe_nvars == 2) formula_cure$cf_idx <- 2L        # separate
   else if (formula_cure$nvars == 1) formula_cure$cf_idx <- 1L      # pooled
   else if (!is.null(formula_cure$bars)) formula_cure$cf_idx <- 3L  # hierarchical
 
+  if (length(distns) == 1) distns <- rep(distns, formula_cure$n_group)
+
   ###############################
   # construct data
   # priors and hyper-parameters
 
-  browser()
-  
   if (is.na(prior_cure)) prior_cure <- default_prior_cure(formula_cure)
-  if (is.na(prior_latent)) prior_latent <- default_prior_latent(formula_latent)
+  if (is.na(prior_latent)) prior_latent <- default_prior_latent(formula_latent,
+                                                                formula_cure)
 
   tx_names <- unique(input_data$TRTA)
   n_tx <- length(tx_names)
@@ -66,30 +68,33 @@ bmcm_stan <- function(input_data,
     stan_data[[i]] <-
       prep_stan_data(formula_cure, formula_latent,
                      event_type = i,
-                     centre_coefs,     ##TODO: generalize to other covariates
-                     bg_model, 
-                     bg_hr)
+                     centre_coefs,
+                     bg_model, bg_hr)
 
+    # append unique id
     names(stan_data[[i]]) <- paste(names(stan_data[[i]]), i, sep = "_")
   }
 
   stan_inputs <- list()
-  
+
   stan_inputs$data <-
-    c(stan_data,
+    c(flatten(stan_data),
       prior_latent,
       prior_cure,
       tx_params,
       bg_model = bg_model,
-      tmax = tmax)
+      tmax = t_max)
 
-  # sampler parameters
-  stan_inputs$warmup  <- warmup
-  stan_inputs$iter    <- iter
-  stan_inputs$thin    <- thin
-  stan_inputs$chains  <- chains
-  stan_inputs$control <- list(adapt_delta = 0.99,
-                              max_treedepth = 20)
+  # default sampler parameters
+  dots <-
+    modifyList(
+      dots,
+      list(warmup = 100,
+           iter = 500,
+           thin = 1,
+           chains = 1,
+           control = list(adapt_delta = 0.99,
+                          max_treedepth = 20)))
 
   ##############
   # fit model
@@ -97,11 +102,11 @@ bmcm_stan <- function(input_data,
   stan_inputs$model_code <- create_stancode(distns)
 
   res <- list()
-  
+
   res$stan_output <- do.call(rstan::stan, c(stan_inputs, dots))
   res$call <- call
   class(res) <- "bmcm"
-  
+
   return(res)
 }
 

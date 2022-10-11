@@ -86,7 +86,7 @@ create_pfs_code <- function(pfs_model) {
 
 
 #
-create_os_codeTx <- function(os_model) {
+create_os_code <- function(os_model) {
 
   scode <- list()
 
@@ -167,7 +167,7 @@ create_os_codeTx <- function(os_model) {
 }
 
 #
-create_cf_codeTx <- function(cf_model) {
+create_cf_code <- function(cf_model) {
 
   scode <- list()
 
@@ -233,7 +233,7 @@ create_cf_codeTx <- function(cf_model) {
 }
 
 #
-create_code_skeletonTx <- function() {
+create_code_skeleton <- function() {
 
   scode <- list()
 
@@ -357,7 +357,7 @@ create_code_skeletonTx <- function() {
 
 #' @importFrom glue glue
 #'
-make_loglikTx <- function(os_model, pfs_model) {
+make_loglik <- function(os_model, pfs_model) {
 
   distn_params <-
     list(exp = "lambda",
@@ -426,7 +426,7 @@ tp <- function(wsp = 2) {
 }
 
 #
-common_code_event_dataTx <- function(e) {
+common_code_event_data <- function(e) {
   glue(
     " int<lower=0> N_{e};\n",
     " int<lower=0> n_{e}[nTx];\n",
@@ -439,7 +439,7 @@ common_code_event_dataTx <- function(e) {
 }
 
 #
-make_postpredTx <- function(os_model, pfs_model) {
+make_postpred <- function(os_model, pfs_model) {
 
   distn_params <-
     list(exp = "mean",
@@ -469,7 +469,7 @@ make_postpredTx <- function(os_model, pfs_model) {
 }
 
 #
-make_priorpredTx <- function(os_model, pfs_model) {
+make_priorpred <- function(os_model, pfs_model) {
 
   distn_params <-
     list(exp = "pmean",
@@ -502,7 +502,7 @@ make_priorpredTx <- function(os_model, pfs_model) {
 
 
 ##TODO: remove duplication with make_loglik()
-make_looTx <- function(os_model, pfs_model) {
+make_loo <- function(os_model, pfs_model) {
 
   distn_params <-
     list(exp = "lambda",

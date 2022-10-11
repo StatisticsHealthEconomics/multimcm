@@ -1,29 +1,23 @@
 
 #'
-create_stancode_postpred <- function(os_model = c("exponential",
+create_stancode_postpred <- function(models = c("exponential",
                                                   "weibull",
                                                   "gompertz",
                                                   "loglogistic",
-                                                  "lognormal"),
-                                     pfs_model = c("exponential",
-                                                   "weibull",
-                                                   "gompertz",
-                                                   "loglogistic",
-                                                   "lognormal")) {
-  os_model <- match.arg(os_model)
-  pfs_model <- match.arg(pfs_model)
+                                                  "lognormal")) {
+  models <- match.arg(models)
 
   scode <- list()
 
   scode$functions <- paste0(
     "functions {\n",
-    ppv_functions_block(os_model, pfs_model),
+    ppv_functions_block(models),
     "\n}\n\n"
   )
 
   scode$data <- paste0(
     "data {\n",
-    ppv_data_block(os_model, pfs_model),
+    ppv_data_block(models),
     "\n}\n\n"
   )
 
@@ -31,7 +25,7 @@ create_stancode_postpred <- function(os_model = c("exponential",
 
   scode$generated_quantities <- paste0(
     "generated quantities {\n",
-    ppv_gen_quants_block(os_model, pfs_model),
+    ppv_gen_quants_block(models),
     "\n}\n\n"
   )
 

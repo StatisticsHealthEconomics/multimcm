@@ -68,11 +68,7 @@ bmcm_stan <- function(input_data,
     stan_data[[i]] <-
       prep_stan_data(formula_cure, formula_latent,
                      event_type = i,
-                     centre_coefs,
-                     bg_model, bg_hr)
-
-    # append unique id
-    names(stan_data[[i]]) <- paste(names(stan_data[[i]]), i, sep = "_")
+                     centre_coefs)
   }
 
   stan_inputs <- list()
@@ -83,7 +79,7 @@ bmcm_stan <- function(input_data,
       prior_cure,
       tx_params,
       bg_model = bg_model,
-      tmax = t_max)
+      bg_hr = bg_hr)
 
   # default sampler parameters
   dots <-

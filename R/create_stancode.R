@@ -17,19 +17,21 @@ create_stancode <- function(models) {
 
   browser()
 
-  stancode <- create_code_skeleton()
+  n_grps <- length(models)
+
+  stancode <- create_code_skeleton(n_grps)
+  cf_code <- create_cf_code(n_grps)
 
   latent_model_code <- list()
 
   for (i in seq_along(models)) {
-    latent_model_code[[i]] <- create_latent_model_code(models[i], i)
+    latent_model_code[[i]] <- make_latent_model_code(models[i], i)
+    priorpred_code[[i]] <- make_priorpred(models[i], i)
+    postpred_code[[i]] <- make_postpred(models[i], i)
+    loo_code[[i]] <- make_loo(models[i], i)
+    loglik_code[[i]] <- make_loglik(models[i], i)
   }
 
-  cf_code <- create_cf_code(cf_model)
-  loglik_code <- make_loglik(models)
-  priorpred_code <- make_priorpred(models)
-  postpred_code <- make_postpred(models)
-  loo_code <- make_loo(models)
 
   scode <- list()
 

@@ -21,7 +21,7 @@
 prep_stan_data <- function(formula_cure,
                            formula_latent,
                            event_type,
-                           centre_ceofs = FALSE,
+                           centre_coefs = FALSE,
                            suffix = TRUE) {
   # one group only
   dat <-
@@ -32,7 +32,7 @@ prep_stan_data <- function(formula_cure,
 
   # centre variables
   dat <-
-    if (centre_ceofs) {
+    if (centre_coefs) {
       dat |> mutate(
         across(where(~ is.numeric(.x) & !is.Surv(.x)),
                ~ round(.x - mean(.x))))

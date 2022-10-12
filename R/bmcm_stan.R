@@ -61,20 +61,21 @@ bmcm_stan <- function(input_data,
   Tx_dmat <- diag(n_tx)
   tx_params <- c(Tx_dmat = list(Tx_dmat), nTx = n_tx)
 
-  stan_data <- list()
+  stan_data <- c()
 
   for (i in seq_len(formula_cure$n_groups)) {
 
-    stan_data[[i]] <-
+    stan_data <- c(
+      stan_data,
       prep_stan_data(formula_cure, formula_latent,
                      event_type = i,
-                     centre_coefs)
+                     centre_coefs))
   }
 
   stan_inputs <- list()
 
   stan_inputs$data <-
-    c(flatten(stan_data),
+    c(stan_data,
       prior_latent,
       prior_cure,
       tx_params,

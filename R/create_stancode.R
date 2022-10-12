@@ -9,29 +9,31 @@
 #' @return
 #' @export
 #' @importFrom glue glue
+#' @importFrom purrr map2
 #'
 #' @examples
 #' cat(create_stancode(c("exponential", "exponential"))
 #'
 create_stancode <- function(models) {
 
-  browser()
-
   n_grps <- length(models)
+  seq_grps <- 1:n_grps
 
   stancode <- create_code_skeleton(n_grps)
   cf_code <- create_cf_code(n_grps)
 
-  latent_model_code <- list()
+  # generate separate blocks of Stan code
+  latent_model_code <- map2(models, seq_grps, make_latent_model_code)
+  priorpred_code <- map2(models, seq_grps, make_priorpred)
+  postpred_code <- map2(models, seq_grps, make_postpred)
+  loo_code <- map2(models, seq_grps, make_loo)
+  loglik_code <- map2(models, seq_grps, make_loglik)
 
-  for (i in seq_along(models)) {
-    latent_model_code[[i]] <- make_latent_model_code(models[i], i)
-    priorpred_code[[i]] <- make_priorpred(models[i], i)
-    postpred_code[[i]] <- make_postpred(models[i], i)
-    loo_code[[i]] <- make_loo(models[i], i)
-    loglik_code[[i]] <- make_loglik(models[i], i)
-  }
-
+  latent_model_code <- rearrange_all_grp_in_a_block(latent_model_code)
+  priorpred_code <- rearrange_all_grp_in_a_block(priorpred_code)
+  postpred_code <- rearrange_all_grp_in_a_block(postpred_code)
+  loo_code <- rearrange_all_grp_in_a_block(loo_code)
+  loglik_code <- rearrange_all_grp_in_a_block(loglik_code)
 
   scode <- list()
 
@@ -41,11 +43,11 @@ create_stancode <- function(models) {
   # generate data block
   scode$data <- paste0(
     "data {\n",
-    stancode$data$def,
-    cf_code$data$def,
-    latent_model_code$data,
-    stancode$data$main,
-    cf_code$data$main,
+    stancode$data_def,
+    cf_code$data_def,
+    latent_model_code$data_def,
+    stancode$data_main,
+    cf_code$data_main,
     "\n}\n\n"
   )
 
@@ -61,12 +63,12 @@ create_stancode <- function(models) {
   # generate transformed parameters block
   scode$trans_params <- paste0(
     "transformed parameters {\n",
-    stancode$trans_params$def,
-    latent_model_code$trans_params$def,
-    cf_code$trans_params$def,
-    stancode$trans_params$main,
-    latent_model_code$trans_params$main,
-    cf_code$trans_params$main,
+    stancode$trans_params_def,
+    latent_model_code$trans_params_def,
+    cf_code$trans_params_def,
+    stancode$trans_params_main,
+    latent_model_code$trans_params_main,
+    cf_code$trans_params_main,
     "\n}\n\n"
   )
 
@@ -83,14 +85,14 @@ create_stancode <- function(models) {
   # generate generated quantities block
   scode$generated_quantities <- paste0(
     "generated quantities {\n",
-    stancode$generated_quantities$def,
-    latent_model_code$generated_quantities$def,
-    latent_model_code$generated_quantities$main,
-    stancode$generated_quantities$main,
-    cf_code$generated_quantities,
-    postpred_code,
-    priorpred_code,
-    loo_code,
+    stancode$generated_quantities_def,
+    paste(latent_model_code$generated_quantities_def, collapse = "\n "),
+    paste(latent_model_code$generated_quantities_main, collapse = "\n "),
+    stancode$generated_quantities_main,
+    cf_code$generated_quantities_main,
+    do.call(paste, postpred_code),
+    do.call(paste, priorpred_code),
+    do.call(paste, loo_code),
     "}\n"
   )
 
@@ -103,5 +105,12 @@ create_stancode <- function(models) {
     scode$model,
     scode$generated_quantities
   )
+}
+
+
+#
+rearrange_all_grp_in_a_block <- function(x) {
+  simply_x <- simplify_all(transpose(x))
+  lapply(simply_x, paste, collapse = "\n ")
 }
 

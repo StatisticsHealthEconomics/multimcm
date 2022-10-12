@@ -86,8 +86,8 @@ create_stancode <- function(models) {
   scode$generated_quantities <- paste0(
     "generated quantities {\n",
     stancode$generated_quantities_def,
-    paste(latent_model_code$generated_quantities_def, collapse = "\n "),
-    paste(latent_model_code$generated_quantities_main, collapse = "\n "),
+    latent_model_code$generated_quantities_def,
+    latent_model_code$generated_quantities_main,
     stancode$generated_quantities_main,
     cf_code$generated_quantities_main,
     do.call(paste, postpred_code),

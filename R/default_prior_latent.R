@@ -50,16 +50,9 @@ default_prior_latent <- function(formula_latent,
            stop("distribution not found."))
 
   # same parameters for each cluster
-  res <- list()
-
-  for (i in seq_len(n_group)) {
-    res[[i]] <- model_params
-
-    # append unique id
-    names(res[[i]]) <- paste(names(res[[i]]), i, sep = "_")
-  }
-
-  flatten(res)
+  n_params <- length(model_params)
+  new_names <- paste(names(model_params), rep(1:n_group, each = n_params), sep = "_")
+  rep(model_params, n_group) |> setNames(new_names)
 }
 
 

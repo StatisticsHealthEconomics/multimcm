@@ -64,7 +64,6 @@ bmcm_stan <- function(input_data,
   stan_data <- c()
 
   for (i in seq_len(formula_cure$n_groups)) {
-
     stan_data <- c(
       stan_data,
       prep_stan_data(formula_cure, formula_latent,

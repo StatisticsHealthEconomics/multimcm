@@ -9,7 +9,6 @@
 #' @return
 #' @export
 #' @importFrom glue glue
-#' @importFrom purrr map2
 #'
 #' @examples
 #' cat(create_stancode(c("exponential", "exponential"))
@@ -17,23 +16,29 @@
 create_stancode <- function(models) {
 
   n_grps <- length(models)
-  seq_grps <- 1:n_grps
+
+  # generate separate blocks of Stan code
 
   stancode <- create_code_skeleton(n_grps)
   cf_code <- create_cf_code(n_grps)
 
-  # generate separate blocks of Stan code
-  latent_model_code <- map2(models, seq_grps, make_latent_model_code)
-  priorpred_code <- map2(models, seq_grps, make_priorpred)
-  postpred_code <- map2(models, seq_grps, make_postpred)
-  loo_code <- map2(models, seq_grps, make_loo)
-  loglik_code <- map2(models, seq_grps, make_loglik)
+  latent_model_code <- priorpred_code <- postpred_code <- list()
+  loo_code <- loglik_code <- list()
 
-  latent_model_code <- rearrange_all_grp_in_a_block(latent_model_code)
-  priorpred_code <- rearrange_all_grp_in_a_block(priorpred_code)
-  postpred_code <- rearrange_all_grp_in_a_block(postpred_code)
-  loo_code <- rearrange_all_grp_in_a_block(loo_code)
-  loglik_code <- rearrange_all_grp_in_a_block(loglik_code)
+  for (i in seq_along(models)) {
+    latent_model_code[[i]] <-  make_latent_model_code(models[i], id = i)
+    priorpred_code[[i]] <- make_priorpred(models[i], id = i)
+    postpred_code[[i]] <- make_postpred(models[i], id = i)
+    loglik_code[[i]] <- make_loglik(models[i], id = i)
+    loo_code[[i]] <- make_loo(models[i], id = i)
+  }
+
+  # interleave all model lists
+  latent_model_code <- rearrange_blocks(latent_model_code)
+  priorpred_code <- rearrange_blocks(priorpred_code)
+  postpred_code <- rearrange_blocks(postpred_code)
+  loglik_code <- rearrange_blocks(loglik_code)
+  loo_code <- rearrange_blocks(loo_code)
 
   scode <- list()
 
@@ -109,8 +114,8 @@ create_stancode <- function(models) {
 
 
 #
-rearrange_all_grp_in_a_block <- function(x) {
-  simply_x <- simplify_all(transpose(x))
-  lapply(simply_x, paste, collapse = "\n ")
+rearrange_blocks <- function(x) {
+  simple_x <- simplify_all(transpose(x))
+  lapply(simple_x, paste, collapse = "\n ")
 }
 

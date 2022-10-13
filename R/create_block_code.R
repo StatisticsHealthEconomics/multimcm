@@ -127,10 +127,10 @@ create_cf_code <- function(n_grp) {
              "\n}\n")
 
   scode$model <-
-    paste0("// cure fraction
-      if (cf_model == 3) {
-        alpha ~ normal(mu_alpha, sigma_alpha);
-        sd_cf ~ normal(mu_sd_cf, sigma_sd_cf);\n",
+    paste0("// cure fraction \n",
+           "if (cf_model == 3) {\n",
+           "alpha ~ normal(mu_alpha, sigma_alpha);\n",
+           "sd_cf ~ normal(mu_sd_cf, sigma_sd_cf);\n",
         glue_data(ids, "lp_cf_{id} ~ normal(lp_cf_global, sd_cf);\n"),
       "\n} else if (cf_model == 2) {\n",
         glue_data(ids, "alpha_{id} ~ normal(mu_alpha_{id}, sigma_alpha_{id});\n"),
@@ -201,10 +201,10 @@ create_code_skeleton <- function(n_grp) {
       }\n")
 
   scode$generated_quantities_def <-
-    paste0(" real mean_bg;
-      // real pbeta_bg;
-      vector[N_1] log_lik;
-      vector[t_max] S_bg;\n",
+    paste0(" real mean_bg;\n",
+           "// real pbeta_bg;\n",
+           "vector[N_1] log_lik;\n",
+           "vector[t_max] S_bg;\n",
       glue_data(ids,
       "vector[t_max] S_{id};
       matrix[t_max, nTx] S_{id}_pred;
@@ -215,11 +215,11 @@ create_code_skeleton <- function(n_grp) {
       \n\n"))
 
   scode$generated_quantities_main <-
-    paste0("// background rate
-      if (bg_model == 1) {
-        mean_bg = exp(beta_bg[1]);
-      } else {
-      // mean_bg = 0.001;\n",
+    paste0("// background rate\n",
+           "if (bg_model == 1) {\n",
+           "mean_bg = exp(beta_bg[1]);\n",
+           "} else {\n",
+           "// mean_bg = 0.001;\n",
         glue_data(ids, "mean_bg = mean(h_bg_{id});"),
       "\n}\n")
 

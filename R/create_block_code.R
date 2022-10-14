@@ -357,7 +357,7 @@ make_loo <- function(model, id) {
          lognormal = c("mu", "sd"),
          gengamma = "")
 
-  loo_params <- paste0(distn_params[[model]], "_os")
+  loo_params <- glue(distn_params[[model]], "_{id}")
 
   loo_params[grep("mu", loo_params)] <-
     paste0(loo_params[grep("mu", loo_params)], "[i]")

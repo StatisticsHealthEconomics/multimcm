@@ -13,16 +13,16 @@ make_latent_model_code <- function(model, id = 1L) {
     common_code_event_data(id)
 
   scode$trans_params_def <-
-      glue("vector[N_{id}] lp_{id};\n")
+      glue("\nvector[N_{id}] lp_{id};\n")
 
   if (model == "exponential") {
     scode$trans_params_def <-
       glue(scode$trans_params_def,
-             c("// rate parameters
-             vector<lower=0>[N_{id}] lambda_{id};\n"))
+           "\n// rate parameters
+             vector<lower=0>[N_{id}] lambda_{id};\n")
 
     scode$trans_params_main <-
-      glue("lambda_{id} = exp(lp_{id});\n")
+      glue("\nlambda_{id} = exp(lp_{id});\n")
 
     scode$generated_quantities_main <-
       glue("mean_{id} = exp(beta_{id}[1]);\n")
@@ -31,16 +31,16 @@ make_latent_model_code <- function(model, id = 1L) {
   if (model %in% c("gompertz", "loglogistic", "weibull")) {
     scode$data_def <-
       glue(scode$data_def,
-             "real<lower=0> a_shape_{id};
-              real<lower=0> b_shape_{id};\n")
+           "real<lower=0> a_shape_{id};\n",
+            "real<lower=0> b_shape_{id};\n")
 
     scode$parameters <-
       glue("real<lower=0> shape_{id};\n")
 
     scode$trans_params_def <-
-      glue(scode$trans_params$def,
-             c("// rate parameters
-               vector[N_{id}] lambda_{id};\n"))
+      glue(scode$trans_params_def,
+           "// rate parameters
+            vector[N_{id}] lambda_{id};\n")
 
     scode$trans_params_main <-
       glue("lambda_{id} = exp(lp_{id});\n")
@@ -65,20 +65,20 @@ make_latent_model_code <- function(model, id = 1L) {
 
     scode$trans_params_def <-
       glue(scode$trans_params_def,
-             c("// rate parameters
-              vector[N_{id}] mu_{id};\n"))
+           "// rate parameters
+            vector[N_{id}] mu_{id};\n")
 
     scode$trans_params_main <-
       glue("mu_{id} = lp_{id};\n")
 
     scode$model <-
-      glue(" sd_{id} ~ gamma(a_sd_{id}, b_sd_{id});\n")
+      glue("sd_{id} ~ gamma(a_sd_{id}, b_sd_{id});\n")
 
     scode$generated_quantities_def <-
-      glue(" real psd_{id} = gamma_rng(a_sd_{id}, b_sd_{id});\n")
+      glue("real psd_{id} = gamma_rng(a_sd_{id}, b_sd_{id});\n")
 
     scode$generated_quantities_main <-
-      glue(" mean_{id} = beta_{id}[1];\n")
+      glue("mean_{id} = beta_{id}[1];\n")
   }
 
   scode
@@ -92,7 +92,7 @@ create_cf_code <- function(n_grp) {
   ids <- data.frame(id = 1:n_grp)
 
   scode$data_def <-
-      c(" int<lower=1, upper=3> cf_model;         // cure fraction\n")
+      c("int<lower=1, upper=3> cf_model;         // cure fraction\n")
 
   scode$data_main <-
       paste0("\n real<lower=0> a_cf[cf_model == 1 ? 1 : 0];\n",
@@ -110,7 +110,7 @@ create_cf_code <- function(n_grp) {
                glue_data(ids,
                     "vector<lower=0, upper=1>[nTx] cf_{id};
                      vector[cf_model == 2 ? nTx : 0] tx_cf_{id};\n"),
-              "\n vector[cf_model == 3 ? nTx : 0] lp_cf_global;\n")
+                    "\n vector[cf_model == 3 ? nTx : 0] lp_cf_global;\n")
 
   scode$trans_params_main <-
       paste0("\n if (cf_model == 1) {\n",
@@ -155,29 +155,30 @@ create_code_skeleton <- function(n_grp) {
 
   scode$data_main <-
       paste0(
-        " int<lower=1, upper=2> bg_model;\n",
-        " vector[bg_model == 1 ? H_1 : 0] mu_bg;\n",
-        " vector<lower=0>[bg_model == 1 ? H_1 : 0] sigma_bg;\n",
+        c("\nint<lower=1, upper=2> bg_model;\n
+        vector[bg_model == 1 ? H_1 : 0] mu_bg;\n
+        vector<lower=0>[bg_model == 1 ? H_1 : 0] sigma_bg;\n"),
       glue_data(ids, " vector<lower=0>[bg_model == 2 ? N_{id} : 0] h_bg_{id};\n"),
-      "\n matrix[nTx, nTx] Tx_dmat;         // treatment design matrix\n",
+      c("\n matrix[nTx, nTx] Tx_dmat;         // treatment design matrix\n",
       "vector[cf_model == 3 ? nTx : 0] mu_alpha;             // treatment regression coefficients\n",
       "vector<lower=0>[cf_model == 3 ? nTx : 0] sigma_alpha;\n",
-      "int<lower=0> t_max;\n",
+      "int<lower=0> t_max;\n"),
       glue_data(ids,
                 "vector[cf_model == 2 ? nTx : 0] mu_alpha_{id};
                  vector<lower=0>[cf_model == 2 ? nTx : 0] sigma_alpha_{id};\n"))
 
   scode$parameters <-
-    paste0(" // coefficients in linear predictor (including intercept)\n",
-      "vector[bg_model == 1 ? H_1 : 0] beta_bg;\n",
-      "vector[cf_model != 2 ? nTx : 0] alpha;\n",
+    paste0(c("// coefficients in linear predictor (including intercept)\n
+      vector[bg_model == 1 ? H_1 : 0] beta_bg;\n
+      vector[cf_model != 2 ? nTx : 0] alpha;\n"),
       glue_data(ids, "vector[cf_model == 2 ? nTx : 0] alpha_{id};
                       vector[H_{id}] beta_{id};\n"))
 
   scode$trans_params_def <-
       glue_data(ids,
-                " vector[N_{id}] lp_{id}_bg;
-                vector<lower=0>[N_{id}] lambda_{id}_bg;\n")
+                "vector[N_{id}] lp_{id}_bg;\n
+                vector<lower=0>[N_{id}] lambda_{id}_bg;\n
+                ")
 
   scode$trans_params_main <-
       glue_data(ids,
@@ -190,37 +191,39 @@ create_code_skeleton <- function(n_grp) {
       } else {{
         lp_{id}_bg = log(h_bg_{id});
       }\n
-      lambda_{id}_bg = exp(lp_{id}_bg);\n")
+      lambda_{id}_bg = exp(lp_{id}_bg);\n
+      ")
 
   scode$model <-
     paste0(
-      glue_data(ids, " int idx_{id};
-      beta_{id} ~ normal(mu_S_{id}, sigma_S_{id});\n"),
-      "\n if (bg_model == 1) {
+      paste0(glue_data(ids,"
+      \nint idx_{id};
+      beta_{id} ~ normal(mu_S_{id}, sigma_S_{id});\n"), collapse = ""),
+      c("\n if (bg_model == 1) {
         beta_bg ~ normal(mu_bg, sigma_bg);
-      }\n")
+      }\n"))
 
   scode$generated_quantities_def <-
-    paste0(" real mean_bg;\n",
-           "// real pbeta_bg;\n",
-           "vector[N_1] log_lik;\n",
-           "vector[t_max] S_bg;\n",
-      glue_data(ids,
+    paste0(c("real mean_bg;\n
+           // real pbeta_bg;\n
+           vector[N_1] log_lik;\n
+           vector[t_max] S_bg;\n"),
+      paste0(glue_data(ids,
       "vector[t_max] S_{id};
       matrix[t_max, nTx] S_{id}_pred;
       real mean_{id};
       int idx_{id};
       vector[N_{id}] log_lik_{id};
       // real pbeta_{id} = normal_rng(mu_S_{id}[1], sigma_S_{id}[1]);
-      \n\n"))
+      \n\n"), collapse = ""))
 
   scode$generated_quantities_main <-
-    paste0("// background rate\n",
-           "if (bg_model == 1) {\n",
-           "mean_bg = exp(beta_bg[1]);\n",
-           "} else {\n",
-           "// mean_bg = 0.001;\n",
-        glue_data(ids, "mean_bg = mean(h_bg_{id});"),
+    paste0(c("// background rate\n
+           if (bg_model == 1) {\n
+           mean_bg = exp(beta_bg[1]);\n
+           } else {\n
+           // mean_bg = 0.001;\n"),
+        paste0(glue_data(ids, "mean_bg = mean(h_bg_{id});"), collapse = ""),
       "\n}\n")
 
   scode
@@ -377,13 +380,13 @@ make_loo <- function(model, id) {
          log_lik_{id}[i] = log_sum_exp(
           log(cf_{id}[Tx]) +
           surv_exp_lpdf(t_{id}[i] | d_{id}[i], lambda_{id}_bg[i]),
-          log1m(cf_os[Tx]) +
+          log1m(cf_{id}[Tx]) +
           {surv_lpdf}(t_{id}[i] | d_{id}[i], {loo_params}, lambda_{id}_bg[i]));
         }
 
-        idx_pfs = idx_pfs + n_pfs[Tx];
+        idx_{id} = idx_{id} + n_{id}[Tx];
       }
-      log_lik = log_lik_os + log_lik_pfs;\n\n")
+      log_lik = log_lik_os + log_lik_pfs;\n\n")   ##TODO:
 
   scode
 }

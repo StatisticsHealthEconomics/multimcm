@@ -43,7 +43,7 @@ bmcm_stan <- function(input_data,
 
   if (is_pooled(formula_cure)) formula_cure$cf_idx <- 1L
   else if (is_separate(formula_cure)) formula_cure$cf_idx <- 2L
-  else if (is_hier(formula_cure) formula_cure$cf_idx <- 3L
+  else if (is_hier(formula_cure)) formula_cure$cf_idx <- 3L
 
   if (length(distns) == 1) distns <- rep(distns, formula_cure$n_group)
            

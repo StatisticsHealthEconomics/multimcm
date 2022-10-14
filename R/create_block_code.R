@@ -119,7 +119,7 @@ create_cf_code <- function(n_grp) {
              if (cf_model == 3) {\n
                lp_cf_global = Tx_dmat*alpha;\n
                cf_global = inv_logit(lp_cf_global);\n"),
-             paste0(glue_data(ids, "cf_{id} = inv_logit(lp_cf_{id});"), collapse = "\n"),
+             cglue_data(ids, "cf_{id} = inv_logit(lp_cf_{id});"),
              "\n}\n",
              "if (cf_model == 2) {\n",
              cglue_data(ids, "tx_cf_{id} = Tx_dmat*alpha_{id};
@@ -208,14 +208,14 @@ create_code_skeleton <- function(n_grp) {
            // real pbeta_bg;\n
            vector[N_1] log_lik;\n
            vector[t_max] S_bg;\n"),
-      paste0(glue_data(ids,
+      cglue_data(ids,
       "vector[t_max] S_{id};
       matrix[t_max, nTx] S_{id}_pred;
       real mean_{id};
       int idx_{id};
       vector[N_{id}] log_lik_{id};
       // real pbeta_{id} = normal_rng(mu_S_{id}[1], sigma_S_{id}[1]);
-      \n\n"), collapse = ""))
+      \n\n"))
 
   scode$generated_quantities_main <-
     paste0(c("// background rate\n

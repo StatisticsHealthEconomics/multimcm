@@ -27,6 +27,7 @@ source("R/create_stancode.R")
 source("R/create_block_code.R")
 source("R/parse_formula.R")
 source("R/validate_distns.R")
+source("R/misc.R")
 
 
 # rstan_options(auto_write = TRUE)

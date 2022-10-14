@@ -171,7 +171,7 @@ create_code_skeleton <- function(n_grp) {
     paste0(c("// coefficients in linear predictor (including intercept)\n
       vector[bg_model == 1 ? H_1 : 0] beta_bg;\n
       vector[cf_model != 2 ? nTx : 0] alpha;\n"),
-      glue_data(ids, "vector[cf_model == 2 ? nTx : 0] alpha_{id};
+      cglue_data(ids, "vector[cf_model == 2 ? nTx : 0] alpha_{id};
                       vector[H_{id}] beta_{id};\n"), collapse = "\n")
 
   scode$trans_params_def <-
@@ -357,7 +357,7 @@ make_loo <- function(model, id) {
          lognormal = c("mu", "sd"),
          gengamma = "")
 
-  loo_params <- glue(distn_params[[model]], "_{id}")
+  loo_params <- paste0(distn_params[[model]], "_{id}")
 
   loo_params[grep("mu", loo_params)] <-
     paste0(loo_params[grep("mu", loo_params)], "[i]")

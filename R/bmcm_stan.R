@@ -41,12 +41,12 @@ bmcm_stan <- function(input_data,
   formula_latent <- parse_formula(formula, input_data, family = family_latent)
   formula_cure <- parse_formula(cureformula, input_data)
 
-  if (formula_cure$fe_nvars == 2) formula_cure$cf_idx <- 2L        # separate
-  else if (formula_cure$nvars == 1) formula_cure$cf_idx <- 1L      # pooled
-  else if (!is.null(formula_cure$bars)) formula_cure$cf_idx <- 3L  # hierarchical
+  if (is_pooled(formula_cure)) formula_cure$cf_idx <- 1L
+  else if (is_separate(formula_cure)) formula_cure$cf_idx <- 2L
+  else if (is_hier(formula_cure)) formula_cure$cf_idx <- 3L
 
   if (length(distns) == 1) distns <- rep(distns, formula_cure$n_group)
-
+           
   ###############################
   # construct data
   # priors and hyper-parameters

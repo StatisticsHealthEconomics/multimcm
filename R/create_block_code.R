@@ -114,12 +114,12 @@ create_cf_code <- function(n_grp) {
 
   scode$parameters <-
     paste0("\n vector<lower=0, upper=1>[cf_model == 1 ? nTx : 0] cf_pooled;\n",
-           glue_data(ids, "vector[cf_model == 3 ? nTx : 0] lp_cf_{id};\n"),
+           cglue_data(ids, "vector[cf_model == 3 ? nTx : 0] lp_cf_{id};\n"),
             "\n vector<lower=0>[cf_model == 3 ? nTx : 0] sd_cf;\n")
 
   scode$trans_params_def <-
         paste0("\n vector<lower=0, upper=1>[cf_model == 3 ? nTx : 0] cf_global;\n",
-               glue_data(ids,
+               cglue_data(ids,
                     "vector<lower=0, upper=1>[nTx] cf_{id};
                      vector[cf_model == 2 ? nTx : 0] tx_cf_{id};\n"),
                     "\n vector[cf_model == 3 ? nTx : 0] lp_cf_global;\n")
@@ -131,10 +131,10 @@ create_cf_code <- function(n_grp) {
              if (cf_model == 3) {\n
                lp_cf_global = Tx_dmat*alpha;\n
                cf_global = inv_logit(lp_cf_global);\n"),
-             glue_data(ids, "cf_{id} = inv_logit(lp_cf_{id});"),
+             cglue_data(ids, "cf_{id} = inv_logit(lp_cf_{id});"),
              "\n}\n",
              "if (cf_model == 2) {\n",
-             glue_data(ids, "tx_cf_{id} = Tx_dmat*alpha_{id};
+             cglue_data(ids, "tx_cf_{id} = Tx_dmat*alpha_{id};
                       cf_{id} = inv_logit(tx_cf_{id});"),
              "\n}\n")
 
@@ -143,9 +143,9 @@ create_cf_code <- function(n_grp) {
            if (cf_model == 3) {\n
            alpha ~ normal(mu_alpha, sigma_alpha);\n
            sd_cf ~ normal(mu_sd_cf, sigma_sd_cf);\n"),
-        glue_data(ids, "lp_cf_{id} ~ normal(lp_cf_global, sd_cf);\n"),
+        cglue_data(ids, "lp_cf_{id} ~ normal(lp_cf_global, sd_cf);\n"),
       "\n} else if (cf_model == 2) {\n",
-        glue_data(ids, "alpha_{id} ~ normal(mu_alpha_{id}, sigma_alpha_{id});\n"),
+        cglue_data(ids, "alpha_{id} ~ normal(mu_alpha_{id}, sigma_alpha_{id});\n"),
       "\n} else {
         cf_pooled ~ beta(a_cf, b_cf);
       }\n")
@@ -170,12 +170,12 @@ create_code_skeleton <- function(n_grp) {
         c("\nint<lower=1, upper=2> bg_model;\n
         vector[bg_model == 1 ? H_1 : 0] mu_bg;\n
         vector<lower=0>[bg_model == 1 ? H_1 : 0] sigma_bg;\n"),
-      glue_data(ids, " vector<lower=0>[bg_model == 2 ? N_{id} : 0] h_bg_{id};\n"),
-      c("\n matrix[nTx, nTx] Tx_dmat;         // treatment design matrix\n",
-      "vector[cf_model == 3 ? nTx : 0] mu_alpha;             // treatment regression coefficients\n",
-      "vector<lower=0>[cf_model == 3 ? nTx : 0] sigma_alpha;\n",
-      "int<lower=0> t_max;\n"),
-      glue_data(ids,
+      cglue_data(ids, " vector<lower=0>[bg_model == 2 ? N_{id} : 0] h_bg_{id};\n"),
+      c("\n matrix[nTx, nTx] Tx_dmat;         // treatment design matrix\n
+      vector[cf_model == 3 ? nTx : 0] mu_alpha;             // treatment regression coefficients\n
+      vector<lower=0>[cf_model == 3 ? nTx : 0] sigma_alpha;\n
+      int<lower=0> t_max;\n"),
+      cglue_data(ids,
                 "vector[cf_model == 2 ? nTx : 0] mu_alpha_{id};
                  vector<lower=0>[cf_model == 2 ? nTx : 0] sigma_alpha_{id};\n"))
 
@@ -183,17 +183,17 @@ create_code_skeleton <- function(n_grp) {
     paste0(c("// coefficients in linear predictor (including intercept)\n
       vector[bg_model == 1 ? H_1 : 0] beta_bg;\n
       vector[cf_model != 2 ? nTx : 0] alpha;\n"),
-      glue_data(ids, "vector[cf_model == 2 ? nTx : 0] alpha_{id};
-                      vector[H_{id}] beta_{id};\n"))
+      cglue_data(ids, "vector[cf_model == 2 ? nTx : 0] alpha_{id};
+                      vector[H_{id}] beta_{id};\n"), collapse = "\n")
 
   scode$trans_params_def <-
-      glue_data(ids,
-                "vector[N_{id}] lp_{id}_bg;\n
+    cglue_data(ids,
+              "vector[N_{id}] lp_{id}_bg;\n
                 vector<lower=0>[N_{id}] lambda_{id}_bg;\n
                 ")
 
   scode$trans_params_main <-
-      glue_data(ids,
+      cglue_data(ids,
       "// correlated event times
         lp_{id} = X_{id}*beta_{id};
 
@@ -208,26 +208,26 @@ create_code_skeleton <- function(n_grp) {
 
   scode$model <-
     paste0(
-      paste0(glue_data(ids,"
+      cglue_data(ids,"
       \nint idx_{id};
-      beta_{id} ~ normal(mu_S_{id}, sigma_S_{id});\n"), collapse = ""),
+      beta_{id} ~ normal(mu_S_{id}, sigma_S_{id});\n"),
       c("\n if (bg_model == 1) {
         beta_bg ~ normal(mu_bg, sigma_bg);
-      }\n"))
+      }\n"), collapse = "\n")
 
   scode$generated_quantities_def <-
     paste0(c("real mean_bg;\n
            // real pbeta_bg;\n
            vector[N_1] log_lik;\n
            vector[t_max] S_bg;\n"),
-      paste0(glue_data(ids,
+      cglue_data(ids,
       "vector[t_max] S_{id};
       matrix[t_max, nTx] S_{id}_pred;
       real mean_{id};
       int idx_{id};
       vector[N_{id}] log_lik_{id};
       // real pbeta_{id} = normal_rng(mu_S_{id}[1], sigma_S_{id}[1]);
-      \n\n"), collapse = ""))
+      \n\n"))
 
   scode$generated_quantities_main <-
     paste0(c("// background rate\n
@@ -235,7 +235,7 @@ create_code_skeleton <- function(n_grp) {
            mean_bg = exp(beta_bg[1]);\n
            } else {\n
            // mean_bg = 0.001;\n"),
-        paste0(glue_data(ids, "mean_bg = mean(h_bg_{id});"), collapse = ""),
+        cglue_data(ids, "mean_bg = mean(h_bg_{id});"),
       "\n}\n")
 
   scode

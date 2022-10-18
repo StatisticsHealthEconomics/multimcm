@@ -1,45 +1,27 @@
 # posterior predictions Stan block code -----------------------------------
 
 
-#' ppv_gen_quants_block("weibull", "weibull")
+#' ppv_gen_quants_block("weibull")
 #'
-ppv_gen_quants_block <- function(os_model, pfs_model) {
+ppv_gen_quants_block <- function(model, id = 1) {
 
-  distn_params <-
-    list(exponential = "lambda",
-         weibull = c("shape", "lambda"),
-         gompertz = c("shape", "lambda"),
-         loglogistic = c("shape", "lambda"),
-         lognormal = c("mu", "sd"),          ##TODO: no lambda
-         gengamma = "")
-
-  os_params <- paste0(distn_params[[os_model]], "_os")
-  pfs_params <- paste0(distn_params[[pfs_model]], "_pfs")
+  os_params <- glue("{distn_params(model)}_{id]")
 
   os_params[grep("lambda", os_params)] <-
     paste0(os_params[grep("lambda", os_params)], "[i, ]")
 
-  pfs_params[grep("lambda", pfs_params)] <-
-    paste0(pfs_params[grep("lambda", pfs_params)], "[i, ]")
-
   os_params[!grepl("lambda", os_params)] <-
     paste0(os_params[!grepl("lambda", os_params)], "[i]")
 
-  pfs_params[!grepl("lambda", pfs_params)] <-
-    paste0(pfs_params[!grepl("lambda", pfs_params)], "[i]")
-
-  pfs_params <- paste(pfs_params, collapse = ", ")
   os_params <- paste(os_params, collapse = ", ")
 
   scode <-
     glue::glue("
     // explicitly loop over samples
-    matrix[n_samples, N_os] t_os_tilde;
-    matrix[n_samples, N_pfs] t_pfs_tilde;
+    matrix[n_samples, N_{id}] t_{id}_tilde;
 
     for (i in 1:n_samples) {{
-      t_os_tilde[i, ] = os_casemix_rng(cf_os[i, ], {os_params}, lambda_os_bg[i, ]);
-      t_pfs_tilde[i, ] = pfs_casemix_rng(cf_pfs[i, ], {pfs_params}, lambda_pfs_bg[i, ]);
+      t_{id}_tilde[i, ] = {id}_casemix_rng(cf_{id}[i, ], {os_params}, lambda_{id}_bg[i, ]);
     }\n\n")
 
   scode
@@ -47,64 +29,34 @@ ppv_gen_quants_block <- function(os_model, pfs_model) {
 
 
 #
-ppv_data_block <- function(os_model, pfs_model) {
+ppv_data_block <- function(model) {
 
   ancil_params_os <-
-    if (os_model %in% c("gompertz", "loglogistic", "weibull")) {
-      "vector[n_samples] shape_os;\n"
-    } else {""}
-
-  ancil_params_pfs <-
-    if (pfs_model %in% c("gompertz", "loglogistic", "weibull")) {
-      "vector[n_samples] shape_pfs;\n"
+    if (model %in% c("gompertz", "loglogistic", "weibull")) {
+      "vector[n_samples] shape_{id};\n"
     } else {""}
 
   scode <-
     glue::glue("
-    int<lower=0> N_os;         // total number of observations
-    int<lower=0> N_pfs;
-
+    int<lower=0> N_{id};         // total number of observations
     int<lower=1> n_samples;
-    matrix[n_samples, N_os] cf_os;
-    matrix[n_samples, N_pfs] cf_pfs;
-
-    matrix[n_samples, N_os] lambda_os;
-    matrix[n_samples, N_pfs] lambda_pfs;
-
-    matrix[n_samples, N_os] lambda_os_bg;
-    matrix[n_samples, N_pfs] lambda_pfs_bg;\n",
-               ancil_params_os,
-               ancil_params_pfs)
+    matrix[n_samples, N_{id}] cf_{id};
+    matrix[n_samples, N_{id}] lambda_{id};
+    matrix[n_samples, N_{id}] lambda_{id}_bg;\n",
+               ancil_params_os)
 
   scode
 }
 
 
 #
-ppv_functions_block<- function(os_model, pfs_model) {
+ppv_functions_block<- function(model) {
 
-  distn_params <-
-    list(exponential = "lambda0[i]",
-         weibull = c("shape", "lambda0[i]"),
-         gompertz = c("shape", "lambda0[i]"),
-         loglogistic = c("shape", "lambda0[i]"),
-         lognormal = c("mu0[i]", "sd"),          ##TODO: no lambda
-         gengamma = "")
-
-  os_params <- distn_params[[os_model]]
-  pfs_params <- distn_params[[pfs_model]]
-
-  pfs_params <- paste(pfs_params, collapse = ", ")
+  os_params <- distn_params(model)
   os_params <- paste(os_params, collapse = ", ")
 
   input_params_os <-
     if (os_model %in% c("gompertz", "loglogistic", "weibull")) {
-      "real shape, row_vector lambda0"
-    } else {
-      "row_vector lambda0"}
-
-  input_params_pfs <-
-    if (pfs_model %in% c("gompertz", "loglogistic", "weibull")) {
       "real shape, row_vector lambda0"
     } else {
       "row_vector lambda0"}
@@ -135,7 +87,7 @@ ppv_functions_block<- function(os_model, pfs_model) {
       return time;
     }
 
-    row_vector os_casemix_rng(row_vector curefrac, {input_params_os}, row_vector lambda_bg) {{
+    row_vector {id}_casemix_rng(row_vector curefrac, {input_params_os}, row_vector lambda_bg) {{
 
       int n = num_elements(curefrac);
       row_vector[n] time;
@@ -151,24 +103,7 @@ ppv_functions_block<- function(os_model, pfs_model) {
         }
       }
       return(time);
-      }\n\n
-    row_vector pfs_casemix_rng(row_vector curefrac, {input_params_pfs}, row_vector lambda_bg) {{
-
-      int n = num_elements(curefrac);
-      row_vector[n] time;
-      real cf[n];
-
-      for (i in 1:n) {{
-        cf[i] = uniform_rng(0, 1);
-
-        if (cf[i] < curefrac[i]) {{
-          time[i] = exponential_rng(lambda_bg[i]);
-        } else {{
-          time[i] = fmin({pfs_model}_rng({pfs_params}), exponential_rng(lambda_bg[i]));
-        }
-      }
-      return(time);
-    }\n\n"
+      }\n\n"
     )
 
   scode

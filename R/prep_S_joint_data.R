@@ -1,6 +1,6 @@
 
 #
-prep_S_jointTx_data <- function(stan_out) {
+prep_S_joint_data <- function(stan_out) {
 
   S_stats <- list()
   model_names <-

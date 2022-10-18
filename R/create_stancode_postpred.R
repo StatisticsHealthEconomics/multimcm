@@ -1,10 +1,10 @@
 
 #'
 create_stancode_postpred <- function(models = c("exponential",
-                                                  "weibull",
-                                                  "gompertz",
-                                                  "loglogistic",
-                                                  "lognormal")) {
+                                                "weibull",
+                                                "gompertz",
+                                                "loglogistic",
+                                                "lognormal")) {
   models <- match.arg(models)
 
   scode <- list()

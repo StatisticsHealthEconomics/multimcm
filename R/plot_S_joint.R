@@ -20,12 +20,12 @@
 #' @examples
 #' load("data/file_names.RData")
 #'
-plot_S_jointTx <- function(stan_out = NA,
-                           facet = TRUE,
-                           annot_cf = FALSE,
-                           data = NA) {
+plot_S_joint <- function(stan_out = NA,
+                         facet = TRUE,
+                         annot_cf = FALSE,
+                         data = NA) {
 
-  plot_dat <- prep_S_jointTx_data(stan_out)
+  plot_dat <- prep_S_joint_data(stan_out)
   # get names direct from Stan fit
   model_names <-
     gsub("_", " ", strsplit(stan_out@model_name, " ")[[1]])

@@ -2,6 +2,18 @@
 # all treatments in single model
 
 
+#
+distn_params <- function(distn) {
+  switch(distn,
+         exponential = "lambda",
+         weibull = c("shape", "lambda"),
+         gompertz = c("shape", "lambda"),
+         loglogistic = c("shape", "lambda"),
+         lognormal = c("mu", "sd"),
+         gengamma = "")
+}
+
+
 #' @examples
 #' lapply(make_latent_model_code("lognormal"), cat)
 #'
@@ -233,15 +245,7 @@ create_code_skeleton <- function(n_grp) {
 #'
 make_loglik <- function(model, id) {
 
-  distn_params <-
-    list(exponential = "lambda",
-         weibull = c("shape", "lambda"),
-         gompertz = c("shape", "lambda"),
-         loglogistic = c("shape", "lambda"),
-         lognormal = c("mu", "sd"),
-         gengamma = "")
-
-  ll_params <- glue("{distn_params[[model]]}_{id}")
+  ll_params <- glue("{distn_params(model)}_{id}")
 
   ll_params[grep("mu", ll_params)] <-
     paste0(ll_params[grep("mu", ll_params)], "[i]")
@@ -274,7 +278,7 @@ make_loglik <- function(model, id) {
   scode
 }
 
-# from brms::
+# from brms package
 tp <- function(wsp = 2) {
   wsp <- glue_collapse(rep(" ", wsp))
   paste0(wsp, "target += ")
@@ -296,15 +300,7 @@ common_code_event_data <- function(id) {
 #
 make_postpred <- function(model, id) {
 
-  distn_params <-
-    list(exponential = "mean",
-         weibull = c("shape", "mean"),
-         gompertz = c("shape", "mean"),
-         loglogistic = c("shape", "mean"),
-         lognormal = c("mean", "sd"),
-         gengamma = "")
-
-  pp_params <- paste0(distn_params[[model]], "_{id}")
+  pp_params <- paste0(distn_params(model), "_{id}")
   pp_params <- paste(pp_params, collapse = ", ")
 
   glue(
@@ -321,15 +317,7 @@ make_postpred <- function(model, id) {
 #
 make_priorpred <- function(model, id) {
 
-  distn_params <-
-    list(exponential = "pmean",
-         weibull = c("pshape", "pmean"),
-         gompertz = c("pshape", "pmean"),
-         loglogistic = c("pshape", "pmean"),
-         lognormal = c("pmean", "psd"),
-         gengamma = "")
-
-  pp_params <- paste0(distn_params[[model]], "_{id}")
+  pp_params <- paste0(distn_params(model), "_{id}")
   pp_params <- paste(pp_params, collapse = ", ")
 
   glue(
@@ -348,15 +336,7 @@ make_priorpred <- function(model, id) {
 ##TODO: remove duplication with make_loglik()
 make_loo <- function(model, id) {
 
-  distn_params <-
-    list(exponential = "lambda",
-         weibull = c("shape", "lambda"),
-         gompertz = c("shape", "lambda"),
-         loglogistic = c("shape", "lambda"),
-         lognormal = c("mu", "sd"),
-         gengamma = "")
-
-  loo_params <- paste0(distn_params[[model]], "_{id}")
+  loo_params <- glue(distn_params(model), "_{id}")
 
   loo_params[grep("mu", loo_params)] <-
     paste0(loo_params[grep("mu", loo_params)], "[i]")

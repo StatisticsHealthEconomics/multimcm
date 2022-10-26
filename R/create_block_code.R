@@ -113,12 +113,12 @@ create_cf_code <- function(n_grp) {
                     "\n vector[cf_model == 3 ? nTx : 0] lp_cf_global;\n")
 
   scode$trans_params_main <-
-      paste0(c("\n if (cf_model == 1) {\n
-             cf_{id} = cf_pooled;\n
-             }\n
-             if (cf_model == 3) {\n
-               lp_cf_global = Tx_dmat*alpha;\n
-               cf_global = inv_logit(lp_cf_global);\n"),
+      paste0(c("\n if (cf_model == 1) {\n"),
+               cglue_data(ids, "cf_{id} = cf_pooled;"),
+             "\n}\n",
+             "if (cf_model == 3) {\n",
+             "lp_cf_global = Tx_dmat*alpha;\n",
+             "cf_global = inv_logit(lp_cf_global);\n",
              cglue_data(ids, "cf_{id} = inv_logit(lp_cf_{id});"),
              "\n}\n",
              "if (cf_model == 2) {\n",
@@ -127,16 +127,15 @@ create_cf_code <- function(n_grp) {
              "\n}\n")
 
   scode$model <-
-    paste0(c("// cure fraction \n
-           if (cf_model == 3) {\n
-           alpha ~ normal(mu_alpha, sigma_alpha);\n
-           sd_cf ~ normal(mu_sd_cf, sigma_sd_cf);\n"),
+    paste0(paste("// cure fraction \n if (cf_model == 3) {\n",
+             "alpha ~ normal(mu_alpha, sigma_alpha);\n",
+             "sd_cf ~ normal(mu_sd_cf, sigma_sd_cf);\n", collapse = "n"),
         cglue_data(ids, "lp_cf_{id} ~ normal(lp_cf_global, sd_cf);\n"),
       "\n} else if (cf_model == 2) {\n",
         cglue_data(ids, "alpha_{id} ~ normal(mu_alpha_{id}, sigma_alpha_{id});\n"),
-      "\n} else {
-        cf_pooled ~ beta(a_cf, b_cf);
-      }\n")
+      "\n} else {\n",
+      "cf_pooled ~ beta(a_cf, b_cf);\n",
+      "}\n")
 
   scode$generated_quantities <-
     c("\n")    ##TODO: what is this for? just so its not empty?
@@ -196,9 +195,9 @@ create_code_skeleton <- function(n_grp) {
 
   scode$model <-
     paste0(
+      cglue_data(ids, "\nint idx_{id};"),
       cglue_data(ids,"
-      \nint idx_{id};
-      beta_{id} ~ normal(mu_S_{id}, sigma_S_{id});\n"),
+      \nbeta_{id} ~ normal(mu_S_{id}, sigma_S_{id});\n"),
       c("\n if (bg_model == 1) {
         beta_bg ~ normal(mu_bg, sigma_bg);
       }\n"), collapse = "\n")

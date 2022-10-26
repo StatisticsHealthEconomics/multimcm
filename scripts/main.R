@@ -42,8 +42,8 @@ data("surv_input_data")
 save_res <- TRUE
 TRTX <- NA
 
+# # types of model
 # latent_formula = "Surv(time=month, event=status) ~ 1 + age_event",
-#
 # cure_formula = "~ TRTA + event_idx",                                     # separate
 # cure_formula = "~ TRTA",                                                 # pooled
 

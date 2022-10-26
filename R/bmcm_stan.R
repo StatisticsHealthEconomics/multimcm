@@ -3,6 +3,19 @@
 #'
 #' jointly estimate all treatments
 #' generate Stan code
+#'
+#' @param input_data
+#' @param formula
+#' @param cureformula
+#' @param family_latent
+#' @param prior_latent
+#' @param prior_cure
+#' @param centre_coefs
+#' @param bg_model
+#' @param bg_hr
+#' @param t_max
+#' @param ...
+#'
 #' @import rstanarm
 #' @importFrom lme4 mkReTrms
 #' @export
@@ -95,6 +108,7 @@ bmcm_stan <- function(input_data,
   ##############
   # fit model
 
+  browser()
   stan_inputs$model_code <- create_stancode(distns)
 
   res <- list()

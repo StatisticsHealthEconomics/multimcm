@@ -51,7 +51,7 @@ bmcm_stan <- function(input_data,
   bg_model <- match.arg(bg_model)
   bg_model_idx <- which(bg_model == c("bg_distn", "bg_fixed"))
 
-  formula_latent <- parse_formula(formula, input_data, family = family_latent)
+  formula_latent <- parse_formula(formula, input_data, family = distns)
   formula_cure <- parse_formula(cureformula, input_data)
 
   if (is_pooled(formula_cure)) formula_cure$cf_idx <- 1L
@@ -59,11 +59,11 @@ bmcm_stan <- function(input_data,
   else if (is_hier(formula_cure)) formula_cure$cf_idx <- 3L
 
   if (length(distns) == 1) distns <- rep(distns, formula_cure$n_group)
-           
+
   ###############################
   # construct data
   # priors and hyper-parameters
-
+browser()
   if (is.na(prior_cure)) prior_cure <- default_prior_cure(formula_cure)
   if (is.na(prior_latent)) prior_latent <- default_prior_latent(formula_latent,
                                                                 formula_cure)

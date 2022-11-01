@@ -1,14 +1,15 @@
 
+#' partial match on start of word
 #'
 validate_distns <- function(model) {
 
-  model_names <- c("exponential",
+  model_names <- c("exp",
                    "weibull",
                    "gompertz",
                    "loglogistic",
                    "lognormal")
 
-  model <- match.arg(model, choices = model_names)
+  model <- model_names[startsWith(model, model_names)]
 
   if (!model %in% model_names)
     stop("distribution not available.", call. = FALSE)

@@ -20,14 +20,14 @@ default_prior_cure <- function(formula_cure,
   # treatment fixed effect
   mu_alpha_tx <- rep(-0.6, nTx)
   sigma_alpha_tx <- rep(0.8, nTx)
-  
+
   params_cf <-
-    if (is_hier_cf(formula_cure))) {
+    if (is_hier_cf(formula_cure)) {
       list(mu_sd_cf = rep(0, nTx),
            sigma_sd_cf = rep(2.5, nTx),
            mu_alpha = mu_alpha_tx,
            sigma_alpha = sigma_alpha_tx)
-    } else if (is_separate_cf(formula_cure) {
+    } else if (is_separate_cf(formula_cure)) {
       list(mu_alpha    = matrix(rep(mu_alpha_tx, n_groups),
                                 ncol = nTx, byrow = TRUE),
            sigma_alpha = matrix(rep(sigma_alpha_tx, n_groups),

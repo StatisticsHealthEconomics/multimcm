@@ -17,7 +17,7 @@ default_prior_latent <- function(formula_latent,
 
   model_params <-
     switch(model,
-           exponential =
+           exp =
              list(mu_S = c(-3, 0),
                   sigma_S = c(0.5, 0.01)),
            loglogistic =

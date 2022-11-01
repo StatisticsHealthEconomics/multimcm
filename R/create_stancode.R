@@ -2,7 +2,7 @@
 #' Create Stan code
 #'
 #' check with
-#' writeLines(create_stancode(c("exponential", "exponential")), "temp.stan")
+#' writeLines(create_stancode(c("exp", "exp")), "temp.stan")
 #'
 #' @param models Vector survival model names
 #'
@@ -11,7 +11,7 @@
 #' @importFrom glue glue
 #'
 #' @examples
-#' cat(create_stancode(c("exponential", "exponential"))
+#' cat(create_stancode(c("exp", "exp")))
 #'
 create_stancode <- function(models) {
 

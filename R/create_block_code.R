@@ -5,7 +5,7 @@
 #
 distn_params <- function(distn) {
   switch(distn,
-         exponential = "lambda",
+         exp = "lambda",
          weibull = c("shape", "lambda"),
          gompertz = c("shape", "lambda"),
          loglogistic = c("shape", "lambda"),
@@ -27,7 +27,7 @@ make_latent_model_code <- function(model, id = 1L) {
   scode$trans_params_def <-
       glue("\nvector[N_{id}] lp_{id};\n")
 
-  if (model == "exponential") {
+  if (model == "exp") {
     scode$trans_params_def <-
       glue(scode$trans_params_def,
            "\n// rate parameters

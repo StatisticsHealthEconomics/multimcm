@@ -1,6 +1,6 @@
 
 #'
-create_stancode_postpred <- function(models = c("exponential",
+create_stancode_postpred <- function(models = c("exp",
                                                 "weibull",
                                                 "gompertz",
                                                 "loglogistic",

@@ -133,14 +133,14 @@ cf_2 = inv_logit(tx_cf_2);
 
 model {
 int idx_1;
-int idx_2;      
+int idx_2;
 beta_1 ~ normal(mu_S_1, sigma_S_1);
-      
+
 beta_2 ~ normal(mu_S_2, sigma_S_2);
  if (bg_model == 1) {
         beta_bg ~ normal(mu_bg, sigma_bg);
       }
-// cure fraction 
+// cure fraction
  if (cf_model == 3) {
  alpha ~ normal(mu_alpha, sigma_alpha);
  sd_cf ~ normal(mu_sd_cf, sigma_sd_cf);
@@ -224,7 +224,7 @@ mean_bg = mean(h_bg_2);
 for (j in 1:nTx) {
   for (i in 1:t_max) {
     S_bg[i] = exp_Surv(i, mean_bg);
-    S_1[i] = exp_exponential_Surv(i, mean_{id}, mean_bg);
+    S_1[i] = exp_exponential_Surv(i, lambda_{id}, mean_bg);
     S_1_pred[i, j] = cf_1[j]*S_bg[i] + (1 - cf_1[j])*S_1[i];
   }
 }
@@ -233,7 +233,7 @@ for (j in 1:nTx) {
 for (j in 1:nTx) {
   for (i in 1:t_max) {
     S_bg[i] = exp_Surv(i, mean_bg);
-    S_2[i] = exp_exponential_Surv(i, mean_{id}, mean_bg);
+    S_2[i] = exp_exponential_Surv(i, lambda_{id}, mean_bg);
     S_2_pred[i, j] = cf_2[j]*S_bg[i] + (1 - cf_2[j])*S_2[i];
   }
 }
@@ -243,7 +243,7 @@ for (j in 1:nTx) {
 
 // for (i in 1:t_max) {
 //  pS_bg[i] = exp_Surv(i, pmean_bg);
-//  pS_1[i] = exp_exponential_Surv(i, pmean_{id}, pmean_bg);
+//  pS_1[i] = exp_exponential_Surv(i, lambda_{id}, pmean_bg);
 //  S_1_prior[i] = pmean_cf_1*pS_bg[i] + (1 - pmean_cf_1)*pS_1[i];
 // }
 
@@ -253,7 +253,7 @@ for (j in 1:nTx) {
 
 // for (i in 1:t_max) {
 //  pS_bg[i] = exp_Surv(i, pmean_bg);
-//  pS_2[i] = exp_exponential_Surv(i, pmean_{id}, pmean_bg);
+//  pS_2[i] = exp_exponential_Surv(i, lambda_{id}, pmean_bg);
 //  S_2_prior[i] = pmean_cf_2*pS_bg[i] + (1 - pmean_cf_2)*pS_2[i];
 // }
 // likelihood
@@ -266,7 +266,7 @@ for (j in 1:nTx) {
       log(cf_1[Tx]) +
       surv_exp_lpdf(t_1[i] | d_1[i], lambda_1_bg[i]),
       log1m(cf_1[Tx]) +
-      joint_exp_exponential_lpdf(t_1[i] | d_1[i], lambda_{id}[i], lambda_1_bg[i]));
+      joint_exp_exponential_lpdf(t_1[i] | d_1[i], lambda_1[i], lambda_1_bg[i]));
     }
 
     idx_1 = idx_1 + n_1[Tx];
@@ -283,7 +283,7 @@ for (j in 1:nTx) {
       log(cf_2[Tx]) +
       surv_exp_lpdf(t_2[i] | d_2[i], lambda_2_bg[i]),
       log1m(cf_2[Tx]) +
-      joint_exp_exponential_lpdf(t_2[i] | d_2[i], lambda_{id}[i], lambda_2_bg[i]));
+      joint_exp_exponential_lpdf(t_2[i] | d_2[i], lambda_2[i], lambda_2_bg[i]));
     }
 
     idx_2 = idx_2 + n_2[Tx];

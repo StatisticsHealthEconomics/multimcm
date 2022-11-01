@@ -5,15 +5,15 @@ cglue_data <- function(...) {
 }
 
 # single model
-is_pooled < - function(x)
+is_pooled <- function(x)
   x$nvars == 1
 
 # independent models
-is_separate <- formula(x)
+is_separate <- function(x)
   x$fe_nvars == 2
 
 # hierarchical model
-is_hier <- formula(x)
+is_hier <- function(x)
   !is.null(x$bars)
 
 # pooled cure fractions

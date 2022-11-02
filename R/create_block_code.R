@@ -217,14 +217,14 @@ create_code_skeleton <- function(n_grp) {
   scode$generated_quantities_def <-
     paste0(c("real mean_bg;\n
            // real pbeta_bg;\n
-           vector[N_1] log_lik;\n
+           real log_lik = 0;\n
            vector[t_max] S_bg;\n"),
       cglue_data(ids,
-      "vector[t_max] S_{id};
+      "matrix[t_max, nTx] S_{id};
       matrix[t_max, nTx] S_{id}_pred;
       real mean_{id};
       int idx_{id};
-      vector[N_{id}] log_lik_{id};
+      real log_lik_{id};
       // real pbeta_{id} = normal_rng(mu_S_{id}[1], sigma_S_{id}[1]);
       \n\n"))
 
@@ -308,8 +308,8 @@ make_postpred <- function(model, id) {
     for (j in 1:nTx) {{
       for (i in 1:t_max) {{
         S_bg[i] = exp_Surv(i, mean_bg);
-        S_{id}[i] = exp_{model}_Surv(i, {pp_params}, mean_bg);
-        S_{id}_pred[i, j] = cf_{id}[j]*S_bg[i] + (1 - cf_{id}[j])*S_{id}[i];
+        S_{id}[i, j] = exp_{model}_Surv(i, ", pp_params, "[j], mean_bg);
+        S_{id}_pred[i, j] = cf_{id}[j]*S_bg[i] + (1 - cf_{id}[j])*S_{id}[i,j];
       }
     }\n\n")
 }
@@ -327,8 +327,8 @@ make_priorpred <- function(model, id) {
 
     // for (i in 1:t_max) {{
     //  pS_bg[i] = exp_Surv(i, pmean_bg);
-    //  pS_{id}[i] = exp_{model}_Surv(i, {pp_params}, pmean_bg);
-    //  S_{id}_prior[i] = pmean_cf_{id}*pS_bg[i] + (1 - pmean_cf_{id})*pS_{id}[i];
+    //  pS_{id}[i] = exp_{model}_Surv(i, ", pp_params, "[j], pmean_bg);
+    //  S_{id}_prior[i] = pmean_cf_{id}*pS_bg[i] + (1 - pmean_cf_{id})*pS_{id}[i,j];
     // }\n\n")
 }
 
@@ -354,9 +354,8 @@ make_loo <- function(model, id) {
       idx_{id} = 1;
 
       for (Tx in 1:nTx) {{
-
-      for (i in idx_{id}:(idx_{id} + n_{id}[Tx] - 1)) {{
-         log_lik_{id}[i] = log_sum_exp(
+        for (i in idx_{id}:(idx_{id} + n_{id}[Tx] - 1)) {{
+          log_lik_{id} += log_sum_exp(
           log(cf_{id}[Tx]) +
           surv_exp_lpdf(t_{id}[i] | d_{id}[i], lambda_{id}_bg[i]),
           log1m(cf_{id}[Tx]) +
@@ -365,7 +364,7 @@ make_loo <- function(model, id) {
 
         idx_{id} = idx_{id} + n_{id}[Tx];
       }
-      log_lik = log_lik_os + log_lik_pfs;\n\n")   ##TODO:
+      log_lik = log_lik + log_lik_{id};\n\n")
 
   scode
 }

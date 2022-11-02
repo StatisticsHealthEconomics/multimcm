@@ -63,7 +63,7 @@ bmcm_stan <- function(input_data,
   ###############################
   # construct data
   # priors and hyper-parameters
-browser()
+
   if (is.na(prior_cure)) prior_cure <- default_prior_cure(formula_cure)
   if (is.na(prior_latent)) prior_latent <- default_prior_latent(formula_latent,
                                                                 formula_cure)
@@ -108,7 +108,6 @@ browser()
   ##############
   # fit model
 
-  browser()
   stan_inputs$model_code <- create_stancode(distns)
 
   res <- list()

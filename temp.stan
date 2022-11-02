@@ -133,14 +133,14 @@ cf_2 = inv_logit(tx_cf_2);
 
 model {
 int idx_1;
-int idx_2;
+int idx_2;      
 beta_1 ~ normal(mu_S_1, sigma_S_1);
-
+      
 beta_2 ~ normal(mu_S_2, sigma_S_2);
  if (bg_model == 1) {
         beta_bg ~ normal(mu_bg, sigma_bg);
       }
-// cure fraction
+// cure fraction 
  if (cf_model == 3) {
  alpha ~ normal(mu_alpha, sigma_alpha);
  sd_cf ~ normal(mu_sd_cf, sigma_sd_cf);
@@ -162,7 +162,7 @@ for (Tx in 1:nTx) {
     log(cf_1[Tx]) +
       surv_exp_lpdf(t_1[i] | d_1[i], lambda_1_bg[i]),
     log1m(cf_1[Tx]) +
-      joint_exp_exponential_lpdf(t_1[i] | d_1[i], lambda_1[i], lambda_1_bg[i]));
+      joint_exp_exp_lpdf(t_1[i] | d_1[i], lambda_1[i], lambda_1_bg[i]));
   }
 
   idx_1 = idx_1 + n_1[Tx];
@@ -177,7 +177,7 @@ for (Tx in 1:nTx) {
     log(cf_2[Tx]) +
       surv_exp_lpdf(t_2[i] | d_2[i], lambda_2_bg[i]),
     log1m(cf_2[Tx]) +
-      joint_exp_exponential_lpdf(t_2[i] | d_2[i], lambda_2[i], lambda_2_bg[i]));
+      joint_exp_exp_lpdf(t_2[i] | d_2[i], lambda_2[i], lambda_2_bg[i]));
   }
 
   idx_2 = idx_2 + n_2[Tx];
@@ -189,22 +189,22 @@ real mean_bg;
 
            // real pbeta_bg;
 
-           vector[N_1] log_lik;
+           real log_lik = 0;
 
            vector[t_max] S_bg;
-vector[t_max] S_1;
+matrix[t_max, nTx] S_1;
 matrix[t_max, nTx] S_1_pred;
 real mean_1;
 int idx_1;
-vector[N_1] log_lik_1;
+real log_lik_1;
 // real pbeta_1 = normal_rng(mu_S_1[1], sigma_S_1[1]);
 
 
-vector[t_max] S_2;
+matrix[t_max, nTx] S_2;
 matrix[t_max, nTx] S_2_pred;
 real mean_2;
 int idx_2;
-vector[N_2] log_lik_2;
+real log_lik_2;
 // real pbeta_2 = normal_rng(mu_S_2[1], sigma_S_2[1]);
 
 mean_1 = exp(beta_1[1]);
@@ -224,8 +224,8 @@ mean_bg = mean(h_bg_2);
 for (j in 1:nTx) {
   for (i in 1:t_max) {
     S_bg[i] = exp_Surv(i, mean_bg);
-    S_1[i] = exp_exponential_Surv(i, lambda_{id}, mean_bg);
-    S_1_pred[i, j] = cf_1[j]*S_bg[i] + (1 - cf_1[j])*S_1[i];
+    S_1[i, j] = exp_exp_Surv(i, lambda_1[j], mean_bg);
+    S_1_pred[i, j] = cf_1[j]*S_bg[i] + (1 - cf_1[j])*S_1[i,j];
   }
 }
 
@@ -233,8 +233,8 @@ for (j in 1:nTx) {
 for (j in 1:nTx) {
   for (i in 1:t_max) {
     S_bg[i] = exp_Surv(i, mean_bg);
-    S_2[i] = exp_exponential_Surv(i, lambda_{id}, mean_bg);
-    S_2_pred[i, j] = cf_2[j]*S_bg[i] + (1 - cf_2[j])*S_2[i];
+    S_2[i, j] = exp_exp_Surv(i, lambda_2[j], mean_bg);
+    S_2_pred[i, j] = cf_2[j]*S_bg[i] + (1 - cf_2[j])*S_2[i,j];
   }
 }
 // prior mean checks
@@ -243,8 +243,8 @@ for (j in 1:nTx) {
 
 // for (i in 1:t_max) {
 //  pS_bg[i] = exp_Surv(i, pmean_bg);
-//  pS_1[i] = exp_exponential_Surv(i, lambda_{id}, pmean_bg);
-//  S_1_prior[i] = pmean_cf_1*pS_bg[i] + (1 - pmean_cf_1)*pS_1[i];
+//  pS_1[i] = exp_exp_Surv(i, lambda_1[j], pmean_bg);
+//  S_1_prior[i] = pmean_cf_1*pS_bg[i] + (1 - pmean_cf_1)*pS_1[i,j];
 // }
 
  // prior mean checks
@@ -253,41 +253,39 @@ for (j in 1:nTx) {
 
 // for (i in 1:t_max) {
 //  pS_bg[i] = exp_Surv(i, pmean_bg);
-//  pS_2[i] = exp_exponential_Surv(i, lambda_{id}, pmean_bg);
-//  S_2_prior[i] = pmean_cf_2*pS_bg[i] + (1 - pmean_cf_2)*pS_2[i];
+//  pS_2[i] = exp_exp_Surv(i, lambda_2[j], pmean_bg);
+//  S_2_prior[i] = pmean_cf_2*pS_bg[i] + (1 - pmean_cf_2)*pS_2[i,j];
 // }
 // likelihood
   idx_1 = 1;
 
   for (Tx in 1:nTx) {
-
-  for (i in idx_1:(idx_1 + n_1[Tx] - 1)) {
-     log_lik_1[i] = log_sum_exp(
+    for (i in idx_1:(idx_1 + n_1[Tx] - 1)) {
+      log_lik_1 += log_sum_exp(
       log(cf_1[Tx]) +
       surv_exp_lpdf(t_1[i] | d_1[i], lambda_1_bg[i]),
       log1m(cf_1[Tx]) +
-      joint_exp_exponential_lpdf(t_1[i] | d_1[i], lambda_1[i], lambda_1_bg[i]));
+      joint_exp_exp_lpdf(t_1[i] | d_1[i], lambda_1[i], lambda_1_bg[i]));
     }
 
     idx_1 = idx_1 + n_1[Tx];
   }
-  log_lik = log_lik_os + log_lik_pfs;
+  log_lik = log_lik + log_lik_1;
 
  // likelihood
   idx_2 = 1;
 
   for (Tx in 1:nTx) {
-
-  for (i in idx_2:(idx_2 + n_2[Tx] - 1)) {
-     log_lik_2[i] = log_sum_exp(
+    for (i in idx_2:(idx_2 + n_2[Tx] - 1)) {
+      log_lik_2 += log_sum_exp(
       log(cf_2[Tx]) +
       surv_exp_lpdf(t_2[i] | d_2[i], lambda_2_bg[i]),
       log1m(cf_2[Tx]) +
-      joint_exp_exponential_lpdf(t_2[i] | d_2[i], lambda_2[i], lambda_2_bg[i]));
+      joint_exp_exp_lpdf(t_2[i] | d_2[i], lambda_2[i], lambda_2_bg[i]));
     }
 
     idx_2 = idx_2 + n_2[Tx];
   }
-  log_lik = log_lik_os + log_lik_pfs;
+  log_lik = log_lik + log_lik_2;
 }
 

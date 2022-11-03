@@ -91,7 +91,8 @@ bmcm_stan <- function(input_data,
       prior_latent,
       prior_cure,
       tx_params,
-      bg_model = bg_model,
+      cf_model = formula_cure$cf_idx,
+      bg_model = bg_model_idx,
       bg_hr = bg_hr)
 
   # default sampler parameters
@@ -103,19 +104,24 @@ bmcm_stan <- function(input_data,
            thin = 1,
            chains = 1,
            control = list(adapt_delta = 0.99,
-                          max_treedepth = 20)))
+                          max_treedepth = 20),
+           include = FALSE,
+           model_name = "multimcm_model",
+           open_progress = TRUE,
+           verbose = TRUE))
 
   ##############
   # fit model
 
   stan_inputs$model_code <- create_stancode(distns)
 
+  ## for testing
   # writeLines(stan_inputs$model_code, con = here::here("data/stan_model_code.stan"))
-  model_code <- readr::read_file(here::here("data/stan_model_code_test.stan"))
-  stan_inputs$model_code <- model_code
+  # model_code <- readr::read_file(here::here("data/stan_model_code_test.stan"))
+  # stan_inputs$model_code <- model_code
 
   res <- list()
-
+browser()
   res$stan_output <- do.call(rstan::stan, c(stan_inputs, dots))
   res$call <- call
   class(res) <- "bmcm"

@@ -94,7 +94,7 @@ out <-
     bg_hr = 1,
     t_max = 60)
 
-# if (save_res) {saveRDS(out, file)}
+if (save_res) {saveRDS(out, file = "data/stan_res.RData")}
 
 
 ##########

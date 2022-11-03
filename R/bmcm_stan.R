@@ -110,6 +110,10 @@ bmcm_stan <- function(input_data,
 
   stan_inputs$model_code <- create_stancode(distns)
 
+  # writeLines(stan_inputs$model_code, con = here::here("data/stan_model_code.stan"))
+  model_code <- readr::read_file(here::here("data/stan_model_code_test.stan"))
+  stan_inputs$model_code <- model_code
+
   res <- list()
 
   res$stan_output <- do.call(rstan::stan, c(stan_inputs, dots))

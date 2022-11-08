@@ -4,17 +4,22 @@
 #' jointly estimate all treatments
 #' generate Stan code
 #'
-#' @param input_data
-#' @param formula
-#' @param cureformula
-#' @param family_latent
-#' @param prior_latent
-#' @param prior_cure
-#' @param centre_coefs
-#' @param bg_model
-#' @param bg_hr
-#' @param t_max
-#' @param ...
+#' @param input_data Long format data frame
+#' @param formula R formula object for latent model component
+#' @param cureformula R formula object for cure fraction model component
+#' @param family_latent Name of distribution, from
+#'    "exp", "weibull", "gompertz", "lognormal", "gamma".
+#'    Single string or vector of length number of end-points
+#' @param prior_latent Optional
+#' @param prior_cure Optional
+#' @param centre_coefs Logical
+#' @param bg_model User supplied distribution or estimated.
+#'    In future this will be probabilities or fitted model object.
+#' @param bg_varname Background variable name in \code{input_data}
+#' @param bg_hr Background hazard ratio adjustment
+#' @param t_max Maximum time horizon
+#' @param ... Additional parameters
+#' @return Stan output as \code{bmcm} class
 #'
 #' @import rstanarm
 #' @importFrom lme4 mkReTrms
@@ -29,6 +34,7 @@ bmcm_stan <- function(input_data,
                       prior_cure = NA,
                       centre_coefs = TRUE,
                       bg_model = c("bg_distn", "bg_fixed"),
+                      bg_varname = "bg_rate",
                       bg_hr = 1,
                       t_max = 60,
                       ...) {
@@ -79,9 +85,11 @@ bmcm_stan <- function(input_data,
   for (i in seq_len(formula_cure$n_groups)) {
     stan_data <- c(
       stan_data,
-      prep_stan_data(formula_cure, formula_latent,
-                     event_type = i,
-                     centre_coefs))
+      prep_latent_data(formula_cure, formula_latent,
+                       event_type = i,
+                       centre_coefs),
+      prep_bg_data(input_data, bg_varname,
+                   formula_cure, event_type = i))
   }
 
   stan_inputs <- list()

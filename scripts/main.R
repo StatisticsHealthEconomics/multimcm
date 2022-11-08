@@ -21,7 +21,8 @@ library(survival)
 ## takes time to compile the Stan code
 source("R/default_prior_cure.R")
 source("R/default_prior_latent.R")
-source("R/prep_stan_data.R")
+source("R/prep_latent_data.R")
+source("R/prep_bg_data.R")
 source("R/bmcm_stan.R")
 source("R/create_stancode.R")
 source("R/create_block_code.R")
@@ -56,12 +57,15 @@ TRTX <- NA
 
 long_event_time_dat <-
   surv_input_data |>
-  select(AAGE, os, pfs, TRTA, SEX, ACOUNTRY) |>
+  select(AAGE, os, pfs, TRTA, SEX, ACOUNTRY, OS_rate, PFS_rate) |>
   mutate(id = 1:n()) |>
   melt(measure.vars = c("os", "pfs"),
        value.name = "month", variable.name = "event_name") |>
   mutate(year = floor(month/12),
-         age_event = AAGE + year)
+         age_event = AAGE + year,
+         bg_rate = ifelse(event_name == "os", OS_rate, PFS_rate),
+         bg_rate = ifelse(bg_rate == 0, 0.00001, bg_rate)) |>  # replace so >0
+  select(-OS_rate, -PFS_rate)
 
 long_input_data <-
   surv_input_data |>
@@ -73,9 +77,6 @@ long_input_data <-
   merge(long_event_time_dat) |>
   filter(if (!is.na(TRTX)) TRTA == TRTX else TRTA != "") |>
   mutate(event_idx = ifelse(event_name == "os", 1, 2))
-
-##TODO: do we need rates?
-# mutate(rate = ifelse(rate == 0, 0.00001, rate)) # replace so >0
 
 
 ##############
@@ -99,8 +100,6 @@ if (save_res) {saveRDS(out, file = "data/stan_res.RData")}
 
 ##########
 # plots
-
-library(survival)
 
 source("R/plot_S_jointTx.R")
 source("R/prep_S_data.R")

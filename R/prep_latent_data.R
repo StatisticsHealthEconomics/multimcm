@@ -1,10 +1,10 @@
 
-#' Prepare Stan data
+#' Prepare Stan data in latent model
 #'
 #' Data specific to end type for Stan input.
 #'
-#' @param formula_cure
-#' @param formula_latent
+#' @param formula_cure parsed formula
+#' @param formula_latent parsed formula
 #' @param event_type cluster/group
 #' @param centre_coefs Logical
 #'    1: Exponential distribution; 2: fixed point values from life-table
@@ -18,11 +18,11 @@
 #' @import dplyr
 #' @export
 #'
-prep_stan_data <- function(formula_cure,
-                           formula_latent,
-                           event_type,
-                           centre_coefs = FALSE,
-                           suffix = TRUE) {
+prep_latent_data <- function(formula_cure,
+                             formula_latent,
+                             event_type,
+                             centre_coefs = FALSE,
+                             suffix = TRUE) {
   # one group only
   dat <-
     ##TODO: merge so don't repeat covariates in both
@@ -53,8 +53,7 @@ prep_stan_data <- function(formula_cure,
     t = dat[[1]][, "time"],
     d = dat[[1]][, "status"],   # censoring indicator
     H = ncol(X_mat),
-    X = X_mat,
-    h_bg = numeric(0))          # background hazard point values
+    X = X_mat)
 
   # append unique id
   if (suffix && !identical(event_type, ""))

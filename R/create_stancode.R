@@ -6,7 +6,7 @@
 #'
 #' @param models Vector survival model names
 #'
-#' @return
+#' @return string
 #' @export
 #' @importFrom glue glue
 #'

@@ -15,22 +15,6 @@ library(abind)
 library(survival)
 # library(rstanarm)
 
-# devtools::load_all()
-
-## reading these in for now since building the package
-## takes time to compile the Stan code
-source("R/default_prior_cure.R")
-source("R/default_prior_latent.R")
-source("R/prep_latent_data.R")
-source("R/prep_bg_data.R")
-source("R/bmcm_stan.R")
-source("R/create_stancode.R")
-source("R/create_block_code.R")
-source("R/parse_formula.R")
-source("R/validate_distns.R")
-source("R/misc.R")
-
-
 # rstan_options(auto_write = TRUE)
 options(mc.cores = parallel::detectCores() - 1)
 

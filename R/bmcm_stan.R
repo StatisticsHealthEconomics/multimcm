@@ -1,8 +1,10 @@
 
+#' @title bmcm_stan
+#'
 #' @rdname bmcm_stan
 #'
-#' jointly estimate all treatments
-#' generate Stan code
+#' @description jointly estimate all treatments
+#'    generate Stan code
 #'
 #' @param input_data Long format data frame
 #' @param formula R formula object for latent model component
@@ -129,7 +131,7 @@ bmcm_stan <- function(input_data,
   # stan_inputs$model_code <- model_code
 
   res <- list()
-browser()
+
   res$stan_output <- do.call(rstan::stan, c(stan_inputs, dots))
   res$call <- call
   class(res) <- "bmcm"

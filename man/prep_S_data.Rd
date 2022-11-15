@@ -4,21 +4,8 @@
 \alias{prep_S_data}
 \title{prep_S_data}
 \usage{
-prep_S_data(stan_extract, event_type = NA)
+prep_S_data(stan_extract, event_type = NA, CI_probs = c(0.025, 0.5, 0.975))
 }
 \description{
 prep_S_data
-}
-\examples{
-
-stan_out <- rstan::extract(out)
-#' plot_dat <- prep_S_data(stan_out, event_type = "os")
-
-ggplot(plot_dat, aes(month, mean, group = type, colour = type)) +
-geom_line() +
-ylab("Survival") +
-geom_ribbon(aes(x = month, ymin = lower, ymax = upper, fill = type),
-            linetype = 0,
-            alpha = 0.2)
-            
 }

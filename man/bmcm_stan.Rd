@@ -2,46 +2,55 @@
 % Please edit documentation in R/bmcm_stan.R
 \name{bmcm_stan}
 \alias{bmcm_stan}
-\title{Run Stan mixture cure model}
+\title{bmcm_stan}
 \usage{
 bmcm_stan(
   input_data,
-  model = "exp",
-  event_type = "PFS",
-  tx_name = "IPILIMUMAB",
-  iter = 2000,
-  warmup = 1000,
-  thin = 10,
-  chains = 1,
-  mean_cf = NA,
-  var_cf = NA,
-  centre_age = TRUE,
+  formula,
+  cureformula = ~1,
+  family_latent = "exponential",
+  prior_latent = NA,
+  prior_cure = NA,
+  centre_coefs = TRUE,
+  bg_model = c("bg_distn", "bg_fixed"),
+  bg_varname = "bg_rate",
+  bg_hr = 1,
+  t_max = 60,
   ...
 )
 }
 \arguments{
-\item{input_data}{Dataframe with all variables}
+\item{input_data}{Long format data frame}
 
-\item{model}{Distribution name; exp, weibull, gompertz}
+\item{formula}{R formula object for latent model component}
 
-\item{event_type}{Overall survival or progression-free survival; OS, PFS}
+\item{cureformula}{R formula object for cure fraction model component}
 
-\item{tx_name}{Treatment name; IPILIMUMAB, NIVOLUMAB, NIVOLUMAB+IPILIMUMAB}
+\item{family_latent}{Name of distribution, from
+"exp", "weibull", "gompertz", "lognormal", "gamma".
+Single string or vector of length number of end-points}
 
-\item{iter}{int}
+\item{prior_latent}{Optional}
 
-\item{warmup}{Number of iterations burn-in; int}
+\item{prior_cure}{Optional}
 
-\item{chains}{Number of chains; int}
+\item{centre_coefs}{Logical}
 
-\item{mean_cf}{Mean cure fraction; default to U\link{0,1}}
+\item{bg_model}{User supplied distribution or estimated.
+In future this will be probabilities or fitted model object.}
 
-\item{var_cf}{Variance of cure fraction}
+\item{bg_varname}{Background variable name in \code{input_data}}
 
-\item{centre_age}{Logical to centre regression covariate}
+\item{bg_hr}{Background hazard ratio adjustment}
 
-\item{...}{Additional arguments}
+\item{t_max}{Maximum time horizon}
+
+\item{...}{Additional parameters}
+}
+\value{
+Stan output as \code{bmcm} class
 }
 \description{
-Use pre-compiled C code.
+jointly estimate all treatments
+generate Stan code
 }

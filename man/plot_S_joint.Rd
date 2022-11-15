@@ -2,20 +2,24 @@
 % Please edit documentation in R/plot_S_joint.R
 \name{plot_S_joint}
 \alias{plot_S_joint}
-\title{plot_S_joint}
+\title{Plot survival curves for joint model and all treatments}
 \usage{
-plot_S_joint(file_names = NA, stan_list = NA)
+plot_S_joint(stan_out = NA, facet = TRUE, annot_cf = FALSE, data = NA)
 }
 \arguments{
-\item{file_names}{Nested list of file names for Stan output}
+\item{stan_out}{Stan output data frame}
 
-\item{stan_list}{List of Stan output}
+\item{facet}{Two separate plots for OS and PFS or overlaid?}
+
+\item{annot_cf}{Annotate with cure fractions? Logical}
+
+\item{data}{Study individual-level data for Kaplan-Meier}
 }
 \value{
 ggplot object
 }
 \description{
-Plot results of running Stan
+Use results of running Stan
 relative survival joint mixture cure model.
 }
 \examples{

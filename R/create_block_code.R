@@ -14,6 +14,8 @@ distn_params <- function(distn) {
 }
 
 
+#' make_latent_model_code
+#'
 #' @examples
 #' lapply(make_latent_model_code("lognormal"), cat)
 #'

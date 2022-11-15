@@ -105,6 +105,11 @@ bmcm_stan <- function(input_data,
       bg_model = bg_model_idx,
       bg_hr = bg_hr)
 
+  ##TODO: define pars explicitly
+  ##
+  ## '''
+
+
   # default sampler parameters
   dots <-
     modifyList(
@@ -113,12 +118,14 @@ bmcm_stan <- function(input_data,
            iter = 500,
            thin = 1,
            chains = 1,
+           pars = "cf_1",
            control = list(adapt_delta = 0.99,
                           max_treedepth = 20),
-           include = FALSE,
+           # include = FALSE,
            model_name = "multimcm_model",
-           open_progress = TRUE,
-           verbose = TRUE))
+           open_progress = TRUE)#,
+           # verbose = TRUE)
+    )
 
   ##############
   # fit model

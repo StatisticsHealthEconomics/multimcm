@@ -3,18 +3,22 @@ functions {
 }
 
 data {
-	int<lower=1> nTx;
-	int<lower=1, upper=3> cf_model;         // cure fraction
+ int<lower=1> nTx;
+ int<lower=1, upper=3> cf_model;         // cure fraction
  int<lower=0> N_pfs;
  int<lower=0> n_pfs[nTx];
  int<lower=0> H_pfs;
+
  vector[N_pfs] t_pfs;
  vector[N_pfs] d_pfs;
+
  matrix[N_pfs, H_pfs] X_pfs;
  vector[H_pfs] mu_0_pfs;
  vector<lower=0>[H_pfs] sigma_0_pfs;
-	real<lower=0> a_sd_pfs;    // gamma hyper-parameters
-              real<lower=0> b_sd_pfs;
+
+ real<lower=0> a_sd_pfs;    // gamma hyper-parameters
+ real<lower=0> b_sd_pfs;
+
  int<lower=0> N_os;
  int<lower=0> n_os[nTx];
  int<lower=0> H_os;
@@ -23,62 +27,64 @@ data {
  matrix[N_os, H_os] X_os;
  vector[H_os] mu_0_os;
  vector<lower=0>[H_os] sigma_0_os;
- int<lower=1, upper=2> bg_model;
-      vector[bg_model == 1 ? H_os : 0] mu_bg;
-      vector<lower=0>[bg_model == 1 ? H_os : 0] sigma_bg;
-      vector[bg_model == 2 ? N_os : 0] h_bg_os;
-      vector[bg_model == 2 ? N_pfs : 0] h_bg_pfs;
-      int<lower=0, upper=1> joint_model;
-      real mu_joint[joint_model];
-      real<lower=0> sigma_joint[joint_model];
-      matrix[nTx, nTx] Tx_dmat;         // treatment design matrix
-      vector[cf_model == 3 ? nTx : 0] mu_alpha;             // treatment regression coefficients
-      vector<lower=0>[cf_model == 3 ? nTx : 0] sigma_alpha;
-      vector[cf_model == 2 ? nTx : 0] mu_alpha_os;
-      vector[cf_model == 2 ? nTx : 0] mu_alpha_pfs;
-      vector<lower=0>[cf_model == 2 ? nTx : 0] sigma_alpha_os;
-      vector<lower=0>[cf_model == 2 ? nTx : 0] sigma_alpha_pfs;
-      int<lower=0> t_max;
-      real a_cf[cf_model == 1 ? 1 : 0];
-      real b_cf[cf_model == 1 ? 1 : 0];
-      vector[cf_model == 3 ? nTx : 0] mu_sd_cf;
-      vector<lower=0>[cf_model == 3 ? nTx : 0] sigma_sd_cf;
 
+ int<lower=1, upper=2> bg_model;
+ vector[bg_model == 1 ? H_os : 0] mu_bg;
+ vector<lower=0>[bg_model == 1 ? H_os : 0] sigma_bg;
+ vector<lower=0>[bg_model == 2 ? N_os : 0] h_bg_os;
+ vector<lower=0>[bg_model == 2 ? N_pfs : 0] h_bg_pfs;
+
+ int<lower=0, upper=1> joint_model;
+ real mu_joint[joint_model];
+ real<lower=0> sigma_joint[joint_model];
+
+ matrix[nTx, nTx] Tx_dmat;         // treatment design matrix
+ vector[cf_model == 3 ? nTx : 0] mu_alpha;             // treatment regression coefficients
+ vector<lower=0>[cf_model == 3 ? nTx : 0] sigma_alpha;
+
+ vector[cf_model == 2 ? nTx : 0] mu_alpha_os;
+ vector[cf_model == 2 ? nTx : 0] mu_alpha_pfs;
+ vector<lower=0>[cf_model == 2 ? nTx : 0] sigma_alpha_os;
+ vector<lower=0>[cf_model == 2 ? nTx : 0] sigma_alpha_pfs;
+
+ int<lower=0> t_max;
+ real a_cf[cf_model == 1 ? 1 : 0];
+ real b_cf[cf_model == 1 ? 1 : 0];
+ vector[cf_model == 3 ? nTx : 0] mu_sd_cf;
+ vector<lower=0>[cf_model == 3 ? nTx : 0] sigma_sd_cf;
 }
 
 parameters {
-    	real<lower=0> sd_pfs;
-    	vector[H_os] beta_os;       // coefficients in linear predictor (including intercept)
-      vector[H_pfs] beta_pfs;
-      vector[bg_model == 1 ? H_os : 0] beta_bg;
-      real beta_joint[joint_model];
-      vector[cf_model != 2 ? nTx : 0] alpha;
-      vector[cf_model == 2 ? nTx : 0] alpha_os;
-      vector[cf_model == 2 ? nTx : 0] alpha_pfs;
-    	vector<lower=0, upper=1>[cf_model == 1 ? nTx : 0] cf_pooled;
-      vector[cf_model == 3 ? nTx : 0] log_sd_cf;
-
+  real<lower=0> sd_pfs;
+  vector[H_os] beta_os;       // coefficients in linear predictor (including intercept)
+  vector[H_pfs] beta_pfs;
+  vector[bg_model == 1 ? H_os : 0] beta_bg;
+  real beta_joint[joint_model];
+  vector[cf_model != 2 ? nTx : 0] alpha;
+  vector[cf_model == 2 ? nTx : 0] alpha_os;
+  vector[cf_model == 2 ? nTx : 0] alpha_pfs;
+  vector<lower=0, upper=1>[cf_model == 1 ? nTx : 0] cf_pooled;
+  vector[cf_model == 3 ? nTx : 0] log_sd_cf;
 }
 
 transformed parameters {
-	    vector[N_os] lp_os_bg;
-      vector[N_os] lp_pfs_bg;
+ vector[N_os] lp_os_bg;
+ vector[N_os] lp_pfs_bg;
 
-      vector[N_os] lambda_os_bg;
-      vector[N_os] lambda_pfs_bg;
-	    vector[N_os] lp_os;
+ vector[N_os] lambda_os_bg;
+ vector[N_os] lambda_pfs_bg;
+ vector[N_os] lp_os;
+ vector[N_pfs] lp_pfs;
 // rate parameters
-      vector[N_os] lambda_os;
-	    vector[N_pfs] lp_pfs;
-// rate parameters
-      vector[N_pfs] mu_pfs;
-	    vector<lower=0, upper=1>[cf_model == 3 ? nTx : 0] cf_global;
-        vector<lower=0, upper=1>[nTx] cf_os;
-        vector<lower=0, upper=1>[nTx] cf_pfs;
-        vector[cf_model == 3 ? nTx : 0] lp_cf_global;
-        vector[cf_model != 1 ? nTx : 0] lp_cf_os;
-        vector[cf_model != 1 ? nTx : 0] lp_cf_pfs;
-        vector<lower=0>[cf_model == 3 ? nTx : 0] sd_cf;
+  vector[N_os] lambda_os;
+ vector[N_pfs] mu_pfs;
+ vector<lower=0, upper=1>[cf_model == 3 ? nTx : 0] cf_global;
+   vector<lower=0, upper=1>[nTx] cf_os;
+   vector<lower=0, upper=1>[nTx] cf_pfs;
+   vector[cf_model == 3 ? nTx : 0] lp_cf_global;
+   vector[cf_model != 1 ? nTx : 0] lp_cf_os;
+   vector[cf_model != 1 ? nTx : 0] lp_cf_pfs;
+   vector<lower=0>[cf_model == 3 ? nTx : 0] sd_cf;
 // correlated event times
       if (joint_model) {
         lp_os = X_os*beta_os + beta_joint[1]*(t_pfs - 1/exp(beta_pfs[1]));
@@ -100,7 +106,8 @@ transformed parameters {
 
       lambda_os_bg = exp(lp_os_bg);
       lambda_pfs_bg = exp(lp_pfs_bg);
-	lambda_os = exp(lp_os);
+
+  	lambda_os = exp(lp_os);
     mu_pfs = lp_pfs;
     if (cf_model == 3) {
         sd_cf = exp(log_sd_cf);
@@ -129,7 +136,7 @@ transformed parameters {
 }
 
 model {
-	int idx_os;
+	    int idx_os;
       int idx_pfs;
 
       beta_os ~ normal(mu_0_os, sigma_0_os);

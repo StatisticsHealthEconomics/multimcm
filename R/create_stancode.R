@@ -1,34 +1,44 @@
 
-#' Create Stan code from component parts
+#' Create Stan code
 #'
-#' @param os_model
-#' @param pfs_model
-#' @param cf_model
-#' @param joint_model
+#' check with
+#' writeLines(create_stancode(c("exp", "exp")), "temp.stan")
+#'
+#' @param models Vector survival model names
 #'
 #' @return
 #' @export
 #' @importFrom glue glue
 #'
 #' @examples
-#' create_stancode("exp", "lognormal", 3, FALSE)
+#' cat(create_stancode(c("exp", "exp")))
 #'
-create_stancode <- function(os_model,
-                            pfs_model,
-                            cf_model,
-                            joint_model) {
+create_stancode <- function(models) {
 
-  # validate_data()
-  # validate_vars()
+  n_grps <- length(models)
 
-  stancode <- create_code_skeleton()
-  pfs_code <- create_pfs_code(pfs_model)
-  os_code <- create_os_code(os_model)
-  cf_code <- create_cf_code(cf_model)
-  loglik_code <- make_loglik(os_model, pfs_model)
-  priorpred_code <- make_priorpred(os_model, pfs_model)
-  postpred_code <- make_postpred(os_model, pfs_model)
-  loo_code <- make_loo(os_model, pfs_model)
+  # generate separate blocks of Stan code
+
+  stancode <- create_code_skeleton(n_grps)
+  cf_code <- create_cf_code(n_grps)
+
+  latent_model_code <- priorpred_code <- postpred_code <- list()
+  loo_code <- loglik_code <- list()
+
+  for (i in seq_along(models)) {
+    latent_model_code[[i]] <-  make_latent_model_code(models[i], id = i)
+    priorpred_code[[i]] <- make_priorpred(models[i], id = i)
+    postpred_code[[i]] <- make_postpred(models[i], id = i)
+    loglik_code[[i]] <- make_loglik(models[i], id = i)
+    loo_code[[i]] <- make_loo(models[i], id = i)
+  }
+
+  # interleave all model lists
+  latent_model_code <- rearrange_blocks(latent_model_code)
+  priorpred_code <- rearrange_blocks(priorpred_code)
+  postpred_code <- rearrange_blocks(postpred_code)
+  loglik_code <- rearrange_blocks(loglik_code)
+  loo_code <- rearrange_blocks(loo_code)
 
   scode <- list()
 
@@ -38,18 +48,18 @@ create_stancode <- function(os_model,
   # generate data block
   scode$data <- paste0(
     "data {\n",
-    pfs_code$data,
-    os_code$data,
-    stancode$data,
-    cf_code$data,
+    stancode$data_def,
+    cf_code$data_def,
+    latent_model_code$data_def,
+    stancode$data_main,
+    cf_code$data_main,
     "\n}\n\n"
   )
 
   # generate parameters block
   scode$parameters <- paste0(
     "parameters {\n",
-    pfs_code$parameters,
-    os_code$parameters,
+    latent_model_code$parameters,
     stancode$parameters,
     cf_code$parameters,
     "\n}\n\n"
@@ -58,24 +68,20 @@ create_stancode <- function(os_model,
   # generate transformed parameters block
   scode$trans_params <- paste0(
     "transformed parameters {\n",
-    stancode$trans_params$def,
-    os_code$trans_params$def,
-    pfs_code$trans_params$def,
-    cf_code$trans_params$def,
-    stancode$trans_params$main,
-    os_code$trans_params$main,
-    pfs_code$trans_params$main,
-    cf_code$trans_params$main,
+    stancode$trans_params_def,
+    latent_model_code$trans_params_def,
+    cf_code$trans_params_def,
+    stancode$trans_params_main,
+    latent_model_code$trans_params_main,
+    cf_code$trans_params_main,
     "\n}\n\n"
   )
-
 
   # combine likelihood with prior part
   scode$model <- paste0(
     "model {\n",
-    pfs_code$model,
-    os_code$model,
     stancode$model,
+    latent_model_code$model,
     cf_code$model,
     loglik_code,
     "\n}\n\n"
@@ -84,16 +90,14 @@ create_stancode <- function(os_model,
   # generate generated quantities block
   scode$generated_quantities <- paste0(
     "generated quantities {\n",
-    stancode$generated_quantities$def,
-    pfs_code$generated_quantities$def,
-    os_code$generated_quantities$def,
-    pfs_code$generated_quantities$main,
-    os_code$generated_quantities$main,
-    stancode$generated_quantities$main,
-    cf_code$generated_quantities,
-    postpred_code,
-    priorpred_code,
-    loo_code,
+    stancode$generated_quantities_def,
+    latent_model_code$generated_quantities_def,
+    latent_model_code$generated_quantities_main,
+    stancode$generated_quantities_main,
+    cf_code$generated_quantities_main,
+    do.call(paste, postpred_code),
+    do.call(paste, priorpred_code),
+    do.call(paste, loo_code),
     "}\n"
   )
 
@@ -105,6 +109,13 @@ create_stancode <- function(os_model,
     scode$trans_params,
     scode$model,
     scode$generated_quantities
-    )
-  }
+  )
+}
+
+
+#
+rearrange_blocks <- function(x) {
+  simple_x <- simplify_all(transpose(x))
+  lapply(simple_x, paste, collapse = "\n ")
+}
 

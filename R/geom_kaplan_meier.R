@@ -51,4 +51,3 @@ geom_kaplan_meier <- function(data,
             colour = col,
             inherit.aes = FALSE)
 }
-

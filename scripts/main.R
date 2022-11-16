@@ -31,7 +31,7 @@ TRTX <- NA
 # latent_formula = "Surv(time=month, event=status) ~ 1 + age_event",
 # cure_formula = "~ TRTA + event_idx",                                     # separate
 # cure_formula = "~ TRTA",                                                 # pooled
-
+jk
 
 ##############
 # prep data

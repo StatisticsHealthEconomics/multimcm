@@ -1,49 +1,38 @@
 
-#' geom_kaplan_meier
-#'
-#' by treatment
+#' Geom for Kaplan-Meier ggplot
 #'
 geom_kaplan_meier <- function(data,
                               col = "black",
-                              event_type = c("os", "pfs")) {
+                              event_type = c(1,2)) {
 
   # remove empty treatment rows
   data <- data[data$TRTA != "", ]
 
-  if (any(grepl("os", event_type, ignore.case = TRUE))) {
-    fit_os <- survfit(Surv(os, os_event) ~ TRTA, data = data)
+  fit <- list()
+  dat <- list()
 
-    os_dat <-
-      data.frame(
-        Tx = if (is.null(fit_os$strata)) {1} else {
-          rep(gsub("TRTA=", "", names(fit_os$strata)),
-              times = fit_os$strata)},
-        event_type = event_type[grepl("os", event_type, ignore.case = TRUE)],
-        time = fit_os$time,
-        surv = fit_os$surv) %>%
-      # force pfs LHS and os RHS plots
-      mutate(endpoint = factor(toupper(event_type), levels = c("PFS", "OS")))
-  } else {
-    os_dat <- NULL
+  for (i in 1:n_event_type) {
+    if (any(grepl(i, event_type, ignore.case = TRUE))) {
+
+      ##TODO: get formula components
+      fit[[i]] <- survfit(Surv(os, os_event) ~ TRTA, data = data)
+
+      dat[[i]] <-
+        data.frame(
+          Tx = if (is.null(fit[[i]]$strata)) {1} else {
+            rep(gsub("TRTA=", "", names(fit[[i]]$strata)),
+                times = fit[[i]]$strata)},
+          event_type = event_type[grepl(i, event_type, ignore.case = TRUE)],
+          time = fit[[i]]$time,
+          surv = fit[[i]]$surv) %>%
+        mutate(endpoint = factor(toupper(event_type),
+                                 levels = 1:n_event_type))
+    } else {
+      dat[[i]] <- NULL
+    }
   }
 
-  if (any(grepl("pfs", event_type, ignore.case = TRUE))) {
-    fit_pfs <- survfit(Surv(pfs, pfs_event) ~ TRTA, data = data)
-
-    pfs_dat <-
-      data.frame(
-        Tx =  if (is.null(fit_pfs$strata)) {1} else {
-          rep(gsub("TRTA=", "", names(fit_pfs$strata)),
-              times = fit_pfs$strata)},
-        event_type = event_type[grepl("pfs", event_type, ignore.case = TRUE)],
-        time = fit_pfs$time,
-        surv = fit_pfs$surv) %>%
-      mutate(endpoint = factor(toupper(event_type), levels = c("PFS", "OS")))
-  } else {
-    pfs_dat <- NULL
-  }
-
-  km_data <- rbind(os_dat, pfs_dat)
+  km_data <- do.call(rbind, dat)
 
   geom_line(aes(x = time, y = surv, group = Tx),
             data = km_data,

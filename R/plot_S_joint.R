@@ -5,7 +5,7 @@
 #' relative survival joint mixture cure model.
 #'
 #' @param stan_out Stan output data frame
-#' @param facet Two separate plots for OS and PFS or overlaid?
+#' @param facet Two separate plots for each end point or overlaid?
 #' @param annot_cf Annotate with cure fractions? Logical
 #' @param data Study individual-level data for Kaplan-Meier
 #'
@@ -47,20 +47,21 @@ plot_S_joint <- function(stan_out = NA,
 
   if (!any(is.na(data))) {
     km_curve <- geom_kaplan_meier(data = data,
-                                  event_type = c("PFS", "OS"))  # pfs LHS and os RHS plots
+                                  event_type = 1:n_endpoint)
   } else {
     km_curve <- NULL}
 
-  curve_cols <- c("turquoise1", "blue", "cyan4", "green", "tomato1")
-  curve_labs <- c("Ipilimumab", "Nivolumab", "Nivolumab & Ipilimumab", "Background", "Uncured")
+  ##TODO:
+  # curve_cols <-
+  # curve_labs <- c("Background", "Uncured")
 
   p +
     km_curve +
     xlim(0, 60) +
-    scale_fill_manual(labels = curve_labs,
-                      values = curve_cols) +
-    scale_color_manual(labels = curve_labs,
-                       values = curve_cols) +
+    # scale_fill_manual(labels = curve_labs,
+    #                   values = curve_cols) +
+    # scale_color_manual(labels = curve_labs,
+    #                    values = curve_cols) +
     guides(color = guide_legend(""), fill = guide_legend("")) +
     theme_bw() +
     xlab("Month") +

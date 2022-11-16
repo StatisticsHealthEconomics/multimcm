@@ -35,33 +35,6 @@ extending current methods to account for the dependence between event
 times we leverage additional information to make better inferences and
 decisions.
 
-## Workflow
-
-The Stan engine can be called either with the compile C code or with the
-Stan script without precompiling.
-
--   The precompiled Stan code is in `inst/stan` and the compiled code in
-    `src/`
--   The non-compiled Stan code is in `scripts/`
-
-There are two runner scripts:
-
--   `scripts/stan_checkmate.R`: Run Stan mixture cure model with
-    *separate* model for PFS and OS data.
--   `scripts/stan_checkmate_joint.R`: Run Stan mixture cure model with
-    *joint* model for PFS and OS data.
-
-## Output
-
-Because the Stan output files are large, we do not save a single list of
-all model outputs as a single objects. Instead `stan_filenames.RData` is
-a list of file names of the model outputs and each output is saved in a
-separate file. The file name formats are:
-
--   For the separate OS, PFS models:
-    `stan_<distn>_<event type>_<treatment name>.Rds`
--   For the joint OS, PFS models:
-    `stan_<distn>_<distn>_<treatment name>.Rds`
 
 ### Code of Conduct
 

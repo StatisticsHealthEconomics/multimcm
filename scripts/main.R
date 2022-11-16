@@ -85,14 +85,9 @@ if (save_res) {saveRDS(out, file = "data/stan_res.RData")}
 ##########
 # plots
 
-source("R/plot_S_jointTx.R")
-source("R/prep_S_data.R")
-source("R/prep_S_jointTx_data.R")
-source("R/geom_kaplan_meier.R")
-
-gg <- plot_S_jointTx(out,
-                     annot_cf = FALSE,
-                     data = surv_input_data)
+gg <- plot_S_joint(out$stan_output,
+                   annot_cf = FALSE,
+                   data = surv_input_data)
 gg
 
 # ggsave(gg, filename)

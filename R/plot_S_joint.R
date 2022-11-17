@@ -1,10 +1,10 @@
 
 #' Plot survival curves for joint model and all treatments
 #'
-#' Use results of running Stan
+#' Use results of running Stan with \code{bmcm_stan()}
 #' relative survival joint mixture cure model.
 #'
-#' @param stan_out Stan output data frame
+#' @param out bmcm class output list
 #' @param facet Two separate plots for each end point or overlaid?
 #' @param annot_cf Annotate with cure fractions? Logical
 #' @param data Study individual-level data for Kaplan-Meier
@@ -20,12 +20,12 @@
 #' @examples
 #' load("data/file_names.RData")
 #'
-plot_S_joint <- function(stan_out = NA,
+plot_S_joint <- function(out,
                          facet = TRUE,
                          annot_cf = FALSE,
                          data = NA) {
 
-  plot_dat <- prep_S_joint_data(stan_out)
+  plot_dat <- prep_S_joint_data(out)
 
   add_facet <- function(facet) list(if (facet) facet_grid( ~ endpoint))
 

@@ -2,10 +2,10 @@
 #' @importFrom glue glue
 #'
 prep_S_joint_data <- function(stan_out) {
-
+browser()
   S_stats <- list()
 
-  event_type <- 1:stan_out$n_endpoints
+  event_type <- 1:n_endpoints
   model_names <- names(stan_out$models)
 
   stan_extract <- rstan::extract(stan_out)

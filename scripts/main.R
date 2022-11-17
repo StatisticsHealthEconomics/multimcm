@@ -85,7 +85,7 @@ if (save_res) {saveRDS(out, file = "data/stan_res.RData")}
 ##########
 # plots
 
-gg <- plot_S_joint(out$stan_output,
+gg <- plot_S_joint(out,
                    annot_cf = FALSE,
                    data = surv_input_data)
 gg

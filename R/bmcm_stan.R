@@ -105,6 +105,7 @@ bmcm_stan <- function(input_data,
       bg_model = bg_model_idx,
       bg_hr = bg_hr)
 
+  browser()
   # default sampler parameters
   dots <-
     modifyList(
@@ -133,8 +134,12 @@ bmcm_stan <- function(input_data,
 
   res <- list()
 
-  res$stan_output <- do.call(rstan::stan, c(stan_inputs, dots))
+  res$output <- do.call(rstan::stan, c(stan_inputs, dots))
   res$call <- call
+  res$distns <- distns
+  res$inputs <- stan_inputs
+  res$formula <- list(cure = formula_cure,
+                      latent = formula_latent)
   class(res) <- "bmcm"
 
   return(res)

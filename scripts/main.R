@@ -48,6 +48,7 @@ long_event_time_dat <-
   mutate(year = floor(month/12),
          age_event = AAGE + year,
          bg_rate = ifelse(event_name == "os", OS_rate, PFS_rate),
+         bg_rate = bg_rate/12,                                 # convert to months
          bg_rate = ifelse(bg_rate == 0, 0.00001, bg_rate)) |>  # replace so >0
   select(-OS_rate, -PFS_rate)
 

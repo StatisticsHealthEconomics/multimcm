@@ -8,6 +8,7 @@
 #' @param facet Two separate plots for each end point or overlaid?
 #' @param annot_cf Annotate with cure fractions? Logical
 #' @param data Study individual-level data for Kaplan-Meier
+#' @param ... Additional parameters
 #'
 #' @return ggplot object
 #'
@@ -23,7 +24,7 @@
 plot_S_joint <- function(bmcm_out,
                          facet = TRUE,
                          annot_cf = FALSE,
-                         data = NA) {
+                         data = NA, ...) {
 
   plot_dat <- prep_S_joint_data(bmcm_out)
 
@@ -64,7 +65,8 @@ plot_S_joint <- function(bmcm_out,
     #                   values = curve_cols) +
     # scale_color_manual(labels = curve_labs,
     #                    values = curve_cols) +
-    guides(color = guide_legend(""), fill = guide_legend("")) +
+    guides(color = guide_legend(""),
+           fill  = guide_legend("")) +
     theme_bw() +
     xlab("Month") +
     theme(text = element_text(size = 20))

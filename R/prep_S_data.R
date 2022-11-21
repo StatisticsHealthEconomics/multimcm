@@ -27,7 +27,7 @@ prep_S_data <- function(stan_extract,
           rbind(1, .) %>%
           mutate(month = 0:(n() - 1),
                  type = S_pred),
-        t(stan_extract[[S_0]][,,i]) %>%
+        t(stan_extract[[S_0]]) %>%
           as_tibble() %>%
           rbind(1, .) %>%
           mutate(month = 0:(n() - 1),
@@ -43,10 +43,11 @@ prep_S_data <- function(stan_extract,
       S_dat %>%
       do.call(rbind, .) %>%
       melt(id.vars = c("month", "type")) %>%
-      group_by(month, type) %>%
+      group_by(month, type)  |>
       summarise(mean = mean(value),
                 lower = quantile(value, probs = CI_probs[1]),
-                upper = quantile(value, probs = CI_probs[3]))
+                upper = quantile(value, probs = CI_probs[3])) |>
+      mutate(Tx = i)
   }
 
   S_stats

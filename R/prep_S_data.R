@@ -1,23 +1,19 @@
 
-#' prep_S_data
+#' Prep S data
 #'
 prep_S_data <- function(stan_extract,
                         event_type = NA,
                         CI_probs = c(0.025, 0.5, 0.975)) {
-
-  #
+  # name curves by event type
   if (is.na(event_type)) {
     S_pred <- "S_pred"
     S_0 <- "S_0"
-  } else if (event_type == "os") {
-    S_pred <- "S_os_pred"
-    S_0 <- "S_os"
   } else {
-    S_pred <- "S_pfs_pred"
-    S_0 <- "S_pfs"
+    S_pred <- glue::glue("S_{event_type}_pred")
+    S_0 <- glue::glue("S_{event_type}")
   }
 
-  n_tx <- dim(stan_extract$cf_os)[2]
+  n_tx <- dim(stan_extract$cf_1)[2]
 
   S_stats <- list()
 
@@ -31,7 +27,7 @@ prep_S_data <- function(stan_extract,
           rbind(1, .) %>%
           mutate(month = 0:(n() - 1),
                  type = S_pred),
-        t(stan_extract[[S_0]]) %>%
+        t(stan_extract[[S_0]][,,i]) %>%
           as_tibble() %>%
           rbind(1, .) %>%
           mutate(month = 0:(n() - 1),

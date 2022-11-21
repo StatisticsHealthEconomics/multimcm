@@ -31,7 +31,7 @@ TRTX <- NA
 # latent_formula = "Surv(time=month, event=status) ~ 1 + age_event",
 # cure_formula = "~ TRTA + event_idx",                                     # separate
 # cure_formula = "~ TRTA",                                                 # pooled
-jk
+
 
 ##############
 # prep data
@@ -79,7 +79,7 @@ out <-
     bg_hr = 1,
     t_max = 60)
 
-if (save_res) {saveRDS(out, file = "data/stan_res.RData")}
+if (save_res) {save(out, file = "data/bmcm_res.RData")}
 
 
 ##########

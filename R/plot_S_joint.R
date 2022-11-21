@@ -20,12 +20,14 @@
 #' @examples
 #' load("data/file_names.RData")
 #'
-plot_S_joint <- function(out,
+plot_S_joint <- function(bmcm_out,
                          facet = TRUE,
                          annot_cf = FALSE,
                          data = NA) {
 
-  plot_dat <- prep_S_joint_data(out)
+  plot_dat <- prep_S_joint_data(bmcm_out)
+
+  browser()
 
   add_facet <- function(facet) list(if (facet) facet_grid( ~ endpoint))
 

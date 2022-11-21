@@ -105,7 +105,6 @@ bmcm_stan <- function(input_data,
       bg_model = bg_model_idx,
       bg_hr = bg_hr)
 
-  browser()
   # default sampler parameters
   dots <-
     modifyList(

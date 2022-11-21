@@ -1,38 +1,41 @@
 
 #' @importFrom glue glue
 #'
-prep_S_joint_data <- function(stan_out) {
-browser()
+prep_S_joint_data <- function(bmcm_out) {
+
   S_stats <- list()
+  n_groups <- bmcm_out$formula$cure$n_groups
 
-  event_type <- 1:n_endpoints
-  model_names <- names(stan_out$models)
+  event_type <- 1:n_groups
+  model_names <-bmcm_out$distns
+  n_tx <- bmcm_out$formula$cure$cf_idx
 
-  stan_extract <- rstan::extract(stan_out)
+  stan_extract <- rstan::extract(bmcm_out$output)
 
   CI_probs <- c(0.025, 0.5, 0.975)
 
   S_stats <- list()
 
-  for (i in 1:n_endpoints) {
+  # summary statistics for each end point
+  for (i in seq_len(n_groups)) {
+
     S_stats[[i]] <-
       prep_S_data(stan_extract,
                   event_type = i)
 
-    label[i] <-
-      apply(X = stan_extract[[glue("cf_{i}")]], 2,
-            FUN = function(x)
-              paste(round(quantile(x, probs = CI_probs), 2),
-                    collapse = " "))
+    ##TODO:
+    # label[[i]] <-
+    #   apply(X = stan_extract[[glue("cf_{i}")]], 2,
+    #         FUN = function(x)
+    #           paste(round(quantile(x, probs = CI_probs), 2),
+    #                 collapse = " "))
   }
-
-  n_tx <- dim(stan_extract$cf_1)[2]
 
   ann_text <-
     data.frame(
       event_type = model_names,
-      Tx = rep(1:n_tx, each = 2),
-      label = label)
+      Tx = rep(1:n_tx, each = 2))#,
+  # label = label)
 
   # unnest
   plot_dat <-
@@ -45,8 +48,9 @@ browser()
                        ifelse(type == "^S_\\d$",
                               "uncured", Tx)),
            Tx = factor(Tx),
-           endpoint = factor(toupper(event_type)),
-           model_name = factor(model_name)) %>%
+           endpoint = factor(toupper(event_type))
+           # model_name = as.factor(model_names)  ##TODO:
+    ) %>%
     arrange(endpoint)
 
   plot_dat

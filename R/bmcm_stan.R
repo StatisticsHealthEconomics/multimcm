@@ -72,9 +72,11 @@ bmcm_stan <- function(input_data,
   # construct data
   # priors and hyper-parameters
 
-  if (is.na(prior_cure)) prior_cure <- default_prior_cure(formula_cure)
-  if (is.na(prior_latent)) prior_latent <- default_prior_latent(formula_latent,
-                                                                formula_cure)
+  if (is.na(prior_cure))
+    prior_cure <- default_prior_cure(formula_cure)
+
+  if (is.na(prior_latent))
+    prior_latent <- default_prior_latent(formula_latent, formula_cure)
 
   tx_names <- unique(input_data$TRTA)
   n_tx <- length(tx_names)
@@ -87,7 +89,8 @@ bmcm_stan <- function(input_data,
   for (i in seq_len(formula_cure$n_groups)) {
     stan_data <- c(
       stan_data,
-      prep_latent_data(formula_cure, formula_latent,
+      prep_latent_data(input_data,
+                       formula_cure, formula_latent,
                        event_type = i,
                        centre_coefs),
       prep_bg_data(input_data, bg_varname,

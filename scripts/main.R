@@ -39,29 +39,43 @@ TRTX <- NA
 # rearrange data in to long format so can have
 # arbitrary number of end types (not just os, pfs)
 
-long_event_time_dat <-
+input_data <-
   surv_input_data |>
-  select(AAGE, os, pfs, TRTA, SEX, ACOUNTRY, OS_rate, PFS_rate) |>
-  mutate(id = 1:n()) |>
+  filter(if (!is.na(TRTX)) TRTA == TRTX else TRTA != "") |>  # remove empty treatments
+  mutate(id = 1:n(),
+         TRTA_id = as.numeric(as.factor(TRTA))) |>
+  group_by(TRTA) |>
+  mutate(tx_id = 1:n()) |>
+  ungroup()
+
+
+# melt by time of event
+long_event_time_dat <-
+  input_data |>
+  select(id, TRTA_id, tx_id, AAGE, os, pfs, TRTA,
+         SEX, ACOUNTRY, OS_rate, PFS_rate) |>
   melt(measure.vars = c("os", "pfs"),
-       value.name = "month", variable.name = "event_name") |>
+       value.name = "month",
+       variable.name = "event_name") |>
   mutate(year = floor(month/12),
+         event_idx = as.numeric(as.factor(event_name)),
          age_event = AAGE + year,
          bg_rate = ifelse(event_name == "os", OS_rate, PFS_rate),
          bg_rate = bg_rate/12,                                 # convert to months
          bg_rate = ifelse(bg_rate == 0, 0.00001, bg_rate)) |>  # replace so >0
   select(-OS_rate, -PFS_rate)
 
+# melt by censoring indicator
 long_input_data <-
-  surv_input_data |>
-  select(os_event, pfs_event) |>
+  input_data |>
+  select(id, os_event, pfs_event) |>
   rename(os = os_event, pfs = pfs_event) |>
-  mutate(id = 1:n()) |>
   melt(measure.vars = c("os", "pfs"),
-       value.name = "status", variable.name = "event_name") |>
-  merge(long_event_time_dat) |>
-  filter(if (!is.na(TRTX)) TRTA == TRTX else TRTA != "") |>
-  mutate(event_idx = ifelse(event_name == "os", 1, 2))
+       value.name = "status",
+       variable.name = "event_name") |>
+  merge(long_event_time_dat, by = c("id", "event_name")) |>
+  mutate(event_idx = ifelse(event_name == "os", 1, 2)) |>
+  arrange(id)
 
 
 ##############
@@ -87,8 +101,7 @@ if (save_res) {save(out, file = "data/bmcm_res.RData")}
 # plots
 
 gg <- plot_S_joint(out,
-                   annot_cf = FALSE,
-                   data = surv_input_data)
+                   annot_cf = FALSE)
 gg
 
 # ggsave(gg, filename)

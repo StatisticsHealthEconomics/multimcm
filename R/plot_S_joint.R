@@ -7,7 +7,7 @@
 #' @param out bmcm class output list
 #' @param facet Two separate plots for each end point or overlaid?
 #' @param annot_cf Annotate with cure fractions? Logical
-#' @param data Study individual-level data for Kaplan-Meier
+#' @param add_km Include Kaplan-Meier layer? Logical
 #' @param ... Additional parameters
 #'
 #' @return ggplot object
@@ -24,11 +24,9 @@
 plot_S_joint <- function(bmcm_out,
                          facet = TRUE,
                          annot_cf = FALSE,
-                         data = NA, ...) {
+                         add_km = FALSE, ...) {
 
   plot_dat <- prep_S_joint_data(bmcm_out)
-
-  browser()
 
   add_facet <- function(facet) list(if (facet) facet_grid( ~ endpoint))
 
@@ -37,10 +35,10 @@ plot_S_joint <- function(bmcm_out,
     geom_line() +
     add_facet(facet) +
     ylab("Survival") +
+    ylim(0, 1) +
     geom_ribbon(aes(x = month, ymin = lower, ymax = upper, fill = Tx),
                 linetype = 0,
-                alpha = 0.2) +
-    ylim(0, 1)
+                alpha = 0.2)
 
   if (annot_cf) {
     p <-
@@ -48,9 +46,10 @@ plot_S_joint <- function(bmcm_out,
                     aes(x = 40, y = 1, label = label),
                     inherit.aes = FALSE)}
 
-  if (!any(is.na(data))) {
-    km_curve <- geom_kaplan_meier(data = data,
-                                  event_type = 1:n_endpoint)
+browser()
+
+  if (add_km) {
+    km_curve <- geom_kaplan_meier(data = bmcm_out)
   } else {
     km_curve <- NULL}
 

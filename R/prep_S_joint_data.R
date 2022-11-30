@@ -12,8 +12,6 @@ prep_S_joint_data <- function(bmcm_out) {
 
   stan_extract <- rstan::extract(bmcm_out$output)
 
-  browser()
-
   CI_probs <- c(0.025, 0.5, 0.975)
 
   S_stats <- list()

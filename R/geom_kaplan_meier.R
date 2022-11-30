@@ -1,12 +1,20 @@
 
+##TODO:
+
 #' Geom for Kaplan-Meier ggplot
 #'
 geom_kaplan_meier <- function(data,
                               col = "black",
                               event_type = c(1,2)) {
 
+  n_endpoint <- data$formula$cure$n_groups
+
+  formula <-
+
   # remove empty treatment rows
   data <- data[data$TRTA != "", ]
+
+  n_event_type <- length(event_type)
 
   fit <- list()
   dat <- list()
@@ -15,7 +23,7 @@ geom_kaplan_meier <- function(data,
     if (any(grepl(i, event_type, ignore.case = TRUE))) {
 
       ##TODO: get formula components
-      fit[[i]] <- survfit(Surv(os, os_event) ~ TRTA, data = data)
+      fit[[i]] <- survfit(formula, data = data)
 
       dat[[i]] <-
         data.frame(

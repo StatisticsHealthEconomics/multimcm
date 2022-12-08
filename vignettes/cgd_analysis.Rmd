@@ -1,0 +1,99 @@
+---
+title: "CGD analysis"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{cgd_analysis}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
+bibliography: bibliography.bib
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup, warning=FALSE, message=FALSE}
+library(purrr)
+library(reshape2)
+library(dplyr)
+library(rstan)
+library(dplyr)
+library(glue)
+library(abind)
+library(survival)
+library(multimcm)
+library(frailtyHL)
+
+# rstan_options(auto_write = TRUE)
+options(mc.cores = parallel::detectCores() - 1)
+```
+
+# Introduction
+
+The analysis is a comparison with a frequentist analysis in @Lai2009.
+
+
+# Data
+
+The data is chronic granulomatous disease (CGD) data available as part of the `frailtyHL` package.
+
+```{r}
+data(cgd)
+head(cgd)
+```
+
+```{r}
+cgd <- mutate(cgd, time = tstop - tstart)
+```
+
+The data has repeat measurements and 13 hospitals so for simplicity we'll remove some of the data in the initial analyses.
+
+```{r}
+cgd_first <-
+  cgd |> 
+  group_by(id) |> 
+  arrange(tstart) |> 
+  filter(row_number() == 1)
+```
+
+```{r}
+cgd_hosp <- cgd_first |>
+  filter(center %in% c("Amsterdam", "NIH"))
+```
+
+
+# Analysis
+
+```{r}
+out <-
+  bmcm_stan(
+    input_data = cgd_hosp,
+    formula = "Surv(time=time, event=status) ~ 1",
+    cureformula = "~ treat + (1 | center)",
+    family_latent = "exponential",
+    prior_latent = NA,
+    prior_cure = NA,
+    centre_coefs = TRUE,
+    bg_model = "bg_fixed",
+    bg_hr = 1,
+    t_max = 60)
+```
+
+
+plots
+
+```{r}
+library(ggplot2)
+
+gg <- plot_S_joint(out,
+                   annot_cf = FALSE)
+gg
+```
+
+
+## References

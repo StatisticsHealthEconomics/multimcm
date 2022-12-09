@@ -25,12 +25,11 @@ prep_latent_data <- function(input_data,
                              event_type,
                              centre_coefs = FALSE,
                              suffix = TRUE) {
-
   # one endpoint only
   dat <-
     input_data |>
     filter(!!sym(formula_cure$group_var) == event_type) |>
-    arrange(TRTA_id)
+    arrange(!!sym(formula_cure$fe_vars))
 
   # centre variables
   dat <-

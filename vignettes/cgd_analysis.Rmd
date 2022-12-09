@@ -49,6 +49,7 @@ head(cgd)
 
 ```{r}
 cgd <- mutate(cgd, time = tstop - tstart)
+              # center_id = as.numeric(as.factor(center))
 ```
 
 The data has repeat measurements and 13 hospitals so for simplicity we'll remove some of the data in the initial analyses.
@@ -62,8 +63,10 @@ cgd_first <-
 ```
 
 ```{r}
-cgd_hosp <- cgd_first |>
-  filter(center %in% c("Amsterdam", "NIH"))
+cgd_center <- cgd_first |>
+  filter(center %in% c("Amsterdam", "NIH")) |> 
+  droplevels() |> 
+  mutate(center_id = as.numeric(center))
 ```
 
 
@@ -72,9 +75,9 @@ cgd_hosp <- cgd_first |>
 ```{r}
 out <-
   bmcm_stan(
-    input_data = cgd_hosp,
+    input_data = cgd_center,
     formula = "Surv(time=time, event=status) ~ 1",
-    cureformula = "~ treat + (1 | center)",
+    cureformula = "~ treat + (1 | center_id)",
     family_latent = "exponential",
     prior_latent = NA,
     prior_cure = NA,

@@ -52,12 +52,12 @@ prep_latent_data <- function(input_data,
   event_var <- toString(formula_latent$lhs$event)
 
   tx_name <- formula_cure$fe_vars[1]
-
+browser()
   stan_data <- list(
-    N = nrow(dat),                    # total size
-    n = array(table(dat[[tx_name]])), # group size by treatment
-    t = dat[, time_var],
-    d = dat[, event_var],   # censoring indicator
+    N = nrow(dat),                         # total size
+    n = array(table(dat[[tx_name]])),      # group size by treatment
+    t = unname(unlist(dat[, time_var])),
+    d = unname(unlist(dat[, event_var])),  # censoring indicator
     H = ncol(X_mat),
     X = X_mat)
 

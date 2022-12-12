@@ -10,7 +10,7 @@
 #' @param centre_coefs Logical
 #'    1: Exponential distribution; 2: fixed point values from life-table
 #'
-#' @return List;
+#' @return List consisting of:
 #'         sample size,
 #'         times,
 #'         censoring indicator,
@@ -51,9 +51,11 @@ prep_latent_data <- function(input_data,
   time_var <- toString(formula_latent$lhs$time)
   event_var <- toString(formula_latent$lhs$event)
 
+  tx_name <- formula_cure$fe_vars[1]
+
   stan_data <- list(
-    N = nrow(dat),              # total size
-    n = array(table(dat$TRTA)), # group size by treatment
+    N = nrow(dat),                    # total size
+    n = array(table(dat[[tx_name]])), # group size by treatment
     t = dat[, time_var],
     d = dat[, event_var],   # censoring indicator
     H = ncol(X_mat),

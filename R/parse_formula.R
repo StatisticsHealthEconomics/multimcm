@@ -42,6 +42,8 @@ parse_formula <- function(formula, data, family = NA) {
 
   mf[, re_parts$group_var] <- as.factor(mf[, re_parts$group_var])
 
+  fe_nlevels <- nlevels(mf[, fe_vars])
+
   c(nlist(
     formula,
     mf,
@@ -56,6 +58,7 @@ parse_formula <- function(formula, data, family = NA) {
     fe_form,
     fe_vars,
     fe_nvars,
+    fe_nlevels,
     n_groups,
     bars),
     re_parts)

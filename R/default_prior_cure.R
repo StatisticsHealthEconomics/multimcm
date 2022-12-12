@@ -13,8 +13,7 @@
 default_prior_cure <- function(formula_cure,
                                bg_model = 2) {
 
-  ##TODO: not hard-coded
-  nTx <- 3
+  nTx <- formula_cure$fe_nlevels[1]
   n_groups <- formula_cure$n_groups
   nvars <- formula_cure$nvars
 

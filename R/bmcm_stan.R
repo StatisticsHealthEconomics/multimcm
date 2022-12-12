@@ -78,7 +78,7 @@ bmcm_stan <- function(input_data,
   if (is.na(prior_latent))
     prior_latent <- default_prior_latent(formula_latent, formula_cure)
 
-  tx_names <- unique(input_data$TRTA)
+  tx_names <- unique(input_data[[formula_cure$fe_vars[1]]])
   n_tx <- length(tx_names)
   tx_names <- factor(tx_names, levels = tx_names)
   Tx_dmat <- diag(n_tx)
@@ -96,7 +96,6 @@ bmcm_stan <- function(input_data,
       prep_bg_data(input_data, bg_varname,
                    formula_cure, event_type = i))
   }
-
   stan_inputs <- list()
 
   stan_inputs$data <-

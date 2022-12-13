@@ -3,7 +3,7 @@ functions {
 }
 
 data {
- int<lower=1> nTx;
+int<lower=1> nTx;
 int<lower=1, upper=3> cf_model;         // cure fraction
 int<lower=0> N_1;
 int<lower=0> n_1[nTx];
@@ -14,7 +14,7 @@ matrix[N_1, H_1] X_1;
 vector[H_1] mu_S_1;
 vector<lower=0>[H_1] sigma_S_1;
 
- int<lower=0> N_2;
+int<lower=0> N_2;
 int<lower=0> n_2[nTx];
 int<lower=0> H_2;
 vector<lower=0>[N_2] t_2;
@@ -25,27 +25,26 @@ vector<lower=0>[H_2] sigma_S_2;
 
 int<lower=1, upper=2> bg_model;
 
-        vector[bg_model == 1 ? H_1 : 0] mu_bg;
+vector[bg_model == 1 ? H_1 : 0] mu_bg;
 
-        vector<lower=0>[bg_model == 1 ? H_1 : 0] sigma_bg;
+vector<lower=0>[bg_model == 1 ? H_1 : 0] sigma_bg;
 vector<lower=0>[bg_model == 2 ? N_1 : 0] h_bg_1;
 vector<lower=0>[bg_model == 2 ? N_2 : 0] h_bg_2;
- matrix[nTx, nTx] Tx_dmat;         // treatment design matrix
+matrix[nTx, nTx] Tx_dmat;         // treatment design matrix
 
-      vector[cf_model == 3 ? nTx : 0] mu_alpha;             // treatment regression coefficients
+vector[cf_model == 3 ? nTx : 0] mu_alpha;             // treatment regression coefficients
 
-      vector<lower=0>[cf_model == 3 ? nTx : 0] sigma_alpha;
+vector<lower=0>[cf_model == 3 ? nTx : 0] sigma_alpha;
 
-      int<lower=0> t_max;
+int<lower=0> t_max;
 vector[cf_model == 2 ? nTx : 0] mu_alpha_1;
 vector<lower=0>[cf_model == 2 ? nTx : 0] sigma_alpha_1;
 vector[cf_model == 2 ? nTx : 0] mu_alpha_2;
 vector<lower=0>[cf_model == 2 ? nTx : 0] sigma_alpha_2;
- real<lower=0> a_cf[cf_model == 1 ? 1 : 0];
+real<lower=0> a_cf[cf_model == 1 ? 1 : 0];
 real<lower=0> b_cf[cf_model == 1 ? 1 : 0];
 vector[cf_model == 3 ? nTx : 0] mu_sd_cf;
 vector<lower=0>[cf_model == 3 ? nTx : 0] sigma_sd_cf;
-
 }
 
 parameters {
@@ -135,11 +134,12 @@ model {
 int idx_1;
 int idx_2;
 beta_1 ~ normal(mu_S_1, sigma_S_1);
-
 beta_2 ~ normal(mu_S_2, sigma_S_2);
- if (bg_model == 1) {
-        beta_bg ~ normal(mu_bg, sigma_bg);
-      }
+
+if (bg_model == 1) {
+  beta_bg ~ normal(mu_bg, sigma_bg);
+}
+
 // cure fraction
  if (cf_model == 3) {
  alpha ~ normal(mu_alpha, sigma_alpha);

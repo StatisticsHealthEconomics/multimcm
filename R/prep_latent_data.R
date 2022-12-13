@@ -52,7 +52,7 @@ prep_latent_data <- function(input_data,
   event_var <- toString(formula_latent$lhs$event)
 
   tx_name <- formula_cure$fe_vars[1]
-browser()
+
   stan_data <- list(
     N = nrow(dat),                         # total size
     n = array(table(dat[[tx_name]])),      # group size by treatment

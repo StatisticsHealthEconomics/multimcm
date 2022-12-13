@@ -69,6 +69,21 @@ cgd_center <- cgd_first |>
   mutate(center_id = as.numeric(center))
 ```
 
+Append background hazard rate by age, sex, country.
+
+```{r}
+xx <- cgd_center |>
+  tidyr::separate(hos.cat, c("country", "hospital")) |> 
+  select(-hospital)
+
+load("../bgfscure/data/bg.mortality.RData")
+
+bg.mortality |> 
+  mutate(ACOUNTRY = ifelse(ACOUNTRY == "UNITED STATES", "US",
+                           ifelse(ACOUNTRY == "FRANCE", "Europe", ACOUNTRY)))
+
+```
+
 
 # Analysis
 
@@ -79,7 +94,8 @@ out <-
     formula = "Surv(time=time, event=status) ~ 1",
     cureformula = "~ treat + (1 | center_id)",
     family_latent = "exponential",
-    prior_latent = NA,
+    prior_latent =  list(mu_S_1 = array(-3,1), sigma_S_1 = array(0.5,1),
+                         mu_S_2 = array(-3,1), sigma_S_2 = array(0.5,1)),
     prior_cure = NA,
     centre_coefs = TRUE,
     bg_model = "bg_fixed",

@@ -1,7 +1,7 @@
 
 #' default_prior_latent
 #'
-#' Default parameters for priors if not supplied.
+#' Default parameters for survival model priors if not supplied.
 #'
 #' @return hyper-parameters
 #' @name prep_stan_params
@@ -9,6 +9,7 @@ NULL
 
 
 #' @rdname prep_stan_params
+#'
 default_prior_latent <- function(formula_latent,
                                  formula_cure) {
 

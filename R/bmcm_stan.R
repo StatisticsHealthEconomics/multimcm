@@ -72,10 +72,10 @@ bmcm_stan <- function(input_data,
   # construct data
   # priors and hyper-parameters
 
-  if (is.na(prior_cure))
+  if (any(is.na(prior_cure)))
     prior_cure <- default_prior_cure(formula_cure)
 
-  if (is.na(prior_latent))
+  if (any(is.na(prior_latent)))
     prior_latent <- default_prior_latent(formula_latent, formula_cure)
 
   tx_names <- unique(input_data[[formula_cure$fe_vars[1]]])
@@ -120,8 +120,10 @@ bmcm_stan <- function(input_data,
            include = TRUE,
            model_name = "multimcm_model",
            open_progress = TRUE)#,
-           # verbose = TRUE)
+      # verbose = TRUE)
     )
+
+  browser()
 
   ##############
   # fit model

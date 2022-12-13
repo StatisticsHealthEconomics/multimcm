@@ -8,7 +8,6 @@ prep_bg_data <- function(input_data,
                          formula_cure,
                          event_type,
                          suffix = TRUE) {
-
   dat <- filter(
     input_data, !!sym(formula_cure$group_var) == event_type)
 

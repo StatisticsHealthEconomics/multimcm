@@ -46,8 +46,6 @@ plot_S_joint <- function(bmcm_out,
                     aes(x = 40, y = 1, label = label),
                     inherit.aes = FALSE)}
 
-browser()
-
   if (add_km) {
     km_curve <- geom_kaplan_meier(data = bmcm_out)
   } else {

@@ -74,7 +74,8 @@ long_input_data <-
        value.name = "status",
        variable.name = "event_name") |>
   merge(long_event_time_dat, by = c("id", "event_name")) |>
-  mutate(event_idx = ifelse(event_name == "os", 1, 2)) |>
+  mutate(event_idx = ifelse(event_name == "os", 1, 2),
+         TRTA = as.factor(TRTA)) |>
   arrange(id)
 
 

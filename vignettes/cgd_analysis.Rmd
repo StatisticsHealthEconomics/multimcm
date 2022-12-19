@@ -64,7 +64,7 @@ cgd_first <-
 
 ```{r filter-center}
 cgd_center <- cgd_first |>
-  filter(center %in% c("Amsterdam", "NIH")) |> 
+  filter(center %in% c("Amsterdam", "NIH", "Univ. of Zurich", "Scripps Institute")) |>
   droplevels() |> 
   mutate(center_id = as.numeric(center))
 ```
@@ -75,7 +75,10 @@ Append background hazard rate by age, sex and country.
 cgd_center <- cgd_center |>
   tidyr::separate(hos.cat, c("country", "hospital")) |> 
   mutate(country = toupper(country),
-         age_event = round(age + time/365.25, 0)) |>   # convert from days to years
+         age_event = round(age + time/365.25, 0),   # convert from days to years
+         country = ifelse(center == "Amsterdam", "NETHERLANDS",
+                   ifelse(center == "Univ. of Zurich", "SWITZERLAND",
+                   ifelse(center == "Copenhagen", "DENMARK", country)))) |> 
   select(-hospital)
 
 load("../bgfscure/data/bg.mortality.RData")
@@ -83,8 +86,7 @@ load("../bgfscure/data/bg.mortality.RData")
 # haramonise fields
 bg.mortality <- bg.mortality |> 
   mutate(ACOUNTRY = toupper(ACOUNTRY),
-         ACOUNTRY = ifelse(ACOUNTRY == "UNITED STATES", "US",
-                           ifelse(ACOUNTRY == "NETHERLANDS", "EUROPE", ACOUNTRY)),
+         ACOUNTRY = ifelse(ACOUNTRY == "UNITED STATES", "US", ACOUNTRY),
          SEX = ifelse(SEX == "M", "male", "female"),
          rate = ifelse(rate == 0, 1e-10, rate)) |>  # replace so >0
   rename(country = ACOUNTRY,
@@ -106,7 +108,9 @@ out <-
     cureformula = "~ treat + (1 | center_id)",
     family_latent = "exponential",
     prior_latent =  list(mu_S_1 = array(-3,1), sigma_S_1 = array(0.5,1),
-                         mu_S_2 = array(-3,1), sigma_S_2 = array(0.5,1)),
+                         mu_S_2 = array(-3,1), sigma_S_2 = array(0.5,1),
+                         mu_S_3 = array(-3,1), sigma_S_3 = array(0.5,1),
+                         mu_S_4 = array(-3,1), sigma_S_4 = array(0.5,1)),
     prior_cure = NA,
     centre_coefs = TRUE,
     bg_model = "bg_fixed",

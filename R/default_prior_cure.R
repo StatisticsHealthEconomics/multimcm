@@ -24,11 +24,10 @@ default_prior_cure <- function(formula_cure,
   # separate cure fractions empty parameters
   empty_alphas <- list(mu_alpha = numeric(0),
                        sigma_alpha = numeric(0))
-  nempty <- length(empty_alphas)
   empty_alphas <- rep(empty_alphas, each = n_groups)
 
   # append group index
-  names(empty_alphas) <- paste(names(empty_alphas), 1:nempty, sep = "_")
+  names(empty_alphas) <- paste(names(empty_alphas), 1:n_groups, sep = "_")
 
   # all cure fraction parameters
   empty_cf <- c(

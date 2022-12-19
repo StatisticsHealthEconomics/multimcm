@@ -2,7 +2,7 @@
 #' Create Stan code
 #'
 #' check with
-#' writeLines(create_stancode(c("exp", "exp")), "temp.stan")
+#' writeLines(create_stancode(c("exp", "exp", "exp")), "temp.stan")
 #'
 #' @param models Vector survival model names
 #'

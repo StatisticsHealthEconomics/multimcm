@@ -49,12 +49,12 @@ head(cgd)
 
 ```{r}
 cgd <- mutate(cgd, time = tstop - tstart)
-              # center_id = as.numeric(as.factor(center))
+# center_id = as.numeric(as.factor(center))
 ```
 
 The data has repeat measurements and 13 hospitals so for simplicity we'll remove some of the data in the initial analyses.
 
-```{r}
+```{r first-measurement}
 cgd_first <-
   cgd |> 
   group_by(id) |> 
@@ -62,26 +62,37 @@ cgd_first <-
   filter(row_number() == 1)
 ```
 
-```{r}
+```{r filter-center}
 cgd_center <- cgd_first |>
   filter(center %in% c("Amsterdam", "NIH")) |> 
   droplevels() |> 
   mutate(center_id = as.numeric(center))
 ```
 
-Append background hazard rate by age, sex, country.
+Append background hazard rate by age, sex and country.
 
-```{r}
-xx <- cgd_center |>
+```{r bg-hazard}
+cgd_center <- cgd_center |>
   tidyr::separate(hos.cat, c("country", "hospital")) |> 
+  mutate(country = toupper(country),
+         age_event = round(age + time/365.25, 0)) |>   # convert from days to years
   select(-hospital)
 
 load("../bgfscure/data/bg.mortality.RData")
 
-bg.mortality |> 
-  mutate(ACOUNTRY = ifelse(ACOUNTRY == "UNITED STATES", "US",
-                           ifelse(ACOUNTRY == "FRANCE", "Europe", ACOUNTRY)))
+# haramonise fields
+bg.mortality <- bg.mortality |> 
+  mutate(ACOUNTRY = toupper(ACOUNTRY),
+         ACOUNTRY = ifelse(ACOUNTRY == "UNITED STATES", "US",
+                           ifelse(ACOUNTRY == "NETHERLANDS", "EUROPE", ACOUNTRY)),
+         SEX = ifelse(SEX == "M", "male", "female"),
+         rate = ifelse(rate == 0, 1e-10, rate)) |>  # replace so >0
+  rename(country = ACOUNTRY,
+         sex = SEX,
+         age_event = Age)
 
+input_data <- merge(cgd_center, bg.mortality,
+                    by = c("age_event", "sex", "country"), sort = FALSE)
 ```
 
 
@@ -90,7 +101,7 @@ bg.mortality |>
 ```{r}
 out <-
   bmcm_stan(
-    input_data = cgd_center,
+    input_data = input_data,
     formula = "Surv(time=time, event=status) ~ 1",
     cureformula = "~ treat + (1 | center_id)",
     family_latent = "exponential",
@@ -99,6 +110,7 @@ out <-
     prior_cure = NA,
     centre_coefs = TRUE,
     bg_model = "bg_fixed",
+    bg_varname = "rate",
     bg_hr = 1,
     t_max = 60)
 ```

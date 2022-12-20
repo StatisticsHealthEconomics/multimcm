@@ -38,11 +38,28 @@ geom_kaplan_meier <- function(out_dat,
   }
 
   km_data <- do.call(rbind, dat)
-    browser()
+  browser()
 
-  geom_line(aes(x = time, y = surv, group = Tx),
-            data = km_data,
-            lwd = 1,
-            colour = col,
-            inherit.aes = FALSE)
+  # include time 0 survival
+  origin_vals <-
+    expand.grid(unique(km_data$Tx),
+                unique(km_data$endpoint)) |>
+    rename(Tx = Var1,
+           endpoint = Var2) |>
+    cbind(time = 0,
+          surv = 1)
+
+  km_data <- km_data |>
+    rbind(origin_vals) |>
+    arrange(endpoint, Tx, time)
+
+  ## for testing
+  # ggplot() +
+  #   facet_grid( ~ endpoint) +
+    # geom_line(aes(x = time, y = surv, group = Tx),
+    geom_step(aes(x = time, y = surv, group = Tx),
+              data = km_data,
+              lwd = 1,
+              colour = col,
+              inherit.aes = FALSE)
 }

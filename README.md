@@ -10,7 +10,7 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 [![R-CMD-check](https://github.com/StatisticsHealthEconomics/rstanbmcm/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/StatisticsHealthEconomics/rstanbmcm/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-The goal of multimcm is to jointly model two event time distributions
+The goal of multimcm is to jointly model multiple event time distributions
 (e.g. time to disease progression (PFS) and time to death (OS)) within a
 Bayesian relative survival mixture cure model framework, using the Stan
 engine called from R.

@@ -31,12 +31,12 @@ plot_S_joint <- function(bmcm_out,
   add_facet <- function(facet) list(if (facet) facet_grid( ~ endpoint))
 
   p <-
-    ggplot(plot_dat, aes(x = month, y = mean, group = type_tx, colour = Tx)) +
+    ggplot(plot_dat, aes(x = time, y = mean, group = type_tx, colour = Tx)) +
     geom_line() +
     add_facet(facet) +
     ylab("Survival") +
     ylim(0, 1) +
-    geom_ribbon(aes(x = month, ymin = lower, ymax = upper, fill = Tx),
+    geom_ribbon(aes(x = time, ymin = lower, ymax = upper, fill = Tx),
                 linetype = 0,
                 alpha = 0.2)
 
@@ -47,7 +47,7 @@ plot_S_joint <- function(bmcm_out,
                     inherit.aes = FALSE)}
 
   if (add_km) {
-    km_curve <- geom_kaplan_meier(data = bmcm_out)
+    km_curve <- geom_kaplan_meier(out_dat = bmcm_out)
   } else {
     km_curve <- NULL}
 
@@ -65,6 +65,6 @@ plot_S_joint <- function(bmcm_out,
     guides(color = guide_legend(""),
            fill  = guide_legend("")) +
     theme_bw() +
-    xlab("Month") +
+    xlab("Time") +
     theme(text = element_text(size = 20))
 }

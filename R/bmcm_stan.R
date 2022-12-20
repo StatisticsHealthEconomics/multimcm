@@ -141,6 +141,7 @@ bmcm_stan <- function(input_data,
   res$call <- call
   res$distns <- distns
   res$inputs <- stan_inputs
+  res$input_data <- input_data
   res$formula <- list(cure = formula_cure,
                       latent = formula_latent)
   class(res) <- "bmcm"

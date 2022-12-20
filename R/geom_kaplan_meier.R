@@ -1,46 +1,44 @@
 
-##TODO:
-
 #' Geom for Kaplan-Meier ggplot
 #'
-geom_kaplan_meier <- function(data,
-                              col = "black",
-                              event_type = c(1,2)) {
+geom_kaplan_meier <- function(out_dat,
+                              col = "black") {
 
-  n_endpoint <- data$formula$cure$n_groups
+  n_groups <- out_dat$formula$cure$n_groups
+  group_var <- out_dat$formula$cure$group_var
+  fe_var <- out_dat$formula$cure$fe_vars
 
   formula <-
-
-  # remove empty treatment rows
-  data <- data[data$TRTA != "", ]
-
-  n_event_type <- length(event_type)
+    update.formula(out_dat$formula$latent$lhs_form,
+                   out_dat$formula$cure$fe_form)
 
   fit <- list()
   dat <- list()
 
-  for (i in 1:n_event_type) {
-    if (any(grepl(i, event_type, ignore.case = TRUE))) {
+  for (i in 1:n_groups) {
+    # if (any(grepl(i, event_type, ignore.case = TRUE))) {
 
-      ##TODO: get formula components
-      fit[[i]] <- survfit(formula, data = data)
+    group_dat <- out_dat$input_data[out_dat$input_data[[group_var]] == i, ]
+    fit[[i]] <- survfit(formula, data = group_dat)
 
-      dat[[i]] <-
-        data.frame(
-          Tx = if (is.null(fit[[i]]$strata)) {1} else {
-            rep(gsub("TRTA=", "", names(fit[[i]]$strata)),
+    # convert to ggplot long format
+    dat[[i]] <-
+      data.frame(
+        Tx =
+          if (is.null(fit[[i]]$strata)) {1
+          } else {
+            rep(gsub(paste0(fe_var,"="), "", names(fit[[i]]$strata)),
                 times = fit[[i]]$strata)},
-          event_type = event_type[grepl(i, event_type, ignore.case = TRUE)],
-          time = fit[[i]]$time,
-          surv = fit[[i]]$surv) %>%
-        mutate(endpoint = factor(toupper(event_type),
-                                 levels = 1:n_event_type))
-    } else {
-      dat[[i]] <- NULL
-    }
+        endpoint = i,   #event_type[grepl(i, event_type, ignore.case = TRUE)],
+        time = fit[[i]]$time,
+        surv = fit[[i]]$surv)
+    # } else {
+    #   dat[[i]] <- NULL
+    # }
   }
 
   km_data <- do.call(rbind, dat)
+    browser()
 
   geom_line(aes(x = time, y = surv, group = Tx),
             data = km_data,

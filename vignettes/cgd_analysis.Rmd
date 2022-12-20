@@ -126,8 +126,9 @@ plots
 library(ggplot2)
 
 gg <- plot_S_joint(out,
+                   add_km = TRUE,
                    annot_cf = FALSE)
-gg
+gg + xlim(0,365)
 ```
 
 

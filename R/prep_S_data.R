@@ -25,25 +25,25 @@ prep_S_data <- function(stan_extract,
         t(stan_extract[[S_pred]][,,i]) %>%
           as_tibble() %>%
           rbind(1, .) %>%
-          mutate(month = 0:(n() - 1),
+          mutate(time = 0:(n() - 1),
                  type = S_pred),
         t(stan_extract[[S_0]]) %>%
           as_tibble() %>%
           rbind(1, .) %>%
-          mutate(month = 0:(n() - 1),
+          mutate(time = 0:(n() - 1),
                  type = S_0),
         t(stan_extract$S_bg) %>%
           as_tibble() %>%
           rbind(1, .) %>%
-          mutate(month = 0:(n() - 1),
+          mutate(time = 0:(n() - 1),
                  type = "S_bg"))
 
     # means and credible intervals
     S_stats[[i]] <-
       S_dat %>%
       do.call(rbind, .) %>%
-      melt(id.vars = c("month", "type")) %>%
-      group_by(month, type)  |>
+      melt(id.vars = c("time", "type")) %>%
+      group_by(time, type)  |>
       summarise(mean = mean(value),
                 lower = quantile(value, probs = CI_probs[1]),
                 upper = quantile(value, probs = CI_probs[3])) |>

@@ -8,6 +8,7 @@
 #' @param facet Two separate plots for each end point or overlaid?
 #' @param annot_cf Annotate with cure fractions? Logical
 #' @param add_km Include Kaplan-Meier layer? Logical
+#' @param add_marks Kaplan-Meier censoring marks; logical
 #' @param ... Additional parameters
 #'
 #' @return ggplot object
@@ -24,7 +25,8 @@
 plot_S_joint <- function(bmcm_out,
                          facet = TRUE,
                          annot_cf = FALSE,
-                         add_km = FALSE, ...) {
+                         add_km = FALSE,
+                         add_marks = TRUE, ...) {
 
   plot_dat <- prep_S_joint_data(bmcm_out)
 

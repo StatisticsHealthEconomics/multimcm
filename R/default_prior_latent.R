@@ -52,7 +52,8 @@ default_prior_latent <- function(formula_latent,
 
   # same parameters for each cluster
   n_params <- length(model_params)
-  new_names <- paste(names(model_params), rep(1:n_group, each = n_params), sep = "_")
+  new_names <- paste(names(model_params),
+                     rep(1:n_group, each = n_params), sep = "_")
   rep(model_params, n_group) |> setNames(new_names)
 }
 

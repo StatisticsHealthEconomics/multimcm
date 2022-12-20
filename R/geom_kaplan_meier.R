@@ -2,7 +2,8 @@
 #' Geom for Kaplan-Meier ggplot
 #'
 geom_kaplan_meier <- function(out_dat,
-                              col = "black") {
+                              col = "black",
+                              add_marks = TRUE) {
 
   n_groups <- out_dat$formula$cure$n_groups
   group_var <- out_dat$formula$cure$group_var
@@ -31,6 +32,7 @@ geom_kaplan_meier <- function(out_dat,
                 times = fit[[i]]$strata)},
         endpoint = i,   #event_type[grepl(i, event_type, ignore.case = TRUE)],
         time = fit[[i]]$time,
+        d = as.numeric(fit[[i]]$n.event>0),
         surv = fit[[i]]$surv)
     # } else {
     #   dat[[i]] <- NULL
@@ -47,19 +49,27 @@ geom_kaplan_meier <- function(out_dat,
     rename(Tx = Var1,
            endpoint = Var2) |>
     cbind(time = 0,
-          surv = 1)
+          surv = 1,
+          d = 1)
 
   km_data <- km_data |>
     rbind(origin_vals) |>
     arrange(endpoint, Tx, time)
 
+  if (add_marks) {
+    cens_dat <- km_data[km_data$d == 0, ]
+    geom_marks <- geom_text(aes(x = time, y = surv, group = Tx),
+                            data = cens_dat, label = "+", inherit.aes = FALSE)
+  } else {geom_marks <- NULL}
+
   ## for testing
   # ggplot() +
   #   facet_grid( ~ endpoint) +
-    # geom_line(aes(x = time, y = surv, group = Tx),
-    geom_step(aes(x = time, y = surv, group = Tx),
-              data = km_data,
-              lwd = 1,
-              colour = col,
-              inherit.aes = FALSE)
+  # geom_line(aes(x = time, y = surv, group = Tx),
+  list(geom_step(aes(x = time, y = surv, group = Tx),
+                 data = km_data,
+                 lwd = 1,
+                 colour = col,
+                 inherit.aes = FALSE),
+       geom_marks)
 }

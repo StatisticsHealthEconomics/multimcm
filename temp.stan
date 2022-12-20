@@ -247,18 +247,16 @@ for (Tx in 1:nTx) {
 generated quantities {
 real mean_bg;
 
-           // real pbeta_bg;
+// real pbeta_bg;
 
-           real log_lik = 0;
-
-           vector[t_max] S_bg;
+real log_lik = 0;
+vector[t_max] S_bg;
 vector[t_max] S_1;
 matrix[t_max, nTx] S_1_pred;
 real mean_1;
 int idx_1;
 real log_lik_1;
 // real pbeta_1 = normal_rng(mu_S_1[1], sigma_S_1[1]);
-
 
 vector[t_max] S_2;
 matrix[t_max, nTx] S_2_pred;
@@ -279,13 +277,13 @@ mean_1 = exp(beta_1[1]);
  mean_2 = exp(beta_2[1]);
  mean_3 = exp(beta_3[1]);// background rate
 
-           if (bg_model == 1) {
+if (bg_model == 1) {
 
-           mean_bg = exp(beta_bg[1]);
+mean_bg = exp(beta_bg[1]);
 
-           } else {
+} else {
 
-           // mean_bg = 0.001;
+// mean_bg = 0.001;
 mean_bg = mean(h_bg_1);
 mean_bg = mean(h_bg_2);
 mean_bg = mean(h_bg_3);

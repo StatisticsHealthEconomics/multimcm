@@ -105,6 +105,7 @@ bmcm_stan <- function(input_data,
       tx_params,
       cf_model = formula_cure$cf_idx,
       bg_model = bg_model_idx,
+      # t_max = t_max,
       bg_hr = bg_hr)
 
   # default sampler parameters
@@ -141,6 +142,7 @@ bmcm_stan <- function(input_data,
   res$call <- call
   res$distns <- distns
   res$inputs <- stan_inputs
+  res$stan_dots <- dots
   res$input_data <- input_data
   res$formula <- list(cure = formula_cure,
                       latent = formula_latent)

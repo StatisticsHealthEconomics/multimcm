@@ -116,7 +116,7 @@ out <-
     bg_model = "bg_fixed",
     bg_varname = "rate",
     bg_hr = 1,
-    t_max = 60)
+    t_max = 365)
 ```
 
 

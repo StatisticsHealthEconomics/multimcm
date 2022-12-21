@@ -64,7 +64,7 @@ cgd_first <-
 
 ```{r filter-center}
 cgd_center <- cgd_first |>
-  filter(center %in% c("Amsterdam", "NIH", "Univ. of Zurich", "Scripps Institute")) |>
+  # filter(center %in% c("Amsterdam", "NIH", "Univ. of Zurich", "Scripps Institute")) |>
   droplevels() |> 
   mutate(center_id = as.numeric(center))
 ```
@@ -107,10 +107,6 @@ out <-
     formula = "Surv(time=time, event=status) ~ 1",
     cureformula = "~ treat + (1 | center_id)",
     family_latent = "exponential",
-    prior_latent =  list(mu_S_1 = array(-3,1), sigma_S_1 = array(0.5,1),
-                         mu_S_2 = array(-3,1), sigma_S_2 = array(0.5,1),
-                         mu_S_3 = array(-3,1), sigma_S_3 = array(0.5,1),
-                         mu_S_4 = array(-3,1), sigma_S_4 = array(0.5,1)),
     prior_cure = NA,
     centre_coefs = TRUE,
     bg_model = "bg_fixed",
@@ -128,8 +124,11 @@ library(ggplot2)
 gg <- plot_S_joint(out,
                    add_km = TRUE,
                    annot_cf = FALSE)
-gg + xlim(0,365)
+gg + xlim(0,365) + facet_wrap(~endpoint)
 ```
 
+```{r eval=FALSE}
+ggsave(filename = "plots/cgd_surv_plot.png", dpi = 640, width = 10, height = 8)
+```
 
 ## References

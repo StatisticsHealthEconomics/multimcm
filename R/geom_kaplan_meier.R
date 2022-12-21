@@ -40,7 +40,6 @@ geom_kaplan_meier <- function(out_dat,
   }
 
   km_data <- do.call(rbind, dat)
-  browser()
 
   # include time 0 survival
   origin_vals <-
@@ -62,10 +61,6 @@ geom_kaplan_meier <- function(out_dat,
                             data = cens_dat, label = "+", inherit.aes = FALSE)
   } else {geom_marks <- NULL}
 
-  ## for testing
-  # ggplot() +
-  #   facet_grid( ~ endpoint) +
-  # geom_line(aes(x = time, y = surv, group = Tx),
   list(geom_step(aes(x = time, y = surv, group = Tx),
                  data = km_data,
                  lwd = 1,

@@ -15,7 +15,6 @@ prep_S_joint_data <- function(bmcm_out) {
   CI_probs <- c(0.025, 0.5, 0.975)
 
   S_stats <- list()
-
   # summary statistics for each end point
   for (i in seq_len(n_groups)) {
 
@@ -34,7 +33,7 @@ prep_S_joint_data <- function(bmcm_out) {
   ann_text <-
     data.frame(
       event_type = model_names,
-      Tx = rep(1:n_tx, each = 2))#,
+      Tx = rep(1:n_tx, each = n_groups))#,
   # label = label)
 
   # unnest
@@ -45,10 +44,11 @@ prep_S_joint_data <- function(bmcm_out) {
     mutate(scenario = paste(event_type, Tx, sep = "_"),
            type_tx = paste(type, Tx, sep = "_"),
            Tx = ifelse(type == "S_bg", "background",
-                       ifelse(grepl("^S_\\d$", type),
+                       ifelse(grepl("^S_\\d+$", type),
                               "uncured", Tx)),
            Tx = factor(Tx),
-           endpoint = factor(toupper(event_type))
+           # endpoint = factor(toupper(event_type)) ##TODO: distinguish between numeric and strings
+           endpoint = as.numeric(event_type)
            # model_name = as.factor(model_names)  ##TODO:
     ) %>%
     arrange(endpoint)

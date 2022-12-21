@@ -32,13 +32,13 @@ prep_latent_data <- function(input_data,
     arrange(!!sym(formula_cure$fe_vars))
 
   # centre variables
-  dat <-
-    if (centre_coefs) {
+  if (centre_coefs) {
+    dat <-
       dat |> mutate(
-        # across(where(~ is.numeric(.x) & !is.Surv(.x)),
+        # across(where(~ is.numeric(.x) & !is.Surv(.x)), TODO:
         across(formula_latent$fe_vars,
                ~ round(.x - mean(.x))))
-    }
+  }
 
   fe_vars <- formula_latent$fe_vars
 

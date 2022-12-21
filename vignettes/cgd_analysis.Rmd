@@ -66,19 +66,22 @@ cgd_first <-
 cgd_center <- cgd_first |>
   # filter(center %in% c("Amsterdam", "NIH", "Univ. of Zurich", "Scripps Institute")) |>
   droplevels() |> 
-  mutate(center_id = as.numeric(center))
+  mutate(center_id = as.numeric(center),
+         hos.cat_id = as.numeric(hos.cat),
+         sex_id = as.numeric(sex))
 ```
 
 Append background hazard rate by age, sex and country.
 
 ```{r bg-hazard}
 cgd_center <- cgd_center |>
-  tidyr::separate(hos.cat, c("country", "hospital")) |> 
+  tidyr::separate(hos.cat, c("country", "hospital"),
+                  remove = FALSE) |> 
   mutate(country = toupper(country),
          age_event = round(age + time/365.25, 0),   # convert from days to years
          country = ifelse(center == "Amsterdam", "NETHERLANDS",
-                   ifelse(center == "Univ. of Zurich", "SWITZERLAND",
-                   ifelse(center == "Copenhagen", "DENMARK", country)))) |> 
+                          ifelse(center == "Univ. of Zurich", "SWITZERLAND",
+                                 ifelse(center == "Copenhagen", "DENMARK", country)))) |> 
   select(-hospital)
 
 load("../bgfscure/data/bg.mortality.RData")
@@ -100,6 +103,8 @@ input_data <- merge(cgd_center, bg.mortality,
 
 # Analysis
 
+By center
+
 ```{r}
 out <-
   bmcm_stan(
@@ -115,8 +120,42 @@ out <-
     t_max = 365)
 ```
 
+By hospital category
 
-plots
+```{r}
+out_hos.cat <-
+  bmcm_stan(
+    input_data = input_data,
+    formula = "Surv(time=time, event=status) ~ 1",
+    cureformula = "~ treat + (1 | hos.cat_id)",
+    family_latent = "exponential",
+    prior_cure = NA,
+    centre_coefs = TRUE,
+    bg_model = "bg_fixed",
+    bg_varname = "rate",
+    bg_hr = 1,
+    t_max = 365)
+```
+
+
+with sex covariate in latent model
+
+```{r}
+out_sex <-
+  bmcm_stan(
+    input_data = input_data,
+    formula = "Surv(time=time, event=status) ~ sex",
+    cureformula = "~ treat + (1 | hos.cat_id)",
+    family_latent = "exponential",
+    prior_cure = NA,
+    bg_model = "bg_fixed",
+    bg_varname = "rate",
+    bg_hr = 1,
+    t_max = 365)
+```
+
+
+## Plots
 
 ```{r}
 library(ggplot2)
@@ -128,7 +167,30 @@ gg + xlim(0,365) + facet_wrap(~endpoint)
 ```
 
 ```{r eval=FALSE}
-ggsave(filename = "plots/cgd_surv_plot.png", dpi = 640, width = 10, height = 8)
+ggsave(plot = gg, filename = "plots/cgd_surv_plot.png", dpi = 640, width = 10, height = 8)
 ```
+
+```{r}
+gg2 <- plot_S_joint(out_hos.cat,
+                    add_km = TRUE,
+                    annot_cf = FALSE)
+gg2 + xlim(0,365) + facet_wrap(~endpoint)
+```
+
+```{r eval=FALSE}
+ggsave(plot = gg2, filename = "plots/cgd_hospcat_surv_plot.png", dpi = 640, width = 10, height = 8)
+```
+
+```{r}
+gg3 <- plot_S_joint(out_sex,
+                    add_km = TRUE,
+                    annot_cf = FALSE)
+gg3 + xlim(0,365) + facet_wrap(~endpoint)
+```
+
+```{r eval=FALSE}
+ggsave(plot = gg3, filename = "plots/cgd_sex_surv_plot.png", dpi = 640, width = 10, height = 8)
+```
+
 
 ## References

@@ -10,7 +10,7 @@ distn_params <- function(distn) {
          gompertz = c("shape", "lambda"),
          loglogistic = c("shape", "lambda"),
          lognormal = c("mu", "sd"),
-         gengamma = "")
+         gengamma = c("mu", "scale", "Q"))
 }
 
 #
@@ -21,7 +21,7 @@ mean_params <- function(distn) {
          gompertz = c("shape", "mean"),
          loglogistic = c("shape", "mean"),
          lognormal = c("mean", "sd"),
-         gengamma = "")
+         gengamma = c("mean", "scale", "Q"))
 }
 
 #' make_latent_model_code
@@ -100,6 +100,37 @@ make_latent_model_code <- function(model, id = 1L) {
 
     scode$generated_quantities_def <-
       glue("real psd_{id} = gamma_rng(a_sd_{id}, b_sd_{id});\n")
+
+    scode$generated_quantities_main <-
+      glue("mean_{id} = beta_{id}[1];\n")
+  }
+
+  if (model == "gengamma") {
+    scode$data_def <-
+      glue(scode$data_def,
+           "real<lower=0> a_Q_{id};    // gamma hyper-parameters
+            real<lower=0> a_Q_{id};
+            real<lower=0> a_scale_{id};
+            real<lower=0> b_scale_{id};\n")
+
+    scode$parameters <-
+      glue("real<lower=0> sd_{id};\n")
+
+    scode$trans_params_def <-
+      glue(scode$trans_params_def,
+           "// rate parameters
+            vector[N_{id}] mu_{id};\n")
+
+    scode$trans_params_main <-
+      glue("mu_{id} = lp_{id};\n")
+
+    scode$model <-
+      glue("scale_{id} ~ gamma(a_scale_{id}, b_scale_{id});
+    Q_{id} ~ gamma(a_Q_{id}, b_Q_{id});\n")
+
+    scode$generated_quantities_def <-
+      glue("real pscale_{id} = gamma_rng(a_scale_{id}, b_scale_{id});
+            real pQ_{id} = gamma_rng(a_Q_{id}, b_Q_{id});\n")
 
     scode$generated_quantities_main <-
       glue("mean_{id} = beta_{id}[1];\n")
@@ -349,7 +380,7 @@ make_priorpred <- function(model, id) {
 ##TODO: remove duplication with make_loglik()
 make_loo <- function(model, id) {
 
-  loo_params <- glue(distn_params(model), "_{id}")
+  loo_params <- paste0(distn_params(model), "_", id)
 
   loo_params[grep("mu", loo_params)] <-
     paste0(loo_params[grep("mu", loo_params)], "[i]")

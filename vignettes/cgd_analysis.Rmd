@@ -68,7 +68,7 @@ cgd_center <- cgd_first |>
   droplevels() |> 
   mutate(center_id = as.numeric(center),
          hos.cat_id = as.numeric(hos.cat),
-         sex_id = as.numeric(sex))
+         sex_id = as.factor(as.numeric(sex)))
 ```
 
 Append background hazard rate by age, sex and country.

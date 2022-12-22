@@ -9,60 +9,73 @@ NULL
 
 
 #' @rdname prep_stan_params
+#' @importFrom purrr flatten
 #'
 default_prior_latent <- function(formula_latent,
                                  formula_cure) {
 
   model <- formula_latent$family
+  n_models <- length(model)
   n_group <- formula_cure$n_group
   nvars <- formula_latent$fe_nvars
 
+  mod_pars <- pars_format(nvars)
+
   model_params <-
-    switch(model,
-           exp =
-             list(mu_S = c(-3, rep(0, nvars)),
-                  sigma_S = c(0.5, rep(0.01, nvars))),
-           loglogistic =
-             list(a_shape = 1,
-                  b_shape = 1,
-                  mu_S = c(3, rep(0, nvars)),
-                  sigma_S = c(0.5, rep(0.01, nvars))),
-           weibull =
-             list(a_shape = 1,
-                  b_shape = 1,
-                  mu_S = c(3, rep(0, nvars)),
-                  sigma_S = c(0.5, rep(0.01, nvars))),
-           gompertz =
-             list(a_shape = 1,
-                  b_shape = 1000,
-                  mu_S = c(-3, rep(0, nvars)),
-                  sigma_S = c(0.5, rep(0.01, nvars))),
-           lognormal =
-             list(a_sd = 1,
-                  b_sd = 2,
-                  mu_S = c(1.5, rep(0, nvars)),
-                  sigma_S = c(0.5, rep(0.01, nvars))),
-           gengamma =
-             list(a_mu = 1,
-                  b_mu = 1,
-                  a_Q = 2,
-                  b_Q = 1,
-                  mu_S = c(-3, rep(0, nvars)),
-                  sigma_S = c(0.5, rep(0.01, nvars))),
-           stop("distribution not found."))
+    lapply(model, \(x)
+           switch(x,
+                  exp =
+                    list(mu_S = mod_pars(-3, 0),
+                         sigma_S = mod_pars(0.5, 0.01)),
+                  loglogistic =
+                    list(a_shape = 1,
+                         b_shape = 1,
+                         mu_S = mod_pars(-3, 0),
+                         sigma_S = mod_pars(0.5, 0.01)),
+                  weibull =
+                    list(a_shape = 1,
+                         b_shape = 1,
+                         mu_S = mod_pars(-3, 0),
+                         sigma_S = mod_pars(0.5, 0.01)),
+                  gompertz =
+                    list(a_shape = 1,
+                         b_shape = 1000,
+                         mu_S = mod_pars(-3, 0),
+                         sigma_S = mod_pars(0.5, 0.01)),
+                  lognormal =
+                    list(a_sd = 1,
+                         b_sd = 2,
+                         mu_S = mod_pars(1.5, 0),
+                         sigma_S = mod_pars(0.5, 0.01)),
+                  gengamma =
+                    list(a_mu = 1,
+                         b_mu = 1,
+                         a_Q = 2,
+                         b_Q = 1,
+                         mu_S = mod_pars(-3, 0),
+                         sigma_S = mod_pars(0.5, 0.01)),
+                  stop("distribution not found.")))
 
-  # ensure consistent dimensions
-  if (nvars == 0) {
-    model_params$mu_S <- array(model_params$mu_S, 1)
-    model_params$sigma_S <- array(model_params$sigma_S, 1)
-  }
+  # label index within each cluster
+  model_params <-
+    lapply(1:n_models, \(x)
+           setNames(model_params[[x]],
+                    paste(names(model_params[[x]]), x, sep = "_")))
 
-  # same parameters for each cluster
-  n_params <- length(model_params)
-  new_names <- paste(names(model_params),
-                     rep(1:n_group, each = n_params), sep = "_")
-  rep(model_params, n_group) |> setNames(new_names)
+  purrr::flatten(model_params)
 }
 
 
+#' ensure consistent dimensions
+#' depending on number of covariates
+#'
+pars_format <- function(nvars) {
+  force(nvars)
+  function(x, y=NA) {
+    if (nvars == 0) {
+      array(x, 1)
+    } else {
+      c(x, rep(y, nvars))
+    }}
+}
 

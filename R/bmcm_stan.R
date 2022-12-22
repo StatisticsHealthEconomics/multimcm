@@ -59,14 +59,15 @@ bmcm_stan <- function(input_data,
   bg_model <- match.arg(bg_model)
   bg_model_idx <- which(bg_model == c("bg_distn", "bg_fixed"))
 
-  formula_latent <- parse_formula(formula, input_data, family = distns)
   formula_cure <- parse_formula(cureformula, input_data)
+
+  if (length(distns) == 1) distns <- rep(distns, formula_cure$n_group)
+
+  formula_latent <- parse_formula(formula, input_data, family = distns)
 
   if (is_pooled(formula_cure)) formula_cure$cf_idx <- 1L
   else if (is_separate(formula_cure)) formula_cure$cf_idx <- 2L
   else if (is_hier(formula_cure)) formula_cure$cf_idx <- 3L
-
-  if (length(distns) == 1) distns <- rep(distns, formula_cure$n_group)
 
   ###############################
   # construct data

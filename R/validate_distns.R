@@ -7,11 +7,12 @@ validate_distns <- function(model) {
                    "weibull",
                    "gompertz",
                    "loglogistic",
-                   "lognormal")
+                   "lognormal",
+                   "gengamma")
 
   model <- model_names[startsWith(model, model_names)]
 
-  if (!model %in% model_names)
+  if (any(!model %in% model_names))
     stop("distribution not available.", call. = FALSE)
 
  model

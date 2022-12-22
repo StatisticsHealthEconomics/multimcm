@@ -87,7 +87,8 @@ out <-
     input_data = long_input_data,
     formula = "Surv(time=month, event=status) ~ 1 + age_event",
     cureformula = "~ TRTA + (1 | event_idx)",    # hierarchical
-    family_latent = "exponential",
+    family_latent = c("exponential", "gengamma"),
+    # family_latent = "exponential",
     prior_latent = NA,
     prior_cure = NA,
     centre_coefs = TRUE,

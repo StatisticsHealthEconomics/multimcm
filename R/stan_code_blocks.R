@@ -111,11 +111,11 @@ make_latent_model_code <- function(model, id = 1L) {
 
   if (model == "gengamma") {
     scode$data_def <-
-      glue(scode$data_def,"
-           real a_Q_{id};    // generalised gamma hyper-parameters
-           real<lower=0> b_Q_{id};
-           real a_scale_{id};
-           real<lower=0> b_scale_{id};\n")
+      glue(scode$data_def,
+           "real a_Q_{id};    // generalised gamma hyper-parameters\n",
+           "real<lower=0> b_Q_{id};\n",
+           "real a_scale_{id};\n",
+           "real<lower=0> b_scale_{id};\n")
 
     scode$parameters <-
       glue("real Q_{id};
@@ -277,11 +277,11 @@ create_code_skeleton <- function(n_grp) {
       \n\n"))
 
   scode$generated_quantities_main <-
-    paste0(c("// background rate\n
-           if (bg_model == 1) {\n
-           mean_bg = exp(beta_bg[1]);\n
-           } else {\n
-           // mean_bg = 0.001;\n"),
+    paste0("// background rate\n",
+           "if (bg_model == 1) {\n",
+           "\tmean_bg = exp(beta_bg[1]);\n",
+           "} else {\n",
+           "// mean_bg = 0.001;\n",
            cglue_data(ids, "mean_bg = mean(h_bg_{id});"),
            "\n}\n")
 
@@ -326,7 +326,9 @@ make_loglik <- function(model, id) {
   scode
 }
 
-# from brms package
+#' from brms package
+#' @importFrom glue glue_collapse
+#'
 tp <- function(wsp = 2) {
   wsp <- glue_collapse(rep(" ", wsp))
   paste0(wsp, "target += ")

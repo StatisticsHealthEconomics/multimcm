@@ -49,11 +49,11 @@ default_prior_latent <- function(formula_latent,
                          sigma_S = mod_pars(0.5, 0.01)),
                   gengamma =
                     list(a_scale = log(0.9),
-                         b_scale = 0.2,
+                         b_scale = 0.1,
                          a_Q = -0.7,
-                         b_Q = 1,
-                         mu_S = mod_pars(-3, 0),
-                         sigma_S = mod_pars(0.5, 0.01)),
+                         b_Q = 0.1,
+                         mu_S = mod_pars(1, 0),
+                         sigma_S = mod_pars(0.1, 0.1)),
                   stop("distribution not found.")))
 
   # label index within each cluster

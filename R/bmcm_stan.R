@@ -10,7 +10,7 @@
 #' @param formula R formula object for latent model component
 #' @param cureformula R formula object for cure fraction model component
 #' @param family_latent Name of distribution, from
-#'    "exp", "weibull", "gompertz", "lognormal", "gamma".
+#'    "exp", "weibull", "gompertz", "lognormal", "loglogistic", "gengamma".
 #'    Single string or vector of length number of end-points
 #' @param prior_latent Optional
 #' @param prior_cure Optional

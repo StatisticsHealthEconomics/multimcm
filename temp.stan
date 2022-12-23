@@ -31,10 +31,10 @@ vector<lower=0, upper=1>[N_3] d_3;
 matrix[N_3, H_3] X_3;
 vector[H_3] mu_S_3;
 vector<lower=0>[H_3] sigma_S_3;
-real<lower=0> a_Q_3;    // generalised gamma hyper-parameters
-           real<lower=0> b_Q_3;
-           real<lower=0> a_scale_3;
-           real<lower=0> b_scale_3;
+real a_Q_3;    // generalised gamma hyper-parameters
+real<lower=0> b_Q_3;
+real a_scale_3;
+real<lower=0> b_scale_3;
 int<lower=1, upper=2> bg_model;
 
         vector[bg_model == 1 ? H_1 : 0] mu_bg;
@@ -64,7 +64,10 @@ vector<lower=0>[cf_model == 3 ? nTx : 0] sigma_sd_cf;
 }
 
 parameters {
-// coefficients in linear predictor (including intercept)
+
+ 
+ real Q_3;
+real<lower=0> scale_3;// coefficients in linear predictor (including intercept)
 
       vector[bg_model == 1 ? H_1 : 0] beta_bg;
 
@@ -178,19 +181,19 @@ cf_3 = inv_logit(tx_cf_3);
 model {
 int idx_1;
 int idx_2;
-int idx_3;
+int idx_3;      
 beta_1 ~ normal(mu_S_1, sigma_S_1);
-
+      
 beta_2 ~ normal(mu_S_2, sigma_S_2);
-
+      
 beta_3 ~ normal(mu_S_3, sigma_S_3);
  if (bg_model == 1) {
         beta_bg ~ normal(mu_bg, sigma_bg);
       }
 
-
+ 
  scale_3 ~ lognormal(a_scale_3, b_scale_3);
-Q_3 ~ normal(a_Q_3, b_Q_3);// cure fraction
+Q_3 ~ normal(a_Q_3, b_Q_3);// cure fraction 
  if (cf_model == 3) {
  alpha ~ normal(mu_alpha, sigma_alpha);
  sd_cf ~ normal(mu_sd_cf, sigma_sd_cf);
@@ -285,14 +288,10 @@ real log_lik_3;
 mean_1 = exp(beta_1[1]);
  mean_2 = exp(beta_2[1]);
  mean_3 = beta_3[1];// background rate
-
-           if (bg_model == 1) {
-
-           mean_bg = exp(beta_bg[1]);
-
-           } else {
-
-           // mean_bg = 0.001;
+if (bg_model == 1) {
+	mean_bg = exp(beta_bg[1]);
+} else {
+// mean_bg = 0.001;
 mean_bg = mean(h_bg_1);
 mean_bg = mean(h_bg_2);
 mean_bg = mean(h_bg_3);

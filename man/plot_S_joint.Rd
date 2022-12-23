@@ -4,22 +4,33 @@
 \alias{plot_S_joint}
 \title{Plot survival curves for joint model and all treatments}
 \usage{
-plot_S_joint(stan_out = NA, facet = TRUE, annot_cf = FALSE, data = NA)
+plot_S_joint(
+  bmcm_out,
+  facet = TRUE,
+  annot_cf = FALSE,
+  add_km = FALSE,
+  add_marks = TRUE,
+  ...
+)
 }
 \arguments{
-\item{stan_out}{Stan output data frame}
-
-\item{facet}{Two separate plots for OS and PFS or overlaid?}
+\item{facet}{Two separate plots for each end point or overlaid?}
 
 \item{annot_cf}{Annotate with cure fractions? Logical}
 
-\item{data}{Study individual-level data for Kaplan-Meier}
+\item{add_km}{Include Kaplan-Meier layer? Logical}
+
+\item{add_marks}{Kaplan-Meier censoring marks; logical}
+
+\item{...}{Additional parameters}
+
+\item{out}{bmcm class output list}
 }
 \value{
 ggplot object
 }
 \description{
-Use results of running Stan
+Use results of running Stan with \code{bmcm_stan()}
 relative survival joint mixture cure model.
 }
 \examples{

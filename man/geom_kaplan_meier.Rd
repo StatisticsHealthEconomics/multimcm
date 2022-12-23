@@ -2,10 +2,10 @@
 % Please edit documentation in R/geom_kaplan_meier.R
 \name{geom_kaplan_meier}
 \alias{geom_kaplan_meier}
-\title{geom_kaplan_meier}
+\title{Geom for Kaplan-Meier ggplot}
 \usage{
-geom_kaplan_meier(data, col = "black", event_type = c("os", "pfs"))
+geom_kaplan_meier(out_dat, col = "black", add_marks = TRUE)
 }
 \description{
-by treatment
+Geom for Kaplan-Meier ggplot
 }

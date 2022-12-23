@@ -5,6 +5,7 @@
 \title{Prepare Stan data in latent model}
 \usage{
 prep_latent_data(
+  input_data,
   formula_cure,
   formula_latent,
   event_type,
@@ -23,7 +24,7 @@ prep_latent_data(
 1: Exponential distribution; 2: fixed point values from life-table}
 }
 \value{
-List;
+List consisting of:
 sample size,
 times,
 censoring indicator,

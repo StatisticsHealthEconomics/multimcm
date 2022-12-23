@@ -11,7 +11,7 @@ bmcm_stan(
   family_latent = "exponential",
   prior_latent = NA,
   prior_cure = NA,
-  centre_coefs = TRUE,
+  centre_coefs = FALSE,
   bg_model = c("bg_distn", "bg_fixed"),
   bg_varname = "bg_rate",
   bg_hr = 1,

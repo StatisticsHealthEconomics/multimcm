@@ -14,7 +14,6 @@
 #' cat(create_stancode(c("exp", "exp")))
 #'
 create_stancode <- function(models) {
-
   n_grps <- length(models)
 
   # generate separate blocks of Stan code
@@ -113,7 +112,8 @@ create_stancode <- function(models) {
 }
 
 
-#
+#' @importFrom purrr simplify_all transpose
+#'
 rearrange_blocks <- function(x) {
   simple_x <- simplify_all(transpose(x))
   lapply(simple_x, paste, collapse = "\n ")

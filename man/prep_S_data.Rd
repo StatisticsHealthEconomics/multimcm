@@ -2,10 +2,10 @@
 % Please edit documentation in R/prep_S_data.R
 \name{prep_S_data}
 \alias{prep_S_data}
-\title{prep_S_data}
+\title{Prep S data}
 \usage{
 prep_S_data(stan_extract, event_type = NA, CI_probs = c(0.025, 0.5, 0.975))
 }
 \description{
-prep_S_data
+Prep S data
 }

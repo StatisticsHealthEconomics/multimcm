@@ -45,8 +45,12 @@ make_latent_model_code <- function(model, id = 1L) {
            "\n// rate parameters
              vector<lower=0>[N_{id}] lambda_{id};\n")
 
+    scode$parameters <- ""
+
     scode$trans_params_main <-
       glue("\nlambda_{id} = exp(lp_{id});\n")
+
+    scode$model <- ""
 
     scode$generated_quantities_main <-
       glue("mean_{id} = exp(beta_{id}[1]);\n")
@@ -107,14 +111,15 @@ make_latent_model_code <- function(model, id = 1L) {
 
   if (model == "gengamma") {
     scode$data_def <-
-      glue(scode$data_def,
-           "real<lower=0> a_Q_{id};    // gamma hyper-parameters
-            real<lower=0> a_Q_{id};
-            real<lower=0> a_scale_{id};
-            real<lower=0> b_scale_{id};\n")
+      glue(scode$data_def,"
+           real a_Q_{id};    // generalised gamma hyper-parameters
+           real<lower=0> b_Q_{id};
+           real a_scale_{id};
+           real<lower=0> b_scale_{id};\n")
 
     scode$parameters <-
-      glue("real<lower=0> sd_{id};\n")
+      glue("real Q_{id};
+            real<lower=0> scale_{id};\n")
 
     scode$trans_params_def <-
       glue(scode$trans_params_def,
@@ -125,12 +130,12 @@ make_latent_model_code <- function(model, id = 1L) {
       glue("mu_{id} = lp_{id};\n")
 
     scode$model <-
-      glue("scale_{id} ~ gamma(a_scale_{id}, b_scale_{id});
-    Q_{id} ~ gamma(a_Q_{id}, b_Q_{id});\n")
+      glue("scale_{id} ~ lognormal(a_scale_{id}, b_scale_{id});
+                Q_{id} ~ normal(a_Q_{id}, b_Q_{id});\n")
 
     scode$generated_quantities_def <-
-      glue("real pscale_{id} = gamma_rng(a_scale_{id}, b_scale_{id});
-            real pQ_{id} = gamma_rng(a_Q_{id}, b_Q_{id});\n")
+      glue("real pscale_{id} = lognormal_rng(a_scale_{id}, b_scale_{id});
+            real pQ_{id} = normal_rng(a_Q_{id}, b_Q_{id});\n")
 
     scode$generated_quantities_main <-
       glue("mean_{id} = beta_{id}[1];\n")

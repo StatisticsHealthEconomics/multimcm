@@ -14,7 +14,7 @@ string
 }
 \description{
 check with
-writeLines(create_stancode(c("exp", "exp")), "temp.stan")
+writeLines(create_stancode(c("exp", "exp", "gengamma")), "temp.stan")
 }
 \examples{
 cat(create_stancode(c("exp", "exp")))

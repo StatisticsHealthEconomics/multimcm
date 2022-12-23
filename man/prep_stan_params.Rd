@@ -11,5 +11,5 @@ default_prior_latent(formula_latent, formula_cure)
 hyper-parameters
 }
 \description{
-Default parameters for priors if not supplied.
+Default parameters for survival model priors if not supplied.
 }

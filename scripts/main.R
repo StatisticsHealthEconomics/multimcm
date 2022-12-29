@@ -96,7 +96,7 @@ out <-
     bg_hr = 1,
     t_max = 60)
 
-if (save_res) {save(out, file = "data/bmcm_res.RData")}
+if (save_res) {save(out, file = "data/bmcm_res_gengamma.RData")}
 
 
 ##########

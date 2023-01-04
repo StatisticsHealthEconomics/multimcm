@@ -39,7 +39,7 @@ bmcm_stan <- function(input_data,
                       bg_model = c("bg_distn", "bg_fixed"),
                       bg_varname = "bg_rate",
                       bg_hr = 1,
-                      t_max = 60,
+                      t_max = 70,
                       ...) {
   call <- match.call()
 

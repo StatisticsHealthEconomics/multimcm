@@ -228,12 +228,18 @@ real gen_gamma_lpdf(real t, real mu, real sigma, real Q) {
   return prob;
 }
 
+# flexsurv alternative parameters given
 real gen_gamma_Surv(real t, real mu, real sigma, real Q) {
   real Surv;
   real w = (log(t) - mu) / sigma;
-  real qq = 1/(Q * Q);
-  real expnu = exp(Q * w) * qq;
-  Surv =  1 - gamma_cdf(expnu, qq, 1);
+  real qq = 1/(Q * Q);                    # shape (gamma)
+  real expnu = exp(abs(Q) * w) * qq;      # u
+
+  if (Q == 0) {
+    Surv = 1 - normal_cdf(w, 0, 1);
+  } else {
+    Surv =  1 - gamma_cdf(expnu, qq, 1);
+  }
   return Surv;
 }
 

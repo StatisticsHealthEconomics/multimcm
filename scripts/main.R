@@ -32,8 +32,8 @@ TRTX <- NA
 # cure_formula = "~ TRTA + event_idx",                                     # separate
 # cure_formula = "~ TRTA",                                                 # pooled
 
-# distn <- c("exponential", "gengamma")
-distn <- "exponential"
+distn <- c("exponential", "gengamma")
+# distn <- "exponential"
 
 
 ##############
@@ -105,9 +105,9 @@ if (save_res) {
 ##########
 # plots
 
-gg <- plot_S_joint(out,
+gg <- plot_S_joint(out, add_km = TRUE,
                    annot_cf = FALSE)
 gg
 
-# ggsave(gg, filename)
+# ggsave(gg, filename = glue::glue("plots/{out$output@model_name}_S_plot.png")))
 

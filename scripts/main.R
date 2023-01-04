@@ -32,6 +32,9 @@ TRTX <- NA
 # cure_formula = "~ TRTA + event_idx",                                     # separate
 # cure_formula = "~ TRTA",                                                 # pooled
 
+# distn <- c("exponential", "gengamma")
+distn <- "exponential"
+
 
 ##############
 # prep data
@@ -87,8 +90,7 @@ out <-
     input_data = long_input_data,
     formula = "Surv(time=month, event=status) ~ 1 + age_event",
     cureformula = "~ TRTA + (1 | event_idx)",    # hierarchical
-    family_latent = c("exponential", "gengamma"),
-    # family_latent = "exponential",
+    family_latent = distn,
     prior_latent = NA,
     prior_cure = NA,
     centre_coefs = TRUE,
@@ -96,7 +98,8 @@ out <-
     bg_hr = 1,
     t_max = 60)
 
-if (save_res) {save(out, file = "data/bmcm_res_gengamma.RData")}
+if (save_res) {
+  save(out, file = glue::glue("data/{out$output@model_name}.RData"))}
 
 
 ##########

@@ -120,7 +120,7 @@ bmcm_stan <- function(input_data,
            control = list(adapt_delta = 0.99,
                           max_treedepth = 20),
            include = TRUE,
-           model_name = "multimcm_model",
+           model_name = paste0("bmcm_stan_", glue::glue_collapse(distns, sep = "_")),
            open_progress = TRUE)#,
       # verbose = TRUE)
     )

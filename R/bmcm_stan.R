@@ -25,6 +25,7 @@
 #'
 #' @import rstanarm
 #' @importFrom lme4 mkReTrms
+#' @importFrom glue glue_collapse
 #' @export
 #'
 bmcm_stan <- function(input_data,

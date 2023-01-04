@@ -266,6 +266,14 @@ real surv_gen_gamma_lpdf(real t, real d, real mu, real sigma, real Q) {
   return prob;
 }
 
+//TODO:
+// real gengamma_rng(real t, real mu, real sigma, real Q) {
+//
+//   u = uniform_rng(0, 1)
+//   gen_gamma_Surv()
+//
+// }
+
 
 /**
 * log-normal

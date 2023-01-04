@@ -65,7 +65,7 @@ vector<lower=0>[cf_model == 3 ? nTx : 0] sigma_sd_cf;
 
 parameters {
 
- 
+
  real Q_3;
 real<lower=0> scale_3;// coefficients in linear predictor (including intercept)
 
@@ -181,19 +181,19 @@ cf_3 = inv_logit(tx_cf_3);
 model {
 int idx_1;
 int idx_2;
-int idx_3;      
+int idx_3;
 beta_1 ~ normal(mu_S_1, sigma_S_1);
-      
+
 beta_2 ~ normal(mu_S_2, sigma_S_2);
-      
+
 beta_3 ~ normal(mu_S_3, sigma_S_3);
  if (bg_model == 1) {
         beta_bg ~ normal(mu_bg, sigma_bg);
       }
 
- 
+
  scale_3 ~ lognormal(a_scale_3, b_scale_3);
-Q_3 ~ normal(a_Q_3, b_Q_3);// cure fraction 
+Q_3 ~ normal(a_Q_3, b_Q_3);// cure fraction
  if (cf_model == 3) {
  alpha ~ normal(mu_alpha, sigma_alpha);
  sd_cf ~ normal(mu_sd_cf, sigma_sd_cf);

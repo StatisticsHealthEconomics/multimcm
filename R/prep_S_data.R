@@ -1,9 +1,10 @@
 
-#' Prep S data
+#' Prepare posterior survival data for plotting
 #'
 prep_S_data <- function(stan_extract,
                         event_type = NA,
-                        CI_probs = c(0.025, 0.5, 0.975)) {
+                        CI_probs = c(0.025, 0.5, 0.975),
+                        tx_id = NA) {
   # name curves by event type
   if (is.na(event_type)) {
     S_pred <- "S_pred"
@@ -13,11 +14,12 @@ prep_S_data <- function(stan_extract,
     S_0 <- glue::glue("S_{event_type}")
   }
 
-  n_tx <- dim(stan_extract$cf_1)[2]
+  if (is.na(tx_idx))
+    tx_idx <- seq_len(dim(stan_extract$cf_1)[2])
 
   S_stats <- list()
 
-  for (i in seq_len(n_tx)) {
+  for (i in tx_idx) {
 
     # rearrange to time as rows
     S_dat <-

@@ -4,7 +4,7 @@
 prep_S_data <- function(stan_extract,
                         event_type = NA,
                         CI_probs = c(0.025, 0.5, 0.975),
-                        tx_id = NA) {
+                        tx_idx = NA) {
   # name curves by event type
   if (is.na(event_type)) {
     S_pred <- "S_pred"

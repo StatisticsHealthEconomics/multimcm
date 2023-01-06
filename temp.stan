@@ -130,9 +130,9 @@ cf_2 = inv_logit(tx_cf_2);
 
 model {
 int idx_1;
-int idx_2;
+int idx_2;      
 beta_1 ~ normal(mu_S_1, sigma_S_1);
-
+      
 beta_2 ~ normal(mu_S_2, sigma_S_2);
 if (bg_model == 1) {
 	 beta_bg ~ normal(mu_bg, sigma_bg);
@@ -140,10 +140,11 @@ if (bg_model == 1) {
 
  scale_2 ~ lognormal(a_scale_2, b_scale_2);
 Q_2 ~ normal(a_Q_2, b_Q_2);
-// cure fraction
+// cure fraction 
  if (cf_model == 3) {
  	 alpha ~ normal(mu_alpha, sigma_alpha);
- 	 sd_cf ~ normal(mu_sd_cf, sigma_sd_cf);  # truncated
+ sd_cf ~ cauchy(mu_sd_cf, sigma_sd_cf);  // truncated
+
 lp_cf_1 ~ normal(lp_cf_global, sd_cf);
 lp_cf_2 ~ normal(lp_cf_global, sd_cf);
 } else if (cf_model == 2) {

@@ -160,7 +160,7 @@ create_cf_code <- function(n_grp) {
            "real<lower=0> b_cf[cf_model == 1 ? 1 : 0];\n",
            "vector[cf_model == 3 ? nTx : 0] mu_sd_cf;\n",
            "vector<lower=0>[cf_model == 3 ? nTx : 0] sigma_sd_cf;\n")
-           # "vector[cf_model == 3 ? nTx : 0] min_sd_cf;\n",           # uniform
+           # "vector[cf_model == 3 ? nTx : 0] min_sd_cf;   // uniform\n",
            # "vector[cf_model == 3 ? nTx : 0] max_sd_cf;\n")
 
   scode$parameters <-
@@ -194,9 +194,9 @@ create_cf_code <- function(n_grp) {
   scode$model <-
     paste0(paste("// cure fraction \n if (cf_model == 3) {\n",
                  "\t alpha ~ normal(mu_alpha, sigma_alpha);\n",
-                 # "\t sd_cf ~ normal(mu_sd_cf, sigma_sd_cf);  # truncated\n", collapse = "\n"),
-                 "sd_cf ~ cauchy(mu_sd_cf, sigma_sd_cf);  # truncated\n", collapse = "\n"),
-                 # "sd_cf ~ student_t(1, mu_sd_cf, sigma_sd_cf);  # truncated\n", collapse = "\n"),
+                 # "\t sd_cf ~ normal(mu_sd_cf, sigma_sd_cf);  // truncated\n", collapse = "\n"),
+                 "sd_cf ~ cauchy(mu_sd_cf, sigma_sd_cf);  // truncated\n\n", collapse = "\n"),
+                 # "sd_cf ~ student_t(1, mu_sd_cf, sigma_sd_cf);  // truncated\n", collapse = "\n"),
                  # "sd_cf ~ uniform(min_sd_cf, max_sd_cf);\n", collapse = "\n"),
            cglue_data(ids, "\t lp_cf_{id} ~ normal(lp_cf_global, sd_cf);\n"),
            "\n} else if (cf_model == 2) {\n",

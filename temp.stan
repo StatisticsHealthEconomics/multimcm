@@ -141,10 +141,12 @@ model {
   }
 
   scale_2 ~ lognormal(a_scale_2, b_scale_2);
-  Q_2 ~ normal(a_Q_2, b_Q_2);// cure fraction
+  Q_2 ~ normal(a_Q_2, b_Q_2);
+
   if (cf_model == 3) {
     alpha ~ normal(mu_alpha, sigma_alpha);
     sd_cf ~ normal(mu_sd_cf, sigma_sd_cf);
+
     lp_cf_1 ~ normal(lp_cf_global, sd_cf);
     lp_cf_2 ~ normal(lp_cf_global, sd_cf);
   } else if (cf_model == 2) {

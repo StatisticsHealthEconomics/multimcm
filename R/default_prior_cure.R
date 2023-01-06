@@ -18,8 +18,8 @@ default_prior_cure <- function(formula_cure,
   nvars <- formula_cure$nvars
 
   # treatment fixed effect
-  mu_alpha_tx <- rep(-0.6, nTx)
-  sigma_alpha_tx <- rep(0.8, nTx)
+  mu_alpha_fe <- rep(-1, nTx)
+  sigma_alpha_fe <- rep(0.5, nTx)
 
   # separate cure fractions empty parameters
   empty_alphas <- list(mu_alpha = numeric(0),
@@ -41,18 +41,21 @@ default_prior_cure <- function(formula_cure,
 
   params_cf <-
     if (is_hier_cf(formula_cure)) {
-      list(mu_sd_cf = rep(0, nTx),
-           sigma_sd_cf = rep(2.5, nTx),
-           mu_alpha = mu_alpha_tx,
-           sigma_alpha = sigma_alpha_tx)
+      list(
+      #     mu_sd_cf = rep(0, nTx),      # half-normal
+      #     sigma_sd_cf = rep(2.5, nTx),
+           mu_sd_cf = rep(0.2, nTx),
+           sigma_sd_cf = rep(0.03, nTx),
+           mu_alpha = mu_alpha_fe,
+           sigma_alpha = sigma_alpha_fe)
     } else if (is_separate_cf(formula_cure)) {
-      list(mu_alpha    = matrix(rep(mu_alpha_tx, n_groups),
+      list(mu_alpha    = matrix(rep(mu_alpha_fe, n_groups),
                                 ncol = nTx, byrow = TRUE),
-           sigma_alpha = matrix(rep(sigma_alpha_tx, n_groups),
+           sigma_alpha = matrix(rep(sigma_alpha_fe, n_groups),
                                 ncol = nTx, byrow = TRUE))
     } else if (is_pooled_cf(formula_cure)) {
-      list(a_cf = 1,
-           b_cf = 1)
+      list(a_cf = 3,
+           b_cf = 8)
     }
 
   params_cf <-

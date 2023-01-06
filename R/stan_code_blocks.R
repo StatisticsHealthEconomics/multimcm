@@ -131,7 +131,7 @@ make_latent_model_code <- function(model, id = 1L) {
 
     scode$model <-
       glue("scale_{id} ~ lognormal(a_scale_{id}, b_scale_{id});
-                Q_{id} ~ normal(a_Q_{id}, b_Q_{id});\n")
+                Q_{id} ~ normal(a_Q_{id}, b_Q_{id});\n\n")
 
     scode$generated_quantities_def <-
       glue("real pscale_{id} = lognormal_rng(a_scale_{id}, b_scale_{id});
@@ -154,15 +154,19 @@ create_cf_code <- function(n_grp) {
   scode$data_def <-
     c("int<lower=1, upper=3> cf_model;         // cure fraction\n")
 
+  ##TODO: see scode$model
   scode$data_main <-
     paste0("\n real<lower=0> a_cf[cf_model == 1 ? 1 : 0];\n",
            "real<lower=0> b_cf[cf_model == 1 ? 1 : 0];\n",
            "vector[cf_model == 3 ? nTx : 0] mu_sd_cf;\n",
            "vector<lower=0>[cf_model == 3 ? nTx : 0] sigma_sd_cf;\n")
+           # "vector[cf_model == 3 ? nTx : 0] min_sd_cf;\n",           # uniform
+           # "vector[cf_model == 3 ? nTx : 0] max_sd_cf;\n")
 
   scode$parameters <-
     paste0("\n vector<lower=0, upper=1>[cf_model == 1 ? nTx : 0] cf_pooled;\n",
            cglue_data(ids, "vector[cf_model == 3 ? nTx : 0] lp_cf_{id};\n"),
+           # vector<offset=lp_cf_global, multiplier=sd_cf> [cf_model == 3 ? nTx : 0] lp_cf_{id};\n   ##TODO: should we include this extra transformation?
            "\n vector<lower=0>[cf_model == 3 ? nTx : 0] sd_cf;\n")
 
   scode$trans_params_def <-
@@ -174,31 +178,31 @@ create_cf_code <- function(n_grp) {
 
   scode$trans_params_main <-
     paste0(c("\n if (cf_model == 1) {\n"),
-           cglue_data(ids, "cf_{id} = cf_pooled;"),
+           cglue_data(ids, "\t cf_{id} = cf_pooled;"),
            "\n}\n",
            "if (cf_model == 3) {\n",
-           "lp_cf_global = Tx_dmat*alpha;\n",
-           "cf_global = inv_logit(lp_cf_global);\n",
-           cglue_data(ids, "cf_{id} = inv_logit(lp_cf_{id});"),
+           "\t lp_cf_global = Tx_dmat*alpha;\n",
+           "\t cf_global = inv_logit(lp_cf_global);\n",
+           cglue_data(ids, "\t cf_{id} = inv_logit(lp_cf_{id});"),
            "\n}\n",
            "if (cf_model == 2) {\n",
-           cglue_data(ids, "tx_cf_{id} = Tx_dmat*alpha_{id};
-                      cf_{id} = inv_logit(tx_cf_{id});"),
+           cglue_data(ids, "\t tx_cf_{id} = Tx_dmat*alpha_{id};
+                      \t cf_{id} = inv_logit(tx_cf_{id});"),
            "\n}\n")
 
   ##TODO: allow distribution selection in call
   scode$model <-
     paste0(paste("// cure fraction \n if (cf_model == 3) {\n",
-                 "alpha ~ normal(mu_alpha, sigma_alpha);\n",
-                 "sd_cf ~ normal(mu_sd_cf, sigma_sd_cf);  # truncated\n", collapse = "\n"),
-                 # "sd_cf ~ cauchy(mu_sd_cf, sigma_sd_cf);  # truncated\n", collapse = "\n"),
+                 "\t alpha ~ normal(mu_alpha, sigma_alpha);\n",
+                 # "\t sd_cf ~ normal(mu_sd_cf, sigma_sd_cf);  # truncated\n", collapse = "\n"),
+                 "sd_cf ~ cauchy(mu_sd_cf, sigma_sd_cf);  # truncated\n", collapse = "\n"),
                  # "sd_cf ~ student_t(1, mu_sd_cf, sigma_sd_cf);  # truncated\n", collapse = "\n"),
                  # "sd_cf ~ uniform(min_sd_cf, max_sd_cf);\n", collapse = "\n"),
-           cglue_data(ids, "lp_cf_{id} ~ normal(lp_cf_global, sd_cf);\n"),
+           cglue_data(ids, "\t lp_cf_{id} ~ normal(lp_cf_global, sd_cf);\n"),
            "\n} else if (cf_model == 2) {\n",
-           cglue_data(ids, "alpha_{id} ~ normal(mu_alpha_{id}, sigma_alpha_{id});\n"),
+           cglue_data(ids, "\t alpha_{id} ~ normal(mu_alpha_{id}, sigma_alpha_{id});\n"),
            "\n} else {\n",
-           "cf_pooled ~ beta(a_cf, b_cf);\n",
+           "\t cf_pooled ~ beta(a_cf, b_cf);\n",
            "}\n")
 
   scode$generated_quantities <-
@@ -263,9 +267,9 @@ create_code_skeleton <- function(n_grp) {
       cglue_data(ids, "\nint idx_{id};"),
       cglue_data(ids,"
       \nbeta_{id} ~ normal(mu_S_{id}, sigma_S_{id});\n"),
-      c("\n if (bg_model == 1) {
-        beta_bg ~ normal(mu_bg, sigma_bg);
-      }\n"), collapse = "\n")
+      paste0("\nif (bg_model == 1) {\n",
+        "\t beta_bg ~ normal(mu_bg, sigma_bg);\n",
+      "}\n"), collapse = "\n")
 
   scode$generated_quantities_def <-
     paste0(

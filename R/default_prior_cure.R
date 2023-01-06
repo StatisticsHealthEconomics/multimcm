@@ -42,12 +42,12 @@ default_prior_cure <- function(formula_cure,
   params_cf <-
     if (is_hier_cf(formula_cure)) {
       list(
-      #     mu_sd_cf = rep(0, nTx),
-      #     sigma_sd_cf = rep(2.5, nTx),     # half-normal
-      #     sigma_sd_cf = rep(25, nTx),      # half-cauchy
-      #     sigma_sd_cf = rep(2.5, nTx),     # half-t
-      #     min_sd_cf = rep(0.001, nTx),     # uniform
-      #     max_sd_cf = rep(5, nTx),         # uniform
+          mu_sd_cf = rep(0, nTx),
+          # sigma_sd_cf = rep(2.5, nTx),     # half-normal
+          sigma_sd_cf = rep(25/10, nTx),      # half-cauchy
+          #  sigma_sd_cf = rep(2.5, nTx),    # half-t
+          # min_sd_cf = rep(0.001, nTx),     # uniform
+          # max_sd_cf = rep(4, nTx),          # uniform
            # mu_sd_cf = rep(0.2, nTx),   # narrow
            # sigma_sd_cf = rep(0.03, nTx),
            mu_alpha = mu_alpha_fe,

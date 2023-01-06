@@ -186,10 +186,14 @@ create_cf_code <- function(n_grp) {
                       cf_{id} = inv_logit(tx_cf_{id});"),
            "\n}\n")
 
+  ##TODO: allow distribution selection in call
   scode$model <-
     paste0(paste("// cure fraction \n if (cf_model == 3) {\n",
                  "alpha ~ normal(mu_alpha, sigma_alpha);\n",
-                 "sd_cf ~ normal(mu_sd_cf, sigma_sd_cf);\n", collapse = "n"),
+                 "sd_cf ~ normal(mu_sd_cf, sigma_sd_cf);  # truncated\n", collapse = "\n"),
+                 # "sd_cf ~ cauchy(mu_sd_cf, sigma_sd_cf);  # truncated\n", collapse = "\n"),
+                 # "sd_cf ~ student_t(1, mu_sd_cf, sigma_sd_cf);  # truncated\n", collapse = "\n"),
+                 # "sd_cf ~ uniform(min_sd_cf, max_sd_cf);\n", collapse = "\n"),
            cglue_data(ids, "lp_cf_{id} ~ normal(lp_cf_global, sd_cf);\n"),
            "\n} else if (cf_model == 2) {\n",
            cglue_data(ids, "alpha_{id} ~ normal(mu_alpha_{id}, sigma_alpha_{id});\n"),
@@ -214,22 +218,23 @@ create_code_skeleton <- function(n_grp) {
 
   scode$data_main <-
     paste0(
-      c("\nint<lower=1, upper=2> bg_model;\n
-        vector[bg_model == 1 ? H_1 : 0] mu_bg;\n
-        vector<lower=0>[bg_model == 1 ? H_1 : 0] sigma_bg;\n"),
+      paste("\nint<lower=1, upper=2> bg_model;\n",
+            "vector[bg_model == 1 ? H_1 : 0] mu_bg;\n",
+            "vector<lower=0>[bg_model == 1 ? H_1 : 0] sigma_bg;\n", collapse = "\n"),
       cglue_data(ids, " vector<lower=0>[bg_model == 2 ? N_{id} : 0] h_bg_{id};\n"),
-      c("\n matrix[nTx, nTx] Tx_dmat;         // treatment design matrix\n
-      vector[cf_model == 3 ? nTx : 0] mu_alpha;             // treatment regression coefficients\n
-      vector<lower=0>[cf_model == 3 ? nTx : 0] sigma_alpha;\n
-      int<lower=0> t_max;\n"),
+      paste("\n matrix[nTx, nTx] Tx_dmat;         // treatment design matrix\n",
+            "vector[cf_model == 3 ? nTx : 0] mu_alpha;             // treatment regression coefficients\n",
+            "vector<lower=0>[cf_model == 3 ? nTx : 0] sigma_alpha;\n",
+            "int<lower=0> t_max;\n", collapse = "\n"),
       cglue_data(ids,
                  "vector[cf_model == 2 ? nTx : 0] mu_alpha_{id};
                  vector<lower=0>[cf_model == 2 ? nTx : 0] sigma_alpha_{id};\n"))
 
   scode$parameters <-
-    paste0(c("// coefficients in linear predictor (including intercept)\n
-      vector[bg_model == 1 ? H_1 : 0] beta_bg;\n
-      vector[cf_model != 2 ? nTx : 0] alpha;\n"),
+    paste0(
+      paste("// coefficients in linear predictor (including intercept)\n",
+            "vector[bg_model == 1 ? H_1 : 0] beta_bg;\n",
+            "vector[cf_model != 2 ? nTx : 0] alpha;\n", collapse = "\n"),
       cglue_data(ids, "vector[cf_model == 2 ? nTx : 0] alpha_{id};
                       vector[H_{id}] beta_{id};\n"), collapse = "\n")
 
@@ -263,12 +268,13 @@ create_code_skeleton <- function(n_grp) {
       }\n"), collapse = "\n")
 
   scode$generated_quantities_def <-
-    paste0(c("real mean_bg;\n
-           // real pbeta_bg;\n
-           real log_lik = 0;\n
-           vector[t_max] S_bg;\n"),
-           cglue_data(ids,
-                      "vector[t_max] S_{id};
+    paste0(
+      paste("real mean_bg;\n",
+            "// real pbeta_bg;\n",
+            "real log_lik = 0;\n",
+            "vector[t_max] S_bg;\n", collapse = "\n"),
+      cglue_data(ids,
+                 "vector[t_max] S_{id};
       matrix[t_max, nTx] S_{id}_pred;
       real mean_{id};
       int idx_{id};

@@ -44,6 +44,7 @@ data {
   vector<lower=0>[cf_model == 2 ? nTx : 0] sigma_alpha_1;
   vector[cf_model == 2 ? nTx : 0] mu_alpha_2;
   vector<lower=0>[cf_model == 2 ? nTx : 0] sigma_alpha_2;
+
   real<lower=0> a_cf[cf_model == 1 ? 1 : 0];
   real<lower=0> b_cf[cf_model == 1 ? 1 : 0];
   vector[cf_model == 3 ? nTx : 0] mu_sd_cf;
@@ -145,7 +146,7 @@ model {
 
   if (cf_model == 3) {
     alpha ~ normal(mu_alpha, sigma_alpha);
-    sd_cf ~ normal(mu_sd_cf, sigma_sd_cf);
+    sd_cf ~ normal(mu_sd_cf, sigma_sd_cf);  # truncated
 
     lp_cf_1 ~ normal(lp_cf_global, sd_cf);
     lp_cf_2 ~ normal(lp_cf_global, sd_cf);

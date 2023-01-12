@@ -161,9 +161,14 @@ for (Tx in 1:nTx) {
 
      target += log_sum_exp(
     log(cf_1[Tx]) +
-      surv_exp_lpdf(t_1[i] | d_1[i], lambda_1_bg[i]),
+      exp_log_S(t_1[i] | lambda_1_bg[i]),
     log1m(cf_1[Tx]) +
-      joint_exp_exp_lpdf(t_1[i] | d_1[i], lambda_1[i], lambda_1_bg[i]));
+      exp_log_S(t_1[i] | lambda_1_bg[i]) + exp_log_S(t_1[i] | lambda_1[i]));
+
+     target += d[i] * log_sum_exp(
+    log(lambda_1_bg[i]),
+    log1m(cf_1[Tx]) +
+      exp_lpdf(t_1[i] | lambda_1[i]) - log(cf_1[Tx] + (1 - cf_1[Tx])*exp_Surv(t_1[i] | lambda_1[i])));
   }
 
   idx_1 = idx_1 + n_1[Tx];
@@ -176,9 +181,14 @@ for (Tx in 1:nTx) {
 
      target += log_sum_exp(
     log(cf_2[Tx]) +
-      surv_exp_lpdf(t_2[i] | d_2[i], lambda_2_bg[i]),
+      exp_log_S(t_2[i] | lambda_2_bg[i]),
     log1m(cf_2[Tx]) +
-      joint_exp_gengamma_lpdf(t_2[i] | d_2[i], mu_2[i], scale_2, Q_2, lambda_2_bg[i]));
+      exp_log_S(t_2[i] | lambda_2_bg[i]) + gengamma_log_S(t_2[i] | mu_2[i], scale_2, Q_2));
+
+     target += d[i] * log_sum_exp(
+    log(lambda_2_bg[i]),
+    log1m(cf_2[Tx]) +
+      gengamma_lpdf(t_2[i] | mu_2[i], scale_2, Q_2) - log(cf_2[Tx] + (1 - cf_2[Tx])*gengamma_Surv(t_2[i] | mu_2[i], scale_2, Q_2)));
   }
 
   idx_2 = idx_2 + n_2[Tx];

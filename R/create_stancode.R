@@ -28,7 +28,8 @@ create_stancode <- function(models) {
     latent_model_code[[i]] <-  make_latent_model_code(models[i], id = i)
     priorpred_code[[i]] <- make_priorpred(models[i], id = i)
     postpred_code[[i]] <- make_postpred(models[i], id = i)
-    loglik_code[[i]] <- make_loglik(models[i], id = i)
+    loglik_code[[i]] <- make_pop_loglik(models[i], id = i)
+    # loglik_code[[i]] <- make_loglik(models[i], id = i)
     loo_code[[i]] <- make_loo(models[i], id = i)
   }
 

@@ -44,6 +44,12 @@ real exp_Surv (real t, real rate) {
   return S;
 }
 
+real exp_lpdf (real t, real rate) {
+  real x;
+  x = log(rate) - (rate * t);
+  return x;
+}
+
 // exponential sampling distribution
 real surv_exp_pdf (real t, real d, real rate) {
   real lik;
@@ -220,7 +226,7 @@ real surv_loglogistic_lpdf (real t, real d, real shape, real scale) {
 * @return Real
 */
 // without censoring
-real gen_gamma_lpdf(real t, real mu, real sigma, real Q) {
+real gengamma_lpdf(real t, real mu, real sigma, real Q) {
   real prob;
   real w;
   w = (log(t) - mu)/sigma;
@@ -229,7 +235,7 @@ real gen_gamma_lpdf(real t, real mu, real sigma, real Q) {
 }
 
 // flexsurv alternative parameters given
-real gen_gamma_Surv(real t, real mu, real sigma, real Q) {
+real gengamma_Surv(real t, real mu, real sigma, real Q) {
   real Surv;
   real w = (log(t) - mu) / sigma;
   real qq = 1/(Q * Q);                    // shape (gamma)
@@ -243,25 +249,25 @@ real gen_gamma_Surv(real t, real mu, real sigma, real Q) {
   return Surv;
 }
 
-real gen_gamma_log_S(real t, real mu, real sigma, real Q) {
+real gengamma_log_S(real t, real mu, real sigma, real Q) {
   real log_S;
-  log_S = log(gen_gamma_Surv(t, mu, sigma, Q));
+  log_S = log(gengamma_Surv(t, mu, sigma, Q));
   return log_S;
 }
 
-real gen_gamma_log_h(real t, real mu, real sigma, real Q) {
+real gengamma_log_h(real t, real mu, real sigma, real Q) {
   real log_h;
-  log_h = gen_gamma_lpdf(t | mu, sigma, Q) - gen_gamma_log_S(t, mu, sigma, Q);
+  log_h = gengamma_lpdf(t | mu, sigma, Q) - gengamma_log_S(t, mu, sigma, Q);
   return log_h;
 }
 
-real gen_gamma_haz(real t, real mu, real sigma, real Q) {
+real gengamma_haz(real t, real mu, real sigma, real Q) {
   real haz;
-  haz = exp(gen_gamma_log_h(t, mu, sigma, Q));
+  haz = exp(gengamma_log_h(t, mu, sigma, Q));
   return haz;
 }
 
-real surv_gen_gamma_lpdf(real t, real d, real mu, real sigma, real Q) {
+real surv_gengamma_lpdf(real t, real d, real mu, real sigma, real Q) {
   // rescale the distribution accounting for right censoring
   real prob;
   real w;
@@ -276,7 +282,7 @@ real surv_gen_gamma_lpdf(real t, real d, real mu, real sigma, real Q) {
 // real gengamma_rng(real t, real mu, real sigma, real Q) {
 //
 //   u = uniform_rng(0, 1)
-//   gen_gamma_Surv()
+//   gengamma_Surv()
 //
 // }
 
@@ -454,21 +460,21 @@ real exp_lognormal_rng(real mu, real sigma, real lambda) {
 
 real joint_exp_gengamma_pdf(real t, real d, real mu, real scale, real Q, real rate) {
   real lik;
-  lik = exp_Surv(t, rate) * gen_gamma_Surv(t, mu, scale, Q) *
-            pow(exp_haz(t, rate) + gen_gamma_haz(t, mu, scale, Q), d);
+  lik = exp_Surv(t, rate) * gengamma_Surv(t, mu, scale, Q) *
+            pow(exp_haz(t, rate) + gengamma_haz(t, mu, scale, Q), d);
   return lik;
 }
 
 real joint_exp_gengamma_lpdf(real t, real d, real mu, real scale, real Q, real rate) {
   real log_lik;
-  log_lik = d * log(exp_haz(t, rate) + gen_gamma_haz(t, mu, scale, Q)) +
-            exp_log_S(t, rate) + gen_gamma_log_S(t, mu, scale, Q);
+  log_lik = d * log(exp_haz(t, rate) + gengamma_haz(t, mu, scale, Q)) +
+            exp_log_S(t, rate) + gengamma_log_S(t, mu, scale, Q);
   return log_lik;
 }
 
 real exp_gengamma_Surv(real t, real mu, real scale, real Q, real rate) {
   real Surv;
-  Surv = exp_Surv(t, rate) * gen_gamma_Surv(t, mu, scale, Q);
+  Surv = exp_Surv(t, rate) * gengamma_Surv(t, mu, scale, Q);
   return Surv;
 }
 

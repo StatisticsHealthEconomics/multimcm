@@ -364,14 +364,14 @@ make_pop_loglik <- function(model, id) {
 
        {tp()}log_sum_exp(
         log(cf_{id}[Tx]) +
-          exp_log_S(t_{id}[i] | lambda_{id}_bg[i]),
+          exp_log_S(t_{id}[i], lambda_{id}_bg[i]),
         log1m(cf_{id}[Tx]) +
-          exp_log_S(t_{id}[i] | lambda_{id}_bg[i]) + {log_surv}(t_{id}[i] | {ll_params}));
+          exp_log_S(t_{id}[i], lambda_{id}_bg[i]) + {log_surv}(t_{id}[i], {ll_params}));
 
-       {tp()}d[i] * log_sum_exp(
+       {tp()}d_{id}[i] * log_sum_exp(
         log(lambda_{id}_bg[i]),
         log1m(cf_{id}[Tx]) +
-          {log_pdf}(t_{id}[i] | {ll_params}) - log(cf_{id}[Tx] + (1 - cf_{id}[Tx])*{surv}(t_{id}[i] | {ll_params})));
+          {log_pdf}(t_{id}[i] | {ll_params}) - log(cf_{id}[Tx] + (1 - cf_{id}[Tx])*{surv}(t_{id}[i], {ll_params})));
       }
 
       idx_{id} = idx_{id} + n_{id}[Tx];

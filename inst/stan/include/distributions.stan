@@ -194,6 +194,18 @@ real loglogistic_haz (real t, real shape, real scale) {
  return haz;
 }
 
+// real loglogistic_pdf (real t, real shape, real scale) {
+//  real x;
+//  x = (shape/scale)*pow(t/scale, shape - 1)/pow(1 + pow(t/scale, shape), 2);
+//  return x;
+// }
+
+real loglogistic_lpdf (real t, real shape, real scale) {
+ real x;
+ x = log(shape) - log(scale) + (shape - 1)*log(t/scale) - 2*log(1 + pow(t/scale, shape));
+ return x;
+}
+
 // log survival
 real loglogistic_log_S (real t, real shape, real scale) {
  real log_S;

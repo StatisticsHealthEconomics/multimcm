@@ -2,7 +2,7 @@
 #' Create Stan code
 #'
 #' check with
-#' writeLines(create_stancode(c("exp", "exp")), "temp.stan")
+#' writeLines(create_stancode(c("gengamma", "exp")), "temp.stan")
 #'
 #' @param models Vector survival model names
 #'
@@ -15,7 +15,7 @@
 #'
 create_stancode <- function(models) {
   n_grps <- length(models)
-
+# browser()
   # generate separate blocks of Stan code
 
   stancode <- create_code_skeleton(n_grps)

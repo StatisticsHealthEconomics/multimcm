@@ -146,6 +146,18 @@ real gompertz_Surv (real t, real shape, real scale) {
   return S;
 }
 
+real gompertz_pdf (real t, real shape, real scale) {
+  real f;
+  f = scale*exp(shape*t - (scale/shape)*(exp(shape * t) - 1));
+  return f;
+}
+
+real gompertz_lpdf (real t, real shape, real scale) {
+  real x;
+  x = log(scale) + shape*t - (scale/shape)*(exp(shape * t) - 1);
+  return x;
+}
+
 // gompertz sampling distribution
 real surv_gompertz_lpdf (real t, real d, real shape, real scale) {
   real log_lik;

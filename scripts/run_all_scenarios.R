@@ -29,7 +29,7 @@ distns <- c(
 # "gengamma")
 
 for (d1 in distns) {
-  for (d2 in distns) {
+  # for (d2 in distns) {
 
     # error_msg <- tryCatch({
       out <-
@@ -45,10 +45,10 @@ for (d1 in distns) {
           bg_hr = 1,
           t_max = 60)
 
-      saveRDS(out, file = glue::glue("data/{out$output@model_name}.Rds"))
+      saveRDS(out, file = glue::glue(here::here("data/{out$output@model_name}.Rds")))
     # },
     # warning = function(w) { },
     # error = function(e) e)
-  }
+  # }
 }
 

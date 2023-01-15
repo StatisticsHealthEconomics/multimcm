@@ -52,6 +52,7 @@ make_latent_model_code <- function(model, id = 1L) {
 
     scode$model <- ""
 
+    scode$generated_quantities_def <- ""
     scode$generated_quantities_main <-
       glue("mean_{id} = exp(beta_{id}[1]);\n")
   }

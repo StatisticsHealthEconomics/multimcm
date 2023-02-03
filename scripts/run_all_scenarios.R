@@ -21,7 +21,7 @@ options(warn = 0)
 load("data/long_input_data.RData")
 
 distns <- c(
-  # "exp",
+  "exp",
   "weibull",
   "gompertz",
   "loglogistic",
@@ -29,7 +29,7 @@ distns <- c(
 # "gengamma")
 
 for (d1 in distns) {
-  # for (d2 in distns) {
+  for (d2 in distns) {
 
     # error_msg <- tryCatch({
       out <-
@@ -49,6 +49,6 @@ for (d1 in distns) {
     # },
     # warning = function(w) { },
     # error = function(e) e)
-  # }
+  }
 }
 

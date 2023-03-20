@@ -2,7 +2,7 @@
 #' Create Stan code
 #'
 #' check with
-#' writeLines(create_stancode(c("exp", "gengamma")), "temp.stan")
+#' writeLines(create_stancode(c("gengamma", "exp")), "temp.stan")
 #'
 #' @param models Vector survival model names
 #'
@@ -15,7 +15,7 @@
 #'
 create_stancode <- function(models) {
   n_grps <- length(models)
-
+# browser()
   # generate separate blocks of Stan code
 
   stancode <- create_code_skeleton(n_grps)
@@ -28,7 +28,8 @@ create_stancode <- function(models) {
     latent_model_code[[i]] <-  make_latent_model_code(models[i], id = i)
     priorpred_code[[i]] <- make_priorpred(models[i], id = i)
     postpred_code[[i]] <- make_postpred(models[i], id = i)
-    loglik_code[[i]] <- make_loglik(models[i], id = i)
+    loglik_code[[i]] <- make_pop_loglik(models[i], id = i)
+    # loglik_code[[i]] <- make_loglik(models[i], id = i)
     loo_code[[i]] <- make_loo(models[i], id = i)
   }
 

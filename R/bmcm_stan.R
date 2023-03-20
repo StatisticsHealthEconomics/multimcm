@@ -119,14 +119,13 @@ bmcm_stan <- function(input_data,
            thin = 1,
            chains = 1,
            control = list(adapt_delta = 0.99,
-                          max_treedepth = 20),
+                          max_treedepth = 100,
+                          stepsize = 0.05),
            include = TRUE,
            model_name = paste0("bmcm_stan_", glue::glue_collapse(distns, sep = "_")),
            open_progress = TRUE)#,
       # verbose = TRUE)
     )
-
-  browser()
 
   ##############
   # fit model

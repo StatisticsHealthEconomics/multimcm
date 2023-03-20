@@ -52,6 +52,7 @@ make_latent_model_code <- function(model, id = 1L) {
 
     scode$model <- ""
 
+    scode$generated_quantities_def <- ""
     scode$generated_quantities_main <-
       glue("mean_{id} = exp(beta_{id}[1]);\n")
   }
@@ -335,6 +336,51 @@ make_loglik <- function(model, id) {
 
   scode
 }
+
+#' @importFrom glue glue
+#'
+make_pop_loglik <- function(model, id) {
+
+  ll_params <- glue("{distn_params(model)}_{id}")
+
+  ll_params[grep("mu", ll_params)] <-
+    paste0(ll_params[grep("mu", ll_params)], "[i]")
+
+  ll_params[grep("lambda", ll_params)] <-
+    paste0(ll_params[grep("lambda", ll_params)], "[i]")
+
+  ll_params <- paste(ll_params, collapse = ", ")
+
+  log_surv <- glue("{model}_log_S")
+  surv <- glue("{model}_Surv")
+  log_pdf <- glue("{model}_lpdf")
+
+  scode <-
+    glue("
+    idx_{id} = 1;
+
+    // likelihood
+    for (Tx in 1:nTx) {{
+      for (i in idx_{id}:(idx_{id} + n_{id}[Tx] - 1)) {{
+
+       {tp()}log_sum_exp(
+        log(cf_{id}[Tx]) +
+          exp_log_S(t_{id}[i], lambda_{id}_bg[i]),
+        log1m(cf_{id}[Tx]) +
+          exp_log_S(t_{id}[i], lambda_{id}_bg[i]) + {log_surv}(t_{id}[i], {ll_params}));
+
+       {tp()}d_{id}[i] * log_sum_exp(
+        log(lambda_{id}_bg[i]),
+        log1m(cf_{id}[Tx]) +
+          {log_pdf}(t_{id}[i] | {ll_params}) - log(cf_{id}[Tx] + (1 - cf_{id}[Tx])*{surv}(t_{id}[i], {ll_params})));
+      }
+
+      idx_{id} = idx_{id} + n_{id}[Tx];
+    }\n")
+
+  scode
+}
+
 
 #' from brms package
 #' @importFrom glue glue_collapse

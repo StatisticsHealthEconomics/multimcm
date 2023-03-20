@@ -59,7 +59,8 @@ cf_forest_plot <- function(folder = "data/") {
     theme_bw() +
     theme(panel.grid.major.y = element_blank()) +
     geom_hline(aes(yintercept = 1.5), col = "lightgrey") +
-    geom_hline(aes(yintercept = 2.5), col = "lightgrey")
+    geom_hline(aes(yintercept = 2.5), col = "lightgrey") +
+    theme(text = element_text(size = 20))
 }
 
 

@@ -48,7 +48,6 @@ bmcm_stan <- function(input_data,
   on.exit(setwd(rtn_wd))
 
   dots <- list(...)
-
   ####################
   # pre-processing
 
@@ -62,7 +61,12 @@ bmcm_stan <- function(input_data,
 
   formula_cure <- parse_formula(cureformula, input_data)
 
-  if (length(distns) == 1) distns <- rep(distns, formula_cure$n_group)
+  if (length(distns) == 1) {
+    if (is_hier(formula_cure)) {
+      distns <- rep(distns, formula_cure$n_group)
+    } else if (is_separate(formula_cure)) {
+      distns <- rep(distns, formula_cure$fe_nlevels[2])
+    }}
 
   formula_latent <- parse_formula(formula, input_data, family = distns)
 

@@ -1,4 +1,8 @@
 
+#' Prepare data for survival plot
+#'
+#' @param bmcm_out Output of Stan model
+#' @return data frame
 #' @importFrom glue glue
 #'
 prep_S_joint_data <- function(bmcm_out) {

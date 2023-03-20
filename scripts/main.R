@@ -32,8 +32,8 @@ TRTX <- NA
 # cure_formula = "~ TRTA + event_idx",                                     # separate
 # cure_formula = "~ TRTA",                                                 # pooled
 
-distn <- c("lognormal", "lognormal")
-# distn <- "exponential"
+# distn <- c("lognormal", "lognormal")
+distn <- "exponential"
 
 
 ##############
@@ -81,7 +81,7 @@ long_input_data <-
          TRTA = as.factor(TRTA)) |>
   arrange(id)
 
-save(long_input_data, file = "data/long_input_data.RData")
+# save(long_input_data, file = "data/long_input_data.RData")
 
 
 ##############

@@ -14,7 +14,7 @@ default_prior_cure <- function(formula_cure,
                                bg_model = 2) {
 
   nTx <- formula_cure$fe_nlevels[1]
-  n_groups <- formula_cure$n_groups
+  n_groups <- formula_cure$re_nlevels[1]
   nvars <- formula_cure$nvars
 
   # treatment fixed effect
@@ -23,7 +23,7 @@ default_prior_cure <- function(formula_cure,
 
   if (is_separate_cf(formula_cure)) {
     empty_alphas <- NULL
-  } else{
+  } else {
     # separate cure fractions empty parameters
     empty_alphas <- list(mu_alpha = numeric(0),
                          sigma_alpha = numeric(0))
@@ -43,8 +43,8 @@ default_prior_cure <- function(formula_cure,
          sigma_sd_cf = numeric(0)),
     empty_alphas)
 
-  params_cf <-
-    if (is_hier_cf(formula_cure)) {
+  if (is_hier_cf(formula_cure)) {
+    params_cf <-
       list(
         mu_sd_cf = rep(0, nTx),
         # sigma_sd_cf = rep(2.5, nTx),     # half-normal
@@ -56,15 +56,19 @@ default_prior_cure <- function(formula_cure,
         # sigma_sd_cf = rep(0.03, nTx),
         mu_alpha = mu_alpha_fe,
         sigma_alpha = sigma_alpha_fe)
-    } else if (is_separate_cf(formula_cure)) {
-      list(mu_alpha    = matrix(rep(mu_alpha_fe, n_groups),
-                                ncol = nTx, byrow = TRUE),
-           sigma_alpha = matrix(rep(sigma_alpha_fe, n_groups),
-                                ncol = nTx, byrow = TRUE))
-    } else if (is_pooled_cf(formula_cure)) {
+  } else if (is_separate_cf(formula_cure)) {
+    params_cf <-
+      list(mu_alpha = mu_alpha_fe,
+           sigma_alpha = sigma_alpha_fe) |>
+      rep(formula_cure$n_groups)
+
+    names(params_cf) <-
+      paste0(names(params_cf), "_", rep(1:2, each = formula_cure$n_groups))
+  } else if (is_pooled_cf(formula_cure)) {
+    params_cf <-
       list(a_cf = 3,
            b_cf = 8)
-    }
+  }
 
   params_cf <-
     modifyList(empty_cf,
@@ -78,16 +82,7 @@ default_prior_cure <- function(formula_cure,
       list(mu_bg = numeric(0),
            sigma_bg = numeric(0))}
 
-  # latent submodel coefficients
-  params_beta <-
-    list(mu_0 = matrix(rep(0, nvars*n_groups),
-                       nrow = n_groups),
-         sigma_0 = matrix(rep(1, nvars*n_groups),
-                          nrow = n_groups))
-
-  c(params_cf,
-    params_bg,
-    params_beta)
+  c(params_cf, params_bg)
 }
 
 

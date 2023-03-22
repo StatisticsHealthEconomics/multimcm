@@ -8,7 +8,7 @@
 prep_S_joint_data <- function(bmcm_out) {
 
   S_stats <- list()
-  n_groups <- bmcm_out$formula$cure$n_groups
+  n_groups <- bmcm_out$formula$cure$re_nlevels[1]
 
   event_type <- 1:n_groups
   model_names <-bmcm_out$distns

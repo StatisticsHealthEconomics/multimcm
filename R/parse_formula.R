@@ -38,11 +38,14 @@ parse_formula <- function(formula, data, family = NA) {
   fe_vars <- attr(terms(fe_form), "term.labels")
   fe_nvars <- length(fe_vars)
 
-  n_groups <- length(unique(mf[, re_parts$group_var]))
+  re_nlevels <- length(unique(mf[, re_parts$group_var]))
 
   mf[, re_parts$group_var] <- as.factor(mf[, re_parts$group_var])
 
   fe_nlevels <- apply(mf[, fe_vars, drop=FALSE], 2, \(x) nlevels(as.factor(x)))
+
+  n_groups <- if (is_hier(list(bars))) {re_nlevels[1]} else {fe_nlevels[2]}
+  group_var <- if (is_hier(list(bars))) {re_parts$re_group_var} else {fe_vars[2]}
 
   c(nlist(
     formula,
@@ -59,7 +62,9 @@ parse_formula <- function(formula, data, family = NA) {
     fe_vars,
     fe_nvars,
     fe_nlevels,
+    re_nlevels,
     n_groups,
+    group_var,
     bars),
     re_parts)
 }
@@ -129,6 +134,6 @@ split_at_bars <- function(x) {
 
   re_form <- formula(paste("~", terms[[1L]]))
   group_var <- terms[[2L]]
-  nlist(re_form, group_var)
+  nlist(re_form, re_group_var)
 }
 

@@ -16,7 +16,7 @@ default_prior_latent <- function(formula_latent,
 
   model <- formula_latent$family
   n_models <- length(model)
-  n_group <- formula_cure$n_group
+  n_group <- formula_cure$re_nlevels[1]
   nvars <- formula_latent$fe_nvars
 
   mod_pars <- pars_format(nvars)

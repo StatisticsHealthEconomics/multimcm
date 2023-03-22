@@ -48,6 +48,7 @@ bmcm_stan <- function(input_data,
   on.exit(setwd(rtn_wd))
 
   dots <- list(...)
+
   ####################
   # pre-processing
 
@@ -63,16 +64,23 @@ bmcm_stan <- function(input_data,
 
   if (length(distns) == 1) {
     if (is_hier(formula_cure)) {
-      distns <- rep(distns, formula_cure$n_group)
+      distns <- rep(distns, formula_cure$re_nlevels[1])
     } else if (is_separate(formula_cure)) {
       distns <- rep(distns, formula_cure$fe_nlevels[2])
     }}
 
   formula_latent <- parse_formula(formula, input_data, family = distns)
 
-  if (is_pooled(formula_cure)) formula_cure$cf_idx <- 1L
-  else if (is_separate(formula_cure)) formula_cure$cf_idx <- 2L
-  else if (is_hier(formula_cure)) formula_cure$cf_idx <- 3L
+  if (is_pooled(formula_cure)) {
+    formula_cure$cf_idx <- 1L
+    formula_cure$cf_name <- "pooled"
+  } else if (is_separate(formula_cure)) {
+    formula_cure$cf_idx <- 2L
+    formula_cure$cf_name <- "separate"
+  } else if (is_hier(formula_cure)) {
+    formula_cure$cf_idx <- 3L
+    formula_cure$cf_name <- "hier"
+  }
 
   ###############################
   # construct data
@@ -130,12 +138,11 @@ bmcm_stan <- function(input_data,
            open_progress = TRUE)#,
       # verbose = TRUE)
     )
-
   ##############
   # fit model
 
   stan_inputs$model_code <- create_stancode(distns)
-
+browser()
   ## for testing
   # writeLines(stan_inputs$model_code, con = here::here("data/stan_model_code.stan"))
   # model_code <- readr::read_file(here::here("data/stan_model_code_test.stan"))

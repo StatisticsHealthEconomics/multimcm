@@ -5,7 +5,7 @@ geom_kaplan_meier <- function(out_dat,
                               col = "black",
                               add_marks = TRUE) {
 
-  n_groups <- out_dat$formula$cure$re_nlevels[1]
+  n_groups <- out_dat$formula$cure$n_groups
   group_var <- out_dat$formula$cure$group_var
   fe_var <- out_dat$formula$cure$fe_vars
 

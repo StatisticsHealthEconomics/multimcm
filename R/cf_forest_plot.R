@@ -3,14 +3,19 @@
 #'
 #' Using all treatment Stan model.
 #'
-#' @param folder String of location
+#' @param folder String of location directory
 #'
 #' @importFrom epicontacts, adegenet
 #' @import dplyr ggplot2 tidybayes purrr
 #'
-#' @return
+#' @return ggplot object
 #' @export
 #'
+#' @examples
+#' \dontrun{}
+#'  cf_forest_plot("data/separate/")
+#'  ggsave()
+#' }
 cf_forest_plot <- function(folder = "data/") {
 
   # read in data

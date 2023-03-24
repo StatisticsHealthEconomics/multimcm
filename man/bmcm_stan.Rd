@@ -15,7 +15,7 @@ bmcm_stan(
   bg_model = c("bg_distn", "bg_fixed"),
   bg_varname = "bg_rate",
   bg_hr = 1,
-  t_max = 60,
+  t_max = 70,
   ...
 )
 }
@@ -27,7 +27,7 @@ bmcm_stan(
 \item{cureformula}{R formula object for cure fraction model component}
 
 \item{family_latent}{Name of distribution, from
-"exp", "weibull", "gompertz", "lognormal", "gamma".
+"exp", "weibull", "gompertz", "lognormal", "loglogistic", "gengamma".
 Single string or vector of length number of end-points}
 
 \item{prior_latent}{Optional}

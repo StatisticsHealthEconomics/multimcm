@@ -5,14 +5,13 @@
 #'
 #' @param folder String of location directory
 #'
-#' @importFrom epicontacts, adegenet
 #' @import dplyr ggplot2 tidybayes purrr
 #'
 #' @return ggplot object
 #' @export
 #'
 #' @examples
-#' \dontrun{}
+#' \dontrun{
 #'  cf_forest_plot("data/separate/")
 #'  ggsave()
 #' }

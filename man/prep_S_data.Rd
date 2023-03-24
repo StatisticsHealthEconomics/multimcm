@@ -2,10 +2,15 @@
 % Please edit documentation in R/prep_S_data.R
 \name{prep_S_data}
 \alias{prep_S_data}
-\title{Prep S data}
+\title{Prepare posterior survival data for plotting}
 \usage{
-prep_S_data(stan_extract, event_type = NA, CI_probs = c(0.025, 0.5, 0.975))
+prep_S_data(
+  stan_extract,
+  event_type = NA,
+  CI_probs = c(0.025, 0.5, 0.975),
+  tx_idx = NA
+)
 }
 \description{
-Prep S data
+Prepare posterior survival data for plotting
 }

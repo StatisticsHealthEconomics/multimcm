@@ -101,7 +101,7 @@ out <-
     t_max = 60)
 
 if (save_res) {
-  save(out, file = glue::glue("data/{out$output@model_name}.RData"))}
+  save(out, file = glue::glue("data/{out$output@model_name}.Rds"))}
 
 
 ##########

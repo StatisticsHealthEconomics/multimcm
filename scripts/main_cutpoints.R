@@ -26,20 +26,21 @@ data("surv_data_cut", package = "bgfscure")
 
 save_res <- TRUE
 TRTX <- NA
-cut_year <- 12
-# cut_year <- 30
+# cut_month <- 12
+# cut_month <- 30
+cut_month <- 100
 
 # # types of model
 # latent_formula = "Surv(time=month, event=status) ~ 1 + age_event",
 # cure_formula = "~ TRTA + event_idx",                                     # separate
 
+surv_input_data <- surv_data_cut[[as.character(cut_month)]]
+
 # distn <- "lognormal"
 distn <- "exponential"
 
-surv_input_data <- surv_data_cut[[as.character(cut_year)]]
-
-model <- "separate"
-# model <- "hier"
+# model <- "separate"
+model <- "hier"
 
 ##############
 # prep data
@@ -105,7 +106,7 @@ out <-
     t_max = 60)
 
 if (save_res) {
-  save(out, file = glue::glue("data/dbl_cut/{model}/{out$output@model_name}_{cut_year}.Rds"))}
+  saveRDS(out, file = glue::glue("data/dbl_cut/{model}/{out$output@model_name}_{cut_month}.Rds"))}
 
 
 ##########

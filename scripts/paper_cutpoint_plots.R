@@ -42,7 +42,6 @@ gg_12[[2]] <- plot_S_joint(stan_list[[3]], add_km = TRUE,
 ghier12 <- do.call("grid_arrange_shared_legend",
                    c(gg_12, nrow = 2, ncol = 1))
 
-
 ggsave(ghier12, filename = glue::glue("plots/plot_S_grid_cf_hier_cpt_12m.png"),
        units = "in", width = fig_width, height = fig_height, dpi = 300)
 
@@ -56,7 +55,6 @@ gg_30[[2]] <- plot_S_joint(stan_list[[4]], add_km = TRUE,
 ghier30 <- do.call("grid_arrange_shared_legend",
                    c(gg_30, nrow = 2, ncol = 1))
 
-
 ggsave(ghier30, filename = glue::glue("plots/plot_S_grid_cf_hier_cpt_30m.png"),
        units = "in", width = fig_width, height = fig_height, dpi = 300)
 
@@ -65,8 +63,8 @@ ggsave(ghier30, filename = glue::glue("plots/plot_S_grid_cf_hier_cpt_30m.png"),
 # forest plots
 
 forest_hier <-
-  cf_forest_cutpoint(folder = "data/independent/cf hier/bg_fixed_hr1",
-                     is_hier = TRUE)
+  cf_forest_cutpoint(folder = "data/dbl_cut/hier/", save_name = c("_30", "_12", "_100"))
+
 forest_hier
 
 ggsave(forest_hier, filename = glue::glue("plots/forest_plot_cf_hier_cpt.png"),
@@ -125,8 +123,7 @@ ggsave(gsep30, filename = glue::glue("plots/plot_S_grid_cf_sep_cpt_30m.png"),
 # forest plots
 
 forest_sep <-
-  cf_forest_cutpoint(folder = "data/independent/cf separate/bg_fixed_hr1",
-                     is_hier = FALSE)
+  cf_forest_cutpoint(folder = "data/dbl_cut/separate/", save_name = c("_30", "_12"))
 forest_sep
 
 ggsave(forest_sep, filename = glue::glue("plots/forest_plot_cf_sep_cpt.png"),

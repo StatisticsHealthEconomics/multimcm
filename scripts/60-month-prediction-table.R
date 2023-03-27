@@ -1,5 +1,7 @@
 # 60 months prediction table
 
+###############
+# hierarchical
 
 folder <- here::here("data/dbl_cut/hier/")
 
@@ -23,6 +25,9 @@ hier_tab <- dplyr::bind_rows(dat, .id = "model") |>
          endpoint = rep(c("OS", "PFS"), n()/2),
          drug = rep(1:3, n()/3)) |>
   select(model, endpoint, drug, everything())
+
+###########
+# separate
 
 folder <- here::here("data/dbl_cut/separate/")
 filenames <- list.files(folder, full.names = TRUE)

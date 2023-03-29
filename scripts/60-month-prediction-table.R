@@ -1,4 +1,8 @@
+
 # 60 months prediction table
+# for different data cut points
+# for paper
+
 
 ###############
 # hierarchical
@@ -16,15 +20,18 @@ names(stan_list) <-
 par_names <- c("S_1_pred[60,1]", "S_1_pred[60,2]", "S_1_pred[60,3]",
                "S_2_pred[60,1]", "S_2_pred[60,2]", "S_2_pred[60,3]")
 
-dat <- map(stan_list, function(x) as_tibble(rstan::summary(x$output, par = par_names)$summary))
+dat_hier <- map(stan_list,
+                function(x) as_tibble(rstan::summary(x$output, par = par_names)$summary))
 
-hier_tab <- dplyr::bind_rows(dat, .id = "model") |>
+hier_tab <-
+  dplyr::bind_rows(dat_hier, .id = "model") |>
   tidyr::separate("model", c("a", "b","c", "distn", "ctpt"), sep = "_") |>
   select(-(a:c)) |>
   mutate(model = "hier",
          endpoint = rep(c("OS", "PFS"), n()/2),
-         drug = rep(1:3, n()/3)) |>
-  select(model, endpoint, drug, everything())
+         drug = rep(1:3, n()/3),
+         ctpt = factor(ctpt, levels = c("12", "30", "100"))) |>
+  select(model, endpoint, drug, ctpt, everything())
 
 ###########
 # separate
@@ -40,15 +47,18 @@ names(stan_list) <-
 par_names <- c("S_1_pred[60,1]", "S_1_pred[60,2]", "S_1_pred[60,3]",
                "S_2_pred[60,1]", "S_2_pred[60,2]", "S_2_pred[60,3]")
 
-dat <- map(stan_list, function(x) as_tibble(rstan::summary(x$output, par = par_names)$summary))
+dat_sep <- map(stan_list,
+           function(x) as_tibble(rstan::summary(x$output, par = par_names)$summary))
 
-sep_tab <- dplyr::bind_rows(dat, .id = "model") |>
+sep_tab <-
+  dplyr::bind_rows(dat_sep, .id = "model") |>
   tidyr::separate("model", c("a", "b","c", "distn", "ctpt"), sep = "_") |>
   select(-(a:c)) |>
   mutate(model = "separate",
          endpoint = rep(c("OS", "PFS"), n()/2),
-         drug = rep(1:3, n()/3)) |>
-  select(model, endpoint, drug, everything())
+         drug = rep(1:3, n()/3),
+         ctpt = factor(ctpt, levels = c("12", "30", "100"))) |>
+  select(model, endpoint, ctpt, drug, everything())
 
 tab <-
   rbind(sep_tab, hier_tab) |>

@@ -95,11 +95,14 @@ out <-
   bmcm_stan(
     input_data = long_input_data,
     formula = "Surv(time=month, event=status) ~ 1 + age_event",
-    # cureformula = "~ TRTA + (1 | event_idx)",    # hierarchical
-    cureformula = "~ TRTA + event_idx",    # separate
+    cureformula =
+      if (model == "hier") {
+        "~ TRTA + (1 | event_idx)"    # hierarchical
+      } else {
+        "~ TRTA + event_idx"},        # separate
     family_latent = distn,
     prior_latent = NA,
-    prior_cure = NA,
+    # prior_cure = list(sigma_sd_cf = c(0.01, 0.01, 0.01)),
     centre_coefs = TRUE,
     bg_model = "bg_fixed",
     bg_hr = 1,

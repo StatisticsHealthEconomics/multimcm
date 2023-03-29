@@ -11,7 +11,9 @@
 #' @return list
 #'
 default_prior_cure <- function(formula_cure,
+                               prior_cure = list(),
                                bg_model = 2) {
+
   nTx <- formula_cure$fe_nlevels[1]
   n_groups <- formula_cure$n_groups
   nvars <- formula_cure$nvars
@@ -81,7 +83,8 @@ default_prior_cure <- function(formula_cure,
       list(mu_bg = numeric(0),
            sigma_bg = numeric(0))}
 
-  c(params_cf, params_bg)
+  modifyList(c(params_cf, params_bg),
+             prior_cure)
 }
 
 

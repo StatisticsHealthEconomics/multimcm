@@ -3,8 +3,9 @@
 #'
 #' Using all treatment Stan model.
 #'
-#' @param folder String of location
-#' @param is_hier Is hierarchical model (or separate)?
+#' @param folder String of location to read in data from
+#' @param save_name File name appended text
+#' @param is_hier Is hierarchical model (or separate)? i.e. whether to use a global parameter
 #'
 #' @importFrom epicontacts, adegenet
 #' @import dplyr ggplot2 tidybayes purrr
@@ -14,7 +15,7 @@
 #'
 cf_forest_cutpoint <- function(distns = list(c("exp", "exp"),
                                              c("lognormal", "lognormal")),
-                               folder = "data/independent/cf separate/bg_fixed_hr1",
+                               folder = NA,
                                save_name = c("_12", "_30", "_100"),
                                is_hier = TRUE) {
   summary_tabs <- list()

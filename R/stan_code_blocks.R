@@ -163,6 +163,7 @@ create_cf_code <- function(n_grp) {
            "vector<lower=0>[cf_model == 3 ? nTx : 0] sigma_sd_cf;\n")
            # "vector[cf_model == 3 ? nTx : 0] min_sd_cf;   // uniform\n",
            # "vector[cf_model == 3 ? nTx : 0] max_sd_cf;\n")
+           # "vector[cf_model == 3 ? nTx : 0] lambda_sd_cf;  // exponential\n")
 
   scode$parameters <-
     paste0("\n vector<lower=0, upper=1>[cf_model == 1 ? nTx : 0] cf_pooled;\n",
@@ -199,6 +200,7 @@ create_cf_code <- function(n_grp) {
                  "sd_cf ~ cauchy(mu_sd_cf, sigma_sd_cf);  // truncated\n\n", collapse = "\n"),
                  # "sd_cf ~ student_t(1, mu_sd_cf, sigma_sd_cf);  // truncated\n", collapse = "\n"),
                  # "sd_cf ~ uniform(min_sd_cf, max_sd_cf);\n", collapse = "\n"),
+                 # "sd_cf ~ exponential(lambda_sd_cf);  // penalised complexity\n", collapse = "\n"),
            cglue_data(ids, "\t lp_cf_{id} ~ normal(lp_cf_global, sd_cf);\n"),
            "\n} else if (cf_model == 2) {\n",
            cglue_data(ids, "\t alpha_{id} ~ normal(mu_alpha_{id}, sigma_alpha_{id});\n"),

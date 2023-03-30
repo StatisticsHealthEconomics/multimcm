@@ -52,7 +52,7 @@ default_prior_cure <- function(formula_cure,
         # min_sd_cf = rep(0.001, nTx),     # uniform
         # max_sd_cf = rep(4, nTx),          # uniform
         # mu_sd_cf = rep(0.2, nTx),   # narrow
-        # sigma_sd_cf = rep(0.03, nTx),
+        # lambda_sd_cf = rep(46, nTx),
         mu_alpha = mu_alpha_fe,
         sigma_alpha = sigma_alpha_fe)
   } else if (is_separate_cf(formula_cure)) {

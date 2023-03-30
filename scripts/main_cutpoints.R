@@ -26,20 +26,21 @@ data("surv_data_cut", package = "bgfscure")
 
 save_res <- TRUE
 TRTX <- NA
-cut_year <- 12
-# cut_year <- 30
+# cut_month <- 12
+# cut_month <- 30
+cut_month <- 100
 
 # # types of model
 # latent_formula = "Surv(time=month, event=status) ~ 1 + age_event",
 # cure_formula = "~ TRTA + event_idx",                                     # separate
 
+surv_input_data <- surv_data_cut[[as.character(cut_month)]]
+
 # distn <- "lognormal"
 distn <- "exponential"
 
-surv_input_data <- surv_data_cut[[as.character(cut_year)]]
-
-model <- "separate"
-# model <- "hier"
+# model <- "separate"
+model <- "hier"
 
 ##############
 # prep data
@@ -94,18 +95,21 @@ out <-
   bmcm_stan(
     input_data = long_input_data,
     formula = "Surv(time=month, event=status) ~ 1 + age_event",
-    # cureformula = "~ TRTA + (1 | event_idx)",    # hierarchical
-    cureformula = "~ TRTA + event_idx",    # separate
+    cureformula =
+      if (model == "hier") {
+        "~ TRTA + (1 | event_idx)"    # hierarchical
+      } else {
+        "~ TRTA + event_idx"},        # separate
     family_latent = distn,
     prior_latent = NA,
-    prior_cure = NA,
+    # prior_cure = list(sigma_sd_cf = c(0.01, 0.01, 0.01)),
     centre_coefs = TRUE,
     bg_model = "bg_fixed",
     bg_hr = 1,
     t_max = 60)
 
 if (save_res) {
-  save(out, file = glue::glue("data/dbl_cut/{model}/{out$output@model_name}_{cut_year}.Rds"))}
+  saveRDS(out, file = glue::glue("data/dbl_cut/{model}/{out$output@model_name}_{cut_month}.Rds"))}
 
 
 ##########

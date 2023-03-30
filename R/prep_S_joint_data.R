@@ -11,7 +11,7 @@ prep_S_joint_data <- function(bmcm_out) {
   n_groups <- bmcm_out$formula$cure$n_groups
 
   event_type <- 1:n_groups
-  model_names <-bmcm_out$distns
+  model_names <- bmcm_out$distns
   n_tx <- bmcm_out$formula$cure$fe_nlevels[1]
 
   stan_extract <- rstan::extract(bmcm_out$output)

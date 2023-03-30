@@ -34,7 +34,7 @@ bmcm_stan <- function(input_data,
                       family_latent = "exponential",
                       # family_cure = "logit",
                       prior_latent = NA,
-                      prior_cure = NA,
+                      prior_cure = list(),
                       centre_coefs = FALSE,
                       bg_model = c("bg_distn", "bg_fixed"),
                       bg_varname = "bg_rate",
@@ -86,8 +86,7 @@ bmcm_stan <- function(input_data,
   # construct data
   # priors and hyper-parameters
 
-  if (any(is.na(prior_cure)))
-    prior_cure <- default_prior_cure(formula_cure)
+  prior_cure <- default_prior_cure(formula_cure, prior_cure)
 
   if (any(is.na(prior_latent)))
     prior_latent <- default_prior_latent(formula_latent, formula_cure)

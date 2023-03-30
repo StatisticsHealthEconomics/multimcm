@@ -46,3 +46,4 @@ data/*.Rds
 data/*.RDS
 data/separate/*.Rds
 data/separate/*.RDS
+data/dbl_cut/

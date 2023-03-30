@@ -27,6 +27,7 @@ plot_S_joint <- function(bmcm_out,
                          annot_cf = FALSE,
                          add_km = FALSE,
                          add_marks = TRUE, ...) {
+
   plot_dat <- prep_S_joint_data(bmcm_out)
 
   add_facet <- function(facet) list(if (facet) facet_grid( ~ endpoint))

@@ -12,8 +12,13 @@
 #'
 #' @examples
 #' \dontrun{
-#'  cf_forest_plot("data/separate/")
-#'  ggsave()
+#'  # independent model
+#'  fp_sep <- cf_forest_plot("data/separate/")
+#'  #ggsave(fp_sep, filename = "plots/forest_plot_sep_multimcm.png", dpi = 640, width = 12, height = 8)
+#'
+#'  # hierarchical model
+#'  fp_hier <- cf_forest_plot("data/")
+#'  #ggsave(fp_hier, filename = "plots/forest_plot_multimcm.png", dpi = 640, width = 12, height = 8)
 #' }
 cf_forest_plot <- function(folder = "data/") {
 
@@ -38,7 +43,9 @@ cf_forest_plot <- function(folder = "data/") {
                                  "Cure fraction PFS")),
            treatment = ifelse(tx == 1, "Ipilimumab",
                               ifelse(tx == 2, "Nivolumab",
-                                     "Nivolumab + Ipilimumab"))) %>%
+                                     "Ipilimumab + Nivolumab")),
+           treatment = factor(treatment,
+                              levels = c("Ipilimumab", "Nivolumab", "Ipilimumab + Nivolumab"))) %>%
     tidyr::separate(scenario, c("OS", "PFS")) %>%
     `rownames<-`(NULL) %>%
     mutate(OS = as.factor(OS),

@@ -13,6 +13,16 @@
 #' @return
 #' @export
 #'
+#' @examples
+#' \dontrun{
+#'  # independent model
+#'  fp_sep <- cf_forest_cutpoint(folder = "data/dbl_cut/separate", save_name = c("_30", "_12", "_100"))
+#'  #ggsave(fp_sep, filename = "plots/forest_plot_cf_sep_cpt.png", dpi = 640, width = 16, height = 14)
+#'
+#'  # hierarchical model
+#'  fp_hier <- cf_forest_cutpoint(folder = "data/dbl_cut/hier", save_name = c("_30", "_12", "_100"))
+#'  #ggsave(fp_hier, filename = "plots/forest_plot_cf_hier_cpt.png", dpi = 640, width = 16, height = 14)
+#' }
 cf_forest_cutpoint <- function(distns = list(c("exp", "exp"),
                                              c("lognormal", "lognormal")),
                                folder = NA,
@@ -42,7 +52,9 @@ cf_forest_cutpoint <- function(distns = list(c("exp", "exp"),
                                  "Cure fraction PFS")),
            treatment = ifelse(tx == "1", "Ipilimumab",
                               ifelse(tx == "2", "Nivolumab",
-                                     "Nivolumab + Ipilimumab"))) %>%
+                                     "Ipilimumab + Nivolumab")),
+           treatment = factor(treatment,
+                              levels = c("Ipilimumab", "Nivolumab", "Ipilimumab + Nivolumab"))) %>%
     mutate(distns = as.factor(distns),
            cpt = ifelse(cpt == "_12", "12 months",
                         ifelse(cpt == "_30", "30 months",

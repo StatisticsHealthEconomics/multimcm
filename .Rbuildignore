@@ -4,3 +4,4 @@
 data/
 plots/
 ^\.github$
+^LICENSE\.md$

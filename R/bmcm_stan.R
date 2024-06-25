@@ -17,11 +17,11 @@
 #' @param centre_coefs Logical
 #' @param bg_model User supplied distribution or estimated.
 #'    In future this will be probabilities or fitted model object.
-#' @param bg_varname Background variable name in \code{input_data}
+#' @param bg_varname Background variable name in `input_data`
 #' @param bg_hr Background hazard ratio adjustment
 #' @param t_max Maximum time horizon
 #' @param ... Additional parameters
-#' @return Stan output as \code{bmcm} class
+#' @return Stan output as `bmcm` class
 #'
 #' @import rstanarm
 #' @importFrom lme4 mkReTrms
@@ -137,6 +137,7 @@ bmcm_stan <- function(input_data,
            open_progress = TRUE)#,
       # verbose = TRUE)
     )
+
   ##############
   # fit model
 

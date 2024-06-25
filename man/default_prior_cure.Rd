@@ -4,7 +4,7 @@
 \alias{default_prior_cure}
 \title{Prepare shared parameters for Stan model}
 \usage{
-default_prior_cure(formula_cure, bg_model = 2)
+default_prior_cure(formula_cure, prior_cure = list(), bg_model = 2)
 }
 \arguments{
 \item{formula_cure}{Result of \code{parse_formula}}

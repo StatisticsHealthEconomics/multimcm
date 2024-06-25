@@ -2,7 +2,7 @@
 % Please edit documentation in R/create_stancode.R
 \name{create_stancode}
 \alias{create_stancode}
-\title{Create Stan code}
+\title{Create Stan code from component parts}
 \usage{
 create_stancode(models)
 }
@@ -13,10 +13,13 @@ create_stancode(models)
 string
 }
 \description{
-check with
-writeLines(create_stancode(c("gengamma", "exp")), "temp.stan")
+Create Stan code from component parts
 }
 \examples{
 cat(create_stancode(c("exp", "exp")))
 
+\dontrun{
+ check with
+ writeLines(create_stancode(c("gengamma", "exp")), "temp.stan")
+}
 }

@@ -1,7 +1,7 @@
 
 #' Plot survival curves for joint model and all treatments
 #'
-#' Use results of running Stan with \code{bmcm_stan()}
+#' Use results of running Stan with `bmcm_stan()`
 #' relative survival joint mixture cure model.
 #'
 #' @param out bmcm class output list

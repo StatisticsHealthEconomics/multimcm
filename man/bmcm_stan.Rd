@@ -10,7 +10,7 @@ bmcm_stan(
   cureformula = ~1,
   family_latent = "exponential",
   prior_latent = NA,
-  prior_cure = NA,
+  prior_cure = list(),
   centre_coefs = FALSE,
   bg_model = c("bg_distn", "bg_fixed"),
   bg_varname = "bg_rate",

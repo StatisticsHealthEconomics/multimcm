@@ -47,13 +47,14 @@ data(cgd)
 head(cgd)
 ```
 
+Create a new variable for the duration until the event.
 ```{r}
 cgd <- mutate(cgd, time = tstop - tstart)
 # center_id = as.numeric(as.factor(center))
 ```
 
 The data has repeat measurements and 13 hospitals so for simplicity we'll remove some of the data in the initial analyses.
-
+Take the first event for each individual by start time.
 ```{r first-measurement}
 cgd_first <-
   cgd |> 
@@ -61,6 +62,8 @@ cgd_first <-
   arrange(tstart) |> 
   filter(row_number() == 1)
 ```
+
+Drop any levels which only appeared in the data we've just removed and convert the variables to numeric or factor for unique and categorical data, respectively.
 
 ```{r filter-center}
 cgd_center <- cgd_first |>
@@ -71,10 +74,12 @@ cgd_center <- cgd_first |>
          sex_id = as.factor(as.numeric(sex)))
 ```
 
-Append background hazard rate by age, sex and country.
-
+Next, append the background hazard rate by age, sex and country.
+We first need to harmonise the country names and their associated cities.
+Then we join the data with the background mortality data according to age, sex and country.
 ```{r bg-hazard}
-cgd_center <- cgd_center |>
+cgd_center <-
+  cgd_center |>
   tidyr::separate(hos.cat, c("country", "hospital"),
                   remove = FALSE) |> 
   mutate(country = toupper(country),
@@ -84,6 +89,7 @@ cgd_center <- cgd_center |>
                                  ifelse(center == "Copenhagen", "DENMARK", country)))) |> 
   select(-hospital)
 
+# background mortality data
 load("../bgfscure/data/bg.mortality.RData")
 
 # haramonise fields
@@ -100,10 +106,18 @@ input_data <- merge(cgd_center, bg.mortality,
                     by = c("age_event", "sex", "country"), sort = FALSE)
 ```
 
+That is the last step in the data wrangling. We can now proceed to the analysis.
 
 # Analysis
 
-By center
+### By center
+
+No covariates in the latent model and the incidence (cure) model as
+$$
+T \sim \text{Exp}(\lambda)\\
+\pi_i = \text{logit}^{-1}(\alpha + \beta_{\text{treat}[i]} + \gamma_{\text{center}[i]})\\
+\text{center}[i] \sim N(\mu_{\text{center}}, \sigma^2_{\text{center}})
+$$
 
 ```{r}
 out <-
@@ -120,7 +134,14 @@ out <-
     t_max = 365)
 ```
 
-By hospital category
+### By hospital category
+
+No covariates in the latent model and the incidence (cure) model as
+$$
+T \sim \text{Exp}(\lambda)\\
+\pi_i = \text{logit}^{-1}(\alpha + \beta_{\text{treat}[i]} + \gamma_{\text{cat}[i]})\\
+\text{cat}[i] \sim N(\mu_{\text{cat}}, \sigma^2_{\text{cat}})
+$$
 
 ```{r}
 out_hos.cat <-
@@ -138,7 +159,15 @@ out_hos.cat <-
 ```
 
 
-with sex covariate in latent model
+### With sex covariate in latent model
+
+No covariates in the latent model and the incidence (cure) model as
+$$
+T \sim \text{Exp}(\lambda_i)\\
+\lambda_i = \alpha_{\lambda} + \beta_{\text{sex}[i]}\\
+\pi_i = \text{logit}^{-1}(\alpha_{\pi} + \beta_{\text{treat}[i]} + \gamma_{\text{center}[i]})\\
+\text{center}[i] \sim N(\mu_{\text{center}}tyg, \sigma^2_{\text{center}})
+$$
 
 ```{r}
 out_sex <-
@@ -156,6 +185,8 @@ out_sex <-
 
 
 ## Plots
+
+After fitting the models, we can plot the survival curves for each.
 
 ```{r}
 library(ggplot2)

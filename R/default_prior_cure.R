@@ -3,7 +3,7 @@
 #'
 #' Model parameters for cure fraction, background and generated.
 #'
-#' @param formula_cure Result of \code{parse_formula}
+#' @param formula_cure Result of `parse_formula`
 #' @param bg_model Background model index:
 #'    1. exponential distribution
 #'    2. fixed point values from life-tables

@@ -1,6 +1,7 @@
 ---
 title: "CGD analysis"
-output: rmarkdown::html_vignette
+# output: rmarkdown::html_vignette
+output: rmarkdown::pdf_document
 vignette: >
   %\VignetteIndexEntry{cgd_analysis}
   %\VignetteEncoding{UTF-8}
@@ -29,6 +30,8 @@ library(survival)
 library(multimcm)
 library(frailtyHL)
 
+library(multimcm)
+
 # rstan_options(auto_write = TRUE)
 options(mc.cores = parallel::detectCores() - 1)
 ```
@@ -40,7 +43,7 @@ The analysis is a comparison with a frequentist analysis in @Lai2009.
 
 # Data
 
-The data is chronic granulomatous disease (CGD) data available as part of the `frailtyHL` package.
+The data is chronic granulomatous disease (CGD) data available as part of the `{frailtyHL}` package.
 
 ```{r}
 data(cgd)
@@ -90,7 +93,7 @@ cgd_center <-
   select(-hospital)
 
 # background mortality data
-load("../bgfscure/data/bg.mortality.RData")
+load(here::here("../bgfscure/data/bg.mortality.RData"))
 
 # haramonise fields
 bg.mortality <- bg.mortality |> 
@@ -126,7 +129,6 @@ out <-
     formula = "Surv(time=time, event=status) ~ 1",
     cureformula = "~ treat + (1 | center_id)",
     family_latent = "exponential",
-    # prior_cure = NA,
     centre_coefs = TRUE,
     bg_model = "bg_fixed",
     bg_varname = "rate",
@@ -151,7 +153,6 @@ out_hos.cat <-
     formula = "Surv(time=time, event=status) ~ 1",
     cureformula = "~ treat + (1 | hos.cat_id)",
     family_latent = "exponential",
-    prior_cure = NA,
     centre_coefs = TRUE,
     bg_model = "bg_fixed",
     bg_varname = "rate",
@@ -177,7 +178,6 @@ out_sex <-
     formula = "Surv(time=time, event=status) ~ sex",
     cureformula = "~ treat + (1 | hos.cat_id)",
     family_latent = "exponential",
-    prior_cure = NA,
     bg_model = "bg_fixed",
     bg_varname = "rate",
     bg_hr = 1,
@@ -191,14 +191,16 @@ After fitting the models, we can plot the survival curves for each.
 
 ```{r}
 library(ggplot2)
+```
 
+```{r}
 gg <- plot_S_joint(out,
                    add_km = TRUE,
                    annot_cf = FALSE)
 gg + xlim(0,365) + facet_wrap(~endpoint)
 ```
 
-```{r eval=FALSE}
+```{r eval=FALSE, echo=FALSE}
 ggsave(plot = gg, filename = "plots/cgd_surv_plot.png", dpi = 640, width = 10, height = 8)
 ```
 
@@ -209,7 +211,7 @@ gg2 <- plot_S_joint(out_hos.cat,
 gg2 + xlim(0,365) + facet_wrap(~endpoint)
 ```
 
-```{r eval=FALSE}
+```{r eval=FALSE, echo=FALSE}
 ggsave(plot = gg2, filename = "plots/cgd_hospcat_surv_plot.png", dpi = 640, width = 10, height = 8)
 ```
 
@@ -220,7 +222,7 @@ gg3 <- plot_S_joint(out_sex,
 gg3 + xlim(0,365) + facet_wrap(~endpoint)
 ```
 
-```{r eval=FALSE}
+```{r eval=FALSE, echo=FALSE}
 ggsave(plot = gg3, filename = "plots/cgd_sex_surv_plot.png", dpi = 640, width = 10, height = 8)
 ```
 

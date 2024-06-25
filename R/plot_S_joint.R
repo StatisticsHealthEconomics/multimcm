@@ -18,6 +18,7 @@
 #' @importFrom reshape2 melt
 #' @importFrom rstan extract
 #' @importFrom dplyr mutate
+#' @export
 #'
 #' @examples
 #' load("data/file_names.RData")

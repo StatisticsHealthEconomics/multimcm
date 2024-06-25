@@ -212,28 +212,32 @@ real loglogistic_haz (real t, real shape, real scale) {
 //  return x;
 // }
 
-real loglogistic_lpdf (real t, real shape, real scale) {
- real x;
- x = log(shape) - log(scale) + (shape - 1)*log(t/scale) - 2*log(1 + pow(t/scale, shape));
- return x;
-}
+//TODO: check this
+// since stan v2.29 loglogistic_lpdf is now build in
+// but the arguments shape, scale are the other way round
+// to how we had it originally
+// real loglogistic_lpdf (real t, real shape, real scale) {
+//  real x;
+//  x = log(shape) - log(scale) + (shape - 1)*log(t/scale) - 2*log(1 + pow(t/scale, shape));
+//  return x;
+// }
 
 // log survival
-real loglogistic_log_S (real t, real shape, real scale) {
+real loglogistic_log_S (real t, real scale, real shape) {
  real log_S;
  log_S = -log(1 + pow(t/scale, shape));
  return log_S;
 }
 
 // survival
-real loglogistic_Surv (real t, real shape, real scale) {
+real loglogistic_Surv (real t, real scale, real shape) {
  real Surv;
  Surv = 1/(1 + pow(t/scale, shape));
  return Surv;
 }
 
 // sampling distribution
-real surv_loglogistic_lpdf (real t, real d, real shape, real scale) {
+real surv_loglogistic_lpdf (real t, real d, real scale, real shape) {
   real log_lik;
   log_lik = d * loglogistic_log_h(t, shape, scale) + loglogistic_log_S(t, shape, scale);
   return log_lik;
@@ -254,7 +258,7 @@ real gengamma_lpdf(real t, real mu, real sigma, real Q) {
   real prob;
   real w;
   w = (log(t) - mu)/sigma;
-  prob = -log(sigma*t) + log(fabs(Q)) + pow(Q, -2)*log(pow(Q, -2)) + pow(Q, -2)*(Q*w-exp(Q*w)) - lgamma(pow(Q, -2));
+  prob = -log(sigma*t) + log(abs(Q)) + pow(Q, -2)*log(pow(Q, -2)) + pow(Q, -2)*(Q*w-exp(Q*w)) - lgamma(pow(Q, -2));
   return prob;
 }
 
@@ -266,9 +270,9 @@ real gengamma_Surv(real t, real mu, real sigma, real Q) {
   real expnu = exp(abs(Q) * w) * qq;      // u
 
   if (Q == 0) {
-    Surv = 1 - normal_cdf(w, 0, 1);
+    Surv = 1 - normal_cdf(w | 0, 1);
   } else {
-    Surv =  1 - gamma_cdf(expnu, qq, 1);
+    Surv =  1 - gamma_cdf(expnu | qq, 1);
   }
   return Surv;
 }
@@ -298,7 +302,7 @@ real surv_gengamma_lpdf(real t, real d, real mu, real sigma, real Q) {
   real tr;
   tr = t * d;
   w = (log(tr) - mu)/sigma;
-  prob = log(d) - log(sigma*tr) + log(fabs(Q)) + pow(Q, -2)*log(pow(Q, -2)) + pow(Q, -2)*(Q*w - exp(Q*w)) - lgamma(pow(Q, -2));
+  prob = log(d) - log(sigma*tr) + log(abs(Q)) + pow(Q, -2)*log(pow(Q, -2)) + pow(Q, -2)*(Q*w - exp(Q*w)) - lgamma(pow(Q, -2));
   return prob;
 }
 
@@ -471,7 +475,7 @@ real exp_lognormal_Surv(real t, real mu, real sigma, real rate) {
 }
 
 real exp_lognormal_rng(real mu, real sigma, real lambda) {
- real t_latent[2];
+ array[2] real t_latent;
  real t_min;
  t_latent[1] = exponential_rng(lambda);
  t_latent[2] = lognormal_rng(mu, sigma);

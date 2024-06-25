@@ -157,8 +157,8 @@ create_cf_code <- function(n_grp) {
 
   ##TODO: see scode$model
   scode$data_main <-
-    paste0("\n real<lower=0> a_cf[cf_model == 1 ? 1 : 0];\n",
-           "real<lower=0> b_cf[cf_model == 1 ? 1 : 0];\n",
+    paste0("\n array[cf_model == 1 ? 1 : 0] real<lower=0> a_cf;\n",
+           "\n array[cf_model == 1 ? 1 : 0] real<lower=0> b_cf;\n",
            "vector[cf_model == 3 ? nTx : 0] mu_sd_cf;\n",
            "vector<lower=0>[cf_model == 3 ? nTx : 0] sigma_sd_cf;\n")
            # "vector[cf_model == 3 ? nTx : 0] min_sd_cf;   // uniform\n",
@@ -396,7 +396,7 @@ tp <- function(wsp = 2) {
 common_code_event_data <- function(id) {
   glue(
     " int<lower=0> N_{id};\n",
-    " int<lower=0> n_{id}[nTx];\n",
+    " array[nTx] int<lower=0> n_{id};\n",
     " int<lower=0> H_{id};\n",
     " vector<lower=0>[N_{id}] t_{id};\n",
     " vector<lower=0, upper=1>[N_{id}] d_{id};\n",

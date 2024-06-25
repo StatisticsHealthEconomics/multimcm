@@ -8,7 +8,6 @@ parse_formula <- function(formula, data, family = NA) {
   # if (!inherits(formula, "formula")) {
   #   stop("'formula' must be a formula.")
   # }
-
   formula <- as.formula(formula)
 
   # all variables of entire formula
@@ -32,7 +31,9 @@ parse_formula <- function(formula, data, family = NA) {
   bars      <- lme4::findbars(formula)[[1]]
   re_parts  <- split_at_bars(bars)
 
-  mf <- model.frame(lme4::subbars(formula), data = data)
+  # Substitute the '+' function for the '|' function
+  formsub <- lme4::subbars(formula)
+  mf <- model.frame(formsub, data = data)
 
   # names of variable without event type
   fe_vars <- attr(terms(fe_form), "term.labels")
@@ -40,7 +41,8 @@ parse_formula <- function(formula, data, family = NA) {
 
   re_nlevels <- length(unique(mf[, re_parts$re_group_var]))
 
-  mf[, re_parts$re_group_var] <- as.factor(mf[, re_parts$re_group_var])
+  if (!is.null(re_parts$re_group_var))
+    mf[, re_parts$re_group_var] <- as.factor(mf[, re_parts$re_group_var])
 
   fe_nlevels <- apply(mf[, fe_vars, drop=FALSE], 2, \(x) nlevels(as.factor(x)))
 

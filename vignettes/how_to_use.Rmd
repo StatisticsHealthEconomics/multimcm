@@ -21,7 +21,7 @@ This is a basic introduction to how to use `rstanbmcm` to fit Bayesian mixture c
 
 ## Data
 
-We will use the Checkmate 067 study data set.
+We will use the Checkmate 067 study data set @ref.
 The data have already been arranged in to the correct format and saved within the package so we can load it as follows.
 
 ```{r eval=FALSE}
@@ -73,34 +73,20 @@ options(mc.cores = parallel::detectCores() - 1)
 ```
 
 Now we are ready to do the model fitting.
-There are 3 options to use.
-
-* `bmcm_joint_stan_string`: Constructs the Stan code on-the-fly, meaning it is flexible and can run all distributions combinations. It calls the Stan file directly from R without pre-compiling. This is useful for development.
-* `bmcm_joint_stan_file()`: Same as above but for pre-written code. Only available for same-distribution OS-PFS pairs.
-* `bmcm_joint_stan()`: Uses the pre-compiled Stan code. Quicker to run. Like `bmcm_joint_stan_file()` only for a subset of OS-PFS distribution pairs.
-
-An example call to `bmcm_joint_stan_string` is given below.
-We recommend using this because it is the most widely-applicable.
-The other functions can be used for testing.
 
 ```{r eval=FALSE}
 out <-
-  bmcm_joint_stan_string(
-    input_data = surv_input_data,
-    model_os = i,
-    model_pfs = k,
-    tx_name = j,
-    params_cf =
-      list(mu_cf_gl = array(-0.8, 1),
-           sigma_cf_gl = array(2, 1),
-           sd_cf_os = array(0.5, 1),
-           sd_cf_pfs = array(0.5, 1))
-    cf_model = 3,
-    joint_model = FALSE,
-    bg_model = 2,
-    warmup = 100,
-    iter = 1000,
-    thin = 10)
+  bmcm_stan(
+    input_data = input_data,
+    formula = "Surv(time=time, event=status) ~ 1",
+    cureformula = "~ treat + (1 | center_id)",
+    family_latent = "exponential",
+    # prior_cure = NA,
+    centre_coefs = TRUE,
+    bg_model = "bg_fixed",
+    bg_varname = "rate",
+    bg_hr = 1,
+    t_max = 400)
 ```
 
 ### Explanation of function arguments

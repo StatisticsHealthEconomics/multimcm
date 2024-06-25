@@ -7,8 +7,7 @@
 #' @param save_name File name appended text
 #' @param is_hier Is hierarchical model (or separate)? i.e. whether to use a global parameter
 #'
-#' @importFrom epicontacts, adegenet
-#' @import dplyr ggplot2 tidybayes purrr
+#' @import dplyr ggplot2 tidybayes purrr epicontacts adegenet
 #'
 #' @return
 #' @export

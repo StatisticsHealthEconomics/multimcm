@@ -42,7 +42,6 @@ bmcm_stan <- function(input_data,
                       t_max = 70,
                       ...) {
   call <- match.call()
-
   rtn_wd <- getwd()
   setwd(here::here("inst/stan"))
   on.exit(setwd(rtn_wd))
@@ -70,7 +69,6 @@ bmcm_stan <- function(input_data,
     }}
 
   formula_latent <- parse_formula(formula, input_data, family = distns)
-
   if (is_pooled(formula_cure)) {
     formula_cure$cf_idx <- 1L
     formula_cure$cf_name <- "pooled"

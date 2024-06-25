@@ -67,7 +67,7 @@ Drop any levels which only appeared in the data we've just removed and convert t
 
 ```{r filter-center}
 cgd_center <- cgd_first |>
-  # filter(center %in% c("Amsterdam", "NIH", "Univ. of Zurich", "Scripps Institute")) |>
+  filter(center %in% c("Amsterdam", "NIH", "Univ. of Zurich", "Scripps Institute")) |>
   droplevels() |> 
   mutate(center_id = as.numeric(center),
          hos.cat_id = as.numeric(hos.cat),
@@ -126,12 +126,13 @@ out <-
     formula = "Surv(time=time, event=status) ~ 1",
     cureformula = "~ treat + (1 | center_id)",
     family_latent = "exponential",
-    prior_cure = NA,
+    # prior_cure = NA,
     centre_coefs = TRUE,
     bg_model = "bg_fixed",
     bg_varname = "rate",
     bg_hr = 1,
-    t_max = 365)
+    t_max = 400)
+    # t_max = 365)
 ```
 
 ### By hospital category

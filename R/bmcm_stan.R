@@ -43,7 +43,8 @@ bmcm_stan <- function(input_data,
                       ...) {
   call <- match.call()
   rtn_wd <- getwd()
-  setwd(here::here("inst/stan"))
+  new_wd <- system.file("stan", package = "multimcm")
+  setwd(new_wd)
   on.exit(setwd(rtn_wd))
 
   dots <- list(...)

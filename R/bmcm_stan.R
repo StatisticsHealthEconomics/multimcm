@@ -40,6 +40,8 @@ bmcm_stan <- function(input_data,
                       bg_varname = "bg_rate",
                       bg_hr = 1,
                       t_max = 70,
+                      save_stan_code = FALSE,
+                      read_stan_code = FALSE,
                       ...) {
   call <- match.call()
   rtn_wd <- getwd()
@@ -143,9 +145,14 @@ bmcm_stan <- function(input_data,
   stan_inputs$model_code <- create_stancode(distns)
 
   ## for testing
-  # writeLines(stan_inputs$model_code, con = here::here("data/stan_model_code.stan"))
-  # model_code <- readr::read_file(here::here("data/stan_model_code_test.stan"))
-  # stan_inputs$model_code <- model_code
+  if (save_stan_code) {
+    writeLines(stan_inputs$model_code, con = here::here("data/stan_model_code.stan"))
+  }
+
+  if (read_stan_code) {
+    model_code <- readr::read_file(here::here("data/stan_model_code.stan"))
+    stan_inputs$model_code <- model_code
+  }
 
   res <- list()
 

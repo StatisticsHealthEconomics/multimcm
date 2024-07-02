@@ -17,7 +17,7 @@ default_prior_cure <- function(formula_cure,
   n_groups <- formula_cure$n_groups
   nvars <- formula_cure$nvars
 
-  # treatment fixed effect
+  # treatment fixed effect on cure fraction
   mu_alpha_fe <- rep(-1, nTx)
   sigma_alpha_fe <- rep(0.5, nTx)
 

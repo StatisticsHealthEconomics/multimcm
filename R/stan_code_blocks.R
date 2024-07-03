@@ -282,6 +282,7 @@ create_code_skeleton <- function(n_grp) {
             "vector[t_max] S_bg;\n", collapse = "\n"),
       cglue_data(ids,
                  "vector[t_max] S_{id};
+      vector[nTx] rmst_{id};
       matrix[t_max, nTx] S_{id}_pred;
       real mean_{id};
       int idx_{id};
@@ -403,6 +404,20 @@ common_code_event_data <- function(id) {
     " matrix[N_{id}, H_{id}] X_{id};\n",
     " vector[H_{id}] mu_S_{id};\n",
     " vector<lower=0>[H_{id}] sigma_S_{id};\n\n")
+}
+
+#
+make_summary_estimates <- function(model, id) {
+
+  params <-
+    paste0(mean_params(model), "_{id}") |>
+    paste(collapse = ", ")
+
+  glue(
+    "// restricted mean survival time
+    for (i in 1:nTx) {{
+      rmst_{id}[i] = cf_{id}[i]*t_max + (1 - cf_{id}[i])*rmst_{model}(", params, ", t_max);
+    }\n\n")
 }
 
 #

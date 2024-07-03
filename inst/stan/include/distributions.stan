@@ -64,6 +64,13 @@ real surv_exp_lpdf (real t, real d, real rate) {
   return log_lik;
 }
 
+// restricted mean survival time
+real rmst_exp (real rate, real tmax) {
+  real rmst;
+  rmst = (1 - exp(- rate * tmax))/rate;
+  return rmst;
+}
+
 
 /**
 * weibull
@@ -109,6 +116,12 @@ real surv_weibull_lpdf (real t, real d, real shape, real scale) {
   return log_lik;
 }
 
+// restricted mean survival time
+real rmst_weibull (real shape, real scale, real tmax) {
+  real rmst;
+  rmst = scale^(-1/shape) * gamma_q(scale*tmax^shape, 1/shape + 1) + tmax*exp(-scale*tmax^shape);
+  return rmst;
+}
 
 /**
 * gompertz
@@ -179,6 +192,13 @@ real inv_cdf_gompertz (real p, real shape, real scale) {
 //   return res;
 // }
 
+// restricted mean survival time
+real rmst_gompertz (real shape, real scale, real tmax) {
+  real rmst;
+  rmst = 1/scale * (log(1 + shape/scale *(1 - exp(-scale*tmax))) - shape/scale*(1 - exp(-scale*tmax)));
+  return rmst;
+}
+
 
 /**
 * log-logistic
@@ -243,6 +263,12 @@ real surv_loglogistic_lpdf (real t, real d, real scale, real shape) {
   return log_lik;
 }
 
+// restricted mean survival time
+real rmst_loglogistic (real scale, real shape, real tmax) {
+  real rmst;
+  rmst = exp(-scale/shape) * inc_beta(exp(scale)*tmax^shape/(1 + exp(scale)*tmax^shape), 1 + 1/shape, 1 - 1/shape) + tmax*1/(1 + exp(scale)*tmax^shape);
+  return rmst;
+}
 
 /**
 * generalised gamma
@@ -365,6 +391,13 @@ real surv_lognormal_lpdf (real t, real d, real mu, real sigma) {
   real log_lik;
   log_lik = d * lognormal_log_h(t, mu, sigma) + lognormal_log_S(t, mu, sigma);
   return log_lik;
+}
+
+// restricted mean survival time
+real rmst_lognormal (real mu, real sigma, real tmax) {
+  real rmst;
+  rmst = exp(mu + (sigma^2)/2) * Phi((log(tmax) - mu - sigma^2)/sigma) + tmax*(1 - Phi((log(tmax) - mu)/sigma));
+  return rmst;
 }
 
 

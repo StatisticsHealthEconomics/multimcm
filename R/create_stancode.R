@@ -23,13 +23,16 @@ create_stancode <- function(models) {
   stancode <- create_code_skeleton(n_grps)
   cf_code <- create_cf_code(n_grps)
 
-  latent_model_code <- priorpred_code <- postpred_code <- list()
+  latent_model_code <- list()
+  priorpred_code <- postpred_code <- list()
+  estimates_code <- list()
   loo_code <- loglik_code <- list()
 
   for (i in seq_along(models)) {
     latent_model_code[[i]] <-  make_latent_model_code(models[i], id = i)
     priorpred_code[[i]] <- make_priorpred(models[i], id = i)
     postpred_code[[i]] <- make_postpred(models[i], id = i)
+    estimates_code[[i]] <- make_summary_estimates(models[i], id = i)
     loglik_code[[i]] <- make_pop_loglik(models[i], id = i)
     # loglik_code[[i]] <- make_loglik(models[i], id = i)
     loo_code[[i]] <- make_loo(models[i], id = i)
@@ -39,6 +42,7 @@ create_stancode <- function(models) {
   latent_model_code <- rearrange_blocks(latent_model_code)
   priorpred_code <- rearrange_blocks(priorpred_code)
   postpred_code <- rearrange_blocks(postpred_code)
+  estimates_code <- rearrange_blocks(estimates_code)
   loglik_code <- rearrange_blocks(loglik_code)
   loo_code <- rearrange_blocks(loo_code)
 
@@ -98,6 +102,7 @@ create_stancode <- function(models) {
     stancode$generated_quantities_main,
     cf_code$generated_quantities_main,
     do.call(paste, postpred_code),
+    do.call(paste, estimates_code),
     do.call(paste, priorpred_code),
     do.call(paste, loo_code),
     "}\n"

@@ -283,6 +283,7 @@ create_code_skeleton <- function(n_grp) {
       cglue_data(ids,
                  "vector[t_max] S_{id};
       vector[nTx] rmst_{id};
+      vector[nTx] median_{id};
       matrix[t_max, nTx] S_{id}_pred;
       real mean_{id};
       int idx_{id};
@@ -417,6 +418,7 @@ make_summary_estimates <- function(model, id) {
     "// restricted mean survival time
     for (i in 1:nTx) {{
       rmst_{id}[i] = cf_{id}[i]*t_max + (1 - cf_{id}[i])*rmst_{model}(", params, ", t_max);
+      median_{id}[i] = median_surv_{model}(", params, ");
     }\n\n")
 }
 

@@ -71,6 +71,13 @@ real rmst_exp (real rate, real tmax) {
   return rmst;
 }
 
+// median survival time
+real median_surv_exp (real rate) {
+  real tmed;
+  tmed = log(2)/rate;
+  return tmed;
+}
+
 
 /**
 * weibull
@@ -121,6 +128,13 @@ real rmst_weibull (real shape, real scale, real tmax) {
   real rmst;
   rmst = scale^(-1/shape) * gamma_q(scale*tmax^shape, 1/shape + 1) + tmax*exp(-scale*tmax^shape);
   return rmst;
+}
+
+// median survival time
+real median_surv_weibull (real shape, real scale) {
+  real tmed;
+  tmed = scale * pow(log(2), 1/shape);
+  return tmed;
 }
 
 /**
@@ -199,6 +213,13 @@ real rmst_gompertz (real shape, real scale, real tmax) {
   return rmst;
 }
 
+// median survival time
+real median_surv_gompertz (real scale, real shape) {
+  real tmed;
+  tmed = 1/shape * log(log(2)*shape/scale + 1);
+  return tmed;
+}
+
 
 /**
 * log-logistic
@@ -269,6 +290,15 @@ real rmst_loglogistic (real scale, real shape, real tmax) {
   rmst = exp(-scale/shape) * inc_beta(exp(scale)*tmax^shape/(1 + exp(scale)*tmax^shape), 1 + 1/shape, 1 - 1/shape) + tmax*1/(1 + exp(scale)*tmax^shape);
   return rmst;
 }
+
+//TODO
+// // median survival time
+// real median_surv_loglogistic (real scale, real shape) {
+//   real tmed;
+//   tmed = ;
+//   return tmed;
+// }
+
 
 /**
 * generalised gamma
@@ -400,6 +430,12 @@ real rmst_lognormal (real mu, real sigma, real tmax) {
   return rmst;
 }
 
+// median survival time
+real median_surv_lognormal (real mu) {
+  real tmed;
+  tmed = exp(mu);
+  return tmed;
+}
 
 /**
 * combined (non-cured) mortality

@@ -78,6 +78,13 @@ real median_surv_exp (real rate) {
   return tmed;
 }
 
+// median survival time for cure fraction model
+real median_surv_cf_exp (real rate, real cf) {
+  real tmed;
+  real p_star = (0.5 - cf) / (1 - cf);
+  tmed = -log(p_star)/rate;
+  return tmed;
+}
 
 /**
 * weibull
@@ -134,6 +141,14 @@ real rmst_weibull (real shape, real scale, real tmax) {
 real median_surv_weibull (real shape, real scale) {
   real tmed;
   tmed = scale * pow(log(2), 1/shape);
+  return tmed;
+}
+
+// median survival time for cure fraction model
+real median_surv_cf_weibull (real shape, real scale, real cf) {
+  real tmed;
+  real p_star = (0.5 - cf) / (1 - cf);
+  tmed = scale * pow(-log(p_star), 1/shape);
   return tmed;
 }
 
@@ -217,6 +232,14 @@ real rmst_gompertz (real shape, real scale, real tmax) {
 real median_surv_gompertz (real scale, real shape) {
   real tmed;
   tmed = 1/shape * log(log(2)*shape/scale + 1);
+  return tmed;
+}
+
+// median survival time for cure fraction model
+real median_surv_cf_gompertz (real scale, real shape, real cf) {
+  real tmed;
+  real p_star = (0.5 - cf) / (1 - cf);
+  tmed = 1/shape * log(-log(p_star)*shape/scale + 1);
   return tmed;
 }
 
@@ -436,6 +459,15 @@ real median_surv_lognormal (real mu) {
   tmed = exp(mu);
   return tmed;
 }
+
+// median survival time for cure fraction model
+real median_surv_cf_lognormal (real mu, real cf) {
+  real tmed;
+  real p_star = (0.5 - cf) / (1 - cf);
+  tmed = exp(mu);
+  return tmed;
+}
+
 
 /**
 * combined (non-cured) mortality

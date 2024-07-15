@@ -418,7 +418,8 @@ make_summary_estimates <- function(model, id) {
     "// restricted mean survival time
     for (i in 1:nTx) {{
       rmst_{id}[i] = cf_{id}[i]*t_max + (1 - cf_{id}[i])*rmst_{model}(", params, ", t_max);
-      median_{id}[i] = median_surv_{model}(", params, ");
+      median_{id}[i] = median_surv_cf_{model}(", params, ", cf_{id}[i]);
+      //median_{id}[i] = median_surv_{model}(", params, ");  // uncured
     }\n\n")
 }
 

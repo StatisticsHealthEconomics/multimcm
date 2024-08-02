@@ -3,6 +3,10 @@
 precompile_bmcm_model <- function(input_data,
                                   family_latent = "exponential",
                                   cureformula = ~ 1) {
+  rtn_wd <- getwd()
+  new_wd <- system.file("stan", package = "multimcm")
+  setwd(new_wd)
+  on.exit(setwd(rtn_wd))
 
   distns <- validate_distns(family_latent)
 

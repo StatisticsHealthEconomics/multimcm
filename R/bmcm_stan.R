@@ -157,7 +157,6 @@ bmcm_stan <- function(input_data,
     } else {
       model_code <- create_stancode(distns)
     }
-
     precompiled_model <- stan_model(model_code = model_code,
                                     model_name = model_name)
   } else {
@@ -174,6 +173,7 @@ bmcm_stan <- function(input_data,
   res$output <- do.call(
     rstan::sampling,
     c(list(object = precompiled_model), stan_inputs, dots))
+    #precompiled_model$sample(data = data_list, chains = 4, iter_warmup = 1000, iter_sampling = 2000)
   res$call <- call
   res$distns <- distns
   res$inputs <- stan_inputs

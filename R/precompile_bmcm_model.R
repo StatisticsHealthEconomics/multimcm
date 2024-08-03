@@ -30,14 +30,17 @@ precompile_bmcm_model <- function(input_data,
     }}
 
   model_code <- create_stancode(distns)
+  model_code <- create_stancode(distns)
 
   if (is.na(model_name)) {
     model_name <-
       paste0("bmcm_stan_", glue::glue_collapse(distns, sep = "_"))
   }
 
-  precompiled_model <- stan_model(model_code = model_code,
-                                  model_name = model_name)
+  precompiled_model <- rstan::stan_model(model_code = model_code,
+                                         model_name = model_name)
+  #precompiled_model <- cmdstanr::cmdstan_model(model_code = model_code,
+  #                                             model_name = model_name)
 
   saveRDS(precompiled_model, file = glue::glue("{model_name}.RDS"))
 

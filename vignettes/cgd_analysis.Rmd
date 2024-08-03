@@ -134,7 +134,29 @@ out <-
     bg_varname = "rate",
     bg_hr = 1,
     t_max = 400)
-    # t_max = 365)
+```
+
+Alternatively, we can pass in a precompiled model.
+
+```{r}
+model_nm <- "precompiled_stan_model"
+
+precompile_bmcm_model(input_data = input_data, cureformula =  "~ treat + (1 | center_id)", family_latent = "exponential", model_name = model_nm)
+
+model_path <- glue::glue("{system.file('stan', package = 'multimcm')}/{model_nm}.RDS")
+
+out_precompiled <-
+  bmcm_stan(
+    input_data = input_data,
+    formula = "Surv(time=time, event=status) ~ 1",
+    cureformula = "~ treat + (1 | center_id)",
+    family_latent = "exponential",
+    centre_coefs = TRUE,
+    bg_model = "bg_fixed",
+    bg_varname = "rate",
+    bg_hr = 1,
+    t_max = 400,
+    precompiled_model_path = model_path)
 ```
 
 ### By hospital category

@@ -1,8 +1,18 @@
 
-#
+#' precompile_bmcm_model
+#'
+#' @param input_data
+#' @param family_latent
+#' @param cureformula
+#' @param model_name
+#'
+#' @return
+#' @export
+#'
 precompile_bmcm_model <- function(input_data,
                                   family_latent = "exponential",
-                                  cureformula = ~ 1) {
+                                  cureformula = ~ 1,
+                                  model_name = NA) {
   rtn_wd <- getwd()
   new_wd <- system.file("stan", package = "multimcm")
   setwd(new_wd)
@@ -21,11 +31,15 @@ precompile_bmcm_model <- function(input_data,
 
   model_code <- create_stancode(distns)
 
-  model_name <-
-    paste0("bmcm_stan_", glue::glue_collapse(distns, sep = "_"))
+  if (is.na(model_name)) {
+    model_name <-
+      paste0("bmcm_stan_", glue::glue_collapse(distns, sep = "_"))
+  }
 
   precompiled_model <- stan_model(model_code = model_code,
                                   model_name = model_name)
 
   saveRDS(precompiled_model, file = glue::glue("{model_name}.RDS"))
+
+  invisible(precompiled_model)
 }

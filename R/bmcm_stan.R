@@ -20,6 +20,7 @@
 #' @param bg_varname Background variable name in `input_data`
 #' @param bg_hr Background hazard ratio adjustment
 #' @param t_max Maximum time horizon
+#' @param precompiled_model_path Path to precompiled model
 #' @param ... Additional parameters
 #' @return Stan output as `bmcm` class
 #'
@@ -42,6 +43,7 @@ bmcm_stan <- function(input_data,
                       t_max = 70,
                       save_stan_code = FALSE,
                       read_stan_code = FALSE,
+                      precompiled_model_path = NA,
                       ...) {
   call <- match.call()
   rtn_wd <- getwd()
@@ -50,6 +52,10 @@ bmcm_stan <- function(input_data,
   on.exit(setwd(rtn_wd))
 
   dots <- list(...)
+
+  if (!is.na(precompiled_model_path) && !file.exists(precompiled_model_path)) {
+    stop("Precompiled Stan model file does not exist at the specified path.")
+  }
 
   ####################
   # pre-processing
@@ -122,6 +128,8 @@ bmcm_stan <- function(input_data,
       # t_max = t_max,
       bg_hr = bg_hr)
 
+  model_name <- paste0("bmcm_stan_", glue::glue_collapse(distns, sep = "_"))
+
   # default sampler parameters
   dots <-
     modifyList(
@@ -134,7 +142,6 @@ bmcm_stan <- function(input_data,
                           max_treedepth = 100,
                           stepsize = 0.05),
            include = TRUE,
-           model_name = paste0("bmcm_stan_", glue::glue_collapse(distns, sep = "_")),
            open_progress = TRUE)#,
       # verbose = TRUE)
     )
@@ -142,21 +149,31 @@ bmcm_stan <- function(input_data,
   ##############
   # fit model
 
-  stan_inputs$model_code <- create_stancode(distns)
+  use_precompiled_model <- !is.na(precompiled_model_path)
 
-  ## for testing
-  if (save_stan_code) {
-    writeLines(stan_inputs$model_code, con = here::here("data/stan_model_code.stan"))
+  if (!use_precompiled_model) {
+    if (read_stan_code) {
+      model_code <- readr::read_file(here::here("data/stan_model_code.stan"))
+    } else {
+      model_code <- create_stancode(distns)
+    }
+
+    precompiled_model <- stan_model(model_code = model_code,
+                                    model_name = model_name)
+  } else {
+    precompiled_model <- readRDS(precompiled_model_path)
   }
 
-  if (read_stan_code) {
-    model_code <- readr::read_file(here::here("data/stan_model_code.stan"))
-    stan_inputs$model_code <- model_code
+  # for testing
+  if (save_stan_code) {
+    writeLines(model_code, con = here::here("data/stan_model_code.stan"))
   }
 
   res <- list()
 
-  res$output <- do.call(rstan::stan, c(stan_inputs, dots))
+  res$output <- do.call(
+    rstan::sampling,
+    c(list(object = precompiled_model), stan_inputs, dots))
   res$call <- call
   res$distns <- distns
   res$inputs <- stan_inputs

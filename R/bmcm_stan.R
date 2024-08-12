@@ -210,17 +210,27 @@ load_precompiled_model <- function(use_cmdstanr, path) {
 }
 
 #
-perform_sampling <- function(use_cmdstanr, precompiled_model,
+perform_sampling <- function(use_cmdstanr, stan_model,
                              stan_inputs, dots) {
   if (use_cmdstanr) {
+
+    if (!inherits(stan_model, "CmdStanModel")) {
+      stop("The 'stan_model' argument must be a CmdStanModel object.")
+    }
+
     output <- do.call(
-      precompiled_model$sample,
+      stan_model$sample,
       args = c(stan_inputs, dots)
     )
   } else {
+
+    if (!inherits(stan_model, "stanmodel")) {
+      stop("The 'stan_model' argument must be a stanmodel object.")
+    }
+
     output <- do.call(
       rstan::sampling,
-      args = c(list(object = precompiled_model),
+      args = c(list(object = stan_model),
                stan_inputs, dots)
     )
   }

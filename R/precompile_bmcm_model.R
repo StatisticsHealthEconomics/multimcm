@@ -38,14 +38,7 @@ precompile_bmcm_model <- function(input_data,
       paste0("bmcm_stan_", glue::glue_collapse(distns, sep = "_"))
   }
 
-  if (use_cmdstanr) {
-    model_path <- cmdstanr::write_stan_file(model_code, dir = ".", basename = model_name)
-    precompiled_model <- cmdstanr::cmdstan_model(stan_file = model_path, compile = TRUE)
-  } else {
-    precompiled_model <- rstan::stan_model(model_code = model_code,
-                                           model_name = model_name)
-    saveRDS(precompiled_model, file = glue::glue("{model_name}.RDS"))
-  }
+  out <- compile_model(use_cmdstanr, model_code, model_name)
 
-  invisible(precompiled_model)
+  invisible(out)
 }

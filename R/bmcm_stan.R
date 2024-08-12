@@ -20,9 +20,9 @@
 #' @param bg_varname Background variable name in `input_data`
 #' @param bg_hr Background hazard ratio adjustment
 #' @param t_max Maximum time horizon
-#' @param precompiled_model_path Path to precompiled model
+#' @param precompiled_model_path Path to precompiled model, Default is NA
 #' @param use_cmdstanr Logical. If TRUE, use cmdstanr to fit the model. Default is FALSE.
-#' @param ... Additional parameters
+#' @param ... Additional parameters to pass to the Stan sampler
 #' @return Stan output as `bmcm` class
 #'
 #' @import rstanarm

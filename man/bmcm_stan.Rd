@@ -16,6 +16,10 @@ bmcm_stan(
   bg_varname = "bg_rate",
   bg_hr = 1,
   t_max = 70,
+  save_stan_code = FALSE,
+  read_stan_code = FALSE,
+  precompiled_model_path = NA,
+  use_cmdstanr = FALSE,
   ...
 )
 }
@@ -45,7 +49,11 @@ In future this will be probabilities or fitted model object.}
 
 \item{t_max}{Maximum time horizon}
 
-\item{...}{Additional parameters}
+\item{precompiled_model_path}{Path to precompiled model, Default is NA}
+
+\item{use_cmdstanr}{Logical. If TRUE, use cmdstanr to fit the model. Default is FALSE.}
+
+\item{...}{Additional parameters to pass to the Stan sampler}
 }
 \value{
 Stan output as \code{bmcm} class

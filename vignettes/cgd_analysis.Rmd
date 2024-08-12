@@ -136,13 +136,21 @@ out <-
     t_max = 400)
 ```
 
-Alternatively, we can pass in a precompiled model.
+Alternatively, we can pass in a _precompiled_ model, rather than have the model compiled at the time of fitting.
 
 ```{r}
 model_nm <- "precompiled_stan_model"
 
-precompile_bmcm_model(input_data = input_data, cureformula =  "~ treat + (1 | center_id)", family_latent = "exponential", model_name = model_nm)
+# create the precompiled model and save as .RDS file
+precompile_bmcm_model(input_data = input_data,
+                      cureformula =  "~ treat + (1 | center_id)",
+                      family_latent = "exponential",
+                      model_name = model_nm)
+```
 
+Now, load back in the compiled model and fit as before.
+
+```{r}
 model_path <- glue::glue("{system.file('stan', package = 'multimcm')}/{model_nm}.RDS")
 
 out_precompiled <-
@@ -158,6 +166,67 @@ out_precompiled <-
     t_max = 400,
     precompiled_model_path = model_path)
 ```
+
+We can do the same but using a `cmdstanr` model, rather than an `rstan` model. This has some benefits in terms of speed, reliability and memory usage.
+Firstly for a non-compiled model.
+
+```{r}
+out <-
+  bmcm_stan(
+    input_data = input_data,
+    formula = "Surv(time=time, event=status) ~ 1",
+    cureformula = "~ treat + (1 | center_id)",
+    family_latent = "exponential",
+    centre_coefs = TRUE,
+    bg_model = "bg_fixed",
+    bg_varname = "rate",
+    bg_hr = 1,
+    t_max = 400,
+    use_cmdstanr = TRUE)
+
+# so that plotting functions work later
+# convert cmdstanr object to rstan stanfit format
+
+##TODO: error. for some reason save_warmup is NA?...
+# out$output <- rstan::read_stan_csv(out$output$output_files())
+```
+
+Secondly, we can pass in a _precompiled_ `cmdstanr` model. This saves an `.exe` file in the `stan` folder.
+
+```{r}
+model_nm <- "precompiled_stan_model"
+
+precompile_bmcm_model(input_data = input_data,
+                      cureformula =  "~ treat + (1 | center_id)",
+                      family_latent = "exponential",
+                      model_name = model_nm,
+                      use_cmdstanr = TRUE)
+```
+
+and load back in the compiled model and fit as before.
+
+```{r}
+model_path <- glue::glue("{system.file('stan', package = 'multimcm')}/{model_nm}.exe")
+
+out_precompiled <-
+  bmcm_stan(
+    input_data = input_data,
+    formula = "Surv(time=time, event=status) ~ 1",
+    cureformula = "~ treat + (1 | center_id)",
+    family_latent = "exponential",
+    centre_coefs = TRUE,
+    bg_model = "bg_fixed",
+    bg_varname = "rate",
+    bg_hr = 1,
+    t_max = 400,
+    precompiled_model_path = model_path,
+    use_cmdstanr = TRUE)
+
+##TODO:
+# out_precompiled$output <-
+#   rstan::read_stan_csv(out_precompiled$output$output_files())
+```
+
 
 ### By hospital category
 

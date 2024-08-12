@@ -21,6 +21,7 @@
 #' @param bg_hr Background hazard ratio adjustment
 #' @param t_max Maximum time horizon
 #' @param precompiled_model_path Path to precompiled model
+#' @param use_cmdstanr Logical. If TRUE, use cmdstanr to fit the model. Default is FALSE.
 #' @param ... Additional parameters
 #' @return Stan output as `bmcm` class
 #'
@@ -44,6 +45,7 @@ bmcm_stan <- function(input_data,
                       save_stan_code = FALSE,
                       read_stan_code = FALSE,
                       precompiled_model_path = NA,
+                      use_cmdstanr = FALSE,
                       ...) {
   call <- match.call()
   rtn_wd <- getwd()
@@ -125,13 +127,15 @@ bmcm_stan <- function(input_data,
       tx_params,
       cf_model = formula_cure$cf_idx,
       bg_model = bg_model_idx,
-      # t_max = t_max,
+      t_max = t_max,   ##TODO: why was this commented out?
       bg_hr = bg_hr)
 
   model_name <- paste0("bmcm_stan_", glue::glue_collapse(distns, sep = "_"))
 
   # default sampler parameters
-  dots <-
+  #TODO: cmdstanr and rstan are slightly different
+  #      harmonize automatically
+  rstan_dots <-
     modifyList(
       dots,
       list(warmup = 100,
@@ -142,8 +146,21 @@ bmcm_stan <- function(input_data,
                           max_treedepth = 100,
                           stepsize = 0.05),
            include = TRUE,
-           open_progress = TRUE)#,
+           open_progress = TRUE)
       # verbose = TRUE)
+    )
+
+  cmdstanr_dots <-
+    modifyList(
+      dots,
+      list(iter_warmup = 100,
+           iter_sampling = 500,
+           save_warmup = FALSE,
+           thin = 1,
+           chains = 1,
+           adapt_delta = 0.99,
+           max_treedepth = 100,
+           step_size = 0.05)
     )
 
   ##############
@@ -157,10 +174,23 @@ bmcm_stan <- function(input_data,
     } else {
       model_code <- create_stancode(distns)
     }
-    precompiled_model <- stan_model(model_code = model_code,
-                                    model_name = model_name)
+
+    if (use_cmdstanr) {
+      model_path <- cmdstanr::write_stan_file(model_code,
+                                              dir = ".", basename = model_name)
+      precompiled_model <- cmdstanr::cmdstan_model(stan_file = model_path)
+    } else {
+      precompiled_model <- rstan::stan_model(model_code = model_code,
+                                             model_name = model_name)
+    }
+
   } else {
-    precompiled_model <- readRDS(precompiled_model_path)
+    if (use_cmdstanr) {
+      # may be automatically saved to cmdstan_path()
+      precompiled_model <- cmdstanr::cmdstan_model(exe_file = precompiled_model_path)
+    } else {
+      precompiled_model <- readRDS(precompiled_model_path)
+    }
   }
 
   # for testing
@@ -170,14 +200,21 @@ bmcm_stan <- function(input_data,
 
   res <- list()
 
-  res$output <- do.call(
-    rstan::sampling,
-    c(list(object = precompiled_model), stan_inputs, dots))
-    #precompiled_model$sample(data = data_list, chains = 4, iter_warmup = 1000, iter_sampling = 2000)
+  if (use_cmdstanr) {
+    res$output <- do.call(
+      precompiled_model$sample,
+      args = c(stan_inputs, cmdstanr_dots))
+    res$stan_dots <- cmdstanr_dots
+  } else {
+    res$output <- do.call(
+      rstan::sampling,
+      args = c(list(object = precompiled_model), stan_inputs, rstan_dots))
+    res$stan_dots <- rstan_dots
+  }
+
   res$call <- call
   res$distns <- distns
   res$inputs <- stan_inputs
-  res$stan_dots <- dots
   res$input_data <- input_data
   res$formula <- list(cure = formula_cure,
                       latent = formula_latent)

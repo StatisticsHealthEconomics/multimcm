@@ -190,8 +190,12 @@ compile_model <- function(use_cmdstanr,
   if (use_cmdstanr) {
     model_path <-
       cmdstanr::write_stan_file(
-        model_code, dir = file_path, basename = model_name)
-    return(cmdstanr::cmdstan_model(stan_file = model_path, compile = TRUE))
+        model_code, dir = ".", basename = model_name)
+    return(
+      cmdstanr::cmdstan_model(
+        stan_file = model_path,
+        compile = TRUE,
+        dir = file_path))
   } else {
     out <- rstan::stan_model(model_code = model_code, model_name = model_name)
     saveRDS(out, file = glue::glue("{file_path}/{model_name}.RDS"))

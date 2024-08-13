@@ -51,7 +51,7 @@ bmcm_stan <- function(input_data,
   rtn_wd <- getwd()
   new_wd <- system.file("stan", package = "multimcm")
   setwd(new_wd)
-  on.exit(setwd(rtn_wd))
+  on.exit(setwd(rtn_wd), add = TRUE)
 
   dots <- list(...)
 
@@ -80,16 +80,7 @@ bmcm_stan <- function(input_data,
     }}
 
   formula_latent <- parse_formula(formula, input_data, family = distns)
-  if (is_pooled(formula_cure)) {
-    formula_cure$cf_idx <- 1L
-    formula_cure$cf_name <- "pooled"
-  } else if (is_separate(formula_cure)) {
-    formula_cure$cf_idx <- 2L
-    formula_cure$cf_name <- "separate"
-  } else if (is_hier(formula_cure)) {
-    formula_cure$cf_idx <- 3L
-    formula_cure$cf_name <- "hier"
-  }
+  formula_cure <- switch_cure_model_type(formula_cure)
 
   ###############################
   # construct data
@@ -175,6 +166,8 @@ bmcm_stan <- function(input_data,
 
   return(res)
 }
+
+# helper functions
 
 #
 get_model_code <- function(read_stan_code, distns) {
@@ -272,4 +265,20 @@ get_stan_defaults <- function(use_cmdstanr, dots) {
         # verbose = TRUE)
       ))
   }
+}
+
+
+# identify cure model type
+switch_cure_model_type <- function(formula_cure) {
+  if (is_pooled(formula_cure)) {
+    formula_cure$cf_idx <- 1L
+    formula_cure$cf_name <- "pooled"
+  } else if (is_separate(formula_cure)) {
+    formula_cure$cf_idx <- 2L
+    formula_cure$cf_name <- "separate"
+  } else if (is_hier(formula_cure)) {
+    formula_cure$cf_idx <- 3L
+    formula_cure$cf_name <- "hier"
+  }
+  return(formula_cure)
 }

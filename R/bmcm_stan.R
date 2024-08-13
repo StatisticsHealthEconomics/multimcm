@@ -194,7 +194,7 @@ compile_model <- function(use_cmdstanr, model_code, model_name) {
     return(cmdstanr::cmdstan_model(stan_file = model_path, compile = TRUE))
   } else {
     out <- rstan::stan_model(model_code = model_code, model_name = model_name)
-    saveRDS(precompiled_model, file = glue::glue("{model_name}.RDS"))
+    saveRDS(out, file = glue::glue("{model_name}.RDS"))
 
     return(out)
   }

@@ -72,6 +72,7 @@ bmcm_stan <- function(input_data,
 
   formula_cure <- parse_formula(cureformula, input_data)
 
+  # adjust the number of distributions based on the cure model
   if (length(distns) == 1) {
     if (is_hier(formula_cure)) {
       distns <- rep(distns, formula_cure$re_nlevels[1])

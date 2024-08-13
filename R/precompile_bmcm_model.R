@@ -14,7 +14,8 @@ precompile_bmcm_model <- function(input_data,
                                   family_latent = "exponential",
                                   cureformula = ~ 1,
                                   model_name = NA,
-                                  use_cmdstanr = FALSE) {
+                                  use_cmdstanr = FALSE,
+                                  file_path = NA) {
   rtn_wd <- getwd()
   new_wd <- system.file("stan", package = "multimcm")
   setwd(new_wd)
@@ -38,7 +39,7 @@ precompile_bmcm_model <- function(input_data,
       paste0("bmcm_stan_", glue::glue_collapse(distns, sep = "_"))
   }
 
-  out <- compile_model(use_cmdstanr, model_code, model_name)
+  out <- compile_model(use_cmdstanr, model_code, model_name, file_path)
 
   invisible(out)
 }

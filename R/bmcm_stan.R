@@ -180,15 +180,21 @@ get_model_code <- function(read_stan_code, distns) {
 }
 
 #
-compile_model <- function(use_cmdstanr, model_code, model_name) {
+compile_model <- function(use_cmdstanr,
+                          model_code, model_name,
+                          file_path = NA) {
+  if (is.na(file_path)) {
+    file_path <- "."
+  }
+
   if (use_cmdstanr) {
     model_path <-
       cmdstanr::write_stan_file(
-        model_code, dir = ".", basename = model_name)
+        model_code, dir = file_path, basename = model_name)
     return(cmdstanr::cmdstan_model(stan_file = model_path, compile = TRUE))
   } else {
     out <- rstan::stan_model(model_code = model_code, model_name = model_name)
-    saveRDS(out, file = glue::glue("{model_name}.RDS"))
+    saveRDS(out, file = glue::glue("{file_path}/{model_name}.RDS"))
 
     return(out)
   }
@@ -267,7 +273,6 @@ get_stan_defaults <- function(use_cmdstanr, dots) {
       ))
   }
 }
-
 
 # identify cure model type
 switch_cure_model_type <- function(formula_cure) {

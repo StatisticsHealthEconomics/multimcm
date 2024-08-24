@@ -14,7 +14,7 @@ prep_S_joint_data <- function(bmcm_out) {
   model_names <- bmcm_out$distns
   n_tx <- bmcm_out$formula$cure$fe_nlevels[1]
 
-  stan_extract <- rstan::extract(bmcm_out$output)
+  stan_extract <- stan_extract(bmcm_out)
 
   CI_probs <- c(0.025, 0.5, 0.975)
 
@@ -59,3 +59,27 @@ prep_S_joint_data <- function(bmcm_out) {
 
   plot_dat
 }
+
+
+#
+stan_extract <- function(bmcm_out, pattern = "") {
+  fit <- bmcm_out$output
+
+  if (inherits(fit, "stanfit")) {
+
+    samples <- rstan::extract(fit)
+    param_names <- grep(pattern, names(samples), value = TRUE)
+    extracted_params <- samples[param_names]
+
+  } else if (inherits(fit, "CmdStanMCMC")) {
+
+    samples <- fit$draws(format = "df")
+    param_names <- grep(pattern, names(samples), value = TRUE)
+    extracted_params <- samples[, param_names]
+  } else {
+    stop("Fit object must be of class 'stanfit' (rstan) or 'CmdStanMCMC' (cmdstanr).")
+  }
+
+  extracted_params
+}
+

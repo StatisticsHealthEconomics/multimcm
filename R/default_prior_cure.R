@@ -13,7 +13,6 @@
 default_prior_cure <- function(formula_cure,
                                prior_cure = list(),
                                bg_model = 2) {
-  browser()
   nTx <- formula_cure$fe_nlevels[1]
   n_groups <- formula_cure$n_groups
   nvars <- formula_cure$nvars

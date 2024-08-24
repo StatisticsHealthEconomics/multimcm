@@ -227,6 +227,34 @@ out_precompiled <-
 #   rstan::read_stan_csv(out_precompiled$output$output_files())
 ```
 
+#### Separate models
+
+We can also fit the end-points separately by changing the `cureformula` argument to a formula with `~ treat + center_id`.
+
+```{r}
+stan_model <- 
+  precompile_bmcm_model(input_data = input_data,
+                        cureformula =  "~ treat + center_id",
+                        family_latent = "exponential",
+                        model_name = "precompiled_stan_model",
+                        use_cmdstanr = TRUE)
+
+model_path <- stan_model$exe_file()
+
+out_precompiled_separate <-
+  bmcm_stan(
+    input_data = input_data,
+    formula = "Surv(time=time, event=status) ~ 1",
+    cureformula = "~ treat + center_id",
+    family_latent = "exponential",
+    centre_coefs = TRUE,
+    bg_model = "bg_fixed",
+    bg_varname = "rate",
+    bg_hr = 1,
+    t_max = 400,
+    precompiled_model_path = model_path,
+    use_cmdstanr = TRUE)
+```
 
 ### By hospital category
 
@@ -284,6 +312,8 @@ After fitting the models, we can plot the survival curves for each.
 library(ggplot2)
 ```
 
+### Main models
+
 ```{r}
 gg <- plot_S_joint(out,
                    add_km = TRUE,
@@ -292,8 +322,24 @@ gg + xlim(0,365) + facet_wrap(~endpoint)
 ```
 
 ```{r eval=FALSE, echo=FALSE}
+gg <- plot_S_joint(out_precompiled,
+                   add_km = TRUE,
+                   annot_cf = FALSE)
+gg + xlim(0,365) + facet_wrap(~endpoint)
+```
+
+```{r eval=FALSE, echo=FALSE}
+gg <- plot_S_joint(out_precompiled_separate,
+                   add_km = TRUE,
+                   annot_cf = FALSE)
+gg + xlim(0,365) + facet_wrap(~endpoint)
+```
+
+```{r eval=FALSE, echo=FALSE}
 ggsave(plot = gg, filename = "plots/cgd_surv_plot.png", dpi = 640, width = 10, height = 8)
 ```
+
+### By center
 
 ```{r}
 gg2 <- plot_S_joint(out_hos.cat,

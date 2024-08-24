@@ -73,9 +73,18 @@ stan_extract <- function(bmcm_out, pattern = "") {
 
   } else if (inherits(fit, "CmdStanMCMC")) {
 
-    samples <- fit$draws(format = "df")
-    param_names <- grep(pattern, names(samples), value = TRUE)
-    extracted_params <- samples[, param_names]
+    samples <- as_draws_rvars(fit$draws())
+    samples_df <- lapply(samples, \(x) as_draws_df(x))
+
+    # remove extra columns
+    samples_df <-
+      lapply(samples_df, function(x) {
+        drop_cols <- colnames(x) %in% c(".chain", ".iteration", ".draw")
+        x[, !drop_cols]
+      })
+
+    param_names <- grep(pattern, names(samples_df), value = TRUE)
+    extracted_params <- samples_df[param_names]
   } else {
     stop("Fit object must be of class 'stanfit' (rstan) or 'CmdStanMCMC' (cmdstanr).")
   }

@@ -14,37 +14,54 @@ prep_S_data <- function(stan_extract,
     S_0 <- glue::glue("S_{event_type}")
   }
 
-  if (is.na(tx_idx))
-    tx_idx <- seq_len(dim(stan_extract$cf_1)[2])
+  # create treatment indices
+  if (is.na(tx_idx)) {
+    ntx <- dim(stan_extract$cf_1)[2]
+    tx_idx <- seq_len(ntx)
+  }
 
   S_stats <- list()
 
   for (i in tx_idx) {
 
+    # extract survival data
+
+    S_0_extract <- stan_extract[[S_0]]
+    S_bg_extract <- stan_extract$S_bg
+
+    S_pred_data <- stan_extract[[S_pred]]
+
+    if (length(dim(S_pred_data)) == 2) {
+      S_pred_extract <-
+        S_pred_data[, grep(names(S_pred_data), pattern = glue::glue("{i}\\]$"))]
+    } else {
+      S_pred_extract <- S_pred_data[,,i]
+    }
+
     # rearrange to time as rows
     S_dat <-
       list(
-        t(stan_extract[[S_pred]][,,i]) %>%
-          as_tibble() %>%
-          rbind(1, .) %>%
+        t(S_pred_extract) |>
+          as_tibble() |>
+          rbind(1, ... = _) |>
           mutate(time = 0:(n() - 1),
                  type = S_pred),
-        t(stan_extract[[S_0]]) %>%
-          as_tibble() %>%
-          rbind(1, .) %>%
+        t(S_0_extract) |>
+          as_tibble() |>
+          rbind(1, ... = _) |>
           mutate(time = 0:(n() - 1),
                  type = S_0),
-        t(stan_extract$S_bg) %>%
-          as_tibble() %>%
-          rbind(1, .) %>%
+        t(S_bg_extract) |>
+          as_tibble() |>
+          rbind(1, ... = _) |>
           mutate(time = 0:(n() - 1),
                  type = "S_bg"))
 
     # means and credible intervals
     S_stats[[i]] <-
-      S_dat %>%
-      do.call(rbind, .) %>%
-      melt(id.vars = c("time", "type")) %>%
+      S_dat |>
+      do.call(rbind, args = _) |>
+      melt(id.vars = c("time", "type")) |>
       group_by(time, type)  |>
       summarise(mean = mean(value),
                 lower = quantile(value, probs = CI_probs[1]),

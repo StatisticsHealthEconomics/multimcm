@@ -31,6 +31,7 @@
 #' @export
 #'
 bmcm_stan <- function(input_data,
+
                       formula,
                       cureformula = ~ 1,
                       family_latent = "exponential",

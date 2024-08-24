@@ -13,6 +13,7 @@
 default_prior_cure <- function(formula_cure,
                                prior_cure = list(),
                                bg_model = 2) {
+  browser()
   nTx <- formula_cure$fe_nlevels[1]
   n_groups <- formula_cure$n_groups
   nvars <- formula_cure$nvars
@@ -63,7 +64,7 @@ default_prior_cure <- function(formula_cure,
       rep(formula_cure$n_groups)
 
     names(params_cf) <-
-      paste0(names(params_cf), "_", rep(1:2, each = formula_cure$n_groups))
+      paste0(names(params_cf), "_", rep(1:formula_cure$n_groups, each = 2))
   } else if (is_pooled_cf(formula_cure)) {
     params_cf <-
       list(a_cf = 3,

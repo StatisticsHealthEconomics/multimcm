@@ -25,7 +25,6 @@ prep_S_data <- function(stan_extract,
   for (i in tx_idx) {
 
     # extract survival data
-
     S_0_extract <- stan_extract[[S_0]]
     S_bg_extract <- stan_extract$S_bg
 

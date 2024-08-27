@@ -1,7 +1,7 @@
 
 #
 prep_S_joint_data <- function(bmcm_out, ...) {
-  UseMethod("plot_S_joint")
+  UseMethod("prep_S_joint_data")
 }
 
 #' Prepare data for survival plot
@@ -72,7 +72,7 @@ prep_S_joint_data.default <- function(bmcm_out) {
 
   S_stats <- list()
 
-  matches <- grep(pattern = "^cf_\\d+\\[1\\]", names(bmcm_out))
+  matches <- grep(pattern = "^cf_\\d+", names(bmcm_out))
   n_groups <- length(matches)
   event_type <- 1:n_groups
 

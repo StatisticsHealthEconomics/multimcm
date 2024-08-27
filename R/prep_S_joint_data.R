@@ -1,11 +1,16 @@
 
+#
+prep_S_joint_data <- function(bmcm_out, ...) {
+  UseMethod("plot_S_joint")
+}
+
 #' Prepare data for survival plot
 #'
 #' @param bmcm_out Output of Stan model
 #' @return data frame
 #' @importFrom glue glue
 #'
-prep_S_joint_data <- function(bmcm_out) {
+prep_S_joint_data.bmcm <- function(bmcm_out) {
 
   S_stats <- list()
   n_groups <- bmcm_out$formula$cure$n_groups
@@ -19,6 +24,7 @@ prep_S_joint_data <- function(bmcm_out) {
   CI_probs <- c(0.025, 0.5, 0.975)
 
   S_stats <- list()
+
   # summary statistics for each end point
   for (i in seq_len(n_groups)) {
 
@@ -42,9 +48,9 @@ prep_S_joint_data <- function(bmcm_out) {
 
   # unnest
   plot_dat <-
-    S_stats %>%
-    map(bind_rows, .id = "Tx") %>%
-    bind_rows(.id = "event_type") %>%
+    S_stats |>
+    map(bind_rows, .id = "Tx") |>
+    bind_rows(.id = "event_type") |>
     mutate(scenario = paste(event_type, Tx, sep = "_"),
            type_tx = paste(type, Tx, sep = "_"),
            Tx = ifelse(type == "S_bg", "background",
@@ -54,12 +60,52 @@ prep_S_joint_data <- function(bmcm_out) {
            # endpoint = factor(toupper(event_type)) ##TODO: distinguish between numeric and strings
            endpoint = as.numeric(event_type)
            # model_name = as.factor(model_names)  ##TODO:
-    ) %>%
+    ) |>
     arrange(endpoint)
 
   plot_dat
 }
 
+#' already extracted matrix
+#'
+prep_S_joint_data.default <- function(bmcm_out) {
+
+  S_stats <- list()
+
+  matches <- grep(pattern = "^cf_\\d+\\[1\\]", names(bmcm_out))
+  n_groups <- length(matches)
+  event_type <- 1:n_groups
+
+  stan_extract <- bmcm_out
+
+  CI_probs <- c(0.025, 0.5, 0.975)
+
+  S_stats <- list()
+
+  # summary statistics for each end point
+  for (i in seq_len(n_groups)) {
+
+    S_stats[[i]] <-
+      prep_S_data(stan_extract,
+                  event_type = i)
+  }
+
+  # unnest
+  plot_dat <-
+    S_stats |>
+    map(bind_rows, .id = "Tx") |>
+    bind_rows(.id = "event_type") |>
+    mutate(scenario = paste(event_type, Tx, sep = "_"),
+           type_tx = paste(type, Tx, sep = "_"),
+           Tx = ifelse(type == "S_bg", "background",
+                       ifelse(grepl("^S_\\d+$", type),
+                              "uncured", Tx)),
+           Tx = factor(Tx),
+           endpoint = as.numeric(event_type)) |>
+    arrange(endpoint)
+
+  plot_dat
+}
 
 #
 stan_extract <- function(bmcm_out, pattern = "") {

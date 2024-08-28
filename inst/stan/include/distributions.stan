@@ -130,6 +130,13 @@ real surv_weibull_lpdf (real t, real d, real shape, real scale) {
   return log_lik;
 }
 
+// take additional arguments for integration
+real weibull_survival_1d(real t, real xc, real[] theta, real[] x_r, int[] x_i) {
+  real shape = theta[1];
+  real scale = theta[2];
+  return exp(-pow(t / scale, shape));
+}
+
 // restricted mean survival time
 //// this may be wrong accoring to chat-gpt
 // real rmst_weibull (real shape, real scale, real tmax) {
@@ -140,8 +147,13 @@ real surv_weibull_lpdf (real t, real d, real shape, real scale) {
 //TODO: test new formulation
 real rmst_weibull(real shape, real scale, real tmax) {
   real rmst;
-  rmst = tmax * exp(-pow(tmax / scale, shape)) +
-         (scale * gamma(1 + 1/shape) * gamma_p(1 + 1/shape, pow(tmax / scale, shape)));
+  real[] theta = {shape, scale};
+  real[] x_r = {};
+  int[] x_i = {};
+
+  // integrate survival function from 0 to tmax
+  rmst = integrate_1d(weibull_survival_1d, 0, tmax, theta, x_r, x_i, 1e-8);
+
   return rmst;
 }
 

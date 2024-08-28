@@ -131,11 +131,20 @@ real surv_weibull_lpdf (real t, real d, real shape, real scale) {
 }
 
 // restricted mean survival time
-real rmst_weibull (real shape, real scale, real tmax) {
+//// this may be wrong accoring to chat-gpt
+// real rmst_weibull (real shape, real scale, real tmax) {
+//   real rmst;
+//   rmst = scale^(-1/shape) * gamma_q(scale*tmax^shape, 1/shape + 1) + tmax*exp(-scale*tmax^shape);
+//   return rmst;
+// }
+//TODO: test new formulation
+real rmst_weibull(real shape, real scale, real tmax) {
   real rmst;
-  rmst = scale^(-1/shape) * gamma_q(scale*tmax^shape, 1/shape + 1) + tmax*exp(-scale*tmax^shape);
+  rmst = tmax * exp(-pow(tmax / scale, shape)) +
+         (scale * gamma(1 + 1/shape) * gamma_p(1 + 1/shape, pow(tmax / scale, shape)));
   return rmst;
 }
+
 
 // median survival time
 real median_surv_weibull (real shape, real scale) {

@@ -131,7 +131,7 @@ real surv_weibull_lpdf (real t, real d, real shape, real scale) {
 }
 
 // Define the function to be integrated
-real weibull_survival_1d(real t, real xc, vector theta, data vector x_r, data int x_i) {
+real weibull_survival_1d(real t, real xc, array[] real theta, data array[] real x_r, data array[] int x_i) {
   real shape = theta[1];
   real scale = theta[2];
   return exp(-pow(t / scale, shape));
@@ -140,12 +140,12 @@ real weibull_survival_1d(real t, real xc, vector theta, data vector x_r, data in
 // Restricted mean survival time
 real rmst_weibull(real shape, real scale, real tmax) {
   real rmst;
-  vector[2] theta = [shape, scale];
-  vector[0] x_r;  // zero-sized vector
-  int[0] x_i;     // zero-sized int array
+  array[2] real theta = {shape, scale};
+  // array[0] real x_r;  // empty data array
+  array[0] int x_i;   // for integration
 
   // integrate survival function from 0 to tmax
-  rmst = integrate_1d(weibull_survival_1d, 0, tmax, theta, x_r, x_i, 1e-8);
+  rmst = integrate_1d(weibull_survival_1d, 0, tmax, theta, {1.0}, x_i);  //1e-8
 
   return rmst;
 }

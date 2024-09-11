@@ -31,7 +31,6 @@
 #' @export
 #'
 bmcm_stan <- function(input_data,
-
                       formula,
                       cureformula = ~ 1,
                       family_latent = "exponential",
@@ -250,7 +249,6 @@ get_stan_defaults <- function(use_cmdstanr, dots) {
   if (use_cmdstanr) {
     return(
       modifyList(
-        dots,
         list(iter_warmup = 100,
              iter_sampling = 500,
              save_warmup = FALSE,
@@ -258,12 +256,12 @@ get_stan_defaults <- function(use_cmdstanr, dots) {
              chains = 1,
              adapt_delta = 0.99,
              max_treedepth = 100,
-             step_size = 0.05)
+             step_size = 0.05),
+        dots
       ))
   } else {
     return(
       modifyList(
-        dots,
         list(warmup = 100,
              iter = 500,
              thin = 1,
@@ -273,8 +271,9 @@ get_stan_defaults <- function(use_cmdstanr, dots) {
                max_treedepth = 100,
                stepsize = 0.05),
              include = TRUE,
-             open_progress = TRUE)
+             open_progress = TRUE),
         # verbose = TRUE)
+        dots
       ))
   }
 }

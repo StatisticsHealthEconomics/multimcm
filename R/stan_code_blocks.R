@@ -62,6 +62,8 @@ make_latent_model_code <- function(model, id = 1L) {
       glue(scode$data_def,
            "real<lower=0> a_shape_{id};\n",
            "real<lower=0> b_shape_{id};\n")
+           # "array[0] real x_r;  // empty data array\n",
+           # "array[0] int x_i;   // for integration\n")
 
     scode$parameters <-
       glue("real<lower=0> shape_{id};\n")

@@ -75,9 +75,12 @@ make_latent_model_code <- function(model, id = 1L) {
 
     scode$trans_params_main <-
       glue("lambda_{id} = exp(lp_{id});\n",
-           "for (i in 1:num_elements(lambda_{id})) {{ // constrain upper limit\n",
-           "   if (lambda_{id}[i] > 100) {{\n",
+           "for (i in 1:num_elements(lambda_{id})) {{\n",
+           "   if (lambda_{id}[i] > 100) {{ // constrain upper limit\n",
            "      lambda_{id}[i] = 100;\n",
+           "   }\n",
+           "   if (lambda_{id}[i] <= 0) {{ // constrain lower limit\n",
+           "      lambda_{id}[i] = 1e-10;\n",
            "   }\n",
            "}\n")
 

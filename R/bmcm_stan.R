@@ -290,5 +290,5 @@ switch_cure_model_type <- function(formula_cure) {
     formula_cure$cf_idx <- 3L
     formula_cure$cf_name <- "hier"
   }
-  return(formula_cure)
+  formula_cure
 }

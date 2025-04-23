@@ -1,5 +1,5 @@
 
-#' Use single legend
+#' Use single legend for grid of plots
 #'
 #' from https://cran.r-project.org/web/packages/egg/vignettes/Ecosystem.html
 #'

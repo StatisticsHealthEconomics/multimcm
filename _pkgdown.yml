@@ -1,0 +1,40 @@
+template:
+  bootstrap: 5
+
+reference:
+  - title: "Data Wrangle"
+    desc: >
+      Functions used to manipulate and prepare data.
+    contents:
+      - prep_bg_data
+      - prep_latent_data
+      - prep_stan_params
+      - prep_S_data
+      - prep_S_joint_data.bmcm
+      - prep_S_joint_data.default
+      # - pars_format
+      # - cglue_data
+      # - parse_formula
+      # - validate_distns
+
+  - title: "Model Fitting"
+    desc: >
+      Functions for fitting and summarising statistical models.
+    contents:
+      - bmcm_stan
+      - precompile_bmcm_model
+      # - default_prior_cure
+      # - create_stancode
+      # - create_stancode_postpred
+      # - make_latent_model_code
+      # - ppv_gen_quants_block
+
+  - title: "Visualization"
+    desc: >
+      Functions to create visual outputs.
+    contents:
+      - cf_forest_plot
+      - cf_forest_cutpoint
+      - geom_kaplan_meier
+      - grid_arrange_shared_legend
+      - plot_S_joint

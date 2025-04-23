@@ -2,10 +2,14 @@
 % Please edit documentation in R/parse_formula.R
 \name{parse_formula}
 \alias{parse_formula}
-\title{parse formula}
+\title{Parse formula}
 \usage{
 parse_formula(formula, data, family = NA)
 }
-\description{
-parse formula
+\arguments{
+\item{family}{}
 }
+\description{
+Parse formula
+}
+\keyword{internal}

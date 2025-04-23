@@ -1,9 +1,9 @@
 ---
 title: "Chronic granulomatous disease (CGD) analysis"
 # output: rmarkdown::html_vignette
-output: rmarkdown::pdf_document
+# output: rmarkdown::pdf_document
 vignette: >
-  %\VignetteIndexEntry{cgd_analysis}
+  %\VignetteIndexEntry{Chronic granulomatous disease (CGD) analysis}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options: 
@@ -14,7 +14,8 @@ bibliography: bibliography.bib
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  eval = FALSE
 )
 ```
 
@@ -60,7 +61,7 @@ cgd <- mutate(cgd, time = tstop - tstart)
 ```
 
 The data set has repeat measurements for recurrent infections which we currently have not implemented in `{multimcm}` so for simplicity we'll remove some of the data in the initial analyses.
-In @Lai hospital-level random effects are assigned to the cured probability part, and both patient- and hospital-level random effects are assigned to hazard function part. `{multimcm}` currently only applies hierarchical structure to the cure fraction and not to the separate hazards.
+In @Lai2009 hospital-level random effects are assigned to the cured probability part, and both patient- and hospital-level random effects are assigned to hazard function part. `{multimcm}` currently only applies hierarchical structure to the cure fraction and not to the separate hazards.
 
 Take the first event for each individual by start time.
 ```{r first-measurement}
@@ -134,7 +135,7 @@ No covariates in the latent model and the incidence (cure) model as
 $$
 T \sim \text{Exp}(\lambda)\\
 \pi_i = \text{logit}^{-1}(\alpha + \beta_{\text{treat}[i]} + \gamma_{\text{center}[i]})\\
-\text{center}[i] \sim N(\mu_{\text{center}}, \sigma^2_{\text{center}})
+\gamma_{\text{center}[i]} \sim N(\mu_{\text{center}}, \sigma^2_{\text{center}})
 $$
 
 ```{r}
@@ -277,7 +278,7 @@ No covariates in the latent model and the incidence (cure) model as
 $$
 T \sim \text{Exp}(\lambda)\\
 \pi_i = \text{logit}^{-1}(\alpha + \beta_{\text{treat}[i]} + \gamma_{\text{cat}[i]})\\
-\text{cat}[i] \sim N(\mu_{\text{cat}}, \sigma^2_{\text{cat}})
+\gamma_{\text{cat}[i]} \sim N(\mu_{\text{cat}}, \sigma^2_{\text{cat}})
 $$
 
 ```{r}
@@ -300,9 +301,9 @@ out_hos.cat <-
 No covariates in the latent model and the incidence (cure) model as
 $$
 T \sim \text{Exp}(\lambda_i)\\
-\lambda_i = \alpha_{\lambda} + \beta_{\text{sex}[i]}\\
+\log(\lambda_i) = \alpha_{\lambda} + \beta_{\text{sex}[i]}\\
 \pi_i = \text{logit}^{-1}(\alpha_{\pi} + \beta_{\text{treat}[i]} + \gamma_{\text{center}[i]})\\
-\text{center}[i] \sim N(\mu_{\text{center}}tyg, \sigma^2_{\text{center}})
+\gamma_{\text{center}[i]} \sim N(\mu_{\text{center}}, \sigma^2_{\text{center}})
 $$
 
 ```{r}

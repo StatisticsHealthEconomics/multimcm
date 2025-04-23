@@ -2,7 +2,7 @@
 % Please edit documentation in R/grid_arrange_shared_legend.R
 \name{grid_arrange_shared_legend}
 \alias{grid_arrange_shared_legend}
-\title{Use single legend}
+\title{Use single legend for grid of plots}
 \usage{
 grid_arrange_shared_legend(
   ...,

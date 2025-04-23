@@ -2,10 +2,11 @@
 % Please edit documentation in R/validate_distns.R
 \name{validate_distns}
 \alias{validate_distns}
-\title{partial match on start of word}
+\title{Validate distribution}
 \usage{
 validate_distns(model)
 }
 \description{
-partial match on start of word
+Partial match on start of word.
 }
+\keyword{internal}

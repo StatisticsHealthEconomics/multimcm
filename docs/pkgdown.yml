@@ -1,10 +1,8 @@
-pandoc: 2.11.0.4
-pkgdown: 1.6.1
+pandoc: '3.2'
+pkgdown: 2.1.1
 pkgdown_sha: ~
 articles:
-  Check_mate_analysis: Check_mate_analysis.html
+  cgd_analysis: cgd_analysis.html
+  child-survival-in-brasil: child-survival-in-brasil.html
   how_to_use: how_to_use.html
-  joint_event_times: joint_event_times.html
-  Simulating_trial_data: Simulating_trial_data.html
-last_built: 2021-04-02T12:57Z
-
+last_built: 2025-04-23T13:16Z

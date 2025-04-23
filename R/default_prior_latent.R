@@ -70,6 +70,7 @@ default_prior_latent <- function(formula_latent,
 #'
 #' Ensure consistent dimensions
 #' depending on number of covariates
+#' @keywords internal
 #'
 pars_format <- function(nvars) {
   force(nvars)

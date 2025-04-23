@@ -3,7 +3,7 @@
 \name{prep_stan_params}
 \alias{prep_stan_params}
 \alias{default_prior_latent}
-\title{default_prior_latent}
+\title{Default prior latent variable}
 \usage{
 default_prior_latent(formula_latent, formula_cure)
 }

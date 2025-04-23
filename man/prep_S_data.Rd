@@ -11,6 +11,9 @@ prep_S_data(
   tx_idx = NA
 )
 }
+\value{
+dataframe
+}
 \description{
 Prepare posterior survival data for plotting
 }

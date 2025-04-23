@@ -9,6 +9,7 @@
 #'    2. fixed point values from life-tables
 #'
 #' @return list
+#' @keywords internal
 #'
 default_prior_cure <- function(formula_cure,
                                prior_cure = list(),

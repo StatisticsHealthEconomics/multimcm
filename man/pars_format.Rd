@@ -2,12 +2,12 @@
 % Please edit documentation in R/default_prior_latent.R
 \name{pars_format}
 \alias{pars_format}
-\title{ensure consistent dimensions
-depending on number of covariates}
+\title{Parse variables}
 \usage{
 pars_format(nvars)
 }
 \description{
-ensure consistent dimensions
+Ensure consistent dimensions
 depending on number of covariates
 }
+\keyword{internal}

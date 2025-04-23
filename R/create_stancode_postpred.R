@@ -1,5 +1,6 @@
 
 #' Posterior prediction Stan code builder
+#' @keywords internal
 #'
 create_stancode_postpred <- function(
     models = c("exp",

@@ -2,6 +2,7 @@
 
 
 #' ppv_gen_quants_block("weibull")
+#' @keywords internal
 #'
 ppv_gen_quants_block <- function(model, id = 1) {
 

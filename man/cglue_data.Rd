@@ -9,3 +9,4 @@ cglue_data(...)
 \description{
 collapse strings from glue_data
 }
+\keyword{internal}

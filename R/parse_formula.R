@@ -7,6 +7,7 @@
 #'
 #' @importFrom lme4 nobars findbars
 #' @importFrom rstan nlist
+#' @keywords internal
 #'
 parse_formula <- function(formula, data, family = NA) {
 

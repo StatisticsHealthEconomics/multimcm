@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# multimcm: Multilevel mixture cure modelling in Stan <img src='man/figures/hexbadge.png' align="right" height="139" />
+# multimcm: Multilevel mixture cure modelling in Stan <img src='man/figures/hexbadge.png' align="right" width="120"/>
 
 <!-- badges: start -->
 
@@ -10,8 +10,10 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 [![R-CMD-check](https://github.com/StatisticsHealthEconomics/rstanbmcm/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/StatisticsHealthEconomics/rstanbmcm/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
+## Overview
+
 The goal of multimcm is to jointly model multiple event time distributions
-(e.g. time to disease progression (PFS) and time to death (OS)) within a
+(e.g. time to disease progression (PFS) and time to death (OS)) within a
 Bayesian relative survival mixture cure model framework, using the Stan
 engine called from R.
 

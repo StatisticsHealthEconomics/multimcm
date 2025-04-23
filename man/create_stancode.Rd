@@ -22,4 +22,6 @@ cat(create_stancode(c("exp", "exp")))
  check with
  writeLines(create_stancode(c("gengamma", "exp")), "temp.stan")
 }
+
 }
+\keyword{internal}

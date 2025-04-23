@@ -2,10 +2,13 @@
 % Please edit documentation in R/prep_bg_data.R
 \name{prep_bg_data}
 \alias{prep_bg_data}
-\title{Prep background data}
+\title{Prepare background data}
 \usage{
 prep_bg_data(input_data, bg_varname, formula_cure, event_type, suffix = TRUE)
 }
+\arguments{
+\item{suffix}{}
+}
 \description{
-background hazard point values
+Background hazard point values.
 }

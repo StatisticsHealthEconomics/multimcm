@@ -3,8 +3,11 @@ title: "How to use rstanbmcm"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{How to use rstanbmcm}
-  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  markdown: 
+    wrap: sentence
 ---
 
 ```{r, include = FALSE}
@@ -25,16 +28,17 @@ We will use the Checkmate 067 study data set @ref.
 The data have already been arranged in to the correct format and saved within the package so we can load it as follows.
 
 ```{r eval=FALSE}
-data("surv_input_data", package = "rstanbmcm")
+data("surv_input_data", package = "multimcm")
 ```
 
 ```{r echo=FALSE}
-load("~/R/rstanbmcm/data/surv_input_data.RData")
+load("~/R/multimcm/data/surv_input_data.RData")
 ```
 
 Required fields include event times (`os`, `pfs`) and censoring indicators (`os_event`, `pfs_event`) for both OS and PFS.
 There should also be a treatment label column (`TRTA`).
-Additional patient-level covariates can also be included. At present only age at event (`OSage`, `PFSage`) is used.
+Additional patient-level covariates can also be included.
+At present only age at event (`OSage`, `PFSage`) is used.
 
 This looks like this.
 
@@ -54,7 +58,7 @@ library(rstan)
 library(shinystan)
 library(dplyr)
 library(ggplot2)
-# library(rstanbmcm)
+# library(multimcm)
 ```
 
 For demonstration purposes we will select a single treatment and fit Exponential distributions to both OS and PFS.
@@ -67,10 +71,7 @@ j <- "IPILIMUMAB"
 
 To use the Stan engine we set some options to use all-but-one of the available cores and not to over-write pre-complied code.
 
-````{r}
-rstan::rstan_options(auto_write = TRUE)
-options(mc.cores = parallel::detectCores() - 1)
-```
+\``{r} rstan::rstan_options(auto_write = TRUE) options(mc.cores = parallel::detectCores() - 1)`
 
 Now we are ready to do the model fitting.
 
@@ -91,21 +92,29 @@ out <-
 
 ### Explanation of function arguments
 
-* The first thing to note is that we supply the study data as the first argument `input_data`.
-We then define which distributions we want to fit to the OS anf PFS data, followed by the particular treatment subset of data to use from `input_data`.
+-   The first thing to note is that we supply the study data as the first argument `input_data`.
+    We then define which distributions we want to fit to the OS anf PFS data, followed by the particular treatment subset of data to use from `input_data`.
 
-* The optional arguments `params_pfs`, `params_os`  are the prior parameters for the PFS, OS distributions respectively. If not provided then the function uses default values. These must be supplied as a list when done so. The two values for each parameter corresponds to the intercept and age effect in the linear equation component of the rate regression. For the parameters that are optional we have to wrap them with `array(.,1)` because Stan expects an array object even when it is of dimension (1,1).
+-   The optional arguments `params_pfs`, `params_os` are the prior parameters for the PFS, OS distributions respectively.
+    If not provided then the function uses default values.
+    These must be supplied as a list when done so.
+    The two values for each parameter corresponds to the intercept and age effect in the linear equation component of the rate regression.
+    For the parameters that are optional we have to wrap them with `array(.,1)` because Stan expects an array object even when it is of dimension (1,1).
 
-* `params_cf` is the prior parameters for the cure fraction. The cure fraction parameters here are optional because there are alternative ways of defining its prior i.e. using a Beta distribution or using the same prior for both OS and PFS. This example is for the hierarchical cure fraction model.
+-   `params_cf` is the prior parameters for the cure fraction.
+    The cure fraction parameters here are optional because there are alternative ways of defining its prior i.e. using a Beta distribution or using the same prior for both OS and PFS.
+    This example is for the hierarchical cure fraction model.
 
-* `cf_model` defines whether this is a pooled (1), separate (2) or hierarchical (3) cure fraction model.
+-   `cf_model` defines whether this is a pooled (1), separate (2) or hierarchical (3) cure fraction model.
 
-* `joint_model` is a logical argument defining whether we model the OS and PFS event times jointly. If `joint_model = TRUE` then we must also pass the prior parameters using the `params_joint` argument.
+-   `joint_model` is a logical argument defining whether we model the OS and PFS event times jointly.
+    If `joint_model = TRUE` then we must also pass the prior parameters using the `params_joint` argument.
 
-* `bg_model` is the background model. The current options are Exponential distribution (1) or empirical point estimates from WHO life-tables (2). If the former then the function uses a default prior.
+-   `bg_model` is the background model.
+    The current options are Exponential distribution (1) or empirical point estimates from WHO life-tables (2).
+    If the former then the function uses a default prior.
 
-* Finally, the remaining arguments are passed directly to the Stan engine for the HMC.
-
+-   Finally, the remaining arguments are passed directly to the Stan engine for the HMC.
 
 ## Results
 
@@ -130,9 +139,8 @@ The available posterior samples are
 names(res)
 ```
 
-- Parameters prefixed with `p` are prior predicted distribution samples.
-- Parameters prefixed with `lp_` (except `lp__`) are the linear predictors used for the Exponential distributions rate parameters `lambda_`.
-
+-   Parameters prefixed with `p` are prior predicted distribution samples.
+-   Parameters prefixed with `lp_` (except `lp__`) are the linear predictors used for the Exponential distributions rate parameters `lambda_`.
 
 ### Plots
 
@@ -150,7 +158,7 @@ gg <- plot_S_joint(stan_list = stan_list)
 ```
 
 In addition, we overlay the Kaplan-Meier curves for the original data using the `survival` package.
-Note that this will always be slightly different since this is for the trial case-mix and the posterior survival curves are for the _average_ patient.
+Note that this will always be slightly different since this is for the trial case-mix and the posterior survival curves are for the *average* patient.
 
 ```{r fig.width=7, warning=FALSE, message=FALSE}
 library(survival)
@@ -177,6 +185,3 @@ gg + geom_line(aes(x = time, y = surv),
                inherit.aes = FALSE) +
   xlim(0, 60) + ylim(0, 1)
 ```
-
-
-

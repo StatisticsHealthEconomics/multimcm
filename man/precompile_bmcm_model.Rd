@@ -9,7 +9,8 @@ precompile_bmcm_model(
   family_latent = "exponential",
   cureformula = ~1,
   model_name = NA,
-  use_cmdstanr = FALSE
+  use_cmdstanr = FALSE,
+  file_path = NA
 )
 }
 \arguments{

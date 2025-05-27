@@ -3,7 +3,7 @@ title: "CGD analysis"
 # output: rmarkdown::html_vignette
 output: rmarkdown::pdf_document
 vignette: >
-  %\VignetteIndexEntry{cgd_analysis}
+  %\VignetteIndexEntry{CGD analysis}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options: 
@@ -150,7 +150,7 @@ precompile_bmcm_model(input_data = input_data,
 
 Now, load back in the compiled model and fit as before.
 
-```{r}
+```{r precompiled_bmcm_stan}
 model_path <- glue::glue("{system.file('stan', package = 'multimcm')}/{model_nm}.RDS")
 
 out_precompiled <-
@@ -170,7 +170,7 @@ out_precompiled <-
 We can do the same but using a `cmdstanr` model, rather than an `rstan` model. This has some benefits in terms of speed, reliability and memory usage.
 Firstly for a non-compiled model.
 
-```{r}
+```{r eval=FALSE}
 out <-
   bmcm_stan(
     input_data = input_data,

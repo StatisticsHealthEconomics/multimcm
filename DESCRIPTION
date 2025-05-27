@@ -1,18 +1,18 @@
 Package: multimcm
 Title: Bayesian Relative Mixture Cure Modelling
 Version: 0.0.1
-Authors@R: 
+Authors@R:
     person(given = "Nathan",
            family = "Green",
-           role = c("aut", "cre"),
            email = "n.green@ucl.ac.uk",
-           comment = c(ORCID = "0000-0003-2745-1736"))
+           role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0003-2745-1736", ROR = "052gg0110"))
 Description: Bayesian relative mixture cure modelling using Stan.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.2.9000
 Biarch: true
 Depends: 
     R (>= 3.4.0)
@@ -34,4 +34,4 @@ Suggests:
     knitr,
     rmarkdown
 VignetteBuilder: knitr
-BugReports: https://github.com/n8thangreen/multimcm/issues/
+BugReports: https://github.com/StatisticsHealthEconomics/multimcm

@@ -1,5 +1,8 @@
 
-#' partial match on start of word
+#' Validate distribution
+#'
+#' Partial match on start of word.
+#' @keywords internal
 #'
 validate_distns <- function(model) {
 

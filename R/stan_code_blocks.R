@@ -24,7 +24,9 @@ mean_params <- function(distn) {
          gengamma = c("mean", "scale", "Q"))
 }
 
-#' make_latent_model_code
+#' Make_latent_model_code
+#'
+#' @keywords internal
 #'
 #' @examples
 #' lapply(make_latent_model_code("lognormal"), cat)
@@ -398,7 +400,7 @@ make_pop_loglik <- function(model, id) {
 
 #' from brms package
 #' @importFrom glue glue_collapse
-#'
+#' @keywords internal
 tp <- function(wsp = 2) {
   wsp <- glue_collapse(rep(" ", wsp))
   paste0(wsp, "target += ")

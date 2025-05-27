@@ -7,6 +7,7 @@
 #' @return string
 #' @export
 #' @importFrom glue glue
+#' @keywords internal
 #'
 #' @examples
 #' cat(create_stancode(c("exp", "exp")))
@@ -15,6 +16,7 @@
 #'  check with
 #'  writeLines(create_stancode(c("gengamma", "exp")), "temp.stan")
 #' }
+#'
 create_stancode <- function(models) {
   n_grps <- length(models)
 

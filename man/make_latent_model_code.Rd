@@ -2,14 +2,15 @@
 % Please edit documentation in R/stan_code_blocks.R
 \name{make_latent_model_code}
 \alias{make_latent_model_code}
-\title{make_latent_model_code}
+\title{Make_latent_model_code}
 \usage{
 make_latent_model_code(model, id = 1L)
 }
 \description{
-make_latent_model_code
+Make_latent_model_code
 }
 \examples{
 lapply(make_latent_model_code("lognormal"), cat)
 
 }
+\keyword{internal}

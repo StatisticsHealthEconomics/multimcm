@@ -1,10 +1,14 @@
 
+#' Posterior prediction Stan code builder
+#' @keywords internal
 #'
-create_stancode_postpred <- function(models = c("exp",
-                                                "weibull",
-                                                "gompertz",
-                                                "loglogistic",
-                                                "lognormal")) {
+create_stancode_postpred <- function(
+    models = c("exp",
+               "weibull",
+               "gompertz",
+               "loglogistic",
+               "lognormal")) {
+
   models <- match.arg(models)
 
   scode <- list()

@@ -1,6 +1,12 @@
 
 #' Prepare posterior survival data for plotting
 #'
+#' @param stan_extract
+#' @param event_type
+#' @param CI_probs
+#' @param tx_idx
+#' @return dataframe
+#'
 prep_S_data <- function(stan_extract,
                         event_type = NA,
                         CI_probs = c(0.025, 0.5, 0.975),

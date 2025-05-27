@@ -3,27 +3,29 @@
 #'
 #' @rdname bmcm_stan
 #'
-#' @description jointly estimate all treatments
-#'    generate Stan code
+#' @description Jointly estimates all treatments and generates Stan code for Bayesian relative mixture cure modeling.
+#' It supports various latent and cure model configurations and allows the use of precompiled models or on-the-fly compilation.
 #'
-#' @param input_data Long format data frame
-#' @param formula R formula object for latent model component
-#' @param cureformula R formula object for cure fraction model component
-#' @param family_latent Name of distribution, from
-#'    "exp", "weibull", "gompertz", "lognormal", "loglogistic", "gengamma".
-#'    Single string or vector of length number of end-points
-#' @param prior_latent Optional
-#' @param prior_cure Optional
-#' @param centre_coefs Logical
-#' @param bg_model User supplied distribution or estimated.
-#'    In future this will be probabilities or fitted model object.
-#' @param bg_varname Background variable name in `input_data`
-#' @param bg_hr Background hazard ratio adjustment
-#' @param t_max Maximum time horizon
-#' @param precompiled_model_path Path to precompiled model, Default is NA
-#' @param use_cmdstanr Logical. If TRUE, use cmdstanr to fit the model. Default is FALSE.
-#' @param ... Additional parameters to pass to the Stan sampler
-#' @return Stan output as `bmcm` class
+#' @param input_data A long-format data frame containing the input data.
+#' @param formula An R formula object specifying the latent model component.
+#' @param cureformula An R formula object specifying the cure fraction model component. Default is `~ 1`.
+#' @param family_latent A string or vector specifying the distribution(s) for the latent model component.
+#'    Supported values are `"exp"`, `"weibull"`, `"gompertz"`, `"lognormal"`, `"loglogistic"`, and `"gengamma"`.
+#' @param prior_latent An optional prior specification for the latent model component. Default is `NA`.
+#' @param prior_cure An optional list specifying priors for the cure fraction model component. Default is an empty list.
+#' @param centre_coefs Logical. If `TRUE`, coefficients will be centered. Default is `FALSE`.
+#' @param bg_model A string specifying the background model type. Supported values are `"bg_distn"` and `"bg_fixed"`.
+#' @param bg_varname A string specifying the background variable name in `input_data`. Default is `"bg_rate"`.
+#' @param bg_hr A numeric value for the background hazard ratio adjustment. Default is `1`.
+#' @param t_max A numeric value specifying the maximum time horizon for the model. Default is `70`.
+#' @param precompiled_model_path A string specifying the path to a precompiled model. Default is `NA`.
+#' @param use_cmdstanr Logical. If `TRUE`, the `cmdstanr` package is used to fit the model. Default is `FALSE`.
+#' @param save_stan_code Logical. If `TRUE`, saves the Stan model code to a file. Default is `FALSE`.
+#' @param read_stan_code Logical. If `TRUE`, reads the Stan model code from a file instead of generating it dynamically. Default is `FALSE`.
+#' @param ... Additional parameters to pass to the Stan sampler.
+#'
+#' @return A list of class `bmcm` containing the Stan model output, MCMC parameters,
+#'    function call, distributions used, model inputs, input data, and formulas for the cure and latent components.
 #'
 #' @import rstanarm
 #' @importFrom lme4 mkReTrms
@@ -290,5 +292,5 @@ switch_cure_model_type <- function(formula_cure) {
     formula_cure$cf_idx <- 3L
     formula_cure$cf_name <- "hier"
   }
-  return(formula_cure)
+  formula_cure
 }

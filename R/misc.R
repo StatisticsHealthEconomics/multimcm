@@ -1,6 +1,7 @@
 
 #' collapse strings from glue_data
 #' @importFrom glue glue_data
+#' @keywords internal
 #'
 cglue_data <- function(...) {
   paste0(glue_data(...), collapse = "\n")

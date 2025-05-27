@@ -4,281 +4,226 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>How to use rstanbmcm • rstanbmcm</title>
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
-<script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="How to use rstanbmcm">
-<meta property="og:description" content="rstanbmcm">
-<!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
-<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-<![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>How to use multimcm • multimcm</title>
+<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="How to use multimcm">
 </head>
-<body data-spy="scroll" data-target="#toc">
-    <div class="container template-article">
-      <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
-  <div class="container">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">rstanbmcm</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.9000</span>
-      </span>
-    </div>
+<body>
+    <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
-    <div id="navbar" class="navbar-collapse collapse">
-      <ul class="nav navbar-nav">
-<li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
-  <a href="../reference/index.html">Reference</a>
-</li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Articles
-     
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
-<li>
-      <a href="../articles/Check_mate_analysis.html">Checkmate 067 study Bayesian mixture cure model analysis</a>
-    </li>
-    <li>
-      <a href="../articles/how_to_use.html">How to use rstanbmcm</a>
-    </li>
-    <li>
-      <a href="../articles/joint_event_times.html">Joint event time Bayesian mixture cure model</a>
-    </li>
-    <li>
-      <a href="../articles/Simulating_trial_data.html">Simulating trial survival analysis data</a>
-    </li>
+
+    <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
+
+    <a class="navbar-brand me-2" href="../index.html">multimcm</a>
+
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.1</small>
+
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div id="navbar" class="collapse navbar-collapse ms-3">
+      <ul class="navbar-nav me-auto">
+<li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+<li class="active nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
+<li><a class="dropdown-item" href="../articles/cgd_analysis.html">Chronic granulomatous disease (CGD) analysis</a></li>
+    <li><a class="dropdown-item" href="../articles/child-survival-in-brasil.html">Child Survival in Brasil</a></li>
+    <li><a class="dropdown-item" href="../articles/how_to_use.html">How to use multimcm</a></li>
   </ul>
 </li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
-<ul class="nav navbar-nav navbar-right"></ul>
+<ul class="navbar-nav">
+<li class="nav-item"><form class="form-inline" role="search">
+ <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
+</form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/n8thangreen/multimcm/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+      </ul>
 </div>
-<!--/.nav-collapse -->
+
+
   </div>
-<!--/.container -->
-</div>
-<!--/.navbar -->
+</nav><div class="container template-article">
 
-      
 
-      </header><script src="how_to_use_files/header-attrs-2.5/header-attrs.js"></script><link href="how_to_use_files/anchor-sections-1.0/anchor-sections.css" rel="stylesheet">
-<script src="how_to_use_files/anchor-sections-1.0/anchor-sections.js"></script><div class="row">
-  <div class="col-md-9 contents">
-    <div class="page-header toc-ignore">
-      <h1 data-toc-skip>How to use rstanbmcm</h1>
+
+
+<div class="row">
+  <main id="main" class="col-md-9"><div class="page-header">
+
+      <h1>How to use multimcm</h1>
             
       
-      
-      <div class="hidden name"><code>how_to_use.Rmd</code></div>
-
+      <small class="dont-index">Source: <a href="https://github.com/n8thangreen/multimcm/blob/HEAD/vignettes/how_to_use.Rmd" class="external-link"><code>vignettes/how_to_use.Rmd</code></a></small>
+      <div class="d-none name"><code>how_to_use.Rmd</code></div>
     </div>
 
     
     
-<div id="introduction" class="section level2">
-<h2 class="hasAnchor">
-<a href="#introduction" class="anchor"></a>Introduction</h2>
-<p>This is a basic introduction to how to use <code>rstanbmcm</code> to fit Bayesian mixture cure models in Stan.</p>
+<div class="section level2">
+<h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
+</h2>
+<p>This is a quick start, basic introduction to how to use
+<code>multimcm</code> to fit Bayesian mixture cure models in Stan.</p>
 </div>
-<div id="data" class="section level2">
-<h2 class="hasAnchor">
-<a href="#data" class="anchor"></a>Data</h2>
-<p>We will use the Checkmate 067 study data set. The data have already been arranged in to the correct format and saved within the package so we can load it as follows.</p>
-<div class="sourceCode" id="cb1"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="st">"surv_input_data"</span>, package <span class="op">=</span> <span class="st">"rstanbmcm"</span><span class="op">)</span></pre></div>
-<p>Required fields include event times (<code>os</code>, <code>pfs</code>) and censoring indicators (<code>os_event</code>, <code>pfs_event</code>) for both OS and PFS. There should also be a treatment label column (<code>TRTA</code>). Additional patient-level covariates can also be included. At present only age at event (<code>OSage</code>, <code>PFSage</code>) is used.</p>
+<div class="section level2">
+<h2 id="data">Data<a class="anchor" aria-label="anchor" href="#data"></a>
+</h2>
+<p>We will use the xxx data set. The data have already been arranged in
+to the correct format and saved within the package so we can load it as
+follows.</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"surv_input_data"</span>, package <span class="op">=</span> <span class="st">"rstanbmcm"</span><span class="op">)</span></span></code></pre></div>
+<p>If you want to load the data set directly you can use</p>
+<p>Required fields include event times (<code>os</code>,
+<code>pfs</code>) and censoring indicators (<code>os_event</code>,
+<code>pfs_event</code>) for both OS and PFS. There should also be a
+treatment label column (<code>TRTA</code>). Additional patient-level
+covariates can also be included. At present only age at event
+(<code>OSage</code>, <code>PFSage</code>) is used.</p>
 <p>This looks like this.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">surv_input_data</span><span class="op">)</span>
-<span class="co">#&gt;   AAGE OSage PFSage        os os_event       pfs pfs_event                 TRTA</span>
-<span class="co">#&gt; 1   52    57     56 60.024641        0 59.663244         0 NIVOLUMAB+IPILIMUMAB</span>
-<span class="co">#&gt; 2   77    78     77 19.449692        1  2.628337         1            NIVOLUMAB</span>
-<span class="co">#&gt; 3   67    67     67  2.069815        1  2.069815         1           IPILIMUMAB</span>
-<span class="co">#&gt; 4   43    48     47 60.188912        0 59.958932         0            NIVOLUMAB</span>
-<span class="co">#&gt; 5   71    76     73 64.262834        0 32.295688         1            NIVOLUMAB</span>
-<span class="co">#&gt; 6   76    78     76 34.891170        1  2.562628         1           IPILIMUMAB</span>
-<span class="co">#&gt;   SEX COUNTRY    ACOUNTRY best_overall_resp PFS_rate PFS_H     PFS_S OS_rate</span>
-<span class="co">#&gt; 1   M     NLD NETHERLANDS                CR    0.005 0.053 0.9483800   0.005</span>
-<span class="co">#&gt; 2   F     NLD NETHERLANDS                PD    0.026 0.286 0.7512626   0.026</span>
-<span class="co">#&gt; 3   M     NLD NETHERLANDS                NE    0.014 0.155 0.8564152   0.014</span>
-<span class="co">#&gt; 4   F     NLD NETHERLANDS                CR    0.001 0.016 0.9841273   0.001</span>
-<span class="co">#&gt; 5   M     NLD NETHERLANDS                PR    0.023 0.275 0.7595721   0.041</span>
-<span class="co">#&gt; 6   M     NLD NETHERLANDS                PD    0.041 0.380 0.6838614   0.041</span>
-<span class="co">#&gt;    OS_H      OS_S csex</span>
-<span class="co">#&gt; 1 0.058 0.9436499  0.5</span>
-<span class="co">#&gt; 2 0.312 0.7319815 -0.5</span>
-<span class="co">#&gt; 3 0.155 0.8564152  0.5</span>
-<span class="co">#&gt; 4 0.017 0.9831437 -0.5</span>
-<span class="co">#&gt; 5 0.380 0.6838614  0.5</span>
-<span class="co">#&gt; 6 0.462 0.6300223  0.5</span></pre></div>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">surv_input_data</span><span class="op">)</span></span></code></pre></div>
 </div>
-<div id="example" class="section level2">
-<h2 class="hasAnchor">
-<a href="#example" class="anchor"></a>Example</h2>
-<p>First of all attach all of the libraries we are going to need.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit">
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://purrr.tidyverse.org">purrr</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/hadley/reshape">reshape2</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://mc-stan.org/rstan">rstan</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://mc-stan.org/">shinystan</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span>
-<span class="co"># library(rstanbmcm)</span></pre></div>
-<p>For demonstration purposes we will select a single treatment and fit Exponential distributions to both OS and PFS.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit">
-<span class="va">i</span> <span class="op">&lt;-</span>  <span class="st">"exp"</span>
-<span class="va">k</span> <span class="op">&lt;-</span> <span class="st">"exp"</span>
-<span class="va">j</span> <span class="op">&lt;-</span> <span class="st">"IPILIMUMAB"</span></pre></div>
-<p>To use the Stan engine we set some options to use all-but-one of the available cores and not to over-write pre-complied code.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit">
-<span class="fu"><a href="https://mc-stan.org/rstan/reference/rstan_options.html">rstan_options</a></span><span class="op">(</span>auto_write <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span><span class="op">(</span>mc.cores <span class="op">=</span> <span class="fu">parallel</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/parallel/detectCores.html">detectCores</a></span><span class="op">(</span><span class="op">)</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span></pre></div>
-<p>Now we are ready to do the model fitting. There are 3 options to use.</p>
-<ul>
-<li>
-<code>bmcm_joint_stan_string</code>: Constructs the Stan code on-the-fly, meaning it is flexible and can run all distributions combinations. It calls the Stan file directly from R without pre-compiling. This is useful for development.</li>
-<li>
-<code><a href="../reference/bmcm_joint_stan_file.html">bmcm_joint_stan_file()</a></code>: Same as above but for pre-written code. Only available for same-distribution OS-PFS pairs.</li>
-<li>
-<code><a href="../reference/bmcm_joint_stan.html">bmcm_joint_stan()</a></code>: Uses the pre-compiled Stan code. Quicker to run. Like <code><a href="../reference/bmcm_joint_stan_file.html">bmcm_joint_stan_file()</a></code> only for a subset of OS-PFS distribution pairs.</li>
-</ul>
-<p>An example call to <code>bmcm_joint_stan_string</code> is given below. We recommend using this because it is the most widely-applicable. The other functions can be used for testing.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>out <span class="ot">&lt;-</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bmcm_joint_stan_string</span>(</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">input_data =</span> surv_input_data,</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">model_os =</span> i,</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">model_pfs =</span> k,</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">tx_name =</span> j,</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">params_cf =</span></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>      <span class="fu">list</span>(<span class="at">mu_cf_gl =</span> <span class="fu">array</span>(<span class="sc">-</span><span class="fl">0.8</span>, <span class="dv">1</span>),</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>           <span class="at">sigma_cf_gl =</span> <span class="fu">array</span>(<span class="dv">2</span>, <span class="dv">1</span>),</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>           <span class="at">sd_cf_os =</span> <span class="fu">array</span>(<span class="fl">0.5</span>, <span class="dv">1</span>),</span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>           <span class="at">sd_cf_pfs =</span> <span class="fu">array</span>(<span class="fl">0.5</span>, <span class="dv">1</span>))</span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">cf_model =</span> <span class="dv">3</span>,</span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">joint_model =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">bg_model =</span> <span class="dv">2</span>,</span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">warmup =</span> <span class="dv">100</span>,</span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">iter =</span> <span class="dv">1000</span>,</span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">thin =</span> <span class="dv">10</span>)</span></code></pre></div>
-<div id="explanation-of-function-arguments" class="section level3">
-<h3 class="hasAnchor">
-<a href="#explanation-of-function-arguments" class="anchor"></a>Explanation of function arguments</h3>
-<ul>
-<li><p>The first thing to note is that we supply the study data as the first argument <code>input_data</code>. We then define which distributions we want to fit to the OS anf PFS data, followed by the particular treatment subset of data to use from <code>input_data</code>.</p></li>
-<li><p>The optional arguments <code>params_pfs</code>, <code>params_os</code> are the prior parameters for the PFS, OS distributions respectively. If not provided then the function uses default values. These must be supplied as a list when done so. The two values for each parameter corresponds to the intercept and age effect in the linear equation component of the rate regression. For the parameters that are optional we have to wrap them with <code><a href="https://rdrr.io/r/base/array.html">array(.,1)</a></code> because Stan expects an array object even when it is of dimension (1,1).</p></li>
-<li><p><code>params_cf</code> is the prior parameters for the cure fraction. The cure fraction parameters here are optional because there are alternative ways of defining its prior i.e. using a Beta distribution or using the same prior for both OS and PFS. This example is for the hierarchical cure fraction model.</p></li>
-<li><p><code>cf_model</code> defines whether this is a pooled (1), separate (2) or hierarchical (3) cure fraction model.</p></li>
-<li><p><code>joint_model</code> is a logical argument defining whether we model the OS and PFS event times jointly. If <code>joint_model = TRUE</code> then we must also pass the prior parameters using the <code>params_joint</code> argument.</p></li>
-<li><p><code>bg_model</code> is the background model. The current options are Exponential distribution (1) or empirical point estimates from WHO life-tables (2). If the former then the function uses a default prior.</p></li>
-<li><p>Finally, the remaining arguments are passed directly to the Stan engine for the HMC.</p></li>
-</ul>
+<div class="section level2">
+<h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
+</h2>
+<p>First of all, attach all of the libraries we are going to need.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://purrr.tidyverse.org/" class="external-link">purrr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/hadley/reshape" class="external-link">reshape2</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://mc-stan.org/rstan/" class="external-link">rstan</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://mc-stan.org/shinystan/" class="external-link">shinystan</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span></code></pre></div>
+<p>For demonstration purposes we will select a single treatment and fit
+Exponential distributions to both OS and PFS.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">i</span> <span class="op">&lt;-</span>  <span class="st">"exp"</span></span>
+<span><span class="va">k</span> <span class="op">&lt;-</span> <span class="st">"exp"</span></span>
+<span><span class="va">j</span> <span class="op">&lt;-</span> <span class="st">"IPILIMUMAB"</span></span></code></pre></div>
+<p>To use the Stan engine we set some options to use all-but-one of the
+available cores and not to over-write pre-complied code.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">rstan</span><span class="fu">::</span><span class="fu"><a href="https://mc-stan.org/rstan/reference/rstan_options.html" class="external-link">rstan_options</a></span><span class="op">(</span>auto_write <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>mc.cores <span class="op">=</span> <span class="fu">parallel</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/parallel/detectCores.html" class="external-link">detectCores</a></span><span class="op">(</span><span class="op">)</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
+<p>Now we are ready to do the model fitting using
+<code><a href="../reference/bmcm_stan.html">bmcm_stan()</a></code>. Key arguments are <code>formula</code> and
+<code>cureformula</code>. These define the two levels observed
+(incidence) and latent of the model, respectively. They employ the
+standard <code>R</code> formula syntax; For <code>formula</code> using
+the survival regression syntax and mixed effect syntax for
+<code>cureformula</code>. Other arguments can be set to their default
+values.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">out</span> <span class="op">&lt;-</span></span>
+<span>  <span class="fu"><a href="../reference/bmcm_stan.html">bmcm_stan</a></span><span class="op">(</span></span>
+<span>    input_data <span class="op">=</span> <span class="va">input_data</span>,</span>
+<span>    formula <span class="op">=</span> <span class="st">"Surv(time=time, event=status) ~ 1"</span>,</span>
+<span>    cureformula <span class="op">=</span> <span class="st">"~ treat + (1 | center_id)"</span>,</span>
+<span>    family_latent <span class="op">=</span> <span class="st">"exponential"</span>,</span>
+<span>    <span class="co"># prior_cure = NA,</span></span>
+<span>    centre_coefs <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>    bg_model <span class="op">=</span> <span class="st">"bg_fixed"</span>,</span>
+<span>    bg_varname <span class="op">=</span> <span class="st">"rate"</span>,</span>
+<span>    bg_hr <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>    t_max <span class="op">=</span> <span class="fl">400</span><span class="op">)</span></span></code></pre></div>
+<p>The <code>bg_model</code> is the background model. The current
+options are Exponential distribution (1) or empirical point estimates
+from WHO life-tables (2). If the former then the function uses a default
+prior. The remaining arguments are passed directly to the Stan engine
+for the HMC.</p>
 </div>
-</div>
-<div id="results" class="section level2">
-<h2 class="hasAnchor">
-<a href="#results" class="anchor"></a>Results</h2>
-<p>There are several very good packages available to view Stan output, including <code>shinystan</code> and <code>coda</code>. Below we give some basic output specific to <code>rstanbmcm</code>.</p>
-<div id="output-data" class="section level3">
-<h3 class="hasAnchor">
-<a href="#output-data" class="anchor"></a>Output data</h3>
+<div class="section level2">
+<h2 id="results">Results<a class="anchor" aria-label="anchor" href="#results"></a>
+</h2>
+<p>There are several very good packages available to view Stan output,
+including <code>shinystan</code> and <code>coda</code>. Below we give
+some basic output specific to <code>multimcm</code>.</p>
+<div class="section level3">
+<h3 id="output-data">Output data<a class="anchor" aria-label="anchor" href="#output-data"></a>
+</h3>
 <p>We can view the raw output from running the Stan model using</p>
-<div class="sourceCode" id="cb7"><pre class="downlit">
-<span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://mc-stan.org/rstan/reference/stanfit-method-extract.html">extract</a></span><span class="op">(</span><span class="va">stan_exp_exp_IPI</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://mc-stan.org/rstan/reference/stanfit-method-extract.html" class="external-link">extract</a></span><span class="op">(</span><span class="va">stan_exp_exp_IPI</span><span class="op">)</span></span></code></pre></div>
 <p>The available posterior samples are</p>
-<div class="sourceCode" id="cb8"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span>
-<span class="co">#&gt;  [1] "beta_os"       "beta_pfs"      "lp_cf_os"      "lp_cf_pfs"    </span>
-<span class="co">#&gt;  [5] "lp_os_bg"      "lp_pfs_bg"     "lambda_os_bg"  "lambda_pfs_bg"</span>
-<span class="co">#&gt;  [9] "lp_os"         "lambda_os"     "lp_pfs"        "lambda_pfs"   </span>
-<span class="co">#&gt; [13] "cf_os"         "cf_pfs"        "mean_os"       "mean_pfs"     </span>
-<span class="co">#&gt; [17] "mean_bg"       "S_bg"          "S_os"          "S_pfs"        </span>
-<span class="co">#&gt; [21] "S_os_pred"     "S_pfs_pred"    "pmean_os"      "pmean_pfs"    </span>
-<span class="co">#&gt; [25] "pmean_bg"      "pmean_cf_os"   "pmean_cf_pfs"  "pS_bg"        </span>
-<span class="co">#&gt; [29] "pS_os"         "pS_pfs"        "S_os_prior"    "S_pfs_prior"  </span>
-<span class="co">#&gt; [33] "log_lik"       "pbeta_os"      "pbeta_pfs"     "pbeta_bg"     </span>
-<span class="co">#&gt; [37] "lp__"</span></pre></div>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span></code></pre></div>
 <ul>
-<li>Parameters prefixed with <code>p</code> are prior predicted distribution samples.</li>
-<li>Parameters prefixed with <code>lp_</code> (except <code>lp__</code>) are the linear predictors used for the Exponential distributions rate parameters <code>lambda_</code>.</li>
+<li>Parameters prefixed with <code>p</code> are prior predicted
+distribution samples.</li>
+<li>Parameters prefixed with <code>lp_</code> (except <code>lp__</code>)
+are the linear predictors used for the Exponential distributions rate
+parameters <code>lambda_</code>.</li>
 </ul>
 </div>
-<div id="plots" class="section level3">
-<h3 class="hasAnchor">
-<a href="#plots" class="anchor"></a>Plots</h3>
-<p>The function <code><a href="../reference/plot_S_joint.html">plot_S_joint()</a></code> takes a list of multiple Stan runs and creates <code>ggplot2</code> grid object of survival curves for cured, uncured and mixed with 95% credible intervals. In our example we simply create a list of one element.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit">
-<span class="va">stan_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="st">"IPILIMUMAB"</span> <span class="op">=</span> <span class="va">stan_exp_exp_IPI</span><span class="op">)</span>
-<span class="va">gg</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/plot_S_joint.html">plot_S_joint</a></span><span class="op">(</span>stan_list <span class="op">=</span> <span class="va">stan_list</span><span class="op">)</span></pre></div>
-<p>In addition, we overlay the Kaplan-Meier curves for the original data using the <code>survival</code> package. Note that this will always be slightly different since this is for the trial case-mix and the posterior survival curves are for the <em>average</em> patient.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit">
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/therneau/survival">survival</a></span><span class="op">)</span>
-
-<span class="va">trta</span> <span class="op">&lt;-</span> <span class="st">"IPILIMUMAB"</span>
-<span class="va">fit_os</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/survfit.html">survfit</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html">Surv</a></span><span class="op">(</span><span class="va">os</span>, <span class="va">os_event</span><span class="op">)</span> <span class="op">~</span> <span class="fl">1</span>,
-                  data <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">surv_input_data</span>, <span class="va">TRTA</span> <span class="op">==</span> <span class="va">trta</span><span class="op">)</span><span class="op">)</span>
-<span class="va">fit_pfs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/survfit.html">survfit</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html">Surv</a></span><span class="op">(</span><span class="va">pfs</span>, <span class="va">pfs_event</span><span class="op">)</span> <span class="op">~</span> <span class="fl">1</span>,
-                   data <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">surv_input_data</span>, <span class="va">TRTA</span> <span class="op">==</span> <span class="va">trta</span><span class="op">)</span><span class="op">)</span>
-<span class="va">km_data</span> <span class="op">&lt;-</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span><span class="op">(</span>
-    <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>Tx <span class="op">=</span> <span class="va">trta</span>,
-               event_type <span class="op">=</span> <span class="st">"os"</span>,
-               time <span class="op">=</span> <span class="va">fit_os</span><span class="op">$</span><span class="va">time</span>,
-               surv <span class="op">=</span> <span class="va">fit_os</span><span class="op">$</span><span class="va">surv</span><span class="op">)</span>,
-    <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>Tx <span class="op">=</span> <span class="va">trta</span>,
-               event_type <span class="op">=</span> <span class="st">"pfs"</span>,
-               time <span class="op">=</span> <span class="va">fit_pfs</span><span class="op">$</span><span class="va">time</span>,
-               surv <span class="op">=</span> <span class="va">fit_pfs</span><span class="op">$</span><span class="va">surv</span><span class="op">)</span><span class="op">)</span>
-
-<span class="va">gg</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">time</span>, y <span class="op">=</span> <span class="va">surv</span><span class="op">)</span>,
-               data <span class="op">=</span> <span class="va">km_data</span>,
-               lwd <span class="op">=</span> <span class="fl">1</span>,
-               inherit.aes <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html">xlim</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">60</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html">ylim</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span></pre></div>
-<p><img src="how_to_use_files/figure-html/unnamed-chunk-14-1.png" width="672"></p>
+<div class="section level3">
+<h3 id="plots">Plots<a class="anchor" aria-label="anchor" href="#plots"></a>
+</h3>
+<p>The function <code><a href="../reference/plot_S_joint.html">plot_S_joint()</a></code> takes a list of multiple
+Stan runs and creates <code>ggplot2</code> grid object of survival
+curves for cured, uncured and mixed with 95% credible intervals. In our
+example we simply create a list of one element.</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">stan_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"IPILIMUMAB"</span> <span class="op">=</span> <span class="va">stan_exp_exp_IPI</span><span class="op">)</span></span>
+<span><span class="va">gg</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/plot_S_joint.html">plot_S_joint</a></span><span class="op">(</span>stan_list <span class="op">=</span> <span class="va">stan_list</span><span class="op">)</span></span></code></pre></div>
+<p>In addition, we overlay the Kaplan-Meier curves for the original data
+using the <code>survival</code> package. Note that this will always be
+slightly different since this is for the trial case-mix and the
+posterior survival curves are for the <em>average</em> patient.</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/therneau/survival" class="external-link">survival</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">trta</span> <span class="op">&lt;-</span> <span class="st">"IPILIMUMAB"</span></span>
+<span><span class="va">fit_os</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/survfit.html" class="external-link">survfit</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">os</span>, <span class="va">os_event</span><span class="op">)</span> <span class="op">~</span> <span class="fl">1</span>,</span>
+<span>                  data <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">surv_input_data</span>, <span class="va">TRTA</span> <span class="op">==</span> <span class="va">trta</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">fit_pfs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/survfit.html" class="external-link">survfit</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">pfs</span>, <span class="va">pfs_event</span><span class="op">)</span> <span class="op">~</span> <span class="fl">1</span>,</span>
+<span>                   data <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">surv_input_data</span>, <span class="va">TRTA</span> <span class="op">==</span> <span class="va">trta</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">km_data</span> <span class="op">&lt;-</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>Tx <span class="op">=</span> <span class="va">trta</span>,</span>
+<span>               event_type <span class="op">=</span> <span class="st">"os"</span>,</span>
+<span>               time <span class="op">=</span> <span class="va">fit_os</span><span class="op">$</span><span class="va">time</span>,</span>
+<span>               surv <span class="op">=</span> <span class="va">fit_os</span><span class="op">$</span><span class="va">surv</span><span class="op">)</span>,</span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>Tx <span class="op">=</span> <span class="va">trta</span>,</span>
+<span>               event_type <span class="op">=</span> <span class="st">"pfs"</span>,</span>
+<span>               time <span class="op">=</span> <span class="va">fit_pfs</span><span class="op">$</span><span class="va">time</span>,</span>
+<span>               surv <span class="op">=</span> <span class="va">fit_pfs</span><span class="op">$</span><span class="va">surv</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">gg</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">time</span>, y <span class="op">=</span> <span class="va">surv</span><span class="op">)</span>,</span>
+<span>               data <span class="op">=</span> <span class="va">km_data</span>,</span>
+<span>               lwd <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>               inherit.aes <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html" class="external-link">xlim</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">60</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html" class="external-link">ylim</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
-  </div>
-
-  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
-
-        <nav id="toc" data-toggle="toc"><h2 data-toc-skip>Contents</h2>
-    </nav>
-</div>
-
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
+    </nav></aside>
 </div>
 
 
 
-      <footer><div class="copyright">
+    <footer><div class="pkgdown-footer-left">
   <p>Developed by Nathan Green.</p>
 </div>
 
-<div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+<div class="pkgdown-footer-right">
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
-      </footer>
+    </footer>
 </div>
 
-  
+
+
 
 
   </body>

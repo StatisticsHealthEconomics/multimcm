@@ -1,7 +1,13 @@
 
-#' parse formula
+#' Parse formula
+#'
+#' @param formula
+#' @param data
+#' @param family
+#'
 #' @importFrom lme4 nobars findbars
 #' @importFrom rstan nlist
+#' @keywords internal
 #'
 parse_formula <- function(formula, data, family = NA) {
 

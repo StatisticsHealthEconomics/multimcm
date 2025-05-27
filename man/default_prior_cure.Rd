@@ -21,3 +21,4 @@ list
 \description{
 Model parameters for cure fraction, background and generated.
 }
+\keyword{internal}

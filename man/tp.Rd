@@ -9,3 +9,4 @@ tp(wsp = 2)
 \description{
 from brms package
 }
+\keyword{internal}

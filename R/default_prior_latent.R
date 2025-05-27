@@ -1,5 +1,5 @@
 
-#' default_prior_latent
+#' Default prior latent variable
 #'
 #' Default parameters for survival model priors if not supplied.
 #'
@@ -66,8 +66,11 @@ default_prior_latent <- function(formula_latent,
 }
 
 
-#' ensure consistent dimensions
+#' Parse variables
+#'
+#' Ensure consistent dimensions
 #' depending on number of covariates
+#' @keywords internal
 #'
 pars_format <- function(nvars) {
   force(nvars)

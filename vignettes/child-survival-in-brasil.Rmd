@@ -1,0 +1,24 @@
+---
+title: "Child Survival in Brasil"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Child Survival in Brasil}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+bibliography: bibliography.bib
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup, warning=FALSE, message=FALSE}
+library(multimcm)
+```
+
+We duplicate an analysis in @Lai2009 which originated in @Sastry1997 of A frequentist nested frailty model for survival data, with an application to the study of child Survival in northeast Brazil in 1976-86.
+
+## References

@@ -1,7 +1,13 @@
 
-#' Prep background data
+#' Prepare background data
 #'
-#' background hazard point values
+#' Background hazard point values.
+#'
+#' @param input_data
+#' @param bg_varname
+#' @param formula_cure
+#' @param event_type
+#' @param suffix
 #'
 prep_bg_data <- function(input_data,
                          bg_varname,

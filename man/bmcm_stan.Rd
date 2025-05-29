@@ -24,41 +24,44 @@ bmcm_stan(
 )
 }
 \arguments{
-\item{input_data}{Long format data frame}
+\item{input_data}{A long-format data frame containing the input data.}
 
-\item{formula}{R formula object for latent model component}
+\item{formula}{An R formula object specifying the latent model component.}
 
-\item{cureformula}{R formula object for cure fraction model component}
+\item{cureformula}{An R formula object specifying the cure fraction model component. Default is \code{~ 1}.}
 
-\item{family_latent}{Name of distribution, from
-"exp", "weibull", "gompertz", "lognormal", "loglogistic", "gengamma".
-Single string or vector of length number of end-points}
+\item{family_latent}{A string or vector specifying the distribution(s) for the latent model component.
+Supported values are \code{"exp"}, \code{"weibull"}, \code{"gompertz"}, \code{"lognormal"}, \code{"loglogistic"}, and \code{"gengamma"}.}
 
-\item{prior_latent}{Optional}
+\item{prior_latent}{An optional prior specification for the latent model component. Default is \code{NA}.}
 
-\item{prior_cure}{Optional}
+\item{prior_cure}{An optional list specifying priors for the cure fraction model component. Default is an empty list.}
 
-\item{centre_coefs}{Logical}
+\item{centre_coefs}{Logical. If \code{TRUE}, coefficients will be centered. Default is \code{FALSE}.}
 
-\item{bg_model}{User supplied distribution or estimated.
-In future this will be probabilities or fitted model object.}
+\item{bg_model}{A string specifying the background model type. Supported values are \code{"bg_distn"} and \code{"bg_fixed"}.}
 
-\item{bg_varname}{Background variable name in \code{input_data}}
+\item{bg_varname}{A string specifying the background variable name in \code{input_data}. Default is \code{"bg_rate"}.}
 
-\item{bg_hr}{Background hazard ratio adjustment}
+\item{bg_hr}{A numeric value for the background hazard ratio adjustment. Default is \code{1}.}
 
-\item{t_max}{Maximum time horizon}
+\item{t_max}{A numeric value specifying the maximum time horizon for the model. Default is \code{70}.}
 
-\item{precompiled_model_path}{Path to precompiled model, Default is NA}
+\item{save_stan_code}{Logical. If \code{TRUE}, saves the Stan model code to a file. Default is \code{FALSE}.}
 
-\item{use_cmdstanr}{Logical. If TRUE, use cmdstanr to fit the model. Default is FALSE.}
+\item{read_stan_code}{Logical. If \code{TRUE}, reads the Stan model code from a file instead of generating it dynamically. Default is \code{FALSE}.}
 
-\item{...}{Additional parameters to pass to the Stan sampler}
+\item{precompiled_model_path}{A string specifying the path to a precompiled model. Default is \code{NA}.}
+
+\item{use_cmdstanr}{Logical. If \code{TRUE}, the \code{cmdstanr} package is used to fit the model. Default is \code{FALSE}.}
+
+\item{...}{Additional parameters to pass to the Stan sampler.}
 }
 \value{
-Stan output as \code{bmcm} class
+A list of class \code{bmcm} containing the Stan model output, MCMC parameters,
+function call, distributions used, model inputs, input data, and formulas for the cure and latent components.
 }
 \description{
-jointly estimate all treatments
-generate Stan code
+Jointly estimates all treatments and generates Stan code for Bayesian relative mixture cure modeling.
+It supports various latent and cure model configurations and allows the use of precompiled models or on-the-fly compilation.
 }

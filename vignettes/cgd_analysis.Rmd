@@ -92,9 +92,7 @@ cgd_center <- cgd_first |>
          sex_id = as.factor(as.numeric(sex)))
 ```
 
-Next, append the background hazard rate by age, sex and country. These rare are available from the [WHO website](https://www.who.int/data/gho/data/themes/topics/topic-details/GHO/healthy-life-expectancy-(hale)) @wholifetables. We will read from our own local package `{bgfscure}` for simplicity.
-Next, we need to harmonise the country names and their associated cities.
-Then we join the data with the background mortality data according to age, sex and country.
+Next, append the background hazard rate by age, sex and country. These rare are available from the [WHO website](https://www.who.int/data/gho/data/themes/topics/topic-details/GHO/healthy-life-expectancy-(hale)) @wholifetables. We will read from our own local package `{bgfscure}` for simplicity. Next, we need to harmonise the country names and their associated cities. Then we join the data with the background mortality data according to age, sex and country.
 ```{r bg-hazard}
 # WHO background mortality data
 load(here::here("../bgfscure/data/bg.mortality.RData"))  # bg.mortality
@@ -139,6 +137,7 @@ T \sim \text{Exp}(\lambda)\\
 $$
 
 ```{r}
+##TODO: crashes R session
 out <-
   bmcm_stan(
     input_data = input_data,
@@ -203,8 +202,29 @@ out <-
 # so that plotting functions work later
 # convert cmdstanr object to rstan stanfit format
 
-##TODO: error. for some reason save_warmup is NA?...
-# out$output <- rstan::read_stan_csv(out$output$output_files())
+stanfit <- brms::read_csv_as_stanfit(out$output$output_files())
+```
+
+```{r eval=FALSE, echo=FALSE}
+# using brms::read_csv_as_stanfit is not recommended because of breaking changes
+# recommended:
+# Stay in CmdStanR, replace the stanfit helpers with posterior equivalents
+# This is the path the Stan developers now recommend.
+# 
+# library(posterior)
+# draws   <- fit_cmd$draws()                      # draws_array by default
+# epred   <- posterior::weighted_mean(draws[,"mu",], weights = …)   # example
+# ytilde  <- posterior::subset_draws(draws, "y_tilde")
+#
+# If you need the “list of arrays” interface that rstan::extract() used to give, a three-liner does the job :
+# 
+# extract_samples <- function(fit) {
+#   vars  <- fit$metadata()$stan_variables
+#   vec   <- posterior::as_draws_rvars(fit$draws())
+#   lapply(vars, \(v) posterior::draws_of(vec[[v]], with_chains = FALSE)) |>
+#     setNames(vars)
+# }
+# post <- extract_samples(fit_cmd)
 ```
 
 Secondly, we can pass in a _precompiled_ `cmdstanr` model. This saves an `.exe` file in the `stan` folder.

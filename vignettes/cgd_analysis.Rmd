@@ -69,7 +69,7 @@ cgd_first <-
   cgd |> 
   group_by(id) |> 
   arrange(tstart) |> 
-  filter(row_number() == 1)
+  dplyr::filter(row_number() == 1)
 ```
 
 The full data set also has 13 hospitals/centers so select a smaller number:
@@ -85,7 +85,7 @@ Drop any levels which only appeared in the data we've just removed and convert t
 
 ```{r filter-center}
 cgd_center <- cgd_first |>
-  filter(center %in% c("Amsterdam", "NIH", "Univ. of Zurich", "Scripps Institute")) |>
+  dplyr::filter(center %in% c("Amsterdam", "NIH", "Univ. of Zurich", "Scripps Institute")) |>
   droplevels() |> 
   mutate(center_id = as.numeric(center),
          hos.cat_id = as.numeric(hos.cat),

@@ -16,7 +16,13 @@ RoxygenNote: 7.3.2.9000
 Biarch: true
 Depends: 
     R (>= 3.4.0)
-Imports: 
+Imports:
+    adegenet,
+    dplyr,
+    epicontacts,
+    ggplot2,
+    glue,
+    gridExtra,
     methods,
     Rcpp (>= 0.12.0),
     RcppParallel (>= 5.0.1),

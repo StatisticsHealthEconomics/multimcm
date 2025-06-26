@@ -28,7 +28,7 @@ prep_latent_data <- function(input_data,
   # one endpoint only
   dat <-
     input_data |>
-    filter(!!sym(formula_cure$group_var) == event_type) |>
+    dplyr::filter(!!sym(formula_cure$group_var) == event_type) |>
     arrange(!!sym(formula_cure$fe_vars[1]))
 
   # centre variables

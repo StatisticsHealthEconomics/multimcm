@@ -140,9 +140,9 @@ Note that this will always be slightly different since this is for the trial cas
 library(survival)
 
 fit_os <- survfit(Surv(os, os_event) ~ 1,
-                  data = filter(surv_input_data, TRTA == trta))
+                  data = dplyr::filter(surv_input_data, TRTA == trta))
 fit_pfs <- survfit(Surv(pfs, pfs_event) ~ 1,
-                   data = filter(surv_input_data, TRTA == trta))
+                   data = dplyr::filter(surv_input_data, TRTA == trta))
 km_data <-
   rbind(
     data.frame(Tx = trta,

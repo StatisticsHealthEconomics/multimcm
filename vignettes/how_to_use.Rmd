@@ -68,7 +68,6 @@ For demonstration purposes we will select a single treatment and fit Exponential
 ```{r}
 i <-  "exp"
 k <- "exp"
-j <- "IPILIMUMAB"
 ```
 
 To use the Stan engine we set some options to use all-but-one of the available cores and not to over-write pre-complied code.
@@ -107,13 +106,12 @@ There are several very good packages available to view Stan output, including `s
 ### Output data
 
 ```{r echo=FALSE}
-stan_exp_exp_IPI <- readRDS("~/R/rstanbmcm/data/independent/cf separate/bg_fixed/stan_exp_exp_IPILIMUMAB.Rds")
 ```
 
 We can view the raw output from running the Stan model using
 
 ```{r}
-res <- extract(stan_exp_exp_IPI)
+res <- extract(stan_exp_exp)
 ```
 
 The available posterior samples are
@@ -141,7 +139,6 @@ Note that this will always be slightly different since this is for the trial cas
 ```{r fig.width=7, warning=FALSE, message=FALSE}
 library(survival)
 
-trta <- "IPILIMUMAB"
 fit_os <- survfit(Surv(os, os_event) ~ 1,
                   data = filter(surv_input_data, TRTA == trta))
 fit_pfs <- survfit(Surv(pfs, pfs_event) ~ 1,

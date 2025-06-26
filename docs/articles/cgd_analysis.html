@@ -44,7 +44,7 @@
 <li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
 </form></li>
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/n8thangreen/multimcm/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/StatisticsHealthEconomics/multimcm/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
@@ -61,7 +61,7 @@
       <h1>Chronic granulomatous disease (CGD) analysis</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/n8thangreen/multimcm/blob/HEAD/vignettes/cgd_analysis.Rmd" class="external-link"><code>vignettes/cgd_analysis.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/StatisticsHealthEconomics/multimcm/blob/HEAD/vignettes/cgd_analysis.Rmd" class="external-link"><code>vignettes/cgd_analysis.Rmd</code></a></small>
       <div class="d-none name"><code>cgd_analysis.Rmd</code></div>
     </div>
 
@@ -172,7 +172,7 @@ join the data with the background mortality data according to age, sex
 and country.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># WHO background mortality data</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/load.html" class="external-link">load</a></span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html" class="external-link">here</a></span><span class="op">(</span><span class="st">"../bgfscure/data/bg.mortality.RData"</span><span class="op">)</span><span class="op">)</span>  <span class="co"># bg.mortality</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/load.html" class="external-link">load</a></span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html" class="external-link">here</a></span><span class="op">(</span><span class="st">"../bgfscure/data/bg.mortality.RData"</span><span class="op">)</span><span class="op">)</span>  <span class="co"># bg.mortality</span></span>
 <span></span>
 <span><span class="va">cgd_center</span> <span class="op">&lt;-</span></span>
 <span>  <span class="va">cgd_center</span> <span class="op">|&gt;</span></span>
@@ -216,7 +216,8 @@ T \sim \text{Exp}(\lambda)\\
 \sigma^2_{\text{center}})
 $$</span></p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">out</span> <span class="op">&lt;-</span></span>
+<code class="sourceCode R"><span><span class="co">##TODO: crashes R session</span></span>
+<span><span class="va">out</span> <span class="op">&lt;-</span></span>
 <span>  <span class="fu"><a href="../reference/bmcm_stan.html">bmcm_stan</a></span><span class="op">(</span></span>
 <span>    input_data <span class="op">=</span> <span class="va">input_data</span>,</span>
 <span>    formula <span class="op">=</span> <span class="st">"Surv(time=time, event=status) ~ 1"</span>,</span>
@@ -274,8 +275,7 @@ set <code>use_cmdstanr = TRUE</code> argument.</p>
 <span><span class="co"># so that plotting functions work later</span></span>
 <span><span class="co"># convert cmdstanr object to rstan stanfit format</span></span>
 <span></span>
-<span><span class="co">##TODO: error. for some reason save_warmup is NA?...</span></span>
-<span><span class="co"># out$output &lt;- rstan::read_stan_csv(out$output$output_files())</span></span></code></pre></div>
+<span><span class="va">stanfit</span> <span class="op">&lt;-</span> <span class="fu">brms</span><span class="fu">::</span><span class="fu">read_csv_as_stanfit</span><span class="op">(</span><span class="va">out</span><span class="op">$</span><span class="va">output</span><span class="op">$</span><span class="fu">output_files</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>Secondly, we can pass in a <em>precompiled</em> <code>cmdstanr</code>
 model. This saves an <code>.exe</code> file in the <code>stan</code>
 folder.</p>
@@ -452,7 +452,7 @@ country</span>.”</span> <a href="http://apps.who.int/gho/data/?theme=main&amp;
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
     </footer>

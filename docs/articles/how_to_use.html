@@ -44,7 +44,7 @@
 <li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
 </form></li>
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/n8thangreen/multimcm/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/StatisticsHealthEconomics/multimcm/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
@@ -61,7 +61,7 @@
       <h1>How to use multimcm</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/n8thangreen/multimcm/blob/HEAD/vignettes/how_to_use.Rmd" class="external-link"><code>vignettes/how_to_use.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/StatisticsHealthEconomics/multimcm/blob/HEAD/vignettes/how_to_use.Rmd" class="external-link"><code>vignettes/how_to_use.Rmd</code></a></small>
       <div class="d-none name"><code>how_to_use.Rmd</code></div>
     </div>
 
@@ -80,7 +80,7 @@
 to the correct format and saved within the package so we can load it as
 follows.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"surv_input_data"</span>, package <span class="op">=</span> <span class="st">"rstanbmcm"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"surv_input_data"</span>, package <span class="op">=</span> <span class="st">"multimcm"</span><span class="op">)</span></span></code></pre></div>
 <p>If you want to load the data set directly you can use</p>
 <p>Required fields include event times (<code>os</code>,
 <code>pfs</code>) and censoring indicators (<code>os_event</code>,
@@ -103,7 +103,8 @@ covariates can also be included. At present only age at event
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://mc-stan.org/rstan/" class="external-link">rstan</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://mc-stan.org/shinystan/" class="external-link">shinystan</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span></code></pre></div>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
+<span><span class="co"># library(multimcm)</span></span></code></pre></div>
 <p>For demonstration purposes we will select a single treatment and fit
 Exponential distributions to both OS and PFS.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
@@ -113,7 +114,7 @@ Exponential distributions to both OS and PFS.</p>
 <p>To use the Stan engine we set some options to use all-but-one of the
 available cores and not to over-write pre-complied code.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">rstan</span><span class="fu">::</span><span class="fu"><a href="https://mc-stan.org/rstan/reference/rstan_options.html" class="external-link">rstan_options</a></span><span class="op">(</span>auto_write <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu">rstan</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rstan/man/rstan_options.html" class="external-link">rstan_options</a></span><span class="op">(</span>auto_write <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>mc.cores <span class="op">=</span> <span class="fu">parallel</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/parallel/detectCores.html" class="external-link">detectCores</a></span><span class="op">(</span><span class="op">)</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
 <p>Now we are ready to do the model fitting using
 <code><a href="../reference/bmcm_stan.html">bmcm_stan()</a></code>. Key arguments are <code>formula</code> and
@@ -141,6 +142,10 @@ options are Exponential distribution (1) or empirical point estimates
 from WHO life-tables (2). If the former then the function uses a default
 prior. The remaining arguments are passed directly to the Stan engine
 for the HMC.</p>
+<ul>
+<li>Finally, the remaining arguments are passed directly to the Stan
+engine for the HMC.</li>
+</ul>
 </div>
 <div class="section level2">
 <h2 id="results">Results<a class="anchor" aria-label="anchor" href="#results"></a>
@@ -153,7 +158,7 @@ some basic output specific to <code>multimcm</code>.</p>
 </h3>
 <p>We can view the raw output from running the Stan model using</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://mc-stan.org/rstan/reference/stanfit-method-extract.html" class="external-link">extract</a></span><span class="op">(</span><span class="va">stan_exp_exp_IPI</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/rstan/man/stanfit-method-extract.html" class="external-link">extract</a></span><span class="op">(</span><span class="va">stan_exp_exp_IPI</span><span class="op">)</span></span></code></pre></div>
 <p>The available posterior samples are</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span></code></pre></div>
@@ -216,7 +221,7 @@ posterior survival curves are for the <em>average</em> patient.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
     </footer>

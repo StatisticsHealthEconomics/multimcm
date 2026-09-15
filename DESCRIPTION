@@ -38,6 +38,14 @@ LinkingTo:
 Suggests: 
     testthat,
     knitr,
-    rmarkdown
+    rmarkdown,
+    tidyr,
+    purrr,
+    reshape2,
+    abind,
+    survival,
+    here,
+    brms,
+    shinystan
 VignetteBuilder: knitr
 BugReports: https://github.com/StatisticsHealthEconomics/multimcm

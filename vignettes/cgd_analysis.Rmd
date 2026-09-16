@@ -136,7 +136,6 @@ T \sim \text{Exp}(\lambda)\\
 $$
 
 ```{r}
-##TODO: crashes R session
 out <-
   bmcm_stan(
     input_data = input_data,

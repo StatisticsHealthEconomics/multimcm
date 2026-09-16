@@ -49,3 +49,6 @@ data/separate/*.RDS
 data/dbl_cut/
 /doc/
 /Meta/
+
+inst/stan/*.stan
+inst/stan/*.exe

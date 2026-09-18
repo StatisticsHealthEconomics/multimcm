@@ -13,7 +13,6 @@ export(prep_latent_data)
 import(dplyr)
 import(ggplot2)
 import(grid)
-import(gridExtra)
 import(purrr)
 import(rstanarm)
 import(survival)
@@ -24,6 +23,7 @@ importFrom(glue,
   glue_collapse,
   glue_data
 )
+importFrom(gridExtra,arrangeGrob)
 importFrom(purrr,
   flatten,
   map,

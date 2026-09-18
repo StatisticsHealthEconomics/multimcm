@@ -9,7 +9,7 @@
 #' @param position position of the legend
 #' @import ggplot2
 #' @import grid
-#' @import gridExtra
+#' @importFrom gridExtra arrangeGrob
 #'
 grid_arrange_shared_legend <- function(...,
                                        ncol = length(list(...)),

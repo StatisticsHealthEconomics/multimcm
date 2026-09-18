@@ -28,7 +28,6 @@ Imports:
     rstanarm,
     survival,
     tidybayes,
-    cmdstanr,
     readr
 Suggests: 
     testthat,
@@ -38,7 +37,10 @@ Suggests:
     abind,
     here,
     brms,
-    shinystan
+    shinystan,
+    cmdstanr
+Remotes: 
+    stan-dev/cmdstanr
 VignetteBuilder: knitr
 BugReports: https://github.com/StatisticsHealthEconomics/multimcm/issues
 Config/roxygen2/version: 8.1.0

@@ -5,7 +5,7 @@
 #' @param data A data frame
 #' @param family Family string
 #'
-#' @importFrom lme4 nobars findbars
+#' @importFrom reformulas nobars findbars
 #' @importFrom rstan nlist
 #' @keywords internal
 #'
@@ -31,14 +31,14 @@ parse_formula <- function(formula, data, family = NA) {
   rhs_form  <- reformulate_rhs(rhs) # RHS as formula
 
   # just fixed-effect part of formula
-  fe_form   <- lme4::nobars(formula)
+  fe_form   <- reformulas::nobars(formula)
 
   # just random-effect part of formula
-  bars      <- lme4::findbars(formula)[[1]]
+  bars      <- reformulas::findbars(formula)[[1]]
   re_parts  <- split_at_bars(bars)
 
   # Substitute the '+' function for the '|' function
-  formsub <- lme4::subbars(formula)
+  formsub <- reformulas::subbars(formula)
   mf <- model.frame(formsub, data = data)
 
   # names of variable without event type

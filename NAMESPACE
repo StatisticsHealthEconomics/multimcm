@@ -24,16 +24,15 @@ importFrom(glue,
   glue_collapse,
   glue_data
 )
-importFrom(lme4,
-  findbars,
-  mkReTrms,
-  nobars
-)
 importFrom(purrr,
   flatten,
   map,
   simplify_all,
   transpose
+)
+importFrom(reformulas,
+  findbars,
+  nobars
 )
 importFrom(reshape2,melt)
 importFrom(rstan,

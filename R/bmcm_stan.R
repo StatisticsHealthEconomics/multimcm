@@ -28,7 +28,7 @@
 #'    function call, distributions used, model inputs, input data, and formulas for the cure and latent components.
 #'
 #' @import rstanarm
-#' @importFrom lme4 mkReTrms
+
 #' @importFrom glue glue_collapse
 #' @export
 #'

@@ -22,7 +22,7 @@ Imports:
     glue,
     gridExtra,
     rstan (>= 2.18.1),
-    lme4,
+    reformulas,
     purrr,
     reshape2,
     rstanarm,

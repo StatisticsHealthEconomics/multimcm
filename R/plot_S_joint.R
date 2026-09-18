@@ -21,8 +21,9 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' load("data/file_names.RData")
-#'
+#' }
 plot_S_joint <- function(bmcm_out,
                          facet = TRUE,
                          annot_cf = FALSE,

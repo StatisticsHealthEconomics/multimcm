@@ -34,6 +34,7 @@ Use results of running Stan with \code{bmcm_stan()}
 relative survival joint mixture cure model.
 }
 \examples{
+\dontrun{
 load("data/file_names.RData")
-
+}
 }

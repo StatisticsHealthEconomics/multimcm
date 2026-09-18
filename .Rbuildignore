@@ -1,4 +1,4 @@
-^rstanbmcm\.Rproj$
+^multimcm\.Rproj$
 ^\.Rproj\.user$
 ^README\.Rmd$
 data/
@@ -7,3 +7,7 @@ plots/
 ^LICENSE\.md$
 ^doc$
 ^Meta$
+^_pkgdown\.yml$
+^cran-comments\.md$
+^docs$
+^test\.stan$

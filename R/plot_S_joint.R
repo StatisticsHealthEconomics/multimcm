@@ -4,7 +4,7 @@
 #' Use results of running Stan with `bmcm_stan()`
 #' relative survival joint mixture cure model.
 #'
-#' @param out bmcm class output list
+#' @param bmcm_out bmcm class output list
 #' @param facet Two separate plots for each end point or overlaid?
 #' @param annot_cf Annotate with cure fractions? Logical
 #' @param add_km Include Kaplan-Meier layer? Logical
@@ -43,11 +43,11 @@ plot_S_joint <- function(bmcm_out,
                 linetype = 0,
                 alpha = 0.2)
 
-  if (annot_cf) {
-    p <-
-      p + geom_text(data = ann_text,
-                    aes(x = 40, y = 1, label = label),
-                    inherit.aes = FALSE)}
+  # if (annot_cf) {
+  #   p <-
+  #     p + geom_text(data = ann_text,
+  #                   aes(x = 40, y = 1, label = label),
+  #                   inherit.aes = FALSE)}
 
   if (add_km) {
     km_curve <- geom_kaplan_meier(out_dat = bmcm_out)

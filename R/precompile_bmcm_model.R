@@ -1,13 +1,14 @@
 
 #' Precompile bmcm model
 #'
-#' @param input_data
-#' @param family_latent
-#' @param cureformula
-#' @param model_name
+#' @param input_data Data frame
+#' @param family_latent String specifying latent distribution family
+#' @param cureformula Formula for cure fraction
+#' @param model_name Optional string for model name
 #' @param use_cmdstanr Logical. If TRUE, use cmdstanr to compile the model. Default is FALSE.
+#' @param file_path Optional string for file path to save compiled model
 #'
-#' @return
+#' @return A compiled stan model object
 #' @export
 #'
 precompile_bmcm_model <- function(input_data,
@@ -19,7 +20,7 @@ precompile_bmcm_model <- function(input_data,
   rtn_wd <- getwd()
   new_wd <- system.file("stan", package = "multimcm")
   setwd(new_wd)
-  on.exit(setwd(rtn_wd))
+  on.exit(setwd(rtn_wd), add = TRUE)
 
   distns <- validate_distns(family_latent)
 

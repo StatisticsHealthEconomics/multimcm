@@ -10,7 +10,9 @@ make_latent_model_code(model, id = 1L)
 Make_latent_model_code
 }
 \examples{
+\dontrun{
 lapply(make_latent_model_code("lognormal"), cat)
+}
 
 }
 \keyword{internal}

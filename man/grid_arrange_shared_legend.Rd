@@ -11,6 +11,15 @@ grid_arrange_shared_legend(
   position = c("bottom", "right", "top")
 )
 }
+\arguments{
+\item{...}{ggplot objects}
+
+\item{ncol}{number of columns}
+
+\item{nrow}{number of rows}
+
+\item{position}{position of the legend}
+}
 \description{
 from https://cran.r-project.org/web/packages/egg/vignettes/Ecosystem.html
 }

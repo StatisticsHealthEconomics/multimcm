@@ -3,6 +3,8 @@
 #'
 #' Default parameters for survival model priors if not supplied.
 #'
+#' @param formula_latent Formula for latent
+#' @param formula_cure Formula for cure fraction
 #' @return hyper-parameters
 #' @name prep_stan_params
 NULL

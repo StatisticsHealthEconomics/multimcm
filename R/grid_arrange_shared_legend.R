@@ -3,6 +3,10 @@
 #'
 #' from https://cran.r-project.org/web/packages/egg/vignettes/Ecosystem.html
 #'
+#' @param ... ggplot objects
+#' @param ncol number of columns
+#' @param nrow number of rows
+#' @param position position of the legend
 #' @import ggplot2
 #' @import grid
 #' @import gridExtra

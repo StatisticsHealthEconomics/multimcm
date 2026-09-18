@@ -14,6 +14,8 @@ plot_S_joint(
 )
 }
 \arguments{
+\item{bmcm_out}{bmcm class output list}
+
 \item{facet}{Two separate plots for each end point or overlaid?}
 
 \item{annot_cf}{Annotate with cure fractions? Logical}
@@ -23,8 +25,6 @@ plot_S_joint(
 \item{add_marks}{Kaplan-Meier censoring marks; logical}
 
 \item{...}{Additional parameters}
-
-\item{out}{bmcm class output list}
 }
 \value{
 ggplot object

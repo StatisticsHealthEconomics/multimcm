@@ -1,6 +1,9 @@
 
 #' Geom for Kaplan-Meier ggplot
 #'
+#' @param out_dat bmcm class output list
+#' @param col colour string
+#' @param add_marks logical
 geom_kaplan_meier <- function(out_dat,
                               col = "black",
                               add_marks = TRUE) {

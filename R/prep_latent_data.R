@@ -3,12 +3,12 @@
 #'
 #' Data specific to end type for Stan input.
 #'
-#' @param input_data
+#' @param input_data Data frame
 #' @param formula_cure parsed formula
 #' @param formula_latent parsed formula
 #' @param event_type cluster/group
 #' @param centre_coefs Logical
-#'    1: Exponential distribution; 2: fixed point values from life-table
+#' @param suffix Logical
 #'
 #' @return List consisting of:
 #'         sample size,

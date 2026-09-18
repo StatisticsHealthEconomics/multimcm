@@ -1,9 +1,9 @@
 
 #' Parse formula
 #'
-#' @param formula
-#' @param data
-#' @param family
+#' @param formula A formula object
+#' @param data A data frame
+#' @param family Family string
 #'
 #' @importFrom lme4 nobars findbars
 #' @importFrom rstan nlist

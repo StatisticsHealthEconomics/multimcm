@@ -1,5 +1,9 @@
 
-#
+#' Prepare data for survival plot
+#'
+#' @param bmcm_out Output of Stan model
+#' @param ... Additional arguments
+#' @export
 prep_S_joint_data <- function(bmcm_out, ...) {
   UseMethod("prep_S_joint_data")
 }
@@ -7,10 +11,11 @@ prep_S_joint_data <- function(bmcm_out, ...) {
 #' Prepare data for survival plot
 #'
 #' @param bmcm_out Output of Stan model
+#' @param ... Additional arguments
 #' @return data frame
 #' @importFrom glue glue
-#'
-prep_S_joint_data.bmcm <- function(bmcm_out) {
+#' @export
+prep_S_joint_data.bmcm <- function(bmcm_out, ...) {
 
   S_stats <- list()
   n_groups <- bmcm_out$formula$cure$n_groups
@@ -68,7 +73,10 @@ prep_S_joint_data.bmcm <- function(bmcm_out) {
 
 #' already extracted matrix
 #'
-prep_S_joint_data.default <- function(bmcm_out) {
+#' @param bmcm_out Output of Stan model
+#' @param ... Additional arguments
+#' @export
+prep_S_joint_data.default <- function(bmcm_out, ...) {
 
   S_stats <- list()
 

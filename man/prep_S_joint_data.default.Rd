@@ -4,7 +4,12 @@
 \alias{prep_S_joint_data.default}
 \title{already extracted matrix}
 \usage{
-\method{prep_S_joint_data}{default}(bmcm_out)
+\method{prep_S_joint_data}{default}(bmcm_out, ...)
+}
+\arguments{
+\item{bmcm_out}{Output of Stan model}
+
+\item{...}{Additional arguments}
 }
 \description{
 already extracted matrix

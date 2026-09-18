@@ -1,4 +1,4 @@
 library(testthat)
-library(rstanbmcm)
+library(multimcm)
 
-test_check("rstanbmcm")
+test_check("multimcm")

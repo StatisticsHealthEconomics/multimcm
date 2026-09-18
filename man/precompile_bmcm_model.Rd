@@ -14,7 +14,20 @@ precompile_bmcm_model(
 )
 }
 \arguments{
+\item{input_data}{Data frame}
+
+\item{family_latent}{String specifying latent distribution family}
+
+\item{cureformula}{Formula for cure fraction}
+
+\item{model_name}{Optional string for model name}
+
 \item{use_cmdstanr}{Logical. If TRUE, use cmdstanr to compile the model. Default is FALSE.}
+
+\item{file_path}{Optional string for file path to save compiled model}
+}
+\value{
+A compiled stan model object
 }
 \description{
 Precompile bmcm model

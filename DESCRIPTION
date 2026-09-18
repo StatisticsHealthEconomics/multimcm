@@ -7,45 +7,38 @@ Authors@R:
            email = "n.green@ucl.ac.uk",
            role = c("aut", "cre"),
            comment = c(ORCID = "0000-0003-2745-1736", ROR = "052gg0110"))
-Description: Bayesian relative mixture cure modelling using Stan.
+Description: Jointly models two event time distributions (e.g. time to disease progression and time to death) within a Bayesian relative survival mixture cure model framework, using the "Stan" engine called from 'R'. It extends current methods to account for the dependence between event times to leverage additional information to make better inferences and decisions.
+URL: https://github.com/StatisticsHealthEconomics/multimcm
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2.9000
 Biarch: true
 Depends: 
-    R (>= 3.4.0)
+    R (>= 4.2.0)
 Imports:
-    adegenet,
     dplyr,
-    epicontacts,
     ggplot2,
     glue,
     gridExtra,
-    methods,
-    Rcpp (>= 0.12.0),
-    RcppParallel (>= 5.0.1),
     rstan (>= 2.18.1),
-    rstantools (>= 2.1.1)
-LinkingTo: 
-    BH (>= 1.66.0),
-    Rcpp (>= 0.12.0),
-    RcppEigen (>= 0.3.3.3.0),
-    RcppParallel (>= 5.0.1),
-    rstan (>= 2.18.1),
-    StanHeaders (>= 2.18.0)
+    lme4,
+    purrr,
+    reshape2,
+    rstanarm,
+    survival,
+    tidybayes,
+    cmdstanr,
+    readr
 Suggests: 
     testthat,
     knitr,
     rmarkdown,
     tidyr,
-    purrr,
-    reshape2,
     abind,
-    survival,
     here,
     brms,
     shinystan
 VignetteBuilder: knitr
-BugReports: https://github.com/StatisticsHealthEconomics/multimcm
+BugReports: https://github.com/StatisticsHealthEconomics/multimcm/issues
+Config/roxygen2/version: 8.1.0

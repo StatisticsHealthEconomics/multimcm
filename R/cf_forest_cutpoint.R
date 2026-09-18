@@ -3,24 +3,27 @@
 #'
 #' Using all treatment Stan model.
 #'
+#' @param distns List of distributions
 #' @param folder String of location to read in data from
 #' @param save_name File name appended text
 #' @param is_hier Is hierarchical model (or separate)? i.e. whether to use a global parameter
 #'
-#' @import dplyr ggplot2 tidybayes purrr epicontacts adegenet
+#' @import dplyr ggplot2 tidybayes purrr
 #'
-#' @return
+#' @return A ggplot object
 #' @export
 #'
 #' @examples
 #' \dontrun{
 #'  # independent model
 #'  fp_sep <- cf_forest_cutpoint(folder = "data/dbl_cut/separate", save_name = c("_30", "_12", "_100"))
-#'  #ggsave(fp_sep, filename = "plots/forest_plot_cf_sep_cpt.png", dpi = 640, width = 16, height = 14)
+#'  #ggsave(fp_sep, filename = "plots/forest_plot_cf_sep_cpt.png",
+#'  #       dpi = 640, width = 16, height = 14)
 #'
 #'  # hierarchical model
 #'  fp_hier <- cf_forest_cutpoint(folder = "data/dbl_cut/hier", save_name = c("_30", "_12", "_100"))
-#'  #ggsave(fp_hier, filename = "plots/forest_plot_cf_hier_cpt.png", dpi = 640, width = 16, height = 14)
+#'  #ggsave(fp_hier, filename = "plots/forest_plot_cf_hier_cpt.png",
+#'  #       dpi = 640, width = 16, height = 14)
 #' }
 cf_forest_cutpoint <- function(distns = list(c("exp", "exp"),
                                              c("lognormal", "lognormal")),
@@ -31,8 +34,8 @@ cf_forest_cutpoint <- function(distns = list(c("exp", "exp"),
 
   for (cpt in save_name) {
     for (d in distns) {
-      i <- d[1]; print(i)
-      j <- d[2]; print(j)
+      i <- d[1]; message(i)
+      j <- d[2]; message(j)
 
       dist_names <- paste(i,j)
 

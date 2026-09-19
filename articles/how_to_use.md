@@ -1,0 +1,171 @@
+# How to use multimcm
+
+## Introduction
+
+This is a quick start, basic introduction to how to use `multimcm` to
+fit Bayesian mixture cure models in Stan.
+
+## Data
+
+We will use the xxx data set. The data have already been arranged in to
+the correct format and saved within the package so we can load it as
+follows.
+
+``` r
+
+data("surv_input_data", package = "multimcm")
+```
+
+If you want to load the data set directly you can use
+
+Required fields include event times (`os`, `pfs`) and censoring
+indicators (`os_event`, `pfs_event`) for both OS and PFS. There should
+also be a treatment label column (`TRTA`). Additional patient-level
+covariates can also be included. At present only age at event (`OSage`,
+`PFSage`) is used.
+
+This looks like this.
+
+``` r
+
+head(surv_input_data)
+```
+
+## Example
+
+First of all, attach all of the libraries we are going to need.
+
+``` r
+
+library(purrr)
+library(reshape2)
+library(dplyr)
+library(rstan)
+library(shinystan)
+library(dplyr)
+library(ggplot2)
+# library(multimcm)
+```
+
+For demonstration purposes we will select a single treatment and fit
+Exponential distributions to both OS and PFS.
+
+``` r
+
+i <-  "exp"
+k <- "exp"
+```
+
+To use the Stan engine we set some options to use all-but-one of the
+available cores and not to over-write pre-complied code.
+
+``` r
+
+rstan::rstan_options(auto_write = TRUE)
+options(mc.cores = parallel::detectCores() - 1)
+```
+
+Now we are ready to do the model fitting using
+[`bmcm_stan()`](https://statisticshealtheconomics.github.io/multimcm/reference/bmcm_stan.md).
+Key arguments are `formula` and `cureformula`. These define the two
+levels observed (incidence) and latent of the model, respectively. They
+employ the standard `R` formula syntax; For `formula` using the survival
+regression syntax and mixed effect syntax for `cureformula`. Other
+arguments can be set to their default values.
+
+``` r
+
+out <-
+  bmcm_stan(
+    input_data = input_data,
+    formula = "Surv(time=time, event=status) ~ 1",
+    cureformula = "~ treat + (1 | center_id)",
+    family_latent = "exponential",
+    # prior_cure = NA,
+    centre_coefs = TRUE,
+    bg_model = "bg_fixed",
+    bg_varname = "rate",
+    bg_hr = 1,
+    t_max = 400)
+```
+
+The `bg_model` is the background model. The current options are
+Exponential distribution (1) or empirical point estimates from WHO
+life-tables (2). If the former then the function uses a default prior.
+The remaining arguments are passed directly to the Stan engine for the
+HMC.
+
+- Finally, the remaining arguments are passed directly to the Stan
+  engine for the HMC.
+
+## Results
+
+There are several very good packages available to view Stan output,
+including `shinystan` and `coda`. Below we give some basic output
+specific to `multimcm`.
+
+### Output data
+
+We can view the raw output from running the Stan model using
+
+``` r
+
+res <- extract(stan_exp_exp)
+```
+
+The available posterior samples are
+
+``` r
+
+names(res)
+```
+
+- Parameters prefixed with `p` are prior predicted distribution samples.
+- Parameters prefixed with `lp_` (except `lp__`) are the linear
+  predictors used for the Exponential distributions rate parameters
+  `lambda_`.
+
+### Plots
+
+The function
+[`plot_S_joint()`](https://statisticshealtheconomics.github.io/multimcm/reference/plot_S_joint.md)
+takes a list of multiple Stan runs and creates `ggplot2` grid object of
+survival curves for cured, uncured and mixed with 95% credible
+intervals. In our example we simply create a list of one element.
+
+``` r
+
+stan_list <- list("IPILIMUMAB" = stan_exp_exp_IPI)
+gg <- plot_S_joint(stan_list = stan_list)
+```
+
+In addition, we overlay the Kaplan-Meier curves for the original data
+using the `survival` package. Note that this will always be slightly
+different since this is for the trial case-mix and the posterior
+survival curves are for the *average* patient.
+
+``` r
+
+library(survival)
+
+fit_os <- survfit(Surv(os, os_event) ~ 1,
+                  data = dplyr::filter(surv_input_data, TRTA == trta))
+fit_pfs <- survfit(Surv(pfs, pfs_event) ~ 1,
+                   data = dplyr::filter(surv_input_data, TRTA == trta))
+km_data <-
+  rbind(
+    data.frame(Tx = trta,
+               event_type = "os",
+               time = fit_os$time,
+               surv = fit_os$surv),
+    data.frame(Tx = trta,
+               event_type = "pfs",
+               time = fit_pfs$time,
+               surv = fit_pfs$surv))
+
+gg + geom_line(aes(x = time, y = surv),
+               data = km_data,
+               lwd = 1,
+               inherit.aes = FALSE) +
+  xlim(0, 60) + ylim(0, 1)
+```

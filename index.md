@@ -1,0 +1,48 @@
+# multimcm ![](reference/figures/hexbadge.png)
+
+> Multilevel mixture cure modelling in Stan
+
+The goal of `multimcm` is to jointly model two event time distributions
+(e.g. time to disease progression (PFS) and time to death (OS)) within a
+Bayesian relative survival mixture cure model framework, using the Stan
+engine called from R.
+
+## Installation
+
+You can install the development version from
+[GitHub](https://github.com/) with:
+
+``` r
+
+# install.packages("remotes")
+remotes::install_github("StatisticsHealthEconomics/multimcm")
+```
+
+## Motivation
+
+Mixture cure models are increasingly popular in health problems and in
+particular in oncology. A Bayesian paradigm allows the explicitly
+incorporation of uncertainties and principled synthesis of prior
+knowledge such as via expert elicitation or previous trials. By
+extending current methods to account for the dependence between event
+times we leverage additional information to make better inferences and
+decisions.
+
+## Example
+
+This package was originally written for this paper [Green
+(2025)](https://onlinelibrary.wiley.com/doi/10.1002/sim.70132).
+
+### Code of Conduct
+
+Please note that this project is released with a [Contributor Code of
+Conduct](https://contributor-covenant.org/version/2/0/CODE_OF_CONDUCT.html).
+By contributing to this project, you agree to abide by its terms.
+
+### References
+
+- Green, N., Kurt, M., Moshyk, A., Larkin, J. and Baio, G. (2025), A
+  Bayesian Hierarchical Mixture Cure Modelling Framework to Utilize
+  Multiple Survival Datasets for Long-Term Survivorship Estimates: A
+  Case Study From Previously Untreated Metastatic Melanoma. Statistics
+  in Medicine, 44: e70132. <https://doi.org/10.1002/sim.70132>

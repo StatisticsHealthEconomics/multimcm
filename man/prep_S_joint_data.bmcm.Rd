@@ -7,13 +7,29 @@
 \method{prep_S_joint_data}{bmcm}(bmcm_out, ...)
 }
 \arguments{
-\item{bmcm_out}{Output of Stan model}
+\item{bmcm_out}{Output list from the \code{bmcm_stan()} function.}
 
-\item{...}{Additional arguments}
+\item{...}{Additional arguments passed to methods.}
 }
 \value{
-data frame
+A data frame containing the summarized survival predictions.
 }
 \description{
-Prepare data for survival plot
+An internal/helper function used to extract and format survival predictions from a fitted \code{bmcm} model.
+It generates a long-format data frame containing the mean survival estimates and their credible intervals across time points.
+}
+\examples{
+\dontrun{
+data("surv_input_data", package = "multimcm")
+out <- bmcm_stan(
+  input_data = surv_input_data,
+  formula = "Surv(time=os, event=os_event) ~ 1",
+  cureformula = "~ TRTA",
+  family_latent = "exponential",
+  bg_model = "bg_fixed",
+  bg_varname = "rate"
+)
+plot_data <- prep_S_joint_data(out)
+head(plot_data)
+}
 }

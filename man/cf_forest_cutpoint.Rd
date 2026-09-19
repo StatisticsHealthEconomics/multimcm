@@ -12,19 +12,20 @@ cf_forest_cutpoint(
 )
 }
 \arguments{
-\item{distns}{List of distributions}
+\item{distns}{A list or character vector of distribution names used in the model fits.}
 
-\item{folder}{String of location to read in data from}
+\item{folder}{A string specifying the directory path containing the saved model output files.}
 
-\item{save_name}{File name appended text}
+\item{save_name}{A string or vector of text strings appended to the file names (e.g., specific cut-points).}
 
-\item{is_hier}{Is hierarchical model (or separate)? i.e. whether to use a global parameter}
+\item{is_hier}{Logical. Is it a hierarchical model? If \code{TRUE}, it accounts for a global grouping parameter.}
 }
 \value{
-A ggplot object
+A \code{ggplot2} object showing the cure fraction forest plot.
 }
 \description{
-Using all treatment Stan model.
+Generates a forest plot of the cure fractions for different treatments using Stan model outputs
+fitted with specific time cut-points. Useful for comparing cure probabilities across interventions.
 }
 \examples{
 \dontrun{

@@ -11,3 +11,4 @@ plots/
 ^cran-comments\.md$
 ^docs$
 ^test\.stan$
+^pkgdown$

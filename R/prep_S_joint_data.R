@@ -10,11 +10,29 @@ prep_S_joint_data <- function(bmcm_out, ...) {
 
 #' Prepare data for survival plot
 #'
-#' @param bmcm_out Output of Stan model
-#' @param ... Additional arguments
-#' @return data frame
+#' @description An internal/helper function used to extract and format survival predictions from a fitted \code{bmcm} model. 
+#' It generates a long-format data frame containing the mean survival estimates and their credible intervals across time points.
+#'
+#' @param bmcm_out Output list from the \code{bmcm_stan()} function.
+#' @param ... Additional arguments passed to methods.
+#' @return A data frame containing the summarized survival predictions.
 #' @importFrom glue glue
 #' @export
+#'
+#' @examples
+#' \dontrun{
+#' data("surv_input_data", package = "multimcm")
+#' out <- bmcm_stan(
+#'   input_data = surv_input_data,
+#'   formula = "Surv(time=os, event=os_event) ~ 1",
+#'   cureformula = "~ TRTA",
+#'   family_latent = "exponential",
+#'   bg_model = "bg_fixed",
+#'   bg_varname = "rate"
+#' )
+#' plot_data <- prep_S_joint_data(out)
+#' head(plot_data)
+#' }
 prep_S_joint_data.bmcm <- function(bmcm_out, ...) {
 
   S_stats <- list()

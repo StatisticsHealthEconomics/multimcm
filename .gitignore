@@ -52,3 +52,4 @@ data/dbl_cut/
 
 inst/stan/*.stan
 inst/stan/*.exe
+docs

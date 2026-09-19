@@ -8,7 +8,7 @@ Authors@R:
            role = c("aut", "cre"),
            comment = c(ORCID = "0000-0003-2745-1736", ROR = "052gg0110"))
 Description: Jointly models two event time distributions (e.g. time to disease progression and time to death) within a Bayesian relative survival mixture cure model framework, using the "Stan" engine called from 'R'. It extends current methods to account for the dependence between event times to leverage additional information to make better inferences and decisions.
-URL: https://github.com/StatisticsHealthEconomics/multimcm
+URL: https://github.com/StatisticsHealthEconomics/multimcm, https://statisticshealtheconomics.github.io/multimcm/
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true

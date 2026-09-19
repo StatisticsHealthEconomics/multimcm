@@ -1,16 +1,17 @@
 
 #' Cure fraction forest plot using cut-point Stan output
 #'
-#' Using all treatment Stan model.
+#' @description Generates a forest plot of the cure fractions for different treatments using Stan model outputs 
+#' fitted with specific time cut-points. Useful for comparing cure probabilities across interventions.
 #'
-#' @param distns List of distributions
-#' @param folder String of location to read in data from
-#' @param save_name File name appended text
-#' @param is_hier Is hierarchical model (or separate)? i.e. whether to use a global parameter
+#' @param distns A list or character vector of distribution names used in the model fits.
+#' @param folder A string specifying the directory path containing the saved model output files.
+#' @param save_name A string or vector of text strings appended to the file names (e.g., specific cut-points).
+#' @param is_hier Logical. Is it a hierarchical model? If \code{TRUE}, it accounts for a global grouping parameter.
 #'
 #' @import dplyr ggplot2 tidybayes purrr
 #'
-#' @return A ggplot object
+#' @return A \code{ggplot2} object showing the cure fraction forest plot.
 #' @export
 #'
 #' @examples

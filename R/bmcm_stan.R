@@ -24,6 +24,20 @@
 #' @param read_stan_code Logical. If `TRUE`, reads the Stan model code from a file instead of generating it dynamically. Default is `FALSE`.
 #' @param ... Additional parameters to pass to the Stan sampler.
 #'
+#' @examples
+#' \dontrun{
+#' data("surv_input_data", package = "multimcm")
+#' out <- bmcm_stan(
+#'   input_data = surv_input_data,
+#'   formula = "Surv(time=os, event=os_event) ~ 1",
+#'   cureformula = "~ TRTA + (1 | center_id)",
+#'   family_latent = "exponential",
+#'   bg_model = "bg_fixed",
+#'   bg_varname = "rate",
+#'   t_max = 400
+#' )
+#' }
+#'
 #' @return A list of class `bmcm` containing the Stan model output, MCMC parameters,
 #'    function call, distributions used, model inputs, input data, and formulas for the cure and latent components.
 #'

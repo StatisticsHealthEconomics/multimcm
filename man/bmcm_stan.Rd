@@ -65,3 +65,18 @@ function call, distributions used, model inputs, input data, and formulas for th
 Jointly estimates all treatments and generates Stan code for Bayesian relative mixture cure modeling.
 It supports various latent and cure model configurations and allows the use of precompiled models or on-the-fly compilation.
 }
+\examples{
+\dontrun{
+data("surv_input_data", package = "multimcm")
+out <- bmcm_stan(
+  input_data = surv_input_data,
+  formula = "Surv(time=os, event=os_event) ~ 1",
+  cureformula = "~ TRTA + (1 | center_id)",
+  family_latent = "exponential",
+  bg_model = "bg_fixed",
+  bg_varname = "rate",
+  t_max = 400
+)
+}
+
+}

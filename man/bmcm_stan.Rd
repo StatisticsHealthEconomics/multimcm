@@ -58,12 +58,23 @@ Supported values are \code{"exp"}, \code{"weibull"}, \code{"gompertz"}, \code{"l
 \item{...}{Additional parameters to pass to the Stan sampler.}
 }
 \value{
-A list of class \code{bmcm} containing the Stan model output, MCMC parameters,
-function call, distributions used, model inputs, input data, and formulas for the cure and latent components.
+An object of class \code{bmcm}, which is a list containing the following components:
+\itemize{
+\item \code{output}: The fitted Stan model object (either a \code{stanfit} object from \pkg{rstan} or a \code{CmdStanMCMC} object from \pkg{cmdstanr}).
+\item \code{mcmc_params}: A list of the MCMC sampling parameters used (e.g., iterations, warmup, chains).
+\item \code{call}: The matched call to the function.
+\item \code{distns}: A character vector of the latent survival distributions used.
+\item \code{inputs}: A list of the formatted data inputs passed directly to the Stan model.
+\item \code{input_data}: The original \code{input_data} data frame provided.
+\item \code{formula}: A list containing the parsed \code{cure} and \code{latent} model formulas.
+}
 }
 \description{
-Jointly estimates all treatments and generates Stan code for Bayesian relative mixture cure modeling.
-It supports various latent and cure model configurations and allows the use of precompiled models or on-the-fly compilation.
+Jointly models two or more event time distributions within a Bayesian relative survival
+mixture cure model framework. The function generates custom Stan code on-the-fly (or uses precompiled models)
+and estimates treatment effects simultaneously for both the cure fraction and the latent survival distributions.
+It allows for complex hierarchical structures in the cure fraction, background mortality adjustment,
+and multiple parametric families for the latent survival times (e.g., exponential, Weibull, Gompertz).
 }
 \examples{
 \dontrun{

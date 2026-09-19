@@ -1,9 +1,13 @@
 # bmcm_stan
 
-Jointly estimates all treatments and generates Stan code for Bayesian
-relative mixture cure modeling. It supports various latent and cure
-model configurations and allows the use of precompiled models or
-on-the-fly compilation.
+Jointly models two or more event time distributions within a Bayesian
+relative survival mixture cure model framework. The function generates
+custom Stan code on-the-fly (or uses precompiled models) and estimates
+treatment effects simultaneously for both the cure fraction and the
+latent survival distributions. It allows for complex hierarchical
+structures in the cure fraction, background mortality adjustment, and
+multiple parametric families for the latent survival times (e.g.,
+exponential, Weibull, Gompertz).
 
 ## Usage
 
@@ -108,9 +112,27 @@ bmcm_stan(
 
 ## Value
 
-A list of class `bmcm` containing the Stan model output, MCMC
-parameters, function call, distributions used, model inputs, input data,
-and formulas for the cure and latent components.
+An object of class `bmcm`, which is a list containing the following
+components:
+
+- `output`: The fitted Stan model object (either a `stanfit` object from
+  rstan or a `CmdStanMCMC` object from cmdstanr).
+
+- `mcmc_params`: A list of the MCMC sampling parameters used (e.g.,
+  iterations, warmup, chains).
+
+- `call`: The matched call to the function.
+
+- `distns`: A character vector of the latent survival distributions
+  used.
+
+- `inputs`: A list of the formatted data inputs passed directly to the
+  Stan model.
+
+- `input_data`: The original `input_data` data frame provided.
+
+- `formula`: A list containing the parsed `cure` and `latent` model
+  formulas.
 
 ## Examples
 

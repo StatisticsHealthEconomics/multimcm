@@ -4,8 +4,9 @@ pkgdown_sha: ~
 articles:
   cgd_analysis: cgd_analysis.html
   child-survival-in-brasil: child-survival-in-brasil.html
+  colon_cancer_example: colon_cancer_example.html
   how_to_use: how_to_use.html
-last_built: 2026-09-28T14:44Z
+last_built: 2026-09-28T15:31Z
 urls:
   reference: https://statisticshealtheconomics.github.io/multimcm/reference
   article: https://statisticshealtheconomics.github.io/multimcm/articles

@@ -1,10 +1,10 @@
 
 #' Prepare posterior survival data for plotting
 #'
-#' @param stan_extract
-#' @param event_type
-#' @param CI_probs
-#' @param tx_idx
+#' @param stan_extract List of stan output
+#' @param event_type String specifying event type
+#' @param CI_probs Numeric vector of credible interval probabilities
+#' @param tx_idx Numeric vector of treatment indices
 #' @return dataframe
 #'
 prep_S_data <- function(stan_extract,

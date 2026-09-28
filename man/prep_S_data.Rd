@@ -11,6 +11,15 @@ prep_S_data(
   tx_idx = NA
 )
 }
+\arguments{
+\item{stan_extract}{List of stan output}
+
+\item{event_type}{String specifying event type}
+
+\item{CI_probs}{Numeric vector of credible interval probabilities}
+
+\item{tx_idx}{Numeric vector of treatment indices}
+}
 \value{
 dataframe
 }

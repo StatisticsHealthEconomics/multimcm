@@ -1,13 +1,14 @@
 
 #' Cure fraction forest plot using Stan output
 #'
-#' Using all treatment Stan model.
+#' @description Generates a forest plot displaying the estimated cure fractions across all treatments 
+#' derived from the joint relative survival mixture cure model output.
 #'
-#' @param folder String of location directory
+#' @param folder A string specifying the directory path containing the saved Stan model output files.
 #'
 #' @import dplyr ggplot2 tidybayes purrr
 #'
-#' @return ggplot object
+#' @return A \code{ggplot2} object showing the cure fraction forest plot.
 #' @export
 #'
 #' @examples

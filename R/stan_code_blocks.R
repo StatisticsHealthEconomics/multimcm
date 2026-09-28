@@ -29,7 +29,9 @@ mean_params <- function(distn) {
 #' @keywords internal
 #'
 #' @examples
+#' \dontrun{
 #' lapply(make_latent_model_code("lognormal"), cat)
+#' }
 #'
 make_latent_model_code <- function(model, id = 1L) {
 

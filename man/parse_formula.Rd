@@ -7,7 +7,11 @@
 parse_formula(formula, data, family = NA)
 }
 \arguments{
-\item{family}{}
+\item{formula}{A formula object}
+
+\item{data}{A data frame}
+
+\item{family}{Family string}
 }
 \description{
 Parse formula

@@ -14,14 +14,17 @@ prep_latent_data(
 )
 }
 \arguments{
+\item{input_data}{Data frame}
+
 \item{formula_cure}{parsed formula}
 
 \item{formula_latent}{parsed formula}
 
 \item{event_type}{cluster/group}
 
-\item{centre_coefs}{Logical
-1: Exponential distribution; 2: fixed point values from life-table}
+\item{centre_coefs}{Logical}
+
+\item{suffix}{Logical}
 }
 \value{
 List consisting of:

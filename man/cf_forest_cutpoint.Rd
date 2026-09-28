@@ -12,23 +12,31 @@ cf_forest_cutpoint(
 )
 }
 \arguments{
-\item{folder}{String of location to read in data from}
+\item{distns}{A list or character vector of distribution names used in the model fits.}
 
-\item{save_name}{File name appended text}
+\item{folder}{A string specifying the directory path containing the saved model output files.}
 
-\item{is_hier}{Is hierarchical model (or separate)? i.e. whether to use a global parameter}
+\item{save_name}{A string or vector of text strings appended to the file names (e.g., specific cut-points).}
+
+\item{is_hier}{Logical. Is it a hierarchical model? If \code{TRUE}, it accounts for a global grouping parameter.}
+}
+\value{
+A \code{ggplot2} object showing the cure fraction forest plot.
 }
 \description{
-Using all treatment Stan model.
+Generates a forest plot of the cure fractions for different treatments using Stan model outputs
+fitted with specific time cut-points. Useful for comparing cure probabilities across interventions.
 }
 \examples{
 \dontrun{
  # independent model
  fp_sep <- cf_forest_cutpoint(folder = "data/dbl_cut/separate", save_name = c("_30", "_12", "_100"))
- #ggsave(fp_sep, filename = "plots/forest_plot_cf_sep_cpt.png", dpi = 640, width = 16, height = 14)
+ #ggsave(fp_sep, filename = "plots/forest_plot_cf_sep_cpt.png",
+ #       dpi = 640, width = 16, height = 14)
 
  # hierarchical model
  fp_hier <- cf_forest_cutpoint(folder = "data/dbl_cut/hier", save_name = c("_30", "_12", "_100"))
- #ggsave(fp_hier, filename = "plots/forest_plot_cf_hier_cpt.png", dpi = 640, width = 16, height = 14)
+ #ggsave(fp_hier, filename = "plots/forest_plot_cf_hier_cpt.png",
+ #       dpi = 640, width = 16, height = 14)
 }
 }

@@ -3,18 +3,18 @@
 #'
 #' Background hazard point values.
 #'
-#' @param input_data
-#' @param bg_varname
-#' @param formula_cure
-#' @param event_type
-#' @param suffix
-#'
+#' @param input_data Data frame
+#' @param bg_varname String for background variable name
+#' @param formula_cure Parsed formula list
+#' @param event_type String specifying event type
+#' @param suffix Logical indicating whether to append suffix
+#' @return A list with background data
 prep_bg_data <- function(input_data,
                          bg_varname,
                          formula_cure,
                          event_type,
                          suffix = TRUE) {
-  dat <- filter(
+  dat <- dplyr::filter(
     input_data, !!sym(formula_cure$group_var) == event_type)
 
   # append unique id

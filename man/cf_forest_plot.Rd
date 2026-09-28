@@ -7,13 +7,14 @@
 cf_forest_plot(folder = "data/")
 }
 \arguments{
-\item{folder}{String of location directory}
+\item{folder}{A string specifying the directory path containing the saved Stan model output files.}
 }
 \value{
-ggplot object
+A \code{ggplot2} object showing the cure fraction forest plot.
 }
 \description{
-Using all treatment Stan model.
+Generates a forest plot displaying the estimated cure fractions across all treatments
+derived from the joint relative survival mixture cure model output.
 }
 \examples{
 \dontrun{

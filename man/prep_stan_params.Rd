@@ -7,6 +7,11 @@
 \usage{
 default_prior_latent(formula_latent, formula_cure)
 }
+\arguments{
+\item{formula_latent}{Formula for latent}
+
+\item{formula_cure}{Formula for cure fraction}
+}
 \value{
 hyper-parameters
 }

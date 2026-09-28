@@ -3,12 +3,12 @@
 #'
 #' Data specific to end type for Stan input.
 #'
-#' @param input_data
+#' @param input_data Data frame
 #' @param formula_cure parsed formula
 #' @param formula_latent parsed formula
 #' @param event_type cluster/group
 #' @param centre_coefs Logical
-#'    1: Exponential distribution; 2: fixed point values from life-table
+#' @param suffix Logical
 #'
 #' @return List consisting of:
 #'         sample size,
@@ -28,7 +28,7 @@ prep_latent_data <- function(input_data,
   # one endpoint only
   dat <-
     input_data |>
-    filter(!!sym(formula_cure$group_var) == event_type) |>
+    dplyr::filter(!!sym(formula_cure$group_var) == event_type) |>
     arrange(!!sym(formula_cure$fe_vars[1]))
 
   # centre variables

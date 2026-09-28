@@ -1,7 +1,14 @@
-^rstanbmcm\.Rproj$
+^multimcm\.Rproj$
 ^\.Rproj\.user$
 ^README\.Rmd$
 data/
 plots/
 ^\.github$
 ^LICENSE\.md$
+^doc$
+^Meta$
+^_pkgdown\.yml$
+^cran-comments\.md$
+^docs$
+^test\.stan$
+^pkgdown$

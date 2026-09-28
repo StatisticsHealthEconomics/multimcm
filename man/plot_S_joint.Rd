@@ -14,26 +14,44 @@ plot_S_joint(
 )
 }
 \arguments{
-\item{facet}{Two separate plots for each end point or overlaid?}
+\item{bmcm_out}{bmcm class output list, as returned by \code{bmcm_stan()}}
 
-\item{annot_cf}{Annotate with cure fractions? Logical}
+\item{facet}{Logical. Should the plots for each endpoint be separated into facets? Default is \code{TRUE}.}
 
-\item{add_km}{Include Kaplan-Meier layer? Logical}
+\item{annot_cf}{Logical. Annotate the plot with the cure fractions? Default is \code{FALSE}.}
 
-\item{add_marks}{Kaplan-Meier censoring marks; logical}
+\item{add_km}{Logical. Include an overlaid Kaplan-Meier curve of the raw data? Default is \code{FALSE}.}
 
-\item{...}{Additional parameters}
+\item{add_marks}{Logical. Include Kaplan-Meier censoring marks? Default is \code{TRUE}.}
 
-\item{out}{bmcm class output list}
+\item{...}{Additional parameters passed to the plotting function.}
 }
 \value{
-ggplot object
+A \code{ggplot2} object showing the survival curves.
 }
 \description{
+Generates a plot of the survival curves for the joint relative survival mixture cure model,
+overlaying the predicted survival probabilities and (optionally) the original Kaplan-Meier curves for all treatments.
+}
+\details{
 Use results of running Stan with \code{bmcm_stan()}
 relative survival joint mixture cure model.
 }
 \examples{
-load("data/file_names.RData")
+\dontrun{
+data("surv_input_data", package = "multimcm")
 
+out <- bmcm_stan(
+  input_data = surv_input_data,
+  formula = "Surv(time=os, event=os_event) ~ 1",
+  cureformula = "~ TRTA + (1 | center_id)",
+  family_latent = "exponential",
+  bg_model = "bg_fixed",
+  bg_varname = "rate"
+)
+
+# Generate the survival plot, facetting by endpoint
+surv_plot <- plot_S_joint(out, facet = TRUE, add_km = TRUE)
+print(surv_plot)
+}
 }

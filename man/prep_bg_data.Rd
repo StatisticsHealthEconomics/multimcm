@@ -7,7 +7,18 @@
 prep_bg_data(input_data, bg_varname, formula_cure, event_type, suffix = TRUE)
 }
 \arguments{
-\item{suffix}{}
+\item{input_data}{Data frame}
+
+\item{bg_varname}{String for background variable name}
+
+\item{formula_cure}{Parsed formula list}
+
+\item{event_type}{String specifying event type}
+
+\item{suffix}{Logical indicating whether to append suffix}
+}
+\value{
+A list with background data
 }
 \description{
 Background hazard point values.

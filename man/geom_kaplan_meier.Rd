@@ -6,6 +6,13 @@
 \usage{
 geom_kaplan_meier(out_dat, col = "black", add_marks = TRUE)
 }
+\arguments{
+\item{out_dat}{bmcm class output list}
+
+\item{col}{colour string}
+
+\item{add_marks}{logical}
+}
 \description{
 Geom for Kaplan-Meier ggplot
 }

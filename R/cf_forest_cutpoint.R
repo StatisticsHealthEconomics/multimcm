@@ -1,26 +1,30 @@
 
 #' Cure fraction forest plot using cut-point Stan output
 #'
-#' Using all treatment Stan model.
+#' @description Generates a forest plot of the cure fractions for different treatments using Stan model outputs 
+#' fitted with specific time cut-points. Useful for comparing cure probabilities across interventions.
 #'
-#' @param folder String of location to read in data from
-#' @param save_name File name appended text
-#' @param is_hier Is hierarchical model (or separate)? i.e. whether to use a global parameter
+#' @param distns A list or character vector of distribution names used in the model fits.
+#' @param folder A string specifying the directory path containing the saved model output files.
+#' @param save_name A string or vector of text strings appended to the file names (e.g., specific cut-points).
+#' @param is_hier Logical. Is it a hierarchical model? If \code{TRUE}, it accounts for a global grouping parameter.
 #'
-#' @import dplyr ggplot2 tidybayes purrr epicontacts adegenet
+#' @import dplyr ggplot2 tidybayes purrr
 #'
-#' @return
+#' @return A \code{ggplot2} object showing the cure fraction forest plot.
 #' @export
 #'
 #' @examples
 #' \dontrun{
 #'  # independent model
 #'  fp_sep <- cf_forest_cutpoint(folder = "data/dbl_cut/separate", save_name = c("_30", "_12", "_100"))
-#'  #ggsave(fp_sep, filename = "plots/forest_plot_cf_sep_cpt.png", dpi = 640, width = 16, height = 14)
+#'  #ggsave(fp_sep, filename = "plots/forest_plot_cf_sep_cpt.png",
+#'  #       dpi = 640, width = 16, height = 14)
 #'
 #'  # hierarchical model
 #'  fp_hier <- cf_forest_cutpoint(folder = "data/dbl_cut/hier", save_name = c("_30", "_12", "_100"))
-#'  #ggsave(fp_hier, filename = "plots/forest_plot_cf_hier_cpt.png", dpi = 640, width = 16, height = 14)
+#'  #ggsave(fp_hier, filename = "plots/forest_plot_cf_hier_cpt.png",
+#'  #       dpi = 640, width = 16, height = 14)
 #' }
 cf_forest_cutpoint <- function(distns = list(c("exp", "exp"),
                                              c("lognormal", "lognormal")),
@@ -31,8 +35,8 @@ cf_forest_cutpoint <- function(distns = list(c("exp", "exp"),
 
   for (cpt in save_name) {
     for (d in distns) {
-      i <- d[1]; print(i)
-      j <- d[2]; print(j)
+      i <- d[1]; message(i)
+      j <- d[2]; message(j)
 
       dist_names <- paste(i,j)
 

@@ -342,11 +342,24 @@ real rmst_loglogistic (real scale, real shape, real tmax) {
 
 //TODO
 // // median survival time
-// real median_surv_loglogistic (real scale, real shape) {
-//   real tmed;
-//   tmed = ;
-//   return tmed;
-// }
+// median survival time
+real median_surv_loglogistic (real shape, real scale) {
+  real tmed;
+  tmed = scale;
+  return tmed;
+}
+
+// median survival time for cure fraction model
+real median_surv_cf_loglogistic (real shape, real scale, real cf) {
+  real tmed;
+  real p_star = (0.5 - cf) / (1 - cf);
+  if (p_star <= 0) {
+    tmed = positive_infinity();
+  } else {
+    tmed = scale * pow((1 - p_star)/p_star, 1/shape);
+  }
+  return tmed;
+}
 
 
 /**
@@ -412,12 +425,17 @@ real surv_gengamma_lpdf(real t, real d, real mu, real sigma, real Q) {
 }
 
 //TODO:
-// real gengamma_rng(real t, real mu, real sigma, real Q) {
-//
-//   u = uniform_rng(0, 1)
-//   gengamma_Surv()
-//
-// }
+// median survival time
+real median_surv_gengamma (real mu, real scale, real Q) {
+  // Not analytically tractable without inverse gamma CDF
+  return not_a_number();
+}
+
+// median survival time for cure fraction model
+real median_surv_cf_gengamma (real mu, real scale, real Q, real cf) {
+  // Not analytically tractable without inverse gamma CDF
+  return not_a_number();
+}
 
 
 /**

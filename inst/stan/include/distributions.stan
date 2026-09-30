@@ -334,10 +334,9 @@ real surv_loglogistic_lpdf (real t, real d, real scale, real shape) {
 }
 
 // restricted mean survival time
-real rmst_loglogistic (real scale, real shape, real tmax) {
-  real rmst;
-  rmst = exp(-scale/shape) * inc_beta(exp(scale)*tmax^shape/(1 + exp(scale)*tmax^shape), 1 + 1/shape, 1 - 1/shape) + tmax*1/(1 + exp(scale)*tmax^shape);
-  return rmst;
+real rmst_loglogistic (real shape, real scale, real tmax) {
+  // Not implemented robustly in Stan
+  return not_a_number();
 }
 
 //TODO
@@ -381,16 +380,21 @@ real gengamma_lpdf(real t, real mu, real sigma, real Q) {
 }
 
 // flexsurv alternative parameters given
+// flexsurv alternative parameters given
 real gengamma_Surv(real t, real mu, real sigma, real Q) {
   real Surv;
   real w = (log(t) - mu) / sigma;
-  real qq = 1/(Q * Q);                    // shape (gamma)
-  real expnu = exp(abs(Q) * w) * qq;      // u
 
   if (Q == 0) {
     Surv = 1 - normal_cdf(w | 0, 1);
   } else {
-    Surv =  1 - gamma_cdf(expnu | qq, 1);
+    real qq = 1/(Q * Q);                    // shape (gamma)
+    real expnu = exp(Q * w) * qq;           // u
+    if (Q > 0) {
+      Surv =  1 - gamma_cdf(expnu | qq, 1);
+    } else {
+      Surv = gamma_cdf(expnu | qq, 1);
+    }
   }
   return Surv;
 }
@@ -414,14 +418,14 @@ real gengamma_haz(real t, real mu, real sigma, real Q) {
 }
 
 real surv_gengamma_lpdf(real t, real d, real mu, real sigma, real Q) {
-  // rescale the distribution accounting for right censoring
-  real prob;
-  real w;
-  real tr;
-  tr = t * d;
-  w = (log(tr) - mu)/sigma;
-  prob = log(d) - log(sigma*tr) + log(abs(Q)) + pow(Q, -2)*log(pow(Q, -2)) + pow(Q, -2)*(Q*w - exp(Q*w)) - lgamma(pow(Q, -2));
-  return prob;
+  real log_lik;
+  log_lik = d * gengamma_log_h(t, mu, sigma, Q) + gengamma_log_S(t, mu, sigma, Q);
+  return log_lik;
+}
+
+// restricted mean survival time
+real rmst_gengamma (real mu, real scale, real Q, real tmax) {
+  return not_a_number();
 }
 
 //TODO:

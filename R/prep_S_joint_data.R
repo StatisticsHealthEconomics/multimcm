@@ -152,7 +152,7 @@ stan_extract <- function(bmcm_out, pattern = "") {
     samples_df <-
       lapply(samples_df, function(x) {
         drop_cols <- colnames(x) %in% c(".chain", ".iteration", ".draw")
-        x[, !drop_cols]
+        suppressWarnings(x[, !drop_cols])
       })
 
     param_names <- grep(pattern, names(samples_df), value = TRUE)

@@ -82,7 +82,11 @@ real median_surv_exp (real rate) {
 real median_surv_cf_exp (real rate, real cf) {
   real tmed;
   real p_star = (0.5 - cf) / (1 - cf);
-  tmed = -log(p_star)/rate;
+  if (p_star <= 0) {
+    tmed = positive_infinity();
+  } else {
+    tmed = -log(p_star)/rate;
+  }
   return tmed;
 }
 
@@ -162,7 +166,11 @@ real median_surv_weibull (real shape, real scale) {
 real median_surv_cf_weibull (real shape, real scale, real cf) {
   real tmed;
   real p_star = (0.5 - cf) / (1 - cf);
-  tmed = scale * pow(-log(p_star), 1/shape);
+  if (p_star <= 0) {
+    tmed = positive_infinity();
+  } else {
+    tmed = scale * pow(-log(p_star), 1/shape);
+  }
   return tmed;
 }
 
@@ -253,7 +261,11 @@ real median_surv_gompertz (real scale, real shape) {
 real median_surv_cf_gompertz (real scale, real shape, real cf) {
   real tmed;
   real p_star = (0.5 - cf) / (1 - cf);
-  tmed = 1/shape * log(-log(p_star)*shape/scale + 1);
+  if (p_star <= 0) {
+    tmed = positive_infinity();
+  } else {
+    tmed = 1/shape * log(-log(p_star)*shape/scale + 1);
+  }
   return tmed;
 }
 
@@ -478,7 +490,11 @@ real median_surv_lognormal (real mu, real sigma) {
 real median_surv_cf_lognormal (real mu, real sigma, real cf) {
   real tmed;
   real p_star = (0.5 - cf) / (1 - cf);
-  tmed = exp(mu + sigma * inv_Phi(1 - p_star));
+  if (p_star <= 0) {
+    tmed = positive_infinity();
+  } else {
+    tmed = exp(mu + sigma * inv_Phi(1 - p_star));
+  }
   return tmed;
 }
 

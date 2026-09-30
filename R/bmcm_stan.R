@@ -224,10 +224,20 @@ compile_model <- function(use_cmdstanr,
         compile = TRUE,
         dir = file_path))
   } else {
-    # Suppress rstan C++ compiler warnings temporarily
-    old_cxx <- Sys.getenv("CXX14FLAGS")
-    Sys.setenv(CXX14FLAGS = paste(old_cxx, "-Wno-overloaded-virtual -Wno-ignored-attributes -Wno-deprecated-declarations"))
-    on.exit(Sys.setenv(CXX14FLAGS = old_cxx), add = TRUE)
+    # Suppress rstan C++ compiler warnings temporarily for all possible C++ standards
+    old_cxx14 <- Sys.getenv("CXX14FLAGS")
+    old_cxx17 <- Sys.getenv("CXX17FLAGS")
+    old_cxx <- Sys.getenv("CXXFLAGS")
+    suppress_flags <- "-Wno-overloaded-virtual -Wno-ignored-attributes -Wno-deprecated-declarations"
+    Sys.setenv(CXX14FLAGS = paste(old_cxx14, suppress_flags))
+    Sys.setenv(CXX17FLAGS = paste(old_cxx17, suppress_flags))
+    Sys.setenv(CXXFLAGS = paste(old_cxx, suppress_flags))
+    
+    on.exit({
+      Sys.setenv(CXX14FLAGS = old_cxx14)
+      Sys.setenv(CXX17FLAGS = old_cxx17)
+      Sys.setenv(CXXFLAGS = old_cxx)
+    }, add = TRUE)
 
     out <- rstan::stan_model(model_code = model_code, model_name = model_name)
     saveRDS(out, file = glue::glue("{file_path}/{model_name}.RDS"))

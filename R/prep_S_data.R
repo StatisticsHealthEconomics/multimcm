@@ -47,16 +47,19 @@ prep_S_data <- function(stan_extract,
     S_dat <-
       list(
         t(S_pred_extract) |>
+          as.data.frame() |>
           as_tibble() |>
           rbind(1, ... = _) |>
           mutate(time = 0:(n() - 1),
                  type = S_pred),
         t(S_0_extract) |>
+          as.data.frame() |>
           as_tibble() |>
           rbind(1, ... = _) |>
           mutate(time = 0:(n() - 1),
                  type = S_0),
         t(S_bg_extract) |>
+          as.data.frame() |>
           as_tibble() |>
           rbind(1, ... = _) |>
           mutate(time = 0:(n() - 1),
@@ -68,9 +71,9 @@ prep_S_data <- function(stan_extract,
       do.call(rbind, args = _) |>
       melt(id.vars = c("time", "type")) |>
       group_by(time, type)  |>
-      summarise(mean = mean(value),
-                lower = quantile(value, probs = CI_probs[1]),
-                upper = quantile(value, probs = CI_probs[3])) |>
+      summarise(mean = mean(value, na.rm = TRUE),
+                lower = quantile(value, probs = CI_probs[1], na.rm = TRUE),
+                upper = quantile(value, probs = CI_probs[3], na.rm = TRUE)) |>
       mutate(Tx = i)
   }
 

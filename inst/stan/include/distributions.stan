@@ -468,17 +468,17 @@ real rmst_lognormal (real mu, real sigma, real tmax) {
 }
 
 // median survival time
-real median_surv_lognormal (real mu) {
+real median_surv_lognormal (real mu, real sigma) {
   real tmed;
   tmed = exp(mu);
   return tmed;
 }
 
 // median survival time for cure fraction model
-real median_surv_cf_lognormal (real mu, real cf) {
+real median_surv_cf_lognormal (real mu, real sigma, real cf) {
   real tmed;
   real p_star = (0.5 - cf) / (1 - cf);
-  tmed = exp(mu);
+  tmed = exp(mu + sigma * inv_Phi(1 - p_star));
   return tmed;
 }
 

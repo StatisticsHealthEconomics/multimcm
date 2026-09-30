@@ -224,6 +224,11 @@ compile_model <- function(use_cmdstanr,
         compile = TRUE,
         dir = file_path))
   } else {
+    # Suppress rstan C++ compiler warnings temporarily
+    old_cxx <- Sys.getenv("CXX14FLAGS")
+    Sys.setenv(CXX14FLAGS = paste(old_cxx, "-Wno-overloaded-virtual -Wno-ignored-attributes -Wno-deprecated-declarations"))
+    on.exit(Sys.setenv(CXX14FLAGS = old_cxx), add = TRUE)
+
     out <- rstan::stan_model(model_code = model_code, model_name = model_name)
     saveRDS(out, file = glue::glue("{file_path}/{model_name}.RDS"))
 

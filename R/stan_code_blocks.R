@@ -219,7 +219,7 @@ create_cf_code <- function(n_grp) {
            "\n} else if (cf_model == 2) {\n",
            cglue_data(ids, "\t alpha_{id} ~ normal(mu_alpha_{id}, sigma_alpha_{id});\n"),
            "\n} else {\n",
-           "\t cf_pooled ~ beta(a_cf, b_cf);\n",
+           "\t cf_pooled ~ beta(a_cf[1], b_cf[1]);\n",
            "}\n")
 
   scode$generated_quantities <-
@@ -255,7 +255,7 @@ create_code_skeleton <- function(n_grp) {
     paste0(
       paste("// coefficients in linear predictor (including intercept)\n",
             "vector[bg_model == 1 ? H_1 : 0] beta_bg;\n",
-            "vector[cf_model != 2 ? nTx : 0] alpha;\n", collapse = "\n"),
+            "vector[cf_model == 3 ? nTx : 0] alpha;\n", collapse = "\n"),
       cglue_data(ids, "vector[cf_model == 2 ? nTx : 0] alpha_{id};
                       vector[H_{id}] beta_{id};\n"), collapse = "\n")
 

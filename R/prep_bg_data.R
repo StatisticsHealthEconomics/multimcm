@@ -14,8 +14,10 @@ prep_bg_data <- function(input_data,
                          formula_cure,
                          event_type,
                          suffix = TRUE) {
-  dat <- dplyr::filter(
-    input_data, !!sym(formula_cure$group_var) == event_type)
+  dat <- input_data
+  if (!is.na(formula_cure$group_var)) {
+    dat <- dplyr::filter(dat, !!sym(formula_cure$group_var) == event_type)
+  }
 
   # append unique id
   if (suffix && !identical(event_type, ""))

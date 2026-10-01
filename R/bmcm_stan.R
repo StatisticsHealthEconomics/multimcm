@@ -291,8 +291,8 @@ get_stan_defaults <- function(use_cmdstanr, dots) {
   if (use_cmdstanr) {
     return(
       modifyList(
-        list(iter_warmup = 100,
-             iter_sampling = 500,
+        list(iter_warmup = 1000,
+             iter_sampling = 1000,
              save_warmup = FALSE,
              thin = 1,
              chains = 1,
@@ -304,8 +304,8 @@ get_stan_defaults <- function(use_cmdstanr, dots) {
   } else {
     return(
       modifyList(
-        list(warmup = 100,
-             iter = 500,
+        list(warmup = 1000,
+             iter = 2000,
              thin = 1,
              chains = 1,
              control = list(

@@ -52,8 +52,17 @@ parse_formula <- function(formula, data, family = NA) {
 
   fe_nlevels <- apply(mf[, fe_vars, drop=FALSE], 2, \(x) nlevels(as.factor(x)))
 
-  n_groups <- if (is_hier(nlist(bars))) {re_nlevels[1]} else {fe_nlevels[2]}
-  group_var <- if (is_hier(nlist(bars))) {re_parts$re_group_var} else {fe_vars[2]}
+  n_groups <-
+    if (is_hier(nlist(bars))) {
+      re_nlevels[1]
+    } else {
+      if (length(fe_nlevels) >= 2) fe_nlevels[2] else 1}
+
+  group_var <-
+    if (is_hier(nlist(bars))) {
+      re_parts$re_group_var
+    } else {
+      if (length(fe_vars) >= 2) fe_vars[2] else NA}
 
   c(nlist(
     formula,

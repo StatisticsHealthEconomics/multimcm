@@ -75,10 +75,7 @@ bmcm_stan <- function(input_data,
                       use_cmdstanr = FALSE,
                       ...) {
   call <- match.call()
-  rtn_wd <- getwd()
-  new_wd <- system.file("stan", package = "multimcm")
-  setwd(new_wd)
-  on.exit(setwd(rtn_wd), add = TRUE)
+  stan_dir <- system.file("stan", package = "multimcm")
 
   dots <- list(...)
 
@@ -211,18 +208,19 @@ compile_model <- function(use_cmdstanr,
                           model_code, model_name,
                           file_path = NA) {
   if (is.na(file_path)) {
-    file_path <- "."
+    file_path <- tempdir()
   }
 
   if (use_cmdstanr) {
     model_path <-
       cmdstanr::write_stan_file(
-        model_code, dir = ".", basename = model_name)
+        model_code, dir = file_path, basename = model_name)
     return(
       cmdstanr::cmdstan_model(
         stan_file = model_path,
         compile = TRUE,
-        dir = file_path))
+        dir = file_path,
+        include_paths = system.file("stan", package = "multimcm")))
   } else {
     # Suppress rstan C++ compiler warnings temporarily for all possible C++ standards
     old_cxx14 <- Sys.getenv("CXX14FLAGS")
@@ -239,7 +237,7 @@ compile_model <- function(use_cmdstanr,
       Sys.setenv(CXXFLAGS = old_cxx)
     }, add = TRUE)
 
-    out <- rstan::stan_model(model_code = model_code, model_name = model_name)
+    out <- rstan::stan_model(model_code = model_code, model_name = model_name, isystem = system.file("stan", package = "multimcm"))
     saveRDS(out, file = glue::glue("{file_path}/{model_name}.RDS"))
 
     return(out)

@@ -14,7 +14,7 @@
 #' @param cureformula An R formula object specifying the cure fraction model component. Default is `~ 1`.
 #' @param endpoint_var A string specifying the column in `input_data` that defines the endpoints. If provided, the package correctly identifies the endpoint grouping separately from the cure formula, allowing single shared cure fractions across multiple endpoints. Default is `NULL`.
 #' @param family_latent A string or vector specifying the distribution(s) for the latent model component.
-#'    Supported values are `"exp"`, `"weibull"`, `"gompertz"`, `"lognormal"`, `"loglogistic"`, and `"gengamma"`.
+#'    Supported values are `"exponential"`, `"weibull"`, `"gompertz"`, `"lognormal"`, `"loglogistic"`, and `"gengamma"`.
 #' @param prior_latent An optional prior specification for the latent model component. Default is `NA`.
 #' @param prior_cure An optional list specifying priors for the cure fraction model component. Default is an empty list.
 #' @param centre_coefs Logical. If `TRUE`, coefficients will be centered. Default is `FALSE`.

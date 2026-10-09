@@ -160,18 +160,22 @@ Alternatively, we can pass in a _precompiled_ model, rather than have the model 
 model_nm <- "precompiled_stan_model"
 
 # create the precompiled model and save as .RDS file
+tmp_dir <- tempdir()
 precompile_bmcm_model(input_data = input_data,
                       cureformula =  "~ treat + (1 | center_id)",
                       family_latent = "lognormal",
                       # family_latent = "exponential",
                       model_name = model_nm,
-                      use_cmdstanr = TRUE)
+                      use_cmdstanr = TRUE,
+                      file_path = tmp_dir)
 ```
 
 Now, load back in the compiled model and fit as before.
 
 ```{r precompiled_bmcm_stan-by-center, warning=FALSE, message=FALSE}
-model_path <- glue::glue("{system.file('stan', package = 'multimcm')}/{model_nm}.exe")
+# For Windows, cmdstanr creates a .exe file
+exe_ext <- if (Sys.info()[["sysname"]] == "Windows") ".exe" else ""
+model_path <- file.path(tmp_dir, paste0(model_nm, exe_ext))
 
 out_precompiled <-
   bmcm_stan(

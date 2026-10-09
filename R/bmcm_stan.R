@@ -35,7 +35,7 @@
 #'   input_data = surv_input_data,
 #'   formula = "Surv(time=os, event=os_event) ~ 1",
 #'   cureformula = "~ TRTA + (1 | center_id)",
-#'   endpoint_var = "endpoint",
+#'   endpoint_var = "center_id",
 #'   family_latent = "exponential",
 #'   bg_model = "bg_fixed",
 #'   bg_varname = "rate",

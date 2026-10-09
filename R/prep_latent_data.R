@@ -30,7 +30,14 @@ prep_latent_data <- function(input_data,
   if (!is.na(formula_cure$group_var)) {
     dat <- dplyr::filter(dat, !!sym(formula_cure$group_var) == event_type)
   }
-  dat <- arrange(dat, !!sym(formula_cure$fe_vars[1]))
+  tx_name <- formula_cure$tx_var
+
+  if (!is.na(tx_name)) {
+    dat <- arrange(dat, !!sym(tx_name))
+    n_tx_group <- array(table(dat[[tx_name]]))
+  } else {
+    n_tx_group <- array(nrow(dat))
+  }
 
   # centre variables
   if (centre_coefs) {
@@ -52,11 +59,9 @@ prep_latent_data <- function(input_data,
   time_var <- toString(formula_latent$lhs$time)
   event_var <- toString(formula_latent$lhs$event)
 
-  tx_name <- formula_cure$fe_vars[1]
-
   stan_data <- list(
     N = nrow(dat),                         # total size
-    n = array(table(dat[[tx_name]])),      # group size by treatment
+    n = n_tx_group,                        # group size by treatment
     t = unname(unlist(dat[, time_var])),
     d = unname(unlist(dat[, event_var])),  # censoring indicator
     H = ncol(X_mat),

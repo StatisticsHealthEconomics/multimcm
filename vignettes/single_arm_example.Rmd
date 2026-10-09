@@ -1,0 +1,100 @@
+---
+title: "Single Arm Trials and Shared Cure Fractions"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Single Arm Trials and Shared Cure Fractions}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+This vignette demonstrates how to handle single-arm trial scenarios, and how to utilize the `endpoint_var` argument to decouple the endpoint grouping from the cure fraction formula.
+
+## The `endpoint_var` argument
+
+In earlier versions, `multimcm` deduced the endpoint grouping variable based strictly on its position in the `cureformula`. This made it impossible to specify models like:
+1. A single-arm trial with multiple endpoints.
+2. A single shared cure fraction across multiple endpoints.
+
+By using the `endpoint_var` argument, you can explicitly define which column splits the data into multiple survival endpoints, freeing up `cureformula` to model the cure fraction exactly as you want.
+
+### Setup Dummy Data
+
+Let's create a dummy single-arm dataset with two endpoints:
+
+```{r setup, message=FALSE}
+library(multimcm)
+
+set.seed(123)
+single_arm_data <- data.frame(
+  os = rexp(100, 0.1),
+  os_event = sample(0:1, 100, replace=TRUE),
+  endpoint_type = sample(c("PFS", "OS"), 100, replace=TRUE),
+  bg_rate = 0.01
+)
+```
+
+## Scenario 1: Single Shared Cure Fraction
+
+If you want a single, pooled cure fraction across all endpoints in a single-arm trial, you just omit the endpoint variable from the `cureformula`.
+
+Because we specify `endpoint_var = "endpoint_type"`, the package knows to jointly model two separate survival distributions, but it will estimate a single `cf_pooled` applied to both!
+
+```{r shared-cf, eval=FALSE}
+out_shared <- bmcm_stan(
+  input_data = single_arm_data,
+  formula = "Surv(time=os, event=os_event) ~ 1",
+  cureformula = ~ 1,                        # ~ 1 indicates a single shared cure fraction
+  endpoint_var = "endpoint_type",           # Explicitly tell the package the grouping variable
+  family_latent = "exponential",
+  bg_model = "bg_fixed",
+  bg_varname = "bg_rate",
+  t_max = 400
+)
+
+# You can plot the joint survival:
+# plot_S_joint(out_shared)
+```
+
+## Scenario 2: Separate Cure Fractions per Endpoint
+
+If you believe the cure fraction varies by endpoint, include the endpoint variable as a fixed effect in the `cureformula`. 
+
+```{r separate-cf, eval=FALSE}
+out_separate <- bmcm_stan(
+  input_data = single_arm_data,
+  formula = "Surv(time=os, event=os_event) ~ 1",
+  cureformula = ~ endpoint_type,            # ~ endpoint_type indicates separate cure fractions
+  endpoint_var = "endpoint_type",           # Still required to explicitly define the groups
+  family_latent = "exponential",
+  bg_model = "bg_fixed",
+  bg_varname = "bg_rate",
+  t_max = 400
+)
+```
+
+## Scenario 3: Multiple Arms
+
+If you have a traditional multi-arm trial and want to explicitly use `endpoint_var`, the treatment variable simply becomes any fixed effect in `cureformula` that is *not* the endpoint.
+
+```{r multi-arm, eval=FALSE}
+multi_arm_data <- single_arm_data
+multi_arm_data$treatment <- sample(c("A", "B"), 100, replace=TRUE)
+
+out_multi <- bmcm_stan(
+  input_data = multi_arm_data,
+  formula = "Surv(time=os, event=os_event) ~ 1",
+  cureformula = ~ treatment + endpoint_type, 
+  endpoint_var = "endpoint_type",           
+  family_latent = "exponential",
+  bg_model = "bg_fixed",
+  bg_varname = "bg_rate",
+  t_max = 400
+)
+```

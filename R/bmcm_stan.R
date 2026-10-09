@@ -12,6 +12,7 @@
 #' @param input_data A long-format data frame containing the input data.
 #' @param formula An R formula object specifying the latent model component.
 #' @param cureformula An R formula object specifying the cure fraction model component. Default is `~ 1`.
+#' @param endpoint_var A string specifying the column in `input_data` that defines the endpoints. If provided, the package correctly identifies the endpoint grouping separately from the cure formula, allowing single shared cure fractions across multiple endpoints. Default is `NULL`.
 #' @param family_latent A string or vector specifying the distribution(s) for the latent model component.
 #'    Supported values are `"exp"`, `"weibull"`, `"gompertz"`, `"lognormal"`, `"loglogistic"`, and `"gengamma"`.
 #' @param prior_latent An optional prior specification for the latent model component. Default is `NA`.
@@ -34,6 +35,7 @@
 #'   input_data = surv_input_data,
 #'   formula = "Surv(time=os, event=os_event) ~ 1",
 #'   cureformula = "~ TRTA + (1 | center_id)",
+#'   endpoint_var = "endpoint",
 #'   family_latent = "exponential",
 #'   bg_model = "bg_fixed",
 #'   bg_varname = "rate",
@@ -60,6 +62,7 @@
 bmcm_stan <- function(input_data,
                       formula,
                       cureformula = ~ 1,
+                      endpoint_var = NULL,
                       family_latent = "exponential",
                       # family_cure = "logit",
                       prior_latent = NA,
@@ -94,18 +97,18 @@ bmcm_stan <- function(input_data,
   bg_model <- match.arg(bg_model)
   bg_model_idx <- which(bg_model == c("bg_distn", "bg_fixed"))
 
-  formula_cure <- parse_formula(cureformula, input_data)
+  formula_cure <- parse_formula(cureformula, input_data, endpoint_var = endpoint_var)
 
   # adjust the number of distributions based on the cure model
   if (length(distns) == 1) {
     if (is_hier(formula_cure)) {
       distns <- rep(distns, formula_cure$re_nlevels[1])
-    } else if (is_separate(formula_cure)) {
-      distns <- rep(distns, formula_cure$fe_nlevels[2])
+    } else if (formula_cure$n_groups > 1) {
+      distns <- rep(distns, formula_cure$n_groups)
     }}
 
-  formula_latent <- parse_formula(formula, input_data, family = distns)
-  formula_cure <- switch_cure_model_type(formula_cure)
+  formula_latent <- parse_formula(formula, input_data, family = distns, endpoint_var = endpoint_var)
+  formula_cure <- switch_cure_model_type(formula_cure, endpoint_var = endpoint_var)
 
   ###############################
   # construct data
@@ -116,7 +119,16 @@ bmcm_stan <- function(input_data,
   if (any(is.na(prior_latent)))
     prior_latent <- default_prior_latent(formula_latent, formula_cure)
 
-  tx_names <- unique(input_data[[formula_cure$fe_vars[1]]])
+  # Extract treatment variable (first covariate that isn't the endpoint)
+  tx_var <- setdiff(formula_cure$fe_vars, endpoint_var)[1]
+  formula_cure$tx_var <- tx_var
+
+  if (!is.na(tx_var)) {
+    tx_names <- unique(input_data[[tx_var]])
+  } else {
+    tx_names <- "Intercept" # Single arm fallback
+  }
+
   n_tx <- length(tx_names)
   tx_names <- factor(tx_names, levels = tx_names)
   Tx_dmat <- diag(n_tx)
@@ -319,16 +331,29 @@ get_stan_defaults <- function(use_cmdstanr, dots) {
 }
 
 # identify cure model type
-switch_cure_model_type <- function(formula_cure) {
-  if (is_pooled(formula_cure)) {
-    formula_cure$cf_idx <- 1L
-    formula_cure$cf_name <- "pooled"
-  } else if (is_separate(formula_cure)) {
-    formula_cure$cf_idx <- 2L
-    formula_cure$cf_name <- "separate"
-  } else if (is_hier(formula_cure)) {
-    formula_cure$cf_idx <- 3L
-    formula_cure$cf_name <- "hier"
+switch_cure_model_type <- function(formula_cure, endpoint_var = NULL) {
+  if (!is.null(endpoint_var)) {
+    if (is_hier(formula_cure) && !is.null(formula_cure$re_parts$re_group_var) && formula_cure$re_parts$re_group_var == endpoint_var) {
+      formula_cure$cf_idx <- 3L
+      formula_cure$cf_name <- "hier"
+    } else if (endpoint_var %in% formula_cure$fe_vars) {
+      formula_cure$cf_idx <- 2L
+      formula_cure$cf_name <- "separate"
+    } else {
+      formula_cure$cf_idx <- 1L
+      formula_cure$cf_name <- "pooled"
+    }
+  } else {
+    if (is_pooled(formula_cure)) {
+      formula_cure$cf_idx <- 1L
+      formula_cure$cf_name <- "pooled"
+    } else if (is_separate(formula_cure)) {
+      formula_cure$cf_idx <- 2L
+      formula_cure$cf_name <- "separate"
+    } else if (is_hier(formula_cure)) {
+      formula_cure$cf_idx <- 3L
+      formula_cure$cf_name <- "hier"
+    }
   }
   formula_cure
 }

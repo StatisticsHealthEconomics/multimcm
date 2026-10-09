@@ -15,6 +15,7 @@ default_prior_cure <- function(formula_cure,
                                prior_cure = list(),
                                bg_model = 2) {
   nTx <- formula_cure$fe_nlevels[1]
+  if (is.null(nTx) || is.na(nTx)) nTx <- 1
   n_groups <- formula_cure$n_groups
   nvars <- formula_cure$nvars
 

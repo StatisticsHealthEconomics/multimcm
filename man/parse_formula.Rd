@@ -4,7 +4,7 @@
 \alias{parse_formula}
 \title{Parse formula}
 \usage{
-parse_formula(formula, data, family = NA)
+parse_formula(formula, data, family = NA, endpoint_var = NULL)
 }
 \arguments{
 \item{formula}{A formula object}

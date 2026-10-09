@@ -40,7 +40,7 @@ prep_S_joint_data.bmcm <- function(bmcm_out, ...) {
 
   event_type <- 1:n_groups
   model_names <- bmcm_out$distns
-  n_tx <- bmcm_out$formula$cure$fe_nlevels[1]
+  n_tx <- bmcm_out$inputs$data$nTx
 
   stan_extract <- stan_extract(bmcm_out)
 

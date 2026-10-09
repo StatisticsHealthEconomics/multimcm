@@ -9,7 +9,7 @@
 #' @importFrom rstan nlist
 #' @keywords internal
 #'
-parse_formula <- function(formula, data, family = NA) {
+parse_formula <- function(formula, data, family = NA, endpoint_var = NULL) {
 
   # if (!inherits(formula, "formula")) {
   #   stop("'formula' must be a formula.")
@@ -52,17 +52,22 @@ parse_formula <- function(formula, data, family = NA) {
 
   fe_nlevels <- apply(mf[, fe_vars, drop=FALSE], 2, \(x) nlevels(as.factor(x)))
 
-  n_groups <-
-    if (is_hier(nlist(bars))) {
-      re_nlevels[1]
-    } else {
-      if (length(fe_nlevels) >= 2) fe_nlevels[2] else 1}
+  if (!is.null(endpoint_var)) {
+    n_groups <- length(unique(data[[endpoint_var]]))
+    group_var <- endpoint_var
+  } else {
+    n_groups <-
+      if (is_hier(nlist(bars))) {
+        re_nlevels[1]
+      } else {
+        if (length(fe_nlevels) >= 2) fe_nlevels[2] else 1}
 
-  group_var <-
-    if (is_hier(nlist(bars))) {
-      re_parts$re_group_var
-    } else {
-      if (length(fe_vars) >= 2) fe_vars[2] else NA}
+    group_var <-
+      if (is_hier(nlist(bars))) {
+        re_parts$re_group_var
+      } else {
+        if (length(fe_vars) >= 2) fe_vars[2] else NA}
+  }
 
   c(nlist(
     formula,

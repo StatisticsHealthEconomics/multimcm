@@ -40,6 +40,15 @@
 #' surv_plot <- plot_S_joint(out, facet = TRUE, add_km = TRUE)
 #' print(surv_plot)
 #' }
+#' @rdname plot_S_joint
+#' @param x An object of class \code{bmcm}
+#' @export
+plot.bmcm <- function(x, ...) {
+  plot_S_joint(x, ...)
+}
+
+#' @rdname plot_S_joint
+#' @export
 plot_S_joint <- function(bmcm_out,
                          facet = TRUE,
                          annot_cf = FALSE,

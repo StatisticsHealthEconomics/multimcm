@@ -22,11 +22,12 @@ geom_kaplan_meier <- function(out_dat,
   for (i in 1:n_groups) {
     # if (any(grepl(i, event_type, ignore.case = TRUE))) {
 
-    if (!is.na(group_var)) {
-      group_dat <- out_dat$input_data[out_dat$input_data[[group_var]] == i, ]
-    } else {
+    if (is.na(group_var)) {
       group_dat <- out_dat$input_data
+    } else {
+      group_dat <- out_dat$input_data[out_dat$input_data[[group_var]] == i, ]
     }
+
     fit[[i]] <- survfit(formula, data = group_dat)
 
     # convert to ggplot long format

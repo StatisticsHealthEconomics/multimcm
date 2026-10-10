@@ -65,8 +65,8 @@ bmcm_stan <- function(input_data,
                       endpoint_var = NULL,
                       family_latent = "exponential",
                       # family_cure = "logit",
-                      prior_latent = NA,
-                      prior_cure = list(),
+                      prior_latent = .default(NA),
+                      prior_cure = .default(list()),
                       centre_coefs = FALSE,
                       bg_model = c("bg_distn", "bg_fixed"),
                       bg_varname = "bg_rate",
@@ -114,10 +114,17 @@ bmcm_stan <- function(input_data,
   # construct data
   # priors and hyper-parameters
 
+  if (.is_default(prior_cure)) {
+    message("Note: Using default priors for the cure fraction model.")
+  }
   prior_cure <- default_prior_cure(formula_cure, prior_cure)
 
-  if (any(is.na(prior_latent)))
+  if (any(is.na(prior_latent))) {
+    if (.is_default(prior_latent)) {
+      message("Note: Using default priors for the latent survival model.")
+    }
     prior_latent <- default_prior_latent(formula_latent, formula_cure)
+  }
 
   # Extract treatment variable (first covariate that isn't the endpoint)
   tx_var <- setdiff(formula_cure$fe_vars, endpoint_var)[1]

@@ -32,6 +32,7 @@ cf_forest_cutpoint <- function(distns = list(c("exp", "exp"),
                                save_name = c("_12", "_30", "_100"),
                                is_hier = TRUE) {
   summary_tabs <- list()
+  distns <- lapply(distns, validate_distns)
 
   for (cpt in save_name) {
     for (d in distns) {

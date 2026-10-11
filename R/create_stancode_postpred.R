@@ -9,7 +9,7 @@ create_stancode_postpred <- function(
                "loglogistic",
                "lognormal")) {
 
-  models <- match.arg(models)
+  models <- validate_distns(models[1])
 
   scode <- list()
 

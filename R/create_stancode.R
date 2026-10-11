@@ -18,6 +18,7 @@
 #' }
 #'
 create_stancode <- function(models) {
+  models <- validate_distns(models)
   n_grps <- length(models)
 
   # generate separate blocks of Stan code

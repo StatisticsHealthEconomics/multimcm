@@ -6,7 +6,7 @@
 #'
 ppv_gen_quants_block <- function(model, id = 1) {
 
-  os_params <- glue("{distn_params(model)}_{id]")
+  os_params <- glue("{distn_params(model)}_{id}")
 
   os_params[grep("lambda", os_params)] <-
     paste0(os_params[grep("lambda", os_params)], "[i, ]")
@@ -30,7 +30,7 @@ ppv_gen_quants_block <- function(model, id = 1) {
 
 
 #
-ppv_data_block <- function(model) {
+ppv_data_block <- function(model, id = 1) {
 
   ancil_params_os <-
     if (model %in% c("gompertz", "loglogistic", "weibull")) {
@@ -51,13 +51,13 @@ ppv_data_block <- function(model) {
 
 
 #
-ppv_functions_block<- function(model) {
+ppv_functions_block<- function(model, id = 1) {
 
   os_params <- distn_params(model)
   os_params <- paste(os_params, collapse = ", ")
 
   input_params_os <-
-    if (os_model %in% c("gompertz", "loglogistic", "weibull")) {
+    if (model %in% c("gompertz", "loglogistic", "weibull")) {
       "real shape, row_vector lambda0"
     } else {
       "row_vector lambda0"}
@@ -100,7 +100,7 @@ ppv_functions_block<- function(model) {
         if (cf[i] < curefrac[i]) {{
           time[i] = exponential_rng(lambda_bg[i]);
         } else {{
-          time[i] = fmin({os_model}_rng({os_params}), exponential_rng(lambda_bg[i]));
+          time[i] = fmin({model}_rng({os_params}), exponential_rng(lambda_bg[i]));
         }
       }
       return(time);

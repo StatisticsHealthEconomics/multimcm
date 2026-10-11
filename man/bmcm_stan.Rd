@@ -34,7 +34,7 @@ bmcm_stan(
 \item{endpoint_var}{A string specifying the column in \code{input_data} that defines the endpoints. If provided, the package correctly identifies the endpoint grouping separately from the cure formula, allowing single shared cure fractions across multiple endpoints. Default is \code{NULL}.}
 
 \item{family_latent}{A string or vector specifying the distribution(s) for the latent model component.
-Supported values are \code{"exp"}, \code{"weibull"}, \code{"gompertz"}, \code{"lognormal"}, \code{"loglogistic"}, and \code{"gengamma"}.}
+Supported values are \code{"exponential"}, \code{"weibull"}, \code{"gompertz"}, \code{"lognormal"}, \code{"loglogistic"}, and \code{"gengamma"}.}
 
 \item{prior_latent}{An optional prior specification for the latent model component. Default is \code{NA}.}
 
@@ -86,7 +86,7 @@ out <- bmcm_stan(
   input_data = surv_input_data,
   formula = "Surv(time=os, event=os_event) ~ 1",
   cureformula = "~ TRTA + (1 | center_id)",
-  endpoint_var = "endpoint",
+  endpoint_var = "center_id",
   family_latent = "exponential",
   bg_model = "bg_fixed",
   bg_varname = "rate",
